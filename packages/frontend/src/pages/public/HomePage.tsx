@@ -90,7 +90,7 @@ export const HomePage: React.FC = () => {
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
-          <div className="home-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="home-nav-actions">
             <LanguageSelector variant="navbar" />
             <Link to="/login" className="home-btn-ghost">
               {t('nav.login')}
@@ -100,7 +100,7 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="home-mobile-controls" style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="home-mobile-controls">
             <LanguageSelector variant="flagOnly" />
             <Link to="/register" className="home-btn-primary home-btn-mobile-cta">
               {t('nav.getStarted')}

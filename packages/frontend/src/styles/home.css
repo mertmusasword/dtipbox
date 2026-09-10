@@ -130,6 +130,10 @@
   gap: 1rem;
 }
 
+.home-mobile-controls {
+  display: none;
+}
+
 .home-btn-ghost {
   color: #f8fafc;
   font-size: 0.92rem;
@@ -1227,23 +1231,25 @@
   }
   .home-nav-links,
   .home-nav-actions {
-    display: none;
+    display: none !important;
   }
   .home-mobile-controls {
     display: flex !important;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
   .home-btn-mobile-cta {
-    padding: 0.45rem 0.85rem !important;
-    font-size: 0.82rem !important;
+    padding: 0.4rem 0.75rem !important;
+    font-size: 0.78rem !important;
     font-weight: 600 !important;
     border-radius: 9999px !important;
     white-space: nowrap !important;
     text-decoration: none !important;
   }
   .home-mobile-toggle {
-    display: block;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
   .home-hero-section {
     padding-top: 110px;
