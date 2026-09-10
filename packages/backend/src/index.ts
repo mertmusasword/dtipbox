@@ -33,6 +33,15 @@ app.use(
   })
 );
 
+// Canonical apex domain redirect (naponi.com -> https://www.naponi.com)
+app.use((req, res, next) => {
+  const host = (req.headers.host || '').split(':')[0].toLowerCase();
+  if (host === 'naponi.com') {
+    return res.redirect(301, `https://www.naponi.com${req.originalUrl}`);
+  }
+  next();
+});
+
 // CORS
 const allowedOrigins = env.CORS_ORIGIN.includes(',')
   ? env.CORS_ORIGIN.split(',').map((o) => o.trim())
@@ -48,6 +57,7 @@ app.use(
         allowedOrigins.includes(origin) ||
         allowedOrigins.includes('*') ||
         origin.endsWith('.railway.app') ||
+        origin.includes('naponi.com') ||
         origin === env.APP_URL
       ) {
         return callback(null, true);
