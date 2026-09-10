@@ -3,7 +3,7 @@ import { useLanguage } from './LanguageContext';
 import { SupportedLanguage } from './types';
 
 interface LanguageSelectorProps {
-  variant?: 'navbar' | 'compact' | 'footer' | 'floating';
+  variant?: 'navbar' | 'compact' | 'flagOnly' | 'footer' | 'floating';
   className?: string;
 }
 
@@ -47,6 +47,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'n
     setIsOpen(false);
   };
 
+  const isFlagOnly = variant === 'flagOnly';
+  const isCompact = variant === 'compact' || isFlagOnly;
+
   return (
     <div
       ref={dropdownRef}
@@ -63,8 +66,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'n
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          padding: variant === 'compact' ? '6px 12px' : '8px 16px',
+          gap: isFlagOnly ? '4px' : '8px',
+          padding: isFlagOnly ? '5px 8px' : variant === 'compact' ? '6px 12px' : '8px 16px',
           borderRadius: '9999px',
           background: 'rgba(255, 255, 255, 0.12)',
           border: '1px solid rgba(255, 255, 255, 0.28)',
@@ -78,17 +81,17 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'n
           outline: 'none',
         }}
       >
-        <span style={{ fontSize: '18px', lineHeight: 1 }}>{currentMeta.flag}</span>
-        {variant !== 'compact' && (
+        <span style={{ fontSize: isFlagOnly ? '20px' : '18px', lineHeight: 1 }}>{currentMeta.flag}</span>
+        {!isCompact && (
           <span className="lang-name-text" style={{ whiteSpace: 'nowrap', fontWeight: 600 }}>
             {currentMeta.nativeName}
           </span>
         )}
         <svg
           style={{
-            width: '14px',
-            height: '14px',
-            opacity: 0.7,
+            width: isFlagOnly ? '11px' : '14px',
+            height: isFlagOnly ? '11px' : '14px',
+            opacity: 0.75,
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.2s ease',
           }}

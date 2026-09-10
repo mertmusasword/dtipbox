@@ -1228,6 +1228,16 @@
   }
   .home-mobile-controls {
     display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .home-btn-mobile-cta {
+    padding: 0.45rem 0.85rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
   }
   .home-mobile-toggle {
     display: block;

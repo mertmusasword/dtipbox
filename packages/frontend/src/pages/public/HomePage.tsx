@@ -100,14 +100,17 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="home-mobile-controls" style={{ display: 'none', alignItems: 'center', gap: '0.6rem' }}>
-            <LanguageSelector variant="compact" />
+          <div className="home-mobile-controls" style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }}>
+            <LanguageSelector variant="flagOnly" />
+            <Link to="/register" className="home-btn-primary home-btn-mobile-cta">
+              {t('nav.getStarted')}
+            </Link>
             <button
               className="home-mobile-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={t('nav.toggleMenu')}
             >
-              {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </nav>
