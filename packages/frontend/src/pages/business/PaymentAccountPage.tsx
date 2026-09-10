@@ -5,9 +5,11 @@ import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { useToast } from '../../components/Toast';
 import { Building2, ShieldCheck } from 'lucide-react';
+import { useLanguage } from '../../i18n';
 
 export const PaymentAccountPage: React.FC = () => {
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [account, setAccount] = useState<BusinessPaymentAccount | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,9 +46,9 @@ export const PaymentAccountPage: React.FC = () => {
           });
         }
       })
-      .catch(() => setError('Failed to load bank account'))
+      .catch(() => setError(t('common.error')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadAccount();
@@ -59,9 +61,9 @@ export const PaymentAccountPage: React.FC = () => {
     try {
       const res = await api.post('/business/payment-account', formData);
       setAccount(res.data.data);
-      showToast('Payment account saved. IBAN payment channel is ready to activate.');
+      showToast(t('common.saved') || t('common.success'));
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Failed to save account details', 'error');
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setSaving(false);
     }
@@ -70,7 +72,7 @@ export const PaymentAccountPage: React.FC = () => {
   if (loading) {
     return (
       <div className="page-wrapper">
-        <LoadingState message="Loading bank configuration..." />
+        <LoadingState message={t('common.loading')} />
       </div>
     );
   }
@@ -87,9 +89,9 @@ export const PaymentAccountPage: React.FC = () => {
     <div className="page-wrapper" style={{ maxWidth: '800px' }}>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Business Payment Account</h1>
+          <h1 className="page-title">{t('payments.bankDetailsTitle')}</h1>
           <p className="page-subtitle mb-0">
-            Direct settlement destination for all tips received by your establishment
+            {t('payments.bankDetailsSubtitle')}
           </p>
         </div>
       </div>
@@ -99,99 +101,104 @@ export const PaymentAccountPage: React.FC = () => {
           <ShieldCheck size={20} className="section-icon" />
           <h3 className="section-title">Direct Settlement Security</h3>
         </div>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-          D-TIPBOX never holds, pools, or acts as a wallet for customer funds. All digital tips transfer directly into your business bank account or linked payment provider. Individual staff members do not have private bank accounts attached.
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          {t('payments.bankSecurityNotice')}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div className="form-grid form-grid-2">
-          <div className="form-group mb-0">
-            <label className="form-label">Bank Country</label>
+      <div className="glass-card">
+        <form onSubmit={handleSubmit}>
+          <div className="form-grid form-grid-2">
+            <div className="form-group">
+              <label className="form-label">{t('payments.bankCountry')}</label>
+              <input
+                type="text"
+                required
+                value={formData.country}
+                onChange={(e) => setFormData({ ...formData, country: e.target.value.toUpperCase() })}
+                placeholder="US, DE, TR, GB..."
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">{t('payments.accountHolderName')}</label>
+              <input
+                type="text"
+                required
+                value={formData.account_holder_name}
+                onChange={(e) => setFormData({ ...formData, account_holder_name: e.target.value })}
+                placeholder="e.g. The Grand Lounge LLC"
+                className="form-input"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">{t('payments.bankNameLabel')}</label>
             <input
               type="text"
               required
-              value={formData.country}
-              onChange={(e) => setFormData({ ...formData, country: e.target.value.toUpperCase() })}
-              placeholder="e.g. US, DE, GB, TR"
+              value={formData.bank_name}
+              onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
+              placeholder="e.g. JPMorgan Chase, Deutsche Bank, Garanti BBVA"
               className="form-input"
             />
           </div>
-          <div className="form-group mb-0">
-            <label className="form-label">Account Holder / Entity Name</label>
+
+          <div className="form-group">
+            <label className="form-label">{t('payments.ibanField')}</label>
             <input
               type="text"
-              required
-              value={formData.account_holder_name}
-              onChange={(e) => setFormData({ ...formData, account_holder_name: e.target.value })}
-              placeholder="e.g. Acme Hospitality LLC"
+              value={formData.iban}
+              onChange={(e) => setFormData({ ...formData, iban: e.target.value.toUpperCase() })}
+              placeholder="e.g. TR00 0000 0000 0000 0000 0000 00"
               className="form-input"
             />
           </div>
-        </div>
 
-        <div className="form-group mb-0">
-          <label className="form-label">Bank Name</label>
-          <input
-            type="text"
-            value={formData.bank_name}
-            onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
-            placeholder="e.g. JPMorgan Chase, Barclays, Deutsche Bank"
-            className="form-input"
-          />
-        </div>
+          <div className="form-grid form-grid-2">
+            <div className="form-group">
+              <label className="form-label">{t('payments.localAccountNumber')}</label>
+              <input
+                type="text"
+                value={formData.account_number}
+                onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
+                placeholder="Required for non-IBAN regions"
+                className="form-input"
+              />
+            </div>
 
-        <div className="form-group mb-0">
-          <label className="form-label">IBAN (International Bank Account Number)</label>
-          <input
-            type="text"
-            value={formData.iban}
-            onChange={(e) => setFormData({ ...formData, iban: e.target.value })}
-            placeholder="e.g. GB29NWBK60161331926819 or TR33..."
-            className="form-input"
-          />
-        </div>
+            <div className="form-group">
+              <label className="form-label">{t('payments.routingNumber')}</label>
+              <input
+                type="text"
+                value={formData.routing_number}
+                onChange={(e) => setFormData({ ...formData, routing_number: e.target.value })}
+                placeholder="ABA / Sort code"
+                className="form-input"
+              />
+            </div>
+          </div>
 
-        <div className="form-grid form-grid-2">
-          <div className="form-group mb-0">
-            <label className="form-label">Local Account Number (non-IBAN regions)</label>
+          <div className="form-group">
+            <label className="form-label">{t('payments.swiftBic')}</label>
             <input
               type="text"
-              value={formData.account_number}
-              onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
-              placeholder="e.g. 123456789"
+              value={formData.swift_bic}
+              onChange={(e) => setFormData({ ...formData, swift_bic: e.target.value.toUpperCase() })}
+              placeholder="e.g. CHASUS33"
               className="form-input"
             />
           </div>
-          <div className="form-group mb-0">
-            <label className="form-label">Routing Number / Sort Code</label>
-            <input
-              type="text"
-              value={formData.routing_number || formData.sort_code}
-              onChange={(e) => setFormData({ ...formData, routing_number: e.target.value, sort_code: e.target.value })}
-              placeholder="e.g. 021000021"
-              className="form-input"
-            />
+
+          <div className="form-actions">
+            <button type="submit" disabled={saving} className="btn btn-primary" style={{ minWidth: '160px' }}>
+              <Building2 size={16} /> {saving ? t('common.saving') : t('payments.saveBankBtn')}
+            </button>
           </div>
-        </div>
-
-        <div className="form-group mb-0">
-          <label className="form-label">SWIFT / BIC Code (for cross-border routing)</label>
-          <input
-            type="text"
-            value={formData.swift_bic}
-            onChange={(e) => setFormData({ ...formData, swift_bic: e.target.value })}
-            placeholder="e.g. CHASUS33"
-            className="form-input"
-          />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-          <button type="submit" disabled={saving} className="btn btn-primary btn-lg">
-            {saving ? 'Saving...' : 'Save Bank Details'}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

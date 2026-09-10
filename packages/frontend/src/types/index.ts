@@ -81,6 +81,66 @@ export type PaymentMethodType = 'IBAN_TRANSFER' | 'CARD' | 'APPLE_PAY' | 'GOOGLE
 export type PaymentMethodStatus = 'ACTIVE' | 'INACTIVE';
 export type PaymentIntegrationStatus = 'NOT_CONNECTED' | 'CONNECTED' | 'ERROR';
 
+export type ProviderType = 'CARD' | 'VIRTUAL_POS' | 'BANK_TRANSFER' | 'WALLET' | 'OTHER';
+export type ProviderCatalogStatus = 'ACTIVE' | 'INACTIVE' | 'DEVELOPMENT' | 'COMING_SOON';
+export type ProviderRequestStatus = 'PENDING' | 'REVIEWED' | 'PLANNED' | 'REJECTED';
+
+export interface CredentialField {
+  key: string;
+  label: string;
+  type: 'text' | 'password';
+  required: boolean;
+  placeholder?: string;
+  description?: string;
+}
+
+export interface PaymentProvider {
+  id: string;
+  name: string;
+  display_name: string;
+  description?: string;
+  logo_url?: string;
+  type: ProviderType;
+  status: ProviderCatalogStatus;
+  countries: string[];
+  supported_currencies: string[];
+  capabilities: string[];
+  required_credentials: CredentialField[];
+  has_adapter: boolean;
+  is_global: boolean;
+  connectedBusinessCount?: number;
+}
+
+export interface PaymentIntegrationItem {
+  id: string;
+  provider: string;
+  status: PaymentIntegrationStatus;
+  last_tested_at?: string;
+  last_error_message?: string;
+  hasCredentials: boolean;
+  credentials: Record<string, any>;
+  meta?: PaymentProvider | null;
+}
+
+export interface PaymentProviderRequest {
+  id: string;
+  business_id: string;
+  provider_name: string;
+  country: string;
+  website?: string | null;
+  payment_type: string;
+  description?: string | null;
+  status: ProviderRequestStatus;
+  created_at: string;
+  business?: {
+    id: string;
+    name: string;
+    email: string;
+    country: string;
+    currency: string;
+  };
+}
+
 export interface PaymentMethodItem {
   id?: string;
   type: PaymentMethodType;

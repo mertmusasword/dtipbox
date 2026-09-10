@@ -7,6 +7,7 @@ import * as employeeService from '../services/employee.service';
 import * as tableService from '../services/table.service';
 import * as qrService from '../services/qr.service';
 import * as paymentMethodService from '../services/paymentMethod.service';
+import * as providerService from '../services/payment/provider.service';
 import * as analyticsService from '../services/analytics.service';
 import * as auditService from '../services/audit.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType } from '@prisma/client';
@@ -322,6 +323,93 @@ router.put('/payment-methods/integrations', validate(updateIntegrationSchema), a
       req.body.status
     );
     res.json({ success: true, data: integration });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Payment Providers & POS Framework ---
+
+// 1. Get filtered catalog for business
+router.get('/payment-providers/catalog', async (req: AuthRequest, res, next) => {
+  try {
+    const { country, currency, type, search } = req.query;
+    const catalog = await providerService.getCatalog({
+      country: country as string,
+      currency: currency as string,
+      type: type as string,
+      search: search as string,
+    });
+    res.json({ success: true, data: catalog });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 2. Get business integrations with masked credentials
+router.get('/payment-providers/integrations', async (req: AuthRequest, res, next) => {
+  try {
+    const integrations = await providerService.getBusinessIntegrations(req.user!.businessId!);
+    res.json({ success: true, data: integrations });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 3. Save credentials & test connection
+const testIntegrationSchema = {
+  body: z.object({
+    credentials: z.record(z.any()),
+  }),
+};
+
+router.post('/payment-providers/:id/test', validate(testIntegrationSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const result = await providerService.testAndSaveIntegration(
+      req.user!.businessId!,
+      req.user!.id,
+      req.params.id as string,
+      req.body.credentials
+    );
+    res.json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 4. Disconnect provider integration
+router.delete('/payment-providers/:id', async (req: AuthRequest, res, next) => {
+  try {
+    const result = await providerService.deleteIntegration(
+      req.user!.businessId!,
+      req.user!.id,
+      req.params.id as string
+    );
+    res.json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 5. Submit "+ My provider isn't listed" request
+const providerRequestSchema = {
+  body: z.object({
+    providerName: z.string().min(1),
+    country: z.string().min(2),
+    website: z.string().optional(),
+    paymentType: z.string().min(1),
+    description: z.string().optional(),
+  }),
+};
+
+router.post('/payment-providers/request', validate(providerRequestSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const created = await providerService.submitProviderRequest(
+      req.user!.businessId!,
+      req.user!.id,
+      req.body
+    );
+    res.status(201).json({ success: true, data: created, message: 'Provider request submitted' });
   } catch (error) {
     next(error);
   }

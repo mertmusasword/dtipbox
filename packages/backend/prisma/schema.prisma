@@ -51,6 +51,28 @@ enum PaymentStatus {
   UNVERIFIED
 }
 
+enum ProviderType {
+  CARD
+  VIRTUAL_POS
+  BANK_TRANSFER
+  WALLET
+  OTHER
+}
+
+enum ProviderCatalogStatus {
+  ACTIVE
+  INACTIVE
+  DEVELOPMENT
+  COMING_SOON
+}
+
+enum ProviderRequestStatus {
+  PENDING
+  REVIEWED
+  PLANNED
+  REJECTED
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -98,6 +120,7 @@ model Business {
   qr_codes             QrCode[]
   payment_methods      PaymentMethod[]
   payment_integrations PaymentIntegration[]
+  provider_requests    PaymentProviderRequest[]
   tips                 Tip[]
   audit_logs           AuditLog[]
 
@@ -208,22 +231,68 @@ model PaymentMethod {
   @@map("payment_methods")
 }
 
-model PaymentIntegration {
-  id            String                   @id @default(uuid())
-  business_id   String
-  provider      String
-  status        PaymentIntegrationStatus @default(NOT_CONNECTED)
-  configuration Json?
+model PaymentProvider {
+  id                   String                @id // e.g. 'stripe', 'square', 'iyzico'
+  name                 String                // Canonical lowercase identifier
+  display_name         String
+  description          String?
+  logo_url             String?
+  type                 ProviderType          @default(CARD)
+  status               ProviderCatalogStatus @default(COMING_SOON)
+  countries            String[]              // ISO 3166-1 alpha-2 or ['*'] for global
+  supported_currencies String[]              // ISO 4217 currency codes
+  capabilities         String[]              // CREATE_PAYMENT, PAYMENT_STATUS, TEST_CONNECTION, REFUND, WEBHOOK
+  required_credentials Json                  // Field schema: key, label, type, required, placeholder, description
+  has_adapter          Boolean               @default(false)
+  is_global            Boolean               @default(false)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+
+  @@map("payment_providers")
+}
+
+model PaymentIntegration {
+  id                    String                   @id @default(uuid())
+  business_id           String
+  provider              String
+  status                PaymentIntegrationStatus @default(NOT_CONNECTED)
+  configuration         Json?
+  credentials_encrypted String?                  @db.Text
+  last_tested_at        DateTime?
+  last_error_message    String?
+
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
 
   // Relations
-  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  business              Business                 @relation(fields: [business_id], references: [id], onDelete: Cascade)
 
   @@unique([business_id, provider])
   @@index([business_id])
+  @@index([provider])
   @@map("payment_integrations")
+}
+
+model PaymentProviderRequest {
+  id            String                @id @default(uuid())
+  business_id   String
+  provider_name String
+  country       String
+  website       String?
+  payment_type  String
+  description   String?
+  status        ProviderRequestStatus @default(PENDING)
+
+  created_at    DateTime              @default(now())
+  updated_at    DateTime              @updatedAt
+
+  // Relations
+  business      Business              @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@index([business_id])
+  @@index([status])
+  @@map("payment_provider_requests")
 }
 
 model Tip {

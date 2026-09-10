@@ -4,6 +4,7 @@ import { Business } from '../../types';
 import { useToast } from '../../components/Toast';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
+import { useLanguage } from '../../i18n';
 import {
   Building2,
   Globe,
@@ -21,6 +22,7 @@ import {
 
 export const BusinessProfilePage: React.FC = () => {
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,24 +128,24 @@ export const BusinessProfilePage: React.FC = () => {
     <div className="page-wrapper" style={{ maxWidth: '900px' }}>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Business Profile</h1>
+          <h1 className="page-title">{t('business.profileTitle')}</h1>
           <p className="page-subtitle mb-0">
-            Your public-facing brand identity and establishment information
+            {t('business.profileSubtitle')}
           </p>
         </div>
         <div className="page-header-actions">
           {editing ? (
             <>
               <button className="btn btn-secondary" onClick={handleCancel}>
-                <X size={16} /> Cancel
+                <X size={16} /> {t('common.cancel')}
               </button>
               <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
-                <Save size={16} /> {saving ? 'Saving...' : 'Save Changes'}
+                <Save size={16} /> {saving ? t('common.saving') : t('common.save')}
               </button>
             </>
           ) : (
             <button className="btn btn-primary" onClick={() => setEditing(true)}>
-              <Edit3 size={16} /> Edit Profile
+              <Edit3 size={16} /> {t('common.edit')}
             </button>
           )}
         </div>
@@ -200,7 +202,7 @@ export const BusinessProfilePage: React.FC = () => {
                 <Clock size={12} /> {business?.timezone}
               </span>
               <span className={`badge ${business?.is_active ? 'badge-success' : 'badge-danger'}`}>
-                {business?.is_active ? '● Active' : '● Inactive'}
+                {business?.is_active ? `● ${t('common.active')}` : `● ${t('common.inactive')}`}
               </span>
             </div>
           </div>

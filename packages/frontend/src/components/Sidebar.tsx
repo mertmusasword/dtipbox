@@ -12,14 +12,16 @@ import {
   Settings,
   ShieldCheck,
   LogOut,
-  Sparkles,
   Menu,
   X,
   UserCircle,
+  Layers,
 } from 'lucide-react';
+import { useLanguage, LanguageSelector } from '../i18n';
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!user) return null;
@@ -42,7 +44,7 @@ export const Sidebar: React.FC = () => {
       <button
         className="sidebar-mobile-toggle"
         onClick={() => setMobileOpen(!mobileOpen)}
-        aria-label="Toggle sidebar"
+        aria-label={t('nav.toggleMenu')}
       >
         {mobileOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -70,45 +72,54 @@ export const Sidebar: React.FC = () => {
         <nav className="sidebar-nav">
           {isBusiness && (
             <>
-              <NavItem to="/business/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard" onClick={closeMobile} />
-              <NavItem to="/business/profile" icon={<UserCircle size={18} />} label="Business Profile" onClick={closeMobile} />
-              <NavItem to="/business/employees" icon={<Users size={18} />} label="Employees" onClick={closeMobile} />
-              <NavItem to="/business/tables" icon={<UtensilsCrossed size={18} />} label="Tables" onClick={closeMobile} />
-              <NavItem to="/business/qr" icon={<QrCode size={18} />} label="QR Codes" onClick={closeMobile} />
-              <NavItem to="/business/payment-methods" icon={<CreditCard size={18} />} label="Payment Methods" onClick={closeMobile} />
-              <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label="Bank Account" onClick={closeMobile} />
-              <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label="Analytics" onClick={closeMobile} />
-              <NavItem to="/business/settings" icon={<Settings size={18} />} label="Settings" onClick={closeMobile} />
+              <NavItem to="/business/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.dashboard')} onClick={closeMobile} />
+              <NavItem to="/business/profile" icon={<UserCircle size={18} />} label={t('nav.profile')} onClick={closeMobile} />
+              <NavItem to="/business/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
+              <NavItem to="/business/tables" icon={<UtensilsCrossed size={18} />} label={t('nav.tables')} onClick={closeMobile} />
+              <NavItem to="/business/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
+              <NavItem to="/business/payment-methods" icon={<CreditCard size={18} />} label={t('nav.paymentMethods')} onClick={closeMobile} />
+              <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label={t('nav.bankAccount')} onClick={closeMobile} />
+              <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
+              <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
             </>
           )}
 
           {isEmployee && (
-            <NavItem to="/employee/dashboard" icon={<LayoutDashboard size={18} />} label="My Tips & Stats" onClick={closeMobile} />
+            <NavItem to="/employee/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.myTipsStats')} onClick={closeMobile} />
           )}
 
           {isAdmin && (
             <>
-              <NavItem to="/admin" icon={<LayoutDashboard size={18} />} label="Overview" end onClick={closeMobile} />
-              <NavItem to="/admin/businesses" icon={<Building2 size={18} />} label="Businesses" onClick={closeMobile} />
-              <NavItem to="/admin/employees" icon={<Users size={18} />} label="Staff Directory" onClick={closeMobile} />
-              <NavItem to="/admin/qr" icon={<QrCode size={18} />} label="QR Codes" onClick={closeMobile} />
-              <NavItem to="/admin/payments" icon={<CreditCard size={18} />} label="Payments" onClick={closeMobile} />
-              <NavItem to="/admin/statistics" icon={<BarChart3 size={18} />} label="Platform Stats" onClick={closeMobile} />
-              <NavItem to="/admin/audit" icon={<ShieldCheck size={18} />} label="Audit Logs" onClick={closeMobile} />
-              <NavItem to="/admin/settings" icon={<Settings size={18} />} label="Profile & Security" onClick={closeMobile} />
+              <NavItem to="/admin" icon={<LayoutDashboard size={18} />} label={t('nav.adminOverview')} end onClick={closeMobile} />
+              <NavItem to="/admin/businesses" icon={<Building2 size={18} />} label={t('nav.businesses')} onClick={closeMobile} />
+              <NavItem to="/admin/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
+              <NavItem to="/admin/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
+              <NavItem to="/admin/payments" icon={<CreditCard size={18} />} label={t('nav.payments')} onClick={closeMobile} />
+              <NavItem to="/admin/payment-providers" icon={<Layers size={18} />} label={t('nav.paymentProviders')} onClick={closeMobile} />
+              <NavItem to="/admin/statistics" icon={<BarChart3 size={18} />} label={t('nav.platformStats')} onClick={closeMobile} />
+              <NavItem to="/admin/audit" icon={<ShieldCheck size={18} />} label={t('nav.auditLogs')} onClick={closeMobile} />
+              <NavItem to="/admin/settings" icon={<Settings size={18} />} label={t('nav.profileSecurity')} onClick={closeMobile} />
             </>
           )}
         </nav>
 
+        {/* Language selector strip in sidebar */}
+        <div style={{ padding: '0.75rem 1.25rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+            {t('common.currency').slice(0, 4)} / Lang
+          </span>
+          <LanguageSelector variant="compact" />
+        </div>
+
         {/* User Footer */}
         <div className="sidebar-footer">
-          <div style={{ overflow: 'hidden', marginRight: '0.5rem' }}>
+          <div style={{ overflow: 'hidden', marginRight: '0.5rem', flex: 1 }}>
             <div className="sidebar-user-email">{user.email}</div>
             <div className="sidebar-user-business">{user.business?.name || 'Authorized User'}</div>
           </div>
           <button
             onClick={logout}
-            title="Sign out"
+            title={t('nav.logout')}
             style={{
               padding: '0.5rem',
               borderRadius: 'var(--radius-sm)',

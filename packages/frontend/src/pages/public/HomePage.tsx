@@ -32,8 +32,11 @@ import {
   Percent
 } from 'lucide-react';
 import '../../styles/home.css';
+import { useLanguage, LanguageSelector } from '../../i18n';
 
 export const HomePage: React.FC = () => {
+  const { t } = useLanguage();
+
   // Mobile Nav Drawer State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -80,47 +83,52 @@ export const HomePage: React.FC = () => {
           </Link>
 
           <ul className="home-nav-links">
-            <li><a href="#how-it-works" className="home-nav-link">How It Works</a></li>
-            <li><a href="#experience" className="home-nav-link">Customer Experience</a></li>
-            <li><a href="#benefits" className="home-nav-link">For Businesses</a></li>
-            <li><a href="#industries" className="home-nav-link">Industries</a></li>
-            <li><a href="#global" className="home-nav-link">Global</a></li>
-            <li><a href="#faq" className="home-nav-link">FAQ</a></li>
+            <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
+            <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
+            <li><a href="#benefits" className="home-nav-link">{t('nav.businesses')}</a></li>
+            <li><a href="#simulator" className="home-nav-link">{t('nav.simulator')}</a></li>
+            <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
-          <div className="home-nav-actions">
+          <div className="home-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <LanguageSelector variant="navbar" />
             <Link to="/login" className="home-btn-ghost">
-              Sign In
+              {t('nav.login')}
             </Link>
             <Link to="/register" className="home-btn-primary">
-              Get Started <ArrowRight size={16} />
+              {t('nav.getStarted')} <ArrowRight size={16} />
             </Link>
           </div>
 
-          <button
-            className="home-mobile-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
-          </button>
+          <div className="home-mobile-controls" style={{ display: 'none', alignItems: 'center', gap: '0.6rem' }}>
+            <LanguageSelector variant="compact" />
+            <button
+              className="home-mobile-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={t('nav.toggleMenu')}
+            >
+              {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
+          </div>
         </nav>
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
           <div className="home-mobile-menu">
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
-            <a href="#experience" onClick={() => setMobileMenuOpen(false)}>Customer Experience</a>
-            <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>For Businesses</a>
-            <a href="#industries" onClick={() => setMobileMenuOpen(false)}>Industries</a>
-            <a href="#global" onClick={() => setMobileMenuOpen(false)}>Global Architecture</a>
-            <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+              <LanguageSelector variant="compact" />
+            </div>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
+            <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
+            <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>{t('nav.businesses')}</a>
+            <a href="#simulator" onClick={() => setMobileMenuOpen(false)}>{t('nav.simulator')}</a>
+            <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <Link to="/login" className="home-btn-ghost" style={{ flex: 1, textAlign: 'center' }}>
-                Sign In
+                {t('nav.login')}
               </Link>
               <Link to="/register" className="home-btn-primary" style={{ flex: 1, textAlign: 'center' }}>
-                Get Started
+                {t('nav.getStarted')}
               </Link>
             </div>
           </div>
@@ -137,37 +145,39 @@ export const HomePage: React.FC = () => {
             <div className="home-hero-content">
               <div className="home-hero-badge">
                 <Sparkles size={14} className="sparkle" />
-                <span>Next-Gen Cashless Tipping Platform</span>
+                <span>{t('home.heroBadge')}</span>
               </div>
 
               <h1 className="home-hero-title">
-                Digital Tipping, <br />
-                <span className="home-gradient-text">Reimagined for the Modern World.</span>
+                {t('home.heroTitle')} <br />
+                <span className="home-gradient-text">{t('home.heroHighlight')}</span>
               </h1>
 
               <p className="home-hero-desc">
-                Empower your guests to tip in under 6 seconds right from their camera.
-                <strong> Zero app downloads, zero sign-ups</strong>, and direct settlements straight to your configured business bank account.
+                {t('home.heroSubtitle')}
               </p>
 
               <div className="home-hero-cta-group">
                 <Link to="/register" className="home-btn-primary home-btn-hero-large">
-                  Get Started Free <ArrowRight size={18} />
+                  {t('home.ctaGetStarted')} <ArrowRight size={18} />
+                </Link>
+                <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
+                  {t('home.ctaLogin')}
                 </Link>
               </div>
 
               <div className="home-hero-trust-row">
                 <div className="home-trust-item">
                   <CheckCircle2 size={16} />
-                  <span>No App Required</span>
+                  <span>{t('home.feat1Title')}</span>
                 </div>
                 <div className="home-trust-item">
                   <CheckCircle2 size={16} />
-                  <span>Direct Bank Payouts</span>
+                  <span>{t('home.feat2Title')}</span>
                 </div>
                 <div className="home-trust-item">
                   <CheckCircle2 size={16} />
-                  <span>2-Minute Onboarding</span>
+                  <span>{t('home.statTipLatency')}</span>
                 </div>
               </div>
             </div>
@@ -220,7 +230,7 @@ export const HomePage: React.FC = () => {
                       </div>
 
                       {/* Amount Selection */}
-                      <div className="home-phone-amounts-label">Choose Tip Amount</div>
+                      <div className="home-phone-amounts-label">{t('tip.selectAmountTitle')}</div>
                       <div className="home-phone-amounts-grid">
                         {[3, 5, 10, 20].map((amt) => (
                           <button
@@ -235,7 +245,7 @@ export const HomePage: React.FC = () => {
                       </div>
 
                       {/* Payment Method Selector */}
-                      <div className="home-phone-amounts-label">Payment Method</div>
+                      <div className="home-phone-amounts-label">{t('tip.paymentMethodTitle')}</div>
                       <div className="home-phone-pay-methods">
                         <button
                           type="button"
@@ -250,14 +260,14 @@ export const HomePage: React.FC = () => {
                           className={`home-phone-pay-btn ${simPayment === 'card' ? 'selected' : ''}`}
                           onClick={() => setSimPayment('card')}
                         >
-                          <span>Credit or Debit Card</span>
+                          <span>{t('tip.creditCard')}</span>
                           {simPayment === 'card' && <Check size={14} color="#6366f1" />}
                         </button>
                       </div>
 
                       {/* Submit Tip Button */}
                       <button type="submit" className="home-phone-tip-submit">
-                        <Zap size={16} /> Send ${simAmount}.00 Tip Now
+                        <Zap size={16} /> {t('tip.payBtn')} ${simAmount}.00
                       </button>
                     </form>
                   ) : (
@@ -266,16 +276,16 @@ export const HomePage: React.FC = () => {
                       <div className="home-phone-success-icon">
                         <Check size={24} />
                       </div>
-                      <div className="home-phone-success-title">Tip Completed!</div>
+                      <div className="home-phone-success-title">{t('tip.successTitle')}</div>
                       <div className="home-phone-success-sub">
-                        ${simAmount}.00 was transferred directly to {simStaff}. A receipt has been issued instantly.
+                        {t('tip.successSubtitle')}
                       </div>
                       <button
                         type="button"
                         className="home-phone-reset-btn"
                         onClick={handleSimReset}
                       >
-                        Reset Simulator
+                        {t('common.retry')}
                       </button>
                     </div>
                   )}
@@ -717,38 +727,30 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="faq">
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Got Questions?</span>
-            <h2 className="home-section-title">Frequently Asked Questions</h2>
+            <span className="home-section-tag">{t('nav.faq')}</span>
+            <h2 className="home-section-title">{t('home.faqTitle')}</h2>
             <p className="home-section-desc">
-              Everything you need to know about setting up and running digital tipping with NAPONI.
+              {t('home.faqSubtitle')}
             </p>
           </div>
 
           <div className="home-faq-accordion">
             {[
               {
-                q: 'What is NAPONI and how does it work?',
-                a: 'NAPONI is a modern digital tipping platform for hospitality and service venues. Businesses register, configure their payment account, and generate QR codes. Customers simply point their smartphone camera at the QR code, select an amount, and tip using Apple Pay, Google Pay, or card in seconds. No apps or customer accounts are needed.'
+                q: t('home.faqQ1'),
+                a: t('home.faqA1')
               },
               {
-                q: 'Do customers need to download an application to tip?',
-                a: 'No! One of NAPONI’s strongest advantages is zero app downloads. Guests open the tipping screen instantly in their native mobile browser directly from their camera or QR reader. This results in a 96% completion rate.'
+                q: t('home.faqQ2'),
+                a: t('home.faqA2')
               },
               {
-                q: 'How does the business receive the tipped money?',
-                a: 'NAPONI operates on a non-custodial model. We do not hold your money in an intermediary wallet. Funds are deposited directly into the merchant’s configured bank account or payment provider according to your setup.'
+                q: t('home.faqQ3'),
+                a: t('home.faqA3')
               },
               {
-                q: 'Can tips be attributed to individual employees?',
-                a: 'Yes. You can add your team members in the Business Dashboard and generate QR codes for individual staff (e.g. servers, stylists) or enable pooled tipping across entire shifts or venues.'
-              },
-              {
-                q: 'How long does it take to get started?',
-                a: 'Less than 2 minutes. Sign up for a business account, enter your venue details and payout information, and you can immediately generate and print QR codes.'
-              },
-              {
-                q: 'Is NAPONI secure for both businesses and customers?',
-                a: 'Absolutely. NAPONI does not store sensitive cardholder data. All checkout flows utilize 256-bit SSL encryption and tokenized payment processing adhering to strict PCI-DSS standards.'
+                q: t('home.faqQ4'),
+                a: t('home.faqA4')
               }
             ].map((faq, idx) => (
               <div
@@ -781,17 +783,17 @@ export const HomePage: React.FC = () => {
         <div className="home-container">
           <div className="home-cta-banner">
             <h2 className="home-cta-title">
-              Ready to Eliminate Cashless Tipping Friction?
+              {t('home.heroTitle')} {t('home.heroHighlight')}
             </h2>
             <p className="home-cta-sub">
-              Join forward-thinking restaurants, boutique hotels, and service businesses worldwide. Set up your venue in 2 minutes.
+              {t('home.heroSubtitle')}
             </p>
             <div className="home-cta-btn-wrap">
               <Link to="/register" className="home-btn-primary home-btn-hero-large">
-                Create Your Free Account <ArrowRight size={18} />
+                {t('home.ctaGetStarted')} <ArrowRight size={18} />
               </Link>
               <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
-                Sign In to Dashboard
+                {t('nav.login')}
               </Link>
             </div>
           </div>
@@ -813,7 +815,7 @@ export const HomePage: React.FC = () => {
                 />
               </Link>
               <p>
-                The next-generation digital tipping infrastructure empowering hospitality businesses, service staff, and international travelers.
+                {t('home.footerTagline')}
               </p>
               <div className="home-footer-status-pill">
                 <span className="pulse-dot" />
@@ -824,41 +826,38 @@ export const HomePage: React.FC = () => {
             <div>
               <h4 className="home-footer-col-title">Product</h4>
               <ul className="home-footer-links">
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#experience">Customer Journey</a></li>
-                <li><a href="#benefits">Business Benefits</a></li>
-                <li><a href="#industries">Industries</a></li>
-                <li><a href="#global">Multi-Currency</a></li>
+                <li><a href="#how-it-works">{t('nav.features')}</a></li>
+                <li><a href="#experience">{t('nav.solutions')}</a></li>
+                <li><a href="#benefits">{t('nav.businesses')}</a></li>
+                <li><a href="#simulator">{t('nav.simulator')}</a></li>
+                <li><a href="#faq">{t('nav.faq')}</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="home-footer-col-title">Platform</h4>
               <ul className="home-footer-links">
-                <li><Link to="/register">Create Business Account</Link></li>
-                <li><Link to="/login">Merchant Sign In</Link></li>
-                <li><a href="#faq">Support & FAQ</a></li>
+                <li><Link to="/register">{t('nav.getStarted')}</Link></li>
+                <li><Link to="/login">{t('nav.login')}</Link></li>
+                <li><a href="#faq">{t('nav.faq')}</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">Security & Compliance</h4>
-              <ul className="home-footer-links">
-                <li><a href="#benefits">Non-Custodial Payouts</a></li>
-                <li><a href="#experience">256-bit SSL Protection</a></li>
-                <li><a href="#global">PCI-DSS Tokenized Rails</a></li>
-              </ul>
+              <h4 className="home-footer-col-title">Language & Region</h4>
+              <div style={{ marginTop: '0.5rem' }}>
+                <LanguageSelector variant="compact" />
+              </div>
             </div>
           </div>
 
           <div className="home-footer-bottom">
             <div>
-              © {new Date().getFullYear()} NAPONI Digital Tipping Platform. All rights reserved.
+              © {new Date().getFullYear()} NAPONI. {t('home.footerRights')}
             </div>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
-              <a href="#privacy" style={{ color: '#64748b', textDecoration: 'none' }}>Privacy Policy</a>
-              <a href="#terms" style={{ color: '#64748b', textDecoration: 'none' }}>Terms of Service</a>
-              <a href="#security" style={{ color: '#64748b', textDecoration: 'none' }}>Security</a>
+              <a href="#faq" style={{ color: '#64748b', textDecoration: 'none' }}>FAQ</a>
+              <a href="#how-it-works" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.features')}</a>
             </div>
           </div>
         </div>

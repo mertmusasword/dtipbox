@@ -4,11 +4,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { useToast } from '../../components/Toast';
+import { useLanguage } from '../../i18n';
 import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe } from 'lucide-react';
 
 export const ProfileSettingsPage: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -106,9 +108,9 @@ export const ProfileSettingsPage: React.FC = () => {
     <div className="page-wrapper" style={{ maxWidth: '800px' }}>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Account Settings</h1>
+          <h1 className="page-title">{t('nav.settings')}</h1>
           <p className="page-subtitle mb-0">
-            Security, localization, and application preferences
+            {t('nav.profileSecurity')}
           </p>
         </div>
       </div>
@@ -117,15 +119,15 @@ export const ProfileSettingsPage: React.FC = () => {
       <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
         <div className="section-header">
           <Shield size={20} className="section-icon" />
-          <h3 className="section-title">Account</h3>
+          <h3 className="section-title">{t('common.details')}</h3>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div>
-            <div className="form-label">Registered Email</div>
+            <div className="form-label">{t('auth.emailLabel')}</div>
             <div style={{ fontSize: '0.925rem', fontWeight: 600 }}>{user?.email}</div>
           </div>
           <div>
-            <div className="form-label">Account Role</div>
+            <div className="form-label">{t('common.status')}</div>
             <span className="badge badge-accent">{user?.role}</span>
           </div>
         </div>
@@ -135,12 +137,12 @@ export const ProfileSettingsPage: React.FC = () => {
       <form onSubmit={handlePasswordChange} className="glass-card" style={{ marginBottom: '1.5rem' }}>
         <div className="section-header">
           <Lock size={20} className="section-icon" />
-          <h3 className="section-title">Change Password</h3>
+          <h3 className="section-title">{t('auth.passwordLabel')}</h3>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div className="form-group mb-0">
-            <label className="form-label">Current Password</label>
+            <label className="form-label">{t('auth.currentPasswordLabel')}</label>
             <input
               type="password"
               required
@@ -152,7 +154,7 @@ export const ProfileSettingsPage: React.FC = () => {
 
           <div className="form-grid form-grid-2">
             <div className="form-group mb-0">
-              <label className="form-label">New Password</label>
+              <label className="form-label">{t('auth.newPasswordLabel')}</label>
               <input
                 type="password"
                 required
@@ -163,7 +165,7 @@ export const ProfileSettingsPage: React.FC = () => {
               />
             </div>
             <div className="form-group mb-0">
-              <label className="form-label">Confirm New Password</label>
+              <label className="form-label">{t('auth.confirmPasswordLabel')}</label>
               <input
                 type="password"
                 required
@@ -177,7 +179,7 @@ export const ProfileSettingsPage: React.FC = () => {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button type="submit" className="btn btn-secondary" disabled={changingPassword}>
-              {changingPassword ? 'Updating...' : 'Update Password'}
+              {changingPassword ? t('common.saving') : t('common.save')}
             </button>
           </div>
         </div>
@@ -187,12 +189,12 @@ export const ProfileSettingsPage: React.FC = () => {
       <form onSubmit={handleSaveConfig} className="glass-card" style={{ marginBottom: '1.5rem' }}>
         <div className="section-header">
           <Globe size={20} className="section-icon" />
-          <h3 className="section-title">Localization</h3>
+          <h3 className="section-title">{t('nav.settings')}</h3>
         </div>
 
         <div className="form-grid form-grid-2">
           <div className="form-group mb-0">
-            <label className="form-label">Locale</label>
+            <label className="form-label">{t('common.details')}</label>
             <input
               type="text"
               value={businessConfig.locale}
@@ -203,7 +205,7 @@ export const ProfileSettingsPage: React.FC = () => {
             <div className="form-hint">Controls number, date, and currency formatting</div>
           </div>
           <div className="form-group mb-0">
-            <label className="form-label">Timezone</label>
+            <label className="form-label">{t('common.time')}</label>
             <input
               type="text"
               value={businessConfig.timezone}
@@ -217,7 +219,7 @@ export const ProfileSettingsPage: React.FC = () => {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
           <button type="submit" className="btn btn-primary">
-            Save Localization
+            {t('common.save')}
           </button>
         </div>
       </form>

@@ -4,6 +4,8 @@ import { validate } from '../middleware/validation';
 import { authenticate, authorize, AuthRequest } from '../middleware/auth';
 import * as adminService from '../services/admin.service';
 import * as auditService from '../services/audit.service';
+import * as providerService from '../services/payment/provider.service';
+import { ProviderCatalogStatus, ProviderRequestStatus } from '@prisma/client';
 
 const router = Router();
 
@@ -101,6 +103,69 @@ router.get('/audit-logs', async (req, res, next) => {
     const { page, limit } = parsePagination(req.query, 50);
     const data = await auditService.getAllAuditLogs(page, limit);
     res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Payment Providers Management ---
+
+// 1. Get full platform provider catalog with metrics
+router.get('/payment-providers/catalog', async (_req, res, next) => {
+  try {
+    const data = await providerService.getAdminCatalog();
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 2. Update provider catalog status (strict guard: cannot set ACTIVE if has_adapter: false)
+const updateProviderStatusSchema = {
+  body: z.object({
+    status: z.nativeEnum(ProviderCatalogStatus),
+  }),
+};
+
+router.put('/payment-providers/:id/status', validate(updateProviderStatusSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const updated = await providerService.updateProviderStatus(
+      req.params.id as string,
+      req.body.status,
+      req.user!.id
+    );
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 3. Get merchant unlisted provider requests
+router.get('/payment-providers/requests', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 20);
+    const data = await providerService.getAdminProviderRequests(page, limit);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 4. Update status of a merchant provider request
+const updateRequestStatusSchema = {
+  body: z.object({
+    status: z.nativeEnum(ProviderRequestStatus),
+  }),
+};
+
+router.put('/payment-providers/requests/:id/status', validate(updateRequestStatusSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const updated = await providerService.updateProviderRequestStatus(
+      req.params.id as string,
+      req.body.status,
+      req.user!.id
+    );
+    res.json({ success: true, data: updated });
   } catch (error) {
     next(error);
   }

@@ -6,13 +6,17 @@ import { stripeProvider } from '../providers/stripe/stripe.provider';
 import { IPaymentProvider } from './provider.interface';
 import { PaymentMethodType, PaymentStatus } from '@prisma/client';
 import { createAuditLog } from '../../audit.service';
+import { decryptJson } from '../../../utils/crypto.util';
 
 export class PaymentService {
   private providers: Map<string, IPaymentProvider> = new Map();
 
   constructor() {
     this.registerProvider('stripe', stripeProvider);
-    // Future providers (PayPal, Adyen, etc.) can be registered here cleanly
+    // Generic payment channel aliases default to primary card provider
+    this.registerProvider('card', stripeProvider);
+    this.registerProvider('apple_pay', stripeProvider);
+    this.registerProvider('google_pay', stripeProvider);
   }
 
   registerProvider(name: string, provider: IPaymentProvider) {
@@ -51,9 +55,22 @@ export class PaymentService {
     if (params.paymentMethodType === PaymentMethodType.IBAN_TRANSFER) {
       result = await ibanService.processIbanPayment(params);
     } else {
-      // For CARD, APPLE_PAY, GOOGLE_PAY: use default registered provider (stripe)
-      const provider = this.getProvider('stripe');
-      result = await provider.createPayment(params);
+      // Find connected integration for business
+      const integration = await prisma.paymentIntegration.findFirst({
+        where: {
+          business_id: params.businessId,
+          status: 'CONNECTED',
+        },
+      });
+
+      let credentials: Record<string, any> | undefined;
+      if (integration?.credentials_encrypted) {
+        credentials = decryptJson(integration.credentials_encrypted) || undefined;
+      }
+
+      const providerName = integration?.provider || 'stripe';
+      const provider = this.getProvider(providerName);
+      result = await provider.createPayment(params, credentials);
     }
 
     // 2. Update tip with transaction details and status

@@ -9,6 +9,7 @@ import { env } from './config/env';
 import prisma from './utils/prisma';
 import apiRouter from './routes';
 import { errorHandler } from './middleware/errorHandler';
+import { providerRegistry } from './services/payment/core/providerRegistry';
 
 const app = express();
 
@@ -162,6 +163,7 @@ app.listen(PORT, '0.0.0.0', async () => {
   console.log(`🔗 API URL: ${env.API_URL}/api`);
   console.log(`=========================================`);
   await bootstrapAdmin();
+  await providerRegistry.syncCatalogToDatabase();
 });
 
 export default app;

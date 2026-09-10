@@ -1094,3 +1094,83 @@ input, select, textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* ===================== Internationalization (i18n) & RTL ===================== */
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .app-container {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .sidebar {
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+}
+
+[dir="rtl"] .nav-item {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .form-label,
+[dir="rtl"] .form-group label {
+  text-align: right;
+}
+
+[dir="rtl"] .input-icon-wrapper svg {
+  left: auto;
+  right: 14px;
+}
+
+[dir="rtl"] .input-icon-wrapper input {
+  padding-left: 1rem;
+  padding-right: 2.75rem;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+[dir="rtl"] .card-header,
+[dir="rtl"] .modal-header,
+[dir="rtl"] .page-header-actions {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn {
+  flex-direction: row-reverse;
+}
+
+/* Responsive overflow protection for all languages (German, French, Spanish, Arabic, etc.) */
+h1, h2, h3, h4, h5, h6,
+.stat-card-value,
+.badge,
+.nav-item span,
+.btn {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.lang-selector-trigger:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.lang-dropdown-menu {
+  animation: langFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes langFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

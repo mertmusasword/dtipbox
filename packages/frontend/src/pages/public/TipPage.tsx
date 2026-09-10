@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { TipPageDetails, PaymentMethodType } from '../../types';
 import {
@@ -14,9 +14,11 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
+import { useLanguage, LanguageSelector } from '../../i18n';
 
 export const TipPage: React.FC = () => {
   const { publicToken } = useParams<{ publicToken: string }>();
+  const { t, formatCurrency, dir } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,21 +52,21 @@ export const TipPage: React.FC = () => {
         }
       })
       .catch((err) => {
-        setError(err.response?.data?.error || 'Failed to load tip page');
+        setError(err.response?.data?.error || t('tip.invalidQr'));
       })
       .finally(() => setLoading(false));
-  }, [publicToken]);
+  }, [publicToken, t]);
 
   const effectiveAmount = customAmount ? parseFloat(customAmount) || 0 : selectedAmount;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPaymentMethod) {
-      alert('Please select an active payment method');
+      alert(t('tip.noPaymentMethods'));
       return;
     }
     if (effectiveAmount <= 0) {
-      alert('Please select or enter a valid tip amount');
+      alert(t('tip.selectAmountTitle'));
       return;
     }
 
@@ -79,7 +81,7 @@ export const TipPage: React.FC = () => {
       });
       setPaymentResult(res.data.data);
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to submit tip');
+      alert(err.response?.data?.error || t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -96,7 +98,7 @@ export const TipPage: React.FC = () => {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <Sparkles className="animate-spin" size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 1rem' }} />
-          <div style={{ color: 'var(--text-secondary)' }}>Loading Tip Session...</div>
+          <div style={{ color: 'var(--text-secondary)' }}>{t('tip.loadingDetails')}</div>
         </div>
       </div>
     );
@@ -104,11 +106,17 @@ export const TipPage: React.FC = () => {
 
   if (error || !details) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '1rem', right: dir === 'rtl' ? 'auto' : '1rem', left: dir === 'rtl' ? '1rem' : 'auto' }}>
+          <LanguageSelector variant="compact" />
+        </div>
         <div className="glass-card" style={{ maxWidth: '440px', width: '100%', textAlign: 'center', padding: '2.5rem' }}>
           <AlertCircle size={48} style={{ color: '#ef4444', margin: '0 auto 1rem' }} />
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Unable to Open Tip Page</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{error || 'Invalid session'}</p>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{t('tip.invalidQr')}</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>{error || t('tip.inactiveBusiness')}</p>
+          <Link to="/" className="btn btn-secondary">
+            {t('tip.backToHome')}
+          </Link>
         </div>
       </div>
     );
@@ -120,7 +128,11 @@ export const TipPage: React.FC = () => {
     const ibanDetails = paymentResult.payment?.ibanDetails;
 
     return (
-      <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '1rem', right: dir === 'rtl' ? 'auto' : '1rem', left: dir === 'rtl' ? '1rem' : 'auto' }}>
+          <LanguageSelector variant="compact" />
+        </div>
+
         <div className="glass-card" style={{ maxWidth: '480px', width: '100%', padding: '2.5rem', textAlign: 'center' }}>
           <div style={{
             width: '64px',
@@ -137,45 +149,47 @@ export const TipPage: React.FC = () => {
           </div>
 
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-            {isIban ? 'Bank Transfer Details' : 'Tip Initiated!'}
+            {isIban ? t('tip.transferInstructions') : t('tip.successTitle')}
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
             {isIban
-              ? 'Complete the transfer using your banking app.'
-              : 'Thank you for supporting our service team!'}
+              ? t('tip.bankNotice')
+              : t('tip.successSubtitle')}
           </p>
 
           <div style={{
             background: 'var(--bg-input)',
             borderRadius: 'var(--radius-md)',
             padding: '1.25rem',
-            textAlign: 'left',
+            textAlign: dir === 'rtl' ? 'right' : 'left',
             marginBottom: '1.5rem',
             fontSize: '0.9rem',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Amount:</span>
-              <span style={{ fontWeight: 700 }}>{details.business.currency} {paymentResult.tip.amount}</span>
+              <span style={{ color: 'var(--text-muted)' }}>{t('common.amount')}:</span>
+              <span style={{ fontWeight: 700 }}>
+                {formatCurrency(paymentResult.tip.amount, details.business.currency)}
+              </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Status:</span>
+              <span style={{ color: 'var(--text-muted)' }}>{t('common.status')}:</span>
               <span className={`badge ${isIban ? 'badge-warning' : 'badge-success'}`}>
-                {paymentResult.payment?.status}
+                {paymentResult.payment?.status === 'UNVERIFIED' ? t('common.unverified') : (paymentResult.payment?.status || t('common.success'))}
               </span>
             </div>
 
             {isIban && ibanDetails && (
               <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ACCOUNT HOLDER</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.accountHolder')}</div>
                   <div style={{ fontWeight: 600 }}>{ibanDetails.accountHolderName}</div>
                 </div>
                 {ibanDetails.iban && (
                   <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>IBAN / ACCOUNT</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.ibanLabel')}</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <code style={{ fontSize: '0.85rem', fontWeight: 600 }}>{ibanDetails.iban}</code>
-                      <button onClick={() => copyToClipboard(ibanDetails.iban!)} style={{ color: 'var(--accent-primary)' }}>
+                      <button type="button" onClick={() => copyToClipboard(ibanDetails.iban!)} style={{ color: 'var(--accent-primary)', padding: '4px' }}>
                         {copiedIban ? <Check size={16} /> : <Copy size={16} />}
                       </button>
                     </div>
@@ -183,13 +197,14 @@ export const TipPage: React.FC = () => {
                 )}
                 {ibanDetails.bankName && (
                   <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>BANK</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.bankName')}</div>
                     <div style={{ fontWeight: 600 }}>{ibanDetails.bankName}</div>
                   </div>
                 )}
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>TRANSFER REFERENCE</div>
-                  <div style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{ibanDetails.referenceCode}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.refCodeLabel')}</div>
+                  <div style={{ fontWeight: 700, color: 'var(--accent-primary)', fontSize: '1.1rem' }}>{ibanDetails.referenceCode}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{t('tip.refCodeNotice')}</div>
                 </div>
               </div>
             )}
@@ -203,7 +218,7 @@ export const TipPage: React.FC = () => {
               setCustomAmount('');
             }}
           >
-            Leave Another Tip
+            {t('common.retry')}
           </button>
         </div>
       </div>
@@ -212,7 +227,12 @@ export const TipPage: React.FC = () => {
 
   // --- Main 4-Step Tip Form ---
   return (
-    <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+      {/* Top Floating Language Selector */}
+      <div style={{ alignSelf: 'flex-end', maxWidth: '480px', width: '100%', display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+        <LanguageSelector variant="compact" />
+      </div>
+
       <div style={{ maxWidth: '480px', width: '100%' }}>
         {/* Business Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -246,7 +266,7 @@ export const TipPage: React.FC = () => {
             </div>
           )}
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
-            Direct digital tipping. Choose your recipient and amount.
+            {t('home.heroHighlight')} • {t('tip.pageTitle')}
           </p>
         </div>
 
@@ -256,15 +276,15 @@ export const TipPage: React.FC = () => {
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                 <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
-                  1. Select Staff Member
+                  1. {t('tip.selectStaffTitle')}
                 </span>
                 {selectedEmployeeId && (
                   <button
                     type="button"
                     onClick={() => setSelectedEmployeeId(undefined)}
-                    style={{ fontSize: '0.75rem', color: 'var(--accent-primary)' }}
+                    style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600 }}
                   >
-                    General Pool
+                    {t('tip.wholeTeam')}
                   </button>
                 )}
               </div>
@@ -325,7 +345,7 @@ export const TipPage: React.FC = () => {
           {/* Step 2: Select Tip Amount */}
           <div className="glass-card" style={{ padding: '1.25rem' }}>
             <span style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-              2. Choose Tip Amount ({details.business.currency})
+              2. {t('tip.selectAmountTitle')} ({details.business.currency})
             </span>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '0.75rem' }}>
@@ -360,7 +380,7 @@ export const TipPage: React.FC = () => {
               type="number"
               min="1"
               step="any"
-              placeholder="Or enter custom amount..."
+              placeholder={t('tip.customAmountLabel')}
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
               className="form-input"
@@ -371,12 +391,12 @@ export const TipPage: React.FC = () => {
           {/* Step 3: Select Payment Method */}
           <div className="glass-card" style={{ padding: '1.25rem' }}>
             <span style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-              3. Payment Method
+              3. {t('tip.paymentMethodTitle')}
             </span>
 
             {!details.hasAvailablePaymentMethod ? (
               <div style={{ padding: '1rem', textAlign: 'center', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
-                No payment method is currently available.
+                {t('tip.noPaymentMethods')}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -386,16 +406,16 @@ export const TipPage: React.FC = () => {
                   const reason = catalogItem?.reason;
                   const isSelected = selectedPaymentMethod === methodKey;
 
-                  let label = 'Credit / Debit Card';
+                  let label = t('tip.creditCard');
                   let icon = <CreditCard size={18} />;
                   if (methodKey === 'IBAN_TRANSFER') {
-                    label = 'IBAN / Direct Bank Transfer';
+                    label = t('tip.bankTransfer');
                     icon = <Building2 size={18} />;
                   } else if (methodKey === 'APPLE_PAY') {
-                    label = 'Apple Pay';
+                    label = t('tip.applePay');
                     icon = <Smartphone size={18} />;
                   } else if (methodKey === 'GOOGLE_PAY') {
-                    label = 'Google Pay';
+                    label = t('tip.googlePay');
                     icon = <Smartphone size={18} />;
                   }
 
@@ -433,10 +453,10 @@ export const TipPage: React.FC = () => {
                       </div>
                       <div>
                         {isAvailable ? (
-                          <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: 700 }}>🟢 Usable</span>
+                          <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: 700 }}>🟢 {t('common.active')}</span>
                         ) : (
                           <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem', background: 'rgba(255,255,255,0.06)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-                            Disabled
+                            {t('common.inactive')}
                           </span>
                         )}
                       </div>
@@ -452,7 +472,7 @@ export const TipPage: React.FC = () => {
             <div className="form-group" style={{ marginBottom: '0.75rem' }}>
               <input
                 type="text"
-                placeholder="Your Name (optional)"
+                placeholder={t('tip.customerNamePlaceholder')}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="form-input"
@@ -460,7 +480,7 @@ export const TipPage: React.FC = () => {
             </div>
             <div>
               <textarea
-                placeholder="Add a kind note or message (optional)..."
+                placeholder={t('tip.customerMessagePlaceholder')}
                 value={customerMessage}
                 onChange={(e) => setCustomerMessage(e.target.value)}
                 className="form-textarea"
@@ -484,10 +504,10 @@ export const TipPage: React.FC = () => {
             }}
           >
             {submitting ? (
-              'Processing Tip...'
+              t('common.loading')
             ) : (
               <>
-                Send Tip ({details.business.currency} {effectiveAmount || 0})
+                {t('tip.payBtn')} {formatCurrency(effectiveAmount || 0, details.business.currency)}
                 <ArrowRight size={20} />
               </>
             )}
@@ -496,7 +516,7 @@ export const TipPage: React.FC = () => {
 
         <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.9 }} />
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Güvenli Dijital Bahşiş ve Ödeme Altyapısı</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('home.footerTagline')}</span>
         </div>
       </div>
     </div>

@@ -11,6 +11,14 @@ import crypto from 'crypto';
  */
 class MockAdyenProvider implements IPaymentProvider {
   readonly name = 'adyen';
+  readonly capabilities = ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'];
+
+  async testConnection(credentials: Record<string, any>) {
+    if (!credentials.apiKey) {
+      return { success: false, message: 'API key missing' };
+    }
+    return { success: true, message: 'Connected to Adyen gateway' };
+  }
 
   async createPayment(params: CreatePaymentIntentParams): Promise<PaymentIntentResult> {
     const tx = `adyen_${crypto.randomBytes(8).toString('hex')}`;

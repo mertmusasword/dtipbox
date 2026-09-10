@@ -1226,6 +1226,9 @@
   .home-nav-actions {
     display: none;
   }
+  .home-mobile-controls {
+    display: flex !important;
+  }
   .home-mobile-toggle {
     display: block;
   }

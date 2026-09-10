@@ -6,10 +6,12 @@ import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
+import { useLanguage } from '../../i18n';
 import { Plus, Trash2, Edit2, UserCheck, UserX, Users } from 'lucide-react';
 
 export const EmployeesPage: React.FC = () => {
   const { showToast } = useToast();
+  const { t, formatNumber } = useLanguage();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,31 +116,31 @@ export const EmployeesPage: React.FC = () => {
     <div className="page-wrapper">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Team & Staff</h1>
+          <h1 className="page-title">{t('business.staffTitle')}</h1>
           <p className="page-subtitle mb-0">
-            Manage staff members for targeted tip distribution
+            {t('business.staffSubtitle')}
           </p>
         </div>
         <div className="page-header-actions">
           <button className="btn btn-primary" onClick={openCreateModal}>
-            <Plus size={16} /> Add Employee
+            <Plus size={16} /> {t('business.addStaffBtn')}
           </button>
         </div>
       </div>
 
       <div className="glass-card">
         {loading ? (
-          <LoadingState compact message="Loading team..." />
+          <LoadingState compact message={t('common.loading')} />
         ) : error ? (
           <ErrorState message={error} onRetry={loadEmployees} />
         ) : employees.length === 0 ? (
           <EmptyState
             icon={<Users size={28} />}
-            title="No employees added yet"
-            description="Add team members so customers can specifically select them when tipping."
+            title={t('business.staffTitle')}
+            description={t('business.staffSubtitle')}
             action={
               <button className="btn btn-primary" onClick={openCreateModal}>
-                <Plus size={16} /> Add First Employee
+                <Plus size={16} /> {t('business.addStaffBtn')}
               </button>
             }
           />
@@ -147,11 +149,11 @@ export const EmployeesPage: React.FC = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Employee</th>
-                  <th>Position</th>
-                  <th>Status</th>
-                  <th>Tips</th>
-                  <th className="text-right">Actions</th>
+                  <th>{t('common.name')}</th>
+                  <th>{t('business.position')}</th>
+                  <th>{t('common.status')}</th>
+                  <th>{t('nav.payments')}</th>
+                  <th className="text-right">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,10 +179,10 @@ export const EmployeesPage: React.FC = () => {
                     <td>{emp.position || '—'}</td>
                     <td>
                       <span className={`badge ${emp.is_active ? 'badge-success' : 'badge-neutral'}`}>
-                        {emp.is_active ? 'Active' : 'Inactive'}
+                        {emp.is_active ? t('common.active') : t('common.inactive')}
                       </span>
                     </td>
-                    <td className="font-bold">{emp._count?.tips || 0}</td>
+                    <td className="font-bold">{formatNumber(emp._count?.tips || 0)}</td>
                     <td className="text-right">
                       <div className="inline-actions">
                         <button
@@ -190,10 +192,10 @@ export const EmployeesPage: React.FC = () => {
                         >
                           {emp.is_active ? <UserX size={14} /> : <UserCheck size={14} />}
                         </button>
-                        <button className="btn btn-secondary btn-sm" onClick={() => openEditModal(emp)} title="Edit">
+                        <button className="btn btn-secondary btn-sm" onClick={() => openEditModal(emp)} title={t('common.edit')}>
                           <Edit2 size={14} />
                         </button>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(emp)} title="Delete">
+                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(emp)} title={t('common.delete')}>
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -210,12 +212,12 @@ export const EmployeesPage: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingEmployee ? 'Edit Employee' : 'Add New Employee'}
+        title={editingEmployee ? `${t('common.edit')}: ${editingEmployee.first_name} ${editingEmployee.last_name}` : t('business.addStaffBtn')}
       >
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div className="form-grid form-grid-2">
             <div className="form-group mb-0">
-              <label className="form-label">First Name</label>
+              <label className="form-label">{t('business.firstName')}</label>
               <input
                 type="text"
                 required
@@ -225,7 +227,7 @@ export const EmployeesPage: React.FC = () => {
               />
             </div>
             <div className="form-group mb-0">
-              <label className="form-label">Last Name</label>
+              <label className="form-label">{t('business.lastName')}</label>
               <input
                 type="text"
                 required
@@ -237,7 +239,7 @@ export const EmployeesPage: React.FC = () => {
           </div>
 
           <div className="form-group mb-0">
-            <label className="form-label">Role / Position</label>
+            <label className="form-label">{t('business.position')}</label>
             <input
               type="text"
               placeholder="e.g. Head Waiter, Bartender, Barista"
@@ -248,7 +250,7 @@ export const EmployeesPage: React.FC = () => {
           </div>
 
           <div className="form-group mb-0">
-            <label className="form-label">Avatar Image URL (optional)</label>
+            <label className="form-label">{t('business.avatarUrl')}</label>
             <input
               type="url"
               placeholder="https://..."
@@ -260,16 +262,11 @@ export const EmployeesPage: React.FC = () => {
 
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', marginTop: '0.5rem' }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-              {editingEmployee ? 'STAFF LOGIN & ACCESS CREDENTIALS' : 'OPTIONAL LOGIN CREDENTIALS'}
+              {t('common.details')}
             </div>
-            <p className="form-hint" style={{ marginBottom: '0.75rem' }}>
-              {editingEmployee
-                ? 'Update or set login email and password for this employee. Leave password blank to keep existing.'
-                : 'If you provide an email & password, this employee can sign in to view their own tip statistics.'}
-            </p>
 
             <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-              <label className="form-label">Employee Email</label>
+              <label className="form-label">{t('common.email')}</label>
               <input
                 type="email"
                 value={formData.email}
@@ -280,13 +277,13 @@ export const EmployeesPage: React.FC = () => {
             </div>
 
             <div className="form-group mb-0">
-              <label className="form-label">{editingEmployee ? 'New Password (optional)' : 'Temporary Password'}</label>
+              <label className="form-label">{t('auth.passwordLabel')}</label>
               <input
                 type="password"
                 minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder={editingEmployee ? 'Leave blank to keep unchanged' : '••••••••'}
+                placeholder={editingEmployee ? '••••••••' : '••••••••'}
                 className="form-input"
               />
             </div>
@@ -294,10 +291,10 @@ export const EmployeesPage: React.FC = () => {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
             <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </button>
             <button type="submit" className="btn btn-primary">
-              {editingEmployee ? 'Save Changes' : 'Create Employee'}
+              {editingEmployee ? t('common.save') : t('common.create')}
             </button>
           </div>
         </form>

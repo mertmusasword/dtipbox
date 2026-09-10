@@ -8,9 +8,11 @@ import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import { Plus, Trash2, Eye, QrCode as QrIcon } from 'lucide-react';
+import { useLanguage } from '../../i18n';
 
 export const QrCodesPage: React.FC = () => {
   const { showToast } = useToast();
+  const { t, formatDate } = useLanguage();
   const [qrCodes, setQrCodes] = useState<QrCode[]>([]);
   const [tables, setTables] = useState<Table[]>([]);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -30,9 +32,9 @@ export const QrCodesPage: React.FC = () => {
         setTables(tblRes.data.data);
         setBusiness(bizRes.data.data);
       })
-      .catch(() => setError('Failed to load QR code data'))
+      .catch(() => setError(t('common.error')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadData();
@@ -47,21 +49,21 @@ export const QrCodesPage: React.FC = () => {
       });
       setIsCreateModalOpen(false);
       setSelectedTableId('');
-      showToast('New QR code generated');
+      showToast(t('common.success'));
       loadData();
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Failed to generate QR code', 'error');
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     }
   };
 
   const handleDelete = async (qr: QrCode) => {
-    if (!confirm('Are you sure you want to revoke this QR code? Existing physical prints will stop working.')) return;
+    if (!confirm(t('common.confirm'))) return;
     try {
       await api.delete(`/business/qr/${qr.id}`);
-      showToast('QR code revoked');
+      showToast(t('common.success'));
       loadData();
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Failed to delete QR code', 'error');
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     }
   };
 
@@ -69,21 +71,21 @@ export const QrCodesPage: React.FC = () => {
     <div className="page-wrapper">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Digital Tip QR Codes</h1>
+          <h1 className="page-title">{t('business.qrTitle')}</h1>
           <p className="page-subtitle mb-0">
-            Generate and print cryptographically secure QR codes for customers
+            {t('business.qrSubtitle')}
           </p>
         </div>
         <div className="page-header-actions">
           <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
-            <Plus size={16} /> Generate New QR
+            <Plus size={16} /> {t('business.generateQrBtn')}
           </button>
         </div>
       </div>
 
       <div className="glass-card">
         {loading ? (
-          <LoadingState compact message="Loading QR codes..." />
+          <LoadingState compact message={t('common.loading')} />
         ) : error ? (
           <ErrorState message={error} onRetry={loadData} />
         ) : qrCodes.length === 0 ? (
@@ -93,7 +95,7 @@ export const QrCodesPage: React.FC = () => {
             description="Create a general business QR or individual table QR to start receiving tips."
             action={
               <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
-                <Plus size={16} /> Generate First QR
+                <Plus size={16} /> {t('business.generateQrBtn')}
               </button>
             }
           />
@@ -102,11 +104,11 @@ export const QrCodesPage: React.FC = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Scope</th>
-                  <th>Target Destination</th>
+                  <th>Type</th>
+                  <th>Destination</th>
                   <th>Public Token</th>
-                  <th>Created</th>
-                  <th className="text-right">Actions</th>
+                  <th>{t('common.date')}</th>
+                  <th className="text-right">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -114,7 +116,7 @@ export const QrCodesPage: React.FC = () => {
                   <tr key={qr.id}>
                     <td>
                       <span className={`badge ${qr.table ? 'badge-info' : 'badge-success'}`}>
-                        {qr.table ? 'Table Specific' : 'General'}
+                        {qr.table ? t('business.qrTypeTable') : t('business.qrTypeGeneral')}
                       </span>
                     </td>
                     <td className="font-bold">
@@ -124,7 +126,7 @@ export const QrCodesPage: React.FC = () => {
                       <code className="code-tag">{qr.public_token}</code>
                     </td>
                     <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                      {new Date(qr.created_at).toLocaleDateString()}
+                      {formatDate(qr.created_at)}
                     </td>
                     <td className="text-right">
                       <div className="inline-actions">
@@ -133,9 +135,9 @@ export const QrCodesPage: React.FC = () => {
                           onClick={() => setSelectedQr(qr)}
                           title="View & Print QR"
                         >
-                          <Eye size={14} /> View
+                          <Eye size={14} /> {t('common.details')}
                         </button>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(qr)} title="Revoke QR">
+                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(qr)} title={t('common.delete')}>
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -149,26 +151,23 @@ export const QrCodesPage: React.FC = () => {
       </div>
 
       {/* Generate QR Modal */}
-      <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Generate New Tip QR">
+      <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title={t('business.generateQrBtn')}>
         <form onSubmit={handleCreateQr}>
           <div className="form-group">
-            <label className="form-label">Assign To</label>
+            <label className="form-label">{t('business.tablesTitle')}</label>
             <select value={selectedTableId} onChange={(e) => setSelectedTableId(e.target.value)} className="form-select">
-              <option value="">General Business QR (No Table)</option>
+              <option value="">{t('business.qrTypeGeneral')}</option>
               {tables.map((t) => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
-            <div className="form-hint">
-              General QR lets the customer select staff or table manually. Table QR pre-fills the table.
-            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
             <button type="button" className="btn btn-secondary" onClick={() => setIsCreateModalOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </button>
-            <button type="submit" className="btn btn-primary">Generate QR</button>
+            <button type="submit" className="btn btn-primary">{t('business.generateQrBtn')}</button>
           </div>
         </form>
       </Modal>

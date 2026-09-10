@@ -5,6 +5,7 @@ import { MetricCard } from '../../components/MetricCard';
 import { LoadingState, SkeletonCard } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
+import { useLanguage } from '../../i18n';
 import {
   DollarSign,
   TrendingUp,
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export const AnalyticsPage: React.FC = () => {
+  const { t, formatCurrency, formatNumber } = useLanguage();
   const [analytics, setAnalytics] = useState<BusinessAnalytics | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,9 +55,9 @@ export const AnalyticsPage: React.FC = () => {
     <div className="page-wrapper">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Performance & Tip Analytics</h1>
+          <h1 className="page-title">{t('business.analyticsTitle')}</h1>
           <p className="page-subtitle mb-0">
-            Real-time breakdown of tipping trends across staff, tables, QR codes, and payment channels
+            {t('business.analyticsSubtitle')}
           </p>
         </div>
       </div>
@@ -66,40 +68,40 @@ export const AnalyticsPage: React.FC = () => {
       ) : (
         <div className="metrics-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '2rem' }}>
           <MetricCard
-            label="Daily (Today)"
-            value={`${currency} ${(analytics?.todayTips || 0).toFixed(2)}`}
+            label={t('business.todayTips')}
+            value={formatCurrency(analytics?.todayTips || 0, currency)}
             icon={<Calendar size={22} />}
-            subtitle="Today's received tips"
+            subtitle={t('business.todayTips')}
           />
           <MetricCard
-            label="Weekly (7 Days)"
-            value={`${currency} ${(analytics?.weeklyTips || 0).toFixed(2)}`}
+            label={t('business.weeklyTips')}
+            value={formatCurrency(analytics?.weeklyTips || 0, currency)}
             icon={<Calendar size={22} />}
-            subtitle="Last 7 days"
+            subtitle={t('business.weeklyTips')}
           />
           <MetricCard
-            label="Monthly (30 Days)"
-            value={`${currency} ${(analytics?.monthlyTips || 0).toFixed(2)}`}
+            label={t('business.monthlyTips')}
+            value={formatCurrency(analytics?.monthlyTips || 0, currency)}
             icon={<Calendar size={22} />}
-            subtitle="Last 30 days"
+            subtitle={t('business.monthlyTips')}
           />
           <MetricCard
-            label="Total Volume"
-            value={`${currency} ${(analytics?.totalTips || 0).toFixed(2)}`}
+            label={t('business.totalTips')}
+            value={formatCurrency(analytics?.totalTips || 0, currency)}
             icon={<DollarSign size={22} />}
-            subtitle="All-time tip revenue"
+            subtitle={t('business.totalTips')}
           />
           <MetricCard
-            label="Average Tip"
-            value={`${currency} ${(analytics?.averageTip || 0).toFixed(2)}`}
+            label={t('business.avgTip')}
+            value={formatCurrency(analytics?.averageTip || 0, currency)}
             icon={<TrendingUp size={22} />}
-            subtitle="Per transaction"
+            subtitle={t('business.avgTip')}
           />
           <MetricCard
-            label="Total Count"
-            value={analytics?.tipCount || 0}
+            label={t('business.tipCount')}
+            value={formatNumber(analytics?.tipCount || 0)}
             icon={<Hash size={22} />}
-            subtitle="Total tips recorded"
+            subtitle={t('business.tipCount')}
           />
         </div>
       )}
@@ -110,27 +112,27 @@ export const AnalyticsPage: React.FC = () => {
         <div className="glass-card">
           <div className="section-header">
             <Users size={20} className="section-icon" />
-            <h2 className="section-title">Staff Performance</h2>
+            <h2 className="section-title">{t('business.employeePerformance')}</h2>
           </div>
 
           {loading ? (
-            <LoadingState compact message="Loading staff stats..." />
+            <LoadingState compact message={t('common.loading')} />
           ) : analytics?.employeePerformance && analytics.employeePerformance.length > 0 ? (
             <div className="table-responsive">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Staff Member</th>
-                    <th>Tips</th>
-                    <th className="text-right">Volume</th>
+                    <th>{t('common.name')}</th>
+                    <th>{t('business.tipCount')}</th>
+                    <th className="text-right">{t('common.amount')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {analytics.employeePerformance.map((emp, idx) => (
                     <tr key={idx}>
                       <td className="font-bold">{emp.name}</td>
-                      <td>{emp.count}</td>
-                      <td className="text-right font-bold">{currency} {Number(emp.total).toFixed(2)}</td>
+                      <td>{formatNumber(emp.count)}</td>
+                      <td className="text-right font-bold">{formatCurrency(Number(emp.total), currency)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -139,8 +141,8 @@ export const AnalyticsPage: React.FC = () => {
           ) : (
             <EmptyState
               icon={<Users size={24} />}
-              title="No staff data"
-              description="Staff tip data will appear here once tips start flowing."
+              title={t('business.employeePerformance')}
+              description={t('business.noTipsYet')}
             />
           )}
         </div>
@@ -149,27 +151,27 @@ export const AnalyticsPage: React.FC = () => {
         <div className="glass-card">
           <div className="section-header">
             <UtensilsCrossed size={20} className="section-icon" />
-            <h2 className="section-title">Table & Section Performance</h2>
+            <h2 className="section-title">{t('business.tablePerformance')}</h2>
           </div>
 
           {loading ? (
-            <LoadingState compact message="Loading table stats..." />
+            <LoadingState compact message={t('common.loading')} />
           ) : analytics?.tablePerformance && analytics.tablePerformance.length > 0 ? (
             <div className="table-responsive">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Table / Section</th>
-                    <th>Tips</th>
-                    <th className="text-right">Volume</th>
+                    <th>{t('business.tableName')}</th>
+                    <th>{t('business.tipCount')}</th>
+                    <th className="text-right">{t('common.amount')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {analytics.tablePerformance.map((tbl, idx) => (
                     <tr key={idx}>
                       <td className="font-bold">{tbl.name}</td>
-                      <td>{tbl.count}</td>
-                      <td className="text-right font-bold">{currency} {Number(tbl.total).toFixed(2)}</td>
+                      <td>{formatNumber(tbl.count)}</td>
+                      <td className="text-right font-bold">{formatCurrency(Number(tbl.total), currency)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -178,8 +180,8 @@ export const AnalyticsPage: React.FC = () => {
           ) : (
             <EmptyState
               icon={<UtensilsCrossed size={24} />}
-              title="No table data"
-              description="Table tip data will appear here once tips are logged."
+              title={t('business.tablePerformance')}
+              description={t('business.noTipsYet')}
             />
           )}
         </div>
@@ -191,20 +193,20 @@ export const AnalyticsPage: React.FC = () => {
         <div className="glass-card">
           <div className="section-header">
             <QrCode size={20} className="section-icon" />
-            <h2 className="section-title">QR Code Usage</h2>
+            <h2 className="section-title">{t('business.qrTitle')}</h2>
           </div>
 
           {loading ? (
-            <LoadingState compact message="Loading QR usage stats..." />
+            <LoadingState compact message={t('common.loading')} />
           ) : analytics?.qrUsage && analytics.qrUsage.length > 0 ? (
             <div className="table-responsive">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>QR Identifier</th>
-                    <th>Linked Target</th>
-                    <th>Scans/Tips</th>
-                    <th className="text-right">Volume</th>
+                    <th>{t('common.details')}</th>
+                    <th>{t('business.tableName')}</th>
+                    <th>{t('business.tipCount')}</th>
+                    <th className="text-right">{t('common.amount')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,9 +215,9 @@ export const AnalyticsPage: React.FC = () => {
                       <td className="font-bold">
                         <code>{qr.token.substring(0, 10)}...</code>
                       </td>
-                      <td>{qr.table || qr.label || 'Venue General'}</td>
-                      <td>{qr.count}</td>
-                      <td className="text-right font-bold">{currency} {Number(qr.total).toFixed(2)}</td>
+                      <td>{qr.table || qr.label || t('business.qrTypeGeneral')}</td>
+                      <td>{formatNumber(qr.count)}</td>
+                      <td className="text-right font-bold">{formatCurrency(Number(qr.total), currency)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -224,8 +226,8 @@ export const AnalyticsPage: React.FC = () => {
           ) : (
             <EmptyState
               icon={<QrCode size={24} />}
-              title="No QR activity"
-              description="QR scan and tipping activity will be registered here."
+              title={t('business.qrTitle')}
+              description={t('business.noTipsYet')}
             />
           )}
         </div>
@@ -234,27 +236,27 @@ export const AnalyticsPage: React.FC = () => {
         <div className="glass-card">
           <div className="section-header">
             <CreditCard size={20} className="section-icon" />
-            <h2 className="section-title">Payment Method Utilization</h2>
+            <h2 className="section-title">{t('business.paymentMethodUsage')}</h2>
           </div>
 
           {loading ? (
-            <LoadingState compact message="Loading payment stats..." />
+            <LoadingState compact message={t('common.loading')} />
           ) : analytics?.paymentMethodUsage && analytics.paymentMethodUsage.length > 0 ? (
             <div className="table-responsive">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Method</th>
-                    <th>Transactions</th>
-                    <th className="text-right">Volume</th>
+                    <th>{t('common.details')}</th>
+                    <th>{t('business.tipCount')}</th>
+                    <th className="text-right">{t('common.amount')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {analytics.paymentMethodUsage.map((m, idx) => (
                     <tr key={idx}>
                       <td className="font-bold">{m.method.replace(/_/g, ' ')}</td>
-                      <td>{m.count}</td>
-                      <td className="text-right font-bold">{currency} {Number(m.total).toFixed(2)}</td>
+                      <td>{formatNumber(m.count)}</td>
+                      <td className="text-right font-bold">{formatCurrency(Number(m.total), currency)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -263,8 +265,8 @@ export const AnalyticsPage: React.FC = () => {
           ) : (
             <EmptyState
               icon={<CreditCard size={24} />}
-              title="No payment data"
-              description="Payment channel stats will populate as tips are processed."
+              title={t('business.paymentMethodUsage')}
+              description={t('business.noTipsYet')}
             />
           )}
         </div>

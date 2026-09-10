@@ -29,10 +29,15 @@ export async function getPaymentMethods(businessId: string) {
 
     let connectionStatus: 'CONNECTED' | 'NOT_CONNECTED';
     if (isIban) {
-      connectionStatus = paymentAccount ? 'CONNECTED' : 'NOT_CONNECTED';
+      connectionStatus = (paymentAccount?.iban || paymentAccount?.account_number) ? 'CONNECTED' : 'NOT_CONNECTED';
     } else {
-      const integration = integrations.find((i) => i.provider === type);
-      connectionStatus = integration?.status === 'CONNECTED' ? 'CONNECTED' : 'NOT_CONNECTED';
+      const integration = integrations.find(
+        (i) =>
+          (i.provider === type ||
+            ((type === 'CARD' || type === 'APPLE_PAY' || type === 'GOOGLE_PAY') && i.provider === 'stripe')) &&
+          i.status === 'CONNECTED'
+      );
+      connectionStatus = integration ? 'CONNECTED' : 'NOT_CONNECTED';
     }
 
     return {
@@ -112,15 +117,18 @@ async function checkConnection(
     const account = await prisma.businessPaymentAccount.findUnique({
       where: { business_id: businessId },
     });
-    return !!account;
+    return !!(account?.iban || account?.account_number);
   }
 
-  // For provider-based methods, check integration status
+  // For provider-based methods, check if any supporting provider is CONNECTED
   const integration = await prisma.paymentIntegration.findFirst({
     where: {
       business_id: businessId,
-      provider: type,
       status: 'CONNECTED',
+      OR: [
+        { provider: type },
+        { provider: 'stripe' },
+      ],
     },
   });
 
