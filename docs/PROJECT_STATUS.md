@@ -168,13 +168,36 @@
       - Result: **6/6 PASS**.
     - **Comprehensive Documentation**: Complete deployment manual available in `docs/RAILWAY_DEPLOYMENT.md`.
 
+14. **Live Railway Production Deployment & Verification (100% ONLINE & VERIFIED)**:
+    - **Production URL**: `https://dtipbox-production.up.railway.app`
+    - **Railway Project**: `successful-nurturing` (`dtipbox` service + `Postgres` database plugin)
+    - **Automated Container Builds & Migration Deployment**:
+      - GitHub connected repository (`https://github.com/mertmusasword/dtipbox.git`), auto-deploying `main` branch.
+      - Container automatically bound to `0.0.0.0:3000` and passed Railway healthchecks.
+      - Auto-deployed Prisma schema migrations to live PostgreSQL.
+      - Superadmin bootstrapped on container initialization (`admin@dtipbox.com`).
+    - **Live Production Smoke Test Suite (`test-live-railway.ts`)**:
+      - Executed comprehensive live smoke tests directly against `https://dtipbox-production.up.railway.app`:
+        - ✅ **1/9 `/api/health` Endpoint**: `200 OK` (`{"status":"ok","service":"D-TIPBOX API"}`)
+        - ✅ **2/9 Frontend SPA Serving & Client Routing**: Serves production bundle, HTML, root div, scripts, and client-side SPA fallback.
+        - ✅ **3/9 Authentication & Live Database Query**: Superadmin login verified + Business registration and token generation verified.
+        - ✅ **4/9 Business Dashboard & Profile Data**: Successfully retrieved tenant profile from live Railway PostgreSQL database.
+        - ✅ **5/9 Payment Methods & Bank Account Architecture**: Configured bank payout account and activated `IBAN_TRANSFER`.
+        - ✅ **6/9 QR Code Generation**: Created public QR code and generated crypto-random public token.
+        - ✅ **7/9 Public QR Resolution & Zero Leakage**: Public tip page loaded without auth, confirmed zero sensitive data leakage and `IBAN_TRANSFER` marked `isUsable`.
+        - ✅ **8/9 Customer Tip Flow on Live Database**: Live customer tip processed and saved to Railway PostgreSQL with strict wire transfer rule (`payment_status: UNVERIFIED`) and reference code.
+        - ✅ **9/9 Production Security Headers & CORS**: Verified `X-Content-Type-Options: nosniff`, CSP, and CORS policies.
+      - **Result**: **9/9 PASS (100% Success)**.
+
 ---
 
-## 🟢 Live Development Stack & Ready-to-Deploy State
+## 🟢 Live Production Deployment & Development Stack
 
-- **Frontend (Dev)**: [http://localhost:5173](http://localhost:5173)
-- **Customer Tip Test Page**: [http://localhost:5173/tip/demo-general-qr](http://localhost:5173/tip/demo-general-qr)
-- **Backend API**: [http://localhost:3000/api](http://localhost:3000/api)
-- **PostgreSQL Database**: Port 5432 (`dtipbox-db`)
-- **Production Docker Image**: `dtipbox:latest` (Verified & Smoke Tested)
-- **Deployment Target**: Railway ([docs/RAILWAY_DEPLOYMENT.md](file:///c:/Users/Mert%20K%C4%B1l%C4%B1%C3%A7/Desktop/PROJELER/d-tipbox/docs/RAILWAY_DEPLOYMENT.md))
+- **Live Production URL**: [https://dtipbox-production.up.railway.app](https://dtipbox-production.up.railway.app)
+- **Live Healthcheck**: [https://dtipbox-production.up.railway.app/api/health](https://dtipbox-production.up.railway.app/api/health)
+- **GitHub Repository**: [https://github.com/mertmusasword/dtipbox](https://github.com/mertmusasword/dtipbox)
+- **Frontend (Local Dev)**: [http://localhost:5173](http://localhost:5173)
+- **Backend API (Local Dev)**: [http://localhost:3000/api](http://localhost:3000/api)
+- **PostgreSQL Database (Local Dev)**: Port 5432 (`dtipbox-db`)
+- **Production Container**: Railway multi-stage Docker container (`dtipbox-production.up.railway.app`)
+- **Railway Deployment Guide**: [docs/RAILWAY_DEPLOYMENT.md](file:///c:/Users/Mert%20K%C4%B1l%C4%B1%C3%A7/Desktop/PROJELER/d-tipbox/docs/RAILWAY_DEPLOYMENT.md)

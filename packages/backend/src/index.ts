@@ -43,10 +43,16 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
       if (!origin) return callback(null, true);
-      if (env.isDev || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      if (
+        env.isDev ||
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes('*') ||
+        origin.endsWith('.railway.app') ||
+        origin === env.APP_URL
+      ) {
         return callback(null, true);
       }
-      callback(new Error('Blocked by CORS policy'));
+      callback(null, false);
     },
     credentials: true,
   })
