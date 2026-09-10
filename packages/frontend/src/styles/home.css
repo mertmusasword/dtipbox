@@ -1222,6 +1222,9 @@
 }
 
 @media (max-width: 768px) {
+  .home-brand-logo-img {
+    height: 32px;
+  }
   .home-nav-links,
   .home-nav-actions {
     display: none;
