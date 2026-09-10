@@ -5,6 +5,7 @@ import { authenticate, authorize, AuthRequest } from '../middleware/auth';
 import * as adminService from '../services/admin.service';
 import * as auditService from '../services/audit.service';
 import * as providerService from '../services/payment/provider.service';
+import * as agreementService from '../services/agreement.service';
 import { ProviderCatalogStatus, ProviderRequestStatus } from '@prisma/client';
 
 const router = Router();
@@ -166,6 +167,87 @@ router.put('/payment-providers/requests/:id/status', validate(updateRequestStatu
       req.user!.id
     );
     res.json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ==================== AGREEMENTS (SÖZLEŞMELER) ====================
+
+// 1. List all agreements and versions
+router.get('/agreements', async (_req, res, next) => {
+  try {
+    const data = await agreementService.getAdminAgreements();
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 2. Create a new draft agreement version
+const createVersionSchema = {
+  body: z.object({
+    agreementCode: z.string().optional(),
+    version: z.string().min(1, 'Versiyon zorunludur'),
+    title: z.string().min(1, 'Başlık zorunludur'),
+    contentMarkdown: z.string().min(10, 'Sözleşme metni zorunludur'),
+    requiresReacceptance: z.boolean().optional(),
+    effectiveDate: z.string().optional(),
+  }),
+};
+
+router.post('/agreements/versions', validate(createVersionSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const { agreementCode, version, title, contentMarkdown, requiresReacceptance, effectiveDate } = req.body;
+    const data = await agreementService.createAgreementVersion({
+      agreementCode,
+      version,
+      title,
+      contentMarkdown,
+      requiresReacceptance,
+      effectiveDate: effectiveDate ? new Date(effectiveDate) : undefined,
+      adminUserId: req.user!.id,
+    });
+    res.status(201).json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 3. Publish a draft agreement version (immutable)
+router.post('/agreements/versions/:id/publish', async (req: AuthRequest, res, next) => {
+  try {
+    const data = await agreementService.publishAgreementVersion(req.params.id as string, req.user!.id);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 4. Get acceptance audit logs
+router.get('/agreements/audit', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 20);
+    const businessId = req.query.businessId as string | undefined;
+    const versionId = req.query.versionId as string | undefined;
+
+    const data = await agreementService.getAcceptanceAuditLogs({
+      page,
+      limit,
+      businessId,
+      versionId,
+    });
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 5. Get businesses requiring re-acceptance
+router.get('/agreements/pending', async (_req, res, next) => {
+  try {
+    const data = await agreementService.getPendingReacceptanceBusinesses();
+    res.json({ success: true, data });
   } catch (error) {
     next(error);
   }

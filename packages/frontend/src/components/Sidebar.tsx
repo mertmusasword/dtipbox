@@ -16,6 +16,7 @@ import {
   X,
   UserCircle,
   Layers,
+  FileText,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 
@@ -96,6 +97,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/admin/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
               <NavItem to="/admin/payments" icon={<CreditCard size={18} />} label={t('nav.payments')} onClick={closeMobile} />
               <NavItem to="/admin/payment-providers" icon={<Layers size={18} />} label={t('nav.paymentProviders')} onClick={closeMobile} />
+              <NavItem to="/admin/agreements" icon={<FileText size={18} />} label="Sözleşmeler & Onay" onClick={closeMobile} />
               <NavItem to="/admin/statistics" icon={<BarChart3 size={18} />} label={t('nav.platformStats')} onClick={closeMobile} />
               <NavItem to="/admin/audit" icon={<ShieldCheck size={18} />} label={t('nav.auditLogs')} onClick={closeMobile} />
               <NavItem to="/admin/settings" icon={<Settings size={18} />} label={t('nav.profileSecurity')} onClick={closeMobile} />

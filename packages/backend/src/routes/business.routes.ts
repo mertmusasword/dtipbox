@@ -11,6 +11,7 @@ import * as providerService from '../services/payment/provider.service';
 import * as analyticsService from '../services/analytics.service';
 import * as auditService from '../services/audit.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType } from '@prisma/client';
+import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
 
 const router = Router();
 
@@ -80,7 +81,7 @@ router.get('/payment-account', async (req: AuthRequest, res, next) => {
   }
 });
 
-router.post('/payment-account', validate(paymentAccountSchema), async (req: AuthRequest, res, next) => {
+router.post('/payment-account', requireAcceptedAgreement, validate(paymentAccountSchema), async (req: AuthRequest, res, next) => {
   try {
     const account = await businessService.upsertPaymentAccount(
       req.user!.businessId!,
@@ -240,7 +241,7 @@ const createQrSchema = {
   }),
 };
 
-router.post('/qr', validate(createQrSchema), async (req: AuthRequest, res, next) => {
+router.post('/qr', requireAcceptedAgreement, validate(createQrSchema), async (req: AuthRequest, res, next) => {
   try {
     const qrCode = await qrService.createQrCode(
       req.user!.businessId!,

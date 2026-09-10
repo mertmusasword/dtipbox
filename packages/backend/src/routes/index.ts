@@ -5,6 +5,7 @@ import employeeRoutes from './employee.routes';
 import tipRoutes from './tip.routes';
 import adminRoutes from './admin.routes';
 import webhookRoutes from './webhook.routes';
+import agreementRoutes from './agreement.routes';
 
 import prisma from '../utils/prisma';
 import { env } from '../config/env';
@@ -67,5 +68,6 @@ apiRouter.use('/employee', employeeRoutes);
 apiRouter.use('/tip', tipRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/payment/webhook', webhookRoutes);
+apiRouter.use('/agreements', agreementRoutes);
 
 export default apiRouter;

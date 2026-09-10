@@ -20,6 +20,18 @@ enum Role {
   CUSTOMER
 }
 
+enum AgreementStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AgreementType {
+  MERCHANT_TERMS
+  PRIVACY_POLICY
+  KVKK_DISCLOSURE
+}
+
 enum QrType {
   DTIPBOX
   BANK_PAYMENT
@@ -85,9 +97,10 @@ model User {
   updated_at    DateTime @updatedAt
 
   // Relations
-  business   Business?
-  employee   Employee?
-  audit_logs AuditLog[]
+  business              Business?
+  employee              Employee?
+  audit_logs            AuditLog[]
+  agreement_acceptances AgreementAcceptance[]
 
   @@index([email])
   @@index([role])
@@ -113,16 +126,17 @@ model Business {
   updated_at DateTime @updatedAt
 
   // Relations
-  owner                User                  @relation(fields: [owner_user_id], references: [id])
-  payment_account      BusinessPaymentAccount?
-  employees            Employee[]
-  tables               Table[]
-  qr_codes             QrCode[]
-  payment_methods      PaymentMethod[]
-  payment_integrations PaymentIntegration[]
-  provider_requests    PaymentProviderRequest[]
-  tips                 Tip[]
-  audit_logs           AuditLog[]
+  owner                 User                   @relation(fields: [owner_user_id], references: [id])
+  payment_account       BusinessPaymentAccount?
+  employees             Employee[]
+  tables                Table[]
+  qr_codes              QrCode[]
+  payment_methods       PaymentMethod[]
+  payment_integrations  PaymentIntegration[]
+  provider_requests     PaymentProviderRequest[]
+  tips                  Tip[]
+  audit_logs            AuditLog[]
+  agreement_acceptances AgreementAcceptance[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -344,3 +358,65 @@ model AuditLog {
   @@index([entity_type])
   @@map("audit_logs")
 }
+
+model Agreement {
+  id          String        @id @default(uuid())
+  code        String        @unique // e.g. "MERCHANT_SERVICE_AGREEMENT"
+  name        String
+  type        AgreementType @default(MERCHANT_TERMS)
+  description String?
+  is_active   Boolean       @default(true)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+
+  versions    AgreementVersion[]
+
+  @@map("agreements")
+}
+
+model AgreementVersion {
+  id                    String          @id @default(uuid())
+  agreement_id          String
+  version               String          // e.g. "1.0.0"
+  title                 String
+  content_markdown      String          @db.Text
+  content_hash          String          // SHA-256 hash of content_markdown
+  status                AgreementStatus @default(DRAFT)
+  requires_reacceptance Boolean         @default(true)
+  effective_date        DateTime        @default(now())
+  published_at          DateTime?
+  created_by_user_id    String?
+  created_at            DateTime        @default(now())
+
+  agreement             Agreement       @relation(fields: [agreement_id], references: [id], onDelete: Cascade)
+  acceptances           AgreementAcceptance[]
+
+  @@unique([agreement_id, version])
+  @@index([status])
+  @@map("agreement_versions")
+}
+
+model AgreementAcceptance {
+  id                   String           @id @default(uuid())
+  business_id          String
+  user_id              String
+  agreement_version_id String
+  accepted_at          DateTime         @default(now())
+  ip_address           String
+  user_agent           String           @db.Text
+  content_hash         String           // SHA-256 hash at time of acceptance
+  snapshot_html        String?          @db.Text
+  statement            String           // e.g. "Okudum ve Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni kabul ediyorum."
+  metadata             Json?
+
+  business             Business         @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  user                 User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  version              AgreementVersion @relation(fields: [agreement_version_id], references: [id], onDelete: Restrict)
+
+  @@unique([business_id, agreement_version_id])
+  @@index([business_id])
+  @@index([agreement_version_id])
+  @@index([accepted_at])
+  @@map("agreement_acceptances")
+}
+

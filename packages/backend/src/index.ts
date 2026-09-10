@@ -10,6 +10,7 @@ import prisma from './utils/prisma';
 import apiRouter from './routes';
 import { errorHandler } from './middleware/errorHandler';
 import { providerRegistry } from './services/payment/core/providerRegistry';
+import { bootstrapDefaultAgreement } from './services/agreement.service';
 
 const app = express();
 
@@ -192,6 +193,7 @@ app.listen(PORT, '0.0.0.0', async () => {
   console.log(`=========================================`);
   await bootstrapAdmin();
   await providerRegistry.syncCatalogToDatabase();
+  await bootstrapDefaultAgreement();
 });
 
 export default app;

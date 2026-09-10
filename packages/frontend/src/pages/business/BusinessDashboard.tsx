@@ -17,9 +17,12 @@ import {
   Plus,
   ArrowRight,
   Sparkles,
+  ShieldAlert,
+  FileText,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
+import { AgreementModal } from '../../components/AgreementModal';
 
 export const BusinessDashboard: React.FC = () => {
   const { t, formatCurrency, formatTime } = useLanguage();
@@ -27,14 +30,23 @@ export const BusinessDashboard: React.FC = () => {
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [agreementAccepted, setAgreementAccepted] = useState<boolean>(true);
+  const [showAgreementModal, setShowAgreementModal] = useState<boolean>(false);
 
   const loadData = useCallback(() => {
     setLoading(true);
     setError(null);
-    Promise.all([api.get('/business'), api.get('/business/analytics')])
-      .then(([bizRes, analyticsRes]) => {
+    Promise.all([
+      api.get('/business'),
+      api.get('/business/analytics'),
+      api.get('/agreements/active').catch(() => ({ data: { data: { is_accepted: true } } })),
+    ])
+      .then(([bizRes, analyticsRes, agreementRes]) => {
         setBusiness(bizRes.data.data);
         setAnalytics(analyticsRes.data.data);
+        if (agreementRes?.data?.data) {
+          setAgreementAccepted(!!agreementRes.data.data.is_accepted);
+        }
       })
       .catch(() => setError(t('common.error')))
       .finally(() => setLoading(false));
@@ -75,6 +87,31 @@ export const BusinessDashboard: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {/* Agreement Status Banner */}
+      {!loading && !agreementAccepted && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+              <ShieldAlert className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200">
+                Naponi İşletme Hizmet ve Kullanım Sözleşmesi Onayı Bekleniyor
+              </h3>
+              <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-0.5">
+                Canlı ödeme altyapısı ve QR kod operasyonlarını eksiksiz yönetebilmek için lütfen güncel sözleşmeyi inceleyip onaylayınız.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowAgreementModal(true)}
+            className="btn btn-primary bg-amber-600 hover:bg-amber-700 text-white text-xs whitespace-nowrap shrink-0 flex items-center gap-1.5 shadow-sm"
+          >
+            <FileText size={14} /> Sözleşmeyi İncele ve Onayla
+          </button>
+        </div>
+      )}
 
       {/* Financial Metrics */}
       {loading ? (
@@ -199,6 +236,15 @@ export const BusinessDashboard: React.FC = () => {
           />
         )}
       </div>
+
+      <AgreementModal
+        isOpen={showAgreementModal}
+        onClose={() => setShowAgreementModal(false)}
+        onAccepted={() => {
+          setAgreementAccepted(true);
+          loadData();
+        }}
+      />
     </div>
   );
 };
