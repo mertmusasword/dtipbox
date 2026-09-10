@@ -1,0 +1,277 @@
+// ======================
+// D-TIPBOX Prisma Schema
+// ======================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum Role {
+  ADMIN
+  BUSINESS
+  EMPLOYEE
+  CUSTOMER
+}
+
+enum QrType {
+  DTIPBOX
+  BANK_PAYMENT
+}
+
+enum PaymentMethodType {
+  IBAN_TRANSFER
+  CARD
+  APPLE_PAY
+  GOOGLE_PAY
+}
+
+enum PaymentMethodStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PaymentIntegrationStatus {
+  NOT_CONNECTED
+  CONNECTED
+  ERROR
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+  UNVERIFIED
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  role          Role     @default(BUSINESS)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  business   Business?
+  employee   Employee?
+  audit_logs AuditLog[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model Business {
+  id            String  @id @default(uuid())
+  owner_user_id String  @unique
+  name          String
+  logo          String?
+  country       String  // ISO 3166-1 alpha-2
+  currency      String  // ISO 4217
+  timezone      String  // IANA timezone
+  locale        String? // BCP 47 locale tag
+  phone         String?
+  email         String?
+  address       String?
+  description   String?
+  is_active     Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  owner                User                  @relation(fields: [owner_user_id], references: [id])
+  payment_account      BusinessPaymentAccount?
+  employees            Employee[]
+  tables               Table[]
+  qr_codes             QrCode[]
+  payment_methods      PaymentMethod[]
+  payment_integrations PaymentIntegration[]
+  tips                 Tip[]
+  audit_logs           AuditLog[]
+
+  @@index([owner_user_id])
+  @@index([country])
+  @@map("businesses")
+}
+
+model BusinessPaymentAccount {
+  id                  String  @id @default(uuid())
+  business_id         String  @unique
+  country             String
+  account_holder_name String
+  iban                String?
+  account_number      String?
+  routing_number      String?
+  sort_code           String?
+  swift_bic           String?
+  bank_name           String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@map("business_payment_accounts")
+}
+
+model Employee {
+  id          String    @id @default(uuid())
+  business_id String
+  user_id     String?   @unique
+  first_name  String
+  last_name   String
+  position    String?
+  avatar      String?
+  is_active   Boolean   @default(true)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Relations
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [user_id], references: [id])
+  tips     Tip[]
+
+  @@index([business_id])
+  @@index([user_id])
+  @@map("employees")
+}
+
+model Table {
+  id          String  @id @default(uuid())
+  business_id String
+  name        String
+  is_active   Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  qr_codes QrCode[]
+  tips     Tip[]
+
+  @@index([business_id])
+  @@map("tables")
+}
+
+model QrCode {
+  id           String  @id @default(uuid())
+  business_id  String
+  table_id     String?
+  type         QrType  @default(DTIPBOX)
+  public_token String  @unique
+  is_active    Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  table    Table?   @relation(fields: [table_id], references: [id], onDelete: SetNull)
+
+  @@index([business_id])
+  @@index([public_token])
+  @@map("qr_codes")
+}
+
+model PaymentMethod {
+  id            String              @id @default(uuid())
+  business_id   String
+  type          PaymentMethodType
+  provider      String?
+  status        PaymentMethodStatus @default(INACTIVE)
+  configuration Json?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@unique([business_id, type])
+  @@index([business_id])
+  @@map("payment_methods")
+}
+
+model PaymentIntegration {
+  id            String                   @id @default(uuid())
+  business_id   String
+  provider      String
+  status        PaymentIntegrationStatus @default(NOT_CONNECTED)
+  configuration Json?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@unique([business_id, provider])
+  @@index([business_id])
+  @@map("payment_integrations")
+}
+
+model Tip {
+  id                      String        @id @default(uuid())
+  business_id             String
+  employee_id             String?
+  table_id                String?
+  amount                  Decimal       @db.Decimal(10, 2)
+  currency                String        // ISO 4217
+  payment_method          String
+  payment_status          PaymentStatus @default(PENDING)
+  provider_transaction_id String?
+  customer_name           String?
+  customer_message        String?
+
+  created_at DateTime @default(now())
+
+  // Relations
+  business Business  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  employee Employee? @relation(fields: [employee_id], references: [id], onDelete: SetNull)
+  table    Table?    @relation(fields: [table_id], references: [id], onDelete: SetNull)
+
+  @@index([business_id])
+  @@index([employee_id])
+  @@index([table_id])
+  @@index([created_at])
+  @@index([payment_status])
+  @@map("tips")
+}
+
+model AuditLog {
+  id            String  @id @default(uuid())
+  actor_user_id String?
+  business_id   String?
+  action        String
+  entity_type   String
+  entity_id     String?
+  metadata      Json?
+
+  created_at DateTime @default(now())
+
+  // Relations
+  actor    User?     @relation(fields: [actor_user_id], references: [id], onDelete: SetNull)
+  business Business? @relation(fields: [business_id], references: [id], onDelete: SetNull)
+
+  @@index([business_id])
+  @@index([actor_user_id])
+  @@index([created_at])
+  @@index([entity_type])
+  @@map("audit_logs")
+}

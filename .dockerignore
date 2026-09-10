@@ -1,0 +1,12 @@
+node_modules
+.env
+.env.local
+.git
+.gitignore
+pgdata
+*.md
+docker-compose.yml
+.vscode
+.idea
+coverage
+logs

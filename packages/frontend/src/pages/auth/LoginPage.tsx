@@ -1,0 +1,131 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { Sparkles, ArrowRight, Lock, Mail } from 'lucide-react';
+
+export const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const user = await login(email, password);
+      if (user.role === 'ADMIN') {
+        navigate('/admin');
+      } else if (user.role === 'EMPLOYEE') {
+        navigate('/employee/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to sign in. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+      <div className="glass-card" style={{ maxWidth: '440px', width: '100%', padding: '2.5rem' }}>
+        {/* Brand */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '12px',
+            background: 'var(--accent-gradient)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1rem',
+            color: '#fff',
+            boxShadow: '0 4px 16px var(--accent-glow)',
+          }}>
+            <Sparkles size={24} />
+          </div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em' }}>Welcome Back</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+            Sign in to manage your tips, employees & QR codes
+          </p>
+        </div>
+
+        {error && (
+          <div style={{
+            background: 'var(--danger-bg)',
+            color: '#fca5a5',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            padding: '0.75rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            fontSize: '0.85rem',
+            marginBottom: '1.5rem',
+          }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@business.com"
+                className="form-input"
+                style={{ paddingLeft: '2.5rem' }}
+              />
+              <Mail size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            </div>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '1.75rem' }}>
+            <label className="form-label">Password</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="form-input"
+                style={{ paddingLeft: '2.5rem' }}
+              />
+              <Lock size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary"
+            style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem' }}
+          >
+            {loading ? 'Signing in...' : (
+              <>
+                Sign In <ArrowRight size={18} />
+              </>
+            )}
+          </button>
+        </form>
+
+        <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          Don't have a business account?{' '}
+          <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
+            Create one
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
