@@ -19,9 +19,9 @@ export interface AgreementInterpolationData {
 }
 
 export const DEFAULT_NAPONI_META = {
-  legalName: 'Naponi Bilişim ve Finansal Teknolojiler A.Ş.',
-  address: 'Büyükdere Caddesi, No: 199, Levent, Beşiktaş / İstanbul, Türkiye',
-  taxId: '6290881942 / Boğaziçi Kurumlar V.D.',
+  legalName: 'Naponi İnternet Alışveriş ve Mağazacılık İthalat İhracat Limited Şirketi',
+  address: 'Bakırköy Dünya Ticaret Merkezi, Bakırköy / İstanbul, Türkiye',
+  taxId: '6291105866',
   email: 'destek@naponi.com',
   defaultCommissionRate: '%0 (Tanıtım ve Lansman Sürecinde Naponi İşlem Komisyonu Sıfırdır)',
 };
