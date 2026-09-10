@@ -22,7 +22,7 @@ export const env = {
 
   // Admin
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'owner@naponi.com',
-  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || (process.env.NODE_ENV === 'production' ? '' : 'Admin123!'),
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'M23456.',
 
   // Stripe
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
