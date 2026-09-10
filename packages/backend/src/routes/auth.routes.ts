@@ -92,6 +92,30 @@ router.post('/logout', (_req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
+const updateProfileSchema = {
+  body: z.object({
+    email: z.string().email().max(255).optional(),
+    currentPassword: z.string().min(1).max(128).optional(),
+    newPassword: z.string().min(8).max(128).optional(),
+  }),
+};
+
+router.put('/profile', authenticate, validate(updateProfileSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const result = await authService.updateProfile(req.user!.id, req.body);
+    // Refresh cookie
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const user = await authService.getProfile(req.user!.id);

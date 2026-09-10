@@ -5,12 +5,25 @@ import { Sparkles, ArrowRight, Lock, Mail } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Auto-redirect if user is already authenticated
+  React.useEffect(() => {
+    if (user) {
+      if (user.role === 'ADMIN') {
+        navigate('/admin', { replace: true });
+      } else if (user.role === 'EMPLOYEE') {
+        navigate('/employee/dashboard', { replace: true });
+      } else {
+        navigate('/business/dashboard', { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,13 +31,13 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const user = await login(email, password);
-      if (user.role === 'ADMIN') {
-        navigate('/admin');
-      } else if (user.role === 'EMPLOYEE') {
-        navigate('/employee/dashboard');
+      const loggedInUser = await login(email, password);
+      if (loggedInUser.role === 'ADMIN') {
+        navigate('/admin', { replace: true });
+      } else if (loggedInUser.role === 'EMPLOYEE') {
+        navigate('/employee/dashboard', { replace: true });
       } else {
-        navigate('/dashboard');
+        navigate('/business/dashboard', { replace: true });
       }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to sign in. Please check your credentials.');

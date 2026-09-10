@@ -25,6 +25,7 @@ import { AdminEmployeesPage } from './pages/admin/AdminEmployeesPage';
 import { AdminQrsPage } from './pages/admin/AdminQrsPage';
 import { AdminPaymentsPage } from './pages/admin/AdminPaymentsPage';
 import { AdminAuditPage } from './pages/admin/AdminAuditPage';
+import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 import { Role } from './types';
 
 // Protected Route Guard
@@ -110,6 +111,7 @@ export const App: React.FC = () => {
               <Route path="/admin/payments" element={<AdminPaymentsPage />} />
               <Route path="/admin/statistics" element={<AdminDashboard />} />
               <Route path="/admin/audit" element={<AdminAuditPage />} />
+              <Route path="/admin/settings" element={<AdminSettingsPage />} />
             </Route>
 
             {/* Catch-all redirect */}

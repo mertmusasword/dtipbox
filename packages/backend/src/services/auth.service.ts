@@ -205,3 +205,82 @@ export async function getProfile(userId: string) {
 
   return user;
 }
+
+/**
+ * Update current user profile (email and/or password with current password verification).
+ */
+export async function updateProfile(
+  userId: string,
+  input: {
+    email?: string;
+    currentPassword?: string;
+    newPassword?: string;
+  }
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      business: { select: { id: true, name: true } },
+      employee: { select: { id: true, business_id: true, first_name: true, last_name: true } },
+    },
+  });
+
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  // Security guard: verify current password if changing email or password
+  if (input.email || input.newPassword) {
+    if (!input.currentPassword) {
+      throw new AppError('Current password is required to update credentials', 400);
+    }
+    const isPasswordValid = await bcrypt.compare(input.currentPassword, user.password_hash);
+    if (!isPasswordValid) {
+      throw new AppError('Current password is incorrect', 400);
+    }
+  }
+
+  const updateData: { email?: string; password_hash?: string } = {};
+
+  if (input.email) {
+    const newEmail = input.email.toLowerCase().trim();
+    if (newEmail !== user.email) {
+      const existing = await prisma.user.findUnique({ where: { email: newEmail } });
+      if (existing && existing.id !== user.id) {
+        throw new AppError('Email is already registered with another account', 409);
+      }
+      updateData.email = newEmail;
+    }
+  }
+
+  if (input.newPassword) {
+    if (input.newPassword.length < 8 || input.newPassword.length > 128) {
+      throw new AppError('New password must be between 8 and 128 characters', 400);
+    }
+    updateData.password_hash = await bcrypt.hash(input.newPassword, SALT_ROUNDS);
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+    include: {
+      business: { select: { id: true, name: true } },
+      employee: { select: { id: true, business_id: true, first_name: true, last_name: true } },
+    },
+  });
+
+  // Generate fresh token pair with updated email
+  const tokens = generateTokens(updatedUser.id, updatedUser.email, updatedUser.role);
+
+  return {
+    user: {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      business: updatedUser.business,
+      employee: updatedUser.employee,
+    },
+    ...tokens,
+  };
+}
+

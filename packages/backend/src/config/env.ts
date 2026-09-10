@@ -21,8 +21,8 @@ export const env = {
   JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '7d',
 
   // Admin
-  ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'admin@dtipbox.com',
-  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'Admin123!',
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'owner@naponi.com',
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || (process.env.NODE_ENV === 'production' ? '' : 'Admin123!'),
 
   // Stripe
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',

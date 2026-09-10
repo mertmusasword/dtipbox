@@ -95,6 +95,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/admin/payments" icon={<CreditCard size={18} />} label="Payments" onClick={closeMobile} />
               <NavItem to="/admin/statistics" icon={<BarChart3 size={18} />} label="Platform Stats" onClick={closeMobile} />
               <NavItem to="/admin/audit" icon={<ShieldCheck size={18} />} label="Audit Logs" onClick={closeMobile} />
+              <NavItem to="/admin/settings" icon={<Settings size={18} />} label="Profile & Security" onClick={closeMobile} />
             </>
           )}
         </nav>

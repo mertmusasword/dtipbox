@@ -103,10 +103,19 @@ app.use(errorHandler);
 // Initial admin bootstrap (ensures an ADMIN account exists in production without manual shell commands)
 async function bootstrapAdmin() {
   try {
-    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
-    if (adminCount === 0) {
-      const adminEmail = env.ADMIN_EMAIL;
-      const adminPassword = env.ADMIN_PASSWORD;
+    const adminEmail = (env.ADMIN_EMAIL || '').toLowerCase().trim();
+    const adminPassword = env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+      console.log('[BOOTSTRAP] ADMIN_EMAIL or ADMIN_PASSWORD not specified; skipping initial admin creation.');
+      return;
+    }
+
+    const existingAdmin = await prisma.user.findUnique({
+      where: { email: adminEmail },
+    });
+
+    if (!existingAdmin) {
       const passwordHash = await bcrypt.hash(adminPassword, 12);
       await prisma.user.create({
         data: {
@@ -116,7 +125,13 @@ async function bootstrapAdmin() {
           is_active: true,
         },
       });
-      console.log(`[BOOTSTRAP] Initial platform admin created: ${adminEmail}`);
+      console.log(`[BOOTSTRAP] Initial platform admin account created: ${adminEmail}`);
+    } else if (existingAdmin.role !== 'ADMIN') {
+      await prisma.user.update({
+        where: { id: existingAdmin.id },
+        data: { role: 'ADMIN', is_active: true },
+      });
+      console.log(`[BOOTSTRAP] Existing user role elevated to ADMIN: ${adminEmail}`);
     }
   } catch (err) {
     console.warn('[BOOTSTRAP] Admin bootstrap skipped/deferred:', (err as Error).message);
