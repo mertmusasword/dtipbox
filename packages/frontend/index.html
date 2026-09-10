@@ -4,12 +4,98 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Naponi — Dijital Bahşiş ve Ödeme Platformu</title>
-    <meta name="description" content="Naponi — İşletmeler, servis ekipleri ve müşteriler için yeni nesil QR tabanlı dijital bahşiş ve ödeme platformu." />
+    <title>Naponi — Direct QR Digital Tipping Platform for Global Businesses</title>
+    <meta name="description" content="Empower your hospitality and service team with direct QR code digital tipping. No app downloads, no customer accounts. Instant, direct-to-bank settlement." />
+    <meta name="keywords" content="digital tipping, QR code tipping, restaurant tips, cashless tipping, hospitality payments, service staff tips, employee tipping platform, global digital tipping" />
+    <meta name="author" content="Naponi Technologies" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.naponi.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.naponi.com/" />
+    <meta property="og:title" content="Naponi — Direct QR Digital Tipping Platform" />
+    <meta property="og:description" content="Empower your service team with frictionless QR code tipping. No apps. No sign-ups. Direct-to-bank settlement." />
+    <meta property="og:image" content="https://www.naponi.com/logo.png" />
+    <meta property="og:site_name" content="Naponi" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.naponi.com/" />
+    <meta name="twitter:title" content="Naponi — Direct QR Digital Tipping Platform" />
+    <meta name="twitter:description" content="Direct QR tipping for hospitality and service teams worldwide. No app downloads required." />
+    <meta name="twitter:image" content="https://www.naponi.com/logo.png" />
+
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Schema.org Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.naponi.com/#organization",
+          "name": "Naponi",
+          "url": "https://www.naponi.com",
+          "logo": "https://www.naponi.com/logo.png",
+          "sameAs": ["https://twitter.com/naponifin"],
+          "description": "Global QR code digital tipping and service payments platform."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.naponi.com/#website",
+          "url": "https://www.naponi.com",
+          "name": "Naponi",
+          "publisher": { "@id": "https://www.naponi.com/#organization" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Naponi Digital Tipping",
+          "operatingSystem": "All (Web Browser)",
+          "applicationCategory": "BusinessApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "Direct QR-based digital tipping platform for restaurants, cafes, hotels, and service teams worldwide."
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Do customers need to download an app or create an account to tip?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Customers simply scan the QR code using their standard phone camera, select a tip amount or staff member, and pay using Apple Pay, Google Pay, credit cards, or instant bank wire."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does Naponi hold customer funds in a digital wallet?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Naponi is non-custodial. Tips settle directly into the business payment account you configure (IBAN, Swift, routing numbers)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can we track tips by employee or table?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Naponi supports both general venue QR codes and table-bound or staff-attributed QR codes, giving businesses granular real-time metrics and individual staff tracking."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

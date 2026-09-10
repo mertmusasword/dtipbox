@@ -5,6 +5,7 @@ import { ToastProvider } from './components/Toast';
 import { Sidebar } from './components/Sidebar';
 
 // Pages
+import { HomePage } from './pages/public/HomePage';
 import { TipPage } from './pages/public/TipPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
@@ -67,6 +68,9 @@ export const App: React.FC = () => {
       <ToastProvider>
         <BrowserRouter>
           <Routes>
+            {/* Public Landing & Showcase */}
+            <Route path="/" element={<HomePage />} />
+
             {/* Public Customer Tip Routes */}
             <Route path="/tip/:publicToken" element={<TipPage />} />
 
