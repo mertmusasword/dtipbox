@@ -4,13 +4,36 @@ import { SupportedLanguage } from './types';
 
 interface LanguageSelectorProps {
   variant?: 'navbar' | 'compact' | 'flagOnly' | 'footer' | 'floating';
+  direction?: 'up' | 'down' | 'auto';
   className?: string;
 }
 
-export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'navbar', className = '' }) => {
+export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
+  variant = 'navbar',
+  direction = 'auto',
+  className = '',
+}) => {
   const { language, setLanguage, supportedLanguages, currentMeta, dir } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpwards, setOpenUpwards] = useState(direction === 'up');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Determine opening direction
+  useEffect(() => {
+    if (direction === 'up') {
+      setOpenUpwards(true);
+    } else if (direction === 'down') {
+      setOpenUpwards(false);
+    } else if (isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 360 && rect.top > spaceBelow) {
+        setOpenUpwards(true);
+      } else {
+        setOpenUpwards(false);
+      }
+    }
+  }, [isOpen, direction]);
 
   // Close when clicking outside
   useEffect(() => {
@@ -92,7 +115,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'n
             width: isFlagOnly ? '11px' : '14px',
             height: isFlagOnly ? '11px' : '14px',
             opacity: 0.75,
-            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transform: openUpwards
+              ? isOpen ? 'rotate(0deg)' : 'rotate(180deg)'
+              : isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.2s ease',
           }}
           fill="none"
@@ -110,16 +135,21 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'n
           className="lang-dropdown-menu"
           style={{
             position: 'absolute',
-            top: 'calc(100% + 8px)',
+            ...(openUpwards
+              ? { bottom: 'calc(100% + 8px)', top: 'auto' }
+              : { top: 'calc(100% + 8px)', bottom: 'auto' }
+            ),
             [dir === 'rtl' ? 'left' : 'right']: 0,
             zIndex: 99999,
             minWidth: '220px',
-            maxHeight: '360px',
+            maxHeight: '340px',
             overflowY: 'auto',
             background: '#0f172a',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.14)',
             borderRadius: '16px',
-            boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+            boxShadow: openUpwards
+              ? '0 -16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08)'
+              : '0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08)',
             padding: '6px',
             backdropFilter: 'blur(20px)',
           }}

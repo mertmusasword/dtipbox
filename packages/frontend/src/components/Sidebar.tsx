@@ -108,7 +108,7 @@ export const Sidebar: React.FC = () => {
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             {t('common.currency').slice(0, 4)} / Lang
           </span>
-          <LanguageSelector variant="compact" />
+          <LanguageSelector variant="compact" direction="up" />
         </div>
 
         {/* User Footer */}

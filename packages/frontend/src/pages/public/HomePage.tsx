@@ -846,7 +846,7 @@ export const HomePage: React.FC = () => {
             <div>
               <h4 className="home-footer-col-title">Language & Region</h4>
               <div style={{ marginTop: '0.5rem' }}>
-                <LanguageSelector variant="compact" />
+                <LanguageSelector variant="compact" direction="up" />
               </div>
             </div>
           </div>
