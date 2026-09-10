@@ -11,7 +11,7 @@ const apiRouter = Router();
 apiRouter.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    service: 'D-TIPBOX API',
+    service: 'Naponi API',
     timestamp: new Date().toISOString(),
   });
 });

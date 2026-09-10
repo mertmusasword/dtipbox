@@ -50,11 +50,11 @@ export const Sidebar: React.FC = () => {
       <aside className={`sidebar ${mobileOpen ? 'sidebar--open' : ''}`}>
         {/* Brand */}
         <div className="sidebar-brand">
-          <div className="sidebar-brand-logo">
-            <Sparkles size={20} />
+          <div className="sidebar-brand-logo" style={{ overflow: 'hidden', padding: 0, borderRadius: '8px' }}>
+            <img src="/logo.png" alt="Naponi" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
           <div>
-            <div className="sidebar-brand-text">D-TIPBOX</div>
+            <div className="sidebar-brand-text">NAPONI</div>
             <div className="sidebar-brand-role">{user.role} PANEL</div>
           </div>
         </div>

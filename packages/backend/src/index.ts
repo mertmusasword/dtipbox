@@ -127,7 +127,7 @@ async function bootstrapAdmin() {
 const PORT = env.PORT;
 app.listen(PORT, '0.0.0.0', async () => {
   console.log(`=========================================`);
-  console.log(`🚀 D-TIPBOX Backend running on port ${PORT}`);
+  console.log(`🚀 Naponi Backend running on port ${PORT}`);
   console.log(`🌍 Environment: ${env.NODE_ENV}`);
   console.log(`🔗 API URL: ${env.API_URL}/api`);
   console.log(`=========================================`);

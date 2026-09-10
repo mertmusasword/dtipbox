@@ -42,7 +42,7 @@ export const QrModal: React.FC<QrModalProps> = ({
     if (!dataUrl) return;
     const a = document.createElement('a');
     a.href = dataUrl;
-    a.download = `dtipbox-qr-${tableName ? tableName.toLowerCase().replace(/\s+/g, '-') : 'business'}.png`;
+    a.download = `naponi-qr-${tableName ? tableName.toLowerCase().replace(/\s+/g, '-') : 'business'}.png`;
     a.click();
   };
 
@@ -50,7 +50,7 @@ export const QrModal: React.FC<QrModalProps> = ({
     <!DOCTYPE html>
     <html>
       <head>
-        <title>D-TIPBOX QR - ${businessName}${tableName ? ` (${tableName})` : ''}</title>
+        <title>Naponi QR - ${businessName}${tableName ? ` (${tableName})` : ''}</title>
         <style>
           @page {
             size: A4 portrait;
@@ -69,11 +69,10 @@ export const QrModal: React.FC<QrModalProps> = ({
             color: #0f172a;
           }
           .card {
-            border: 2px solid #0f172a;
-            border-radius: 28px;
-            padding: 48px 36px;
-            width: 360px;
-            box-sizing: border-box;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 40px;
+            width: 380px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
           }
           h1 {
@@ -127,7 +126,7 @@ export const QrModal: React.FC<QrModalProps> = ({
           <h2>Scan & Leave a Tip</h2>
           <img class="qr-img" src="${dataUrl}" alt="QR Code" />
           <div class="instructions">SCAN WITH PHONE CAMERA</div>
-          <div class="footer">POWERED BY D-TIPBOX</div>
+          <div class="footer">POWERED BY NAPONI</div>
         </div>
       </body>
     </html>
