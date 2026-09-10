@@ -62,6 +62,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// SEO & Privacy: prevent search engines from indexing private dashboards, api, and customer tip sessions
+app.use((req, res, next) => {
+  const privatePrefixes = ['/admin', '/business', '/employee', '/dashboard', '/api', '/tip'];
+  if (privatePrefixes.some((prefix) => req.path.startsWith(prefix))) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  }
+  next();
+});
+
 // CORS
 const allowedOrigins = env.CORS_ORIGIN.includes(',')
   ? env.CORS_ORIGIN.split(',').map((o) => o.trim())

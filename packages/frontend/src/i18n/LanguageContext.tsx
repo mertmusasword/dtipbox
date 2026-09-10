@@ -20,6 +20,20 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 function detectInitialLanguage(): SupportedLanguage {
+  // 1. Check URL query param (?lang=tr) for search engine crawlers & direct links
+  try {
+    if (typeof window !== 'undefined' && window.location?.search) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryLang = urlParams.get('lang')?.toLowerCase();
+      if (queryLang && SUPPORTED_LANGUAGES.some((l) => l.code === queryLang)) {
+        return queryLang as SupportedLanguage;
+      }
+    }
+  } catch (e) {
+    // ignore URL parsing error
+  }
+
+  // 2. Check saved preference in localStorage
   try {
     const saved = localStorage.getItem(STORAGE_KEY) as SupportedLanguage | null;
     if (saved && SUPPORTED_LANGUAGES.some((l) => l.code === saved)) {

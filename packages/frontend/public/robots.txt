@@ -1,7 +1,27 @@
+# ==============================================================================
+# NAPONI — Direct QR Digital Tipping Platform
+# Production Robots.txt Configuration
+# ==============================================================================
+
 User-agent: *
 Allow: /
+Allow: /login
+Allow: /register
+
+# Disallow Private Dashboards & Admin Portals
 Disallow: /admin
+Disallow: /admin/
 Disallow: /business/
 Disallow: /employee/
+Disallow: /dashboard
+Disallow: /dashboard/
 
+# Disallow Backend API Routes
+Disallow: /api/
+
+# Disallow Dynamic Customer Tipping Sessions (Private transaction tokens)
+Disallow: /tip/
+
+# Sitemap Location
 Sitemap: https://www.naponi.com/sitemap.xml
+Host: https://www.naponi.com
