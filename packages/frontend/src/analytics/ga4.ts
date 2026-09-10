@@ -140,8 +140,13 @@ export function initGA4(customId?: string): boolean {
     cookie_flags: 'SameSite=None;Secure',
   });
 
-  // Inject script asynchronously
-  if (!document.getElementById('ga4-script')) {
+  // Inject script asynchronously if not already present in HTML
+  const hasScript =
+    Boolean(document.getElementById('ga4-script')) ||
+    (typeof document.querySelector === 'function' &&
+      Boolean(document.querySelector('script[src*="googletagmanager.com/gtag/js"]')));
+
+  if (!hasScript) {
     const script = document.createElement('script');
     script.id = 'ga4-script';
     script.async = true;

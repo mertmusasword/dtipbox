@@ -20,11 +20,30 @@ app.use(
       ? {
           directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: [
+              "'self'",
+              "'unsafe-inline'",
+              'https://www.googletagmanager.com',
+              'https://*.googletagmanager.com',
+            ],
             styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
             fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
-            imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
-            connectSrc: ["'self'", 'https:', 'wss:'],
+            imgSrc: [
+              "'self'",
+              'data:',
+              'https:',
+              'blob:',
+              'https://*.google-analytics.com',
+              'https://*.googletagmanager.com',
+            ],
+            connectSrc: [
+              "'self'",
+              'https:',
+              'wss:',
+              'https://*.google-analytics.com',
+              'https://*.analytics.google.com',
+              'https://*.googletagmanager.com',
+            ],
             objectSrc: ["'none'"],
             upgradeInsecureRequests: [],
           },
