@@ -6,6 +6,7 @@ import { ErrorState } from '../../components/ErrorState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
 import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe } from 'lucide-react';
+import { AgreementModal } from '../../components/AgreementModal';
 
 export const ProfileSettingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ export const ProfileSettingsPage: React.FC = () => {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAgreementModal, setShowAgreementModal] = useState(false);
 
   // Account settings
   const [changingPassword, setChangingPassword] = useState(false);
@@ -223,6 +225,43 @@ export const ProfileSettingsPage: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Legal Agreement & Compliance Card */}
+      <div className="glass-card">
+        <div className="section-header">
+          <Shield size={20} className="section-icon" />
+          <h3 className="section-title">Hukuki Sözleşme ve Dijital Onay</h3>
+        </div>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.6 }}>
+          Naponi platformu üzerinden dijital bahşiş ve ödeme altyapısını kullanırken tarafların hak ve yükümlülüklerini belirleyen çerçeve hizmet sözleşmesi.
+        </p>
+
+        <div style={{ padding: '1rem', background: 'var(--bg-input)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Naponi İşletme Hizmet ve Kullanım Sözleşmesi</span>
+              <span className="badge badge-success" style={{ fontSize: '0.75rem' }}>v1.0.0</span>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              HMK m. 193 Uyarınca Kriptografik (SHA-256) İspat ve Onay Protokolü
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowAgreementModal(true)}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            Sözleşmeyi ve Makbuzu Görüntüle
+          </button>
+        </div>
+      </div>
+
+      <AgreementModal
+        isOpen={showAgreementModal}
+        onClose={() => setShowAgreementModal(false)}
+      />
 
       {/* Danger Zone */}
       <div className="glass-card" style={{ borderColor: 'rgba(239, 68, 68, 0.2)' }}>

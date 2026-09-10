@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText, ShieldCheck } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted, trackBusinessRegistered } from '../../analytics';
+import { AgreementModal } from '../../components/AgreementModal';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ export const RegisterPage: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [acceptedAgreement, setAcceptedAgreement] = useState(false);
+  const [showAgreementModal, setShowAgreementModal] = useState(false);
 
   const countries = [
     { code: 'US', name: 'United States', currency: 'USD', timezone: 'America/New_York' },
@@ -57,10 +60,16 @@ export const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!acceptedAgreement) {
+      setError("Devam etmek için lütfen Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni okuyup kabul ediniz.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await register(formData);
+      await register({ ...formData, acceptedAgreement: true } as any);
       trackBusinessRegistered(formData.country, formData.currency, 'form');
       navigate('/dashboard');
     } catch (err: any) {
@@ -179,6 +188,85 @@ export const RegisterPage: React.FC = () => {
             />
           </div>
 
+          {/* Legal Agreement Acceptance Checkbox */}
+          <div
+            style={{
+              margin: '1.25rem 0',
+              padding: '1rem',
+              background: 'var(--bg-input, rgba(255,255,255,0.03))',
+              borderRadius: '12px',
+              border: `1px solid ${!acceptedAgreement && error ? 'rgba(239, 68, 68, 0.5)' : 'var(--border-color, rgba(255,255,255,0.1))'}`,
+              transition: 'border-color 0.2s',
+            }}
+          >
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                lineHeight: '1.45',
+                color: 'var(--text-primary)',
+              }}
+            >
+              <input
+                type="checkbox"
+                id="register-agreement-checkbox"
+                checked={acceptedAgreement}
+                onChange={(e) => setAcceptedAgreement(e.target.checked)}
+                style={{
+                  marginTop: '0.2rem',
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer',
+                  accentColor: 'var(--color-primary, #6366f1)',
+                }}
+              />
+              <span>
+                Okudum ve{' '}
+                <button
+                  type="button"
+                  onClick={() => setShowAgreementModal(true)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: '#3b82f6',
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    display: 'inline',
+                  }}
+                >
+                  Naponi İşletme Hizmet ve Kullanım Sözleşmesi
+                </button>
+                'ni kabul ediyorum.
+              </span>
+            </label>
+
+            <div style={{ marginTop: '0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-color, rgba(255,255,255,0.06))', paddingTop: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                HMK m. 193 Elektronik İspat & Onay
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowAgreementModal(true)}
+                className="btn btn-secondary"
+                style={{
+                  fontSize: '0.75rem',
+                  padding: '0.3rem 0.65rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <FileText size={13} /> Sözleşmeyi İncele (20 Madde)
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -192,6 +280,15 @@ export const RegisterPage: React.FC = () => {
             )}
           </button>
         </form>
+
+        <AgreementModal
+          isOpen={showAgreementModal}
+          onClose={() => setShowAgreementModal(false)}
+          onAccepted={() => {
+            setAcceptedAgreement(true);
+            setShowAgreementModal(false);
+          }}
+        />
 
         <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           {t('auth.haveAccountPrompt')}{' '}

@@ -28,6 +28,9 @@ const registerSchema = {
     country: z.string().length(2).optional(),
     currency: z.string().min(3).max(4).optional(),
     timezone: z.string().max(50).optional(),
+    acceptedAgreement: z.boolean().optional(),
+    agreementVersionId: z.string().optional(),
+    agreementStatement: z.string().optional(),
   }),
 };
 
@@ -41,6 +44,28 @@ const loginSchema = {
 router.post('/register', authLimiter, validate(registerSchema), async (req, res, next) => {
   try {
     const result = await authService.register(req.body);
+
+    // If agreement was accepted during registration, record it immediately
+    if (req.body.acceptedAgreement && result.user.business?.id) {
+      try {
+        const agreementService = await import('../services/agreement.service');
+        const activeAgreement = await agreementService.getActiveAgreement();
+        const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.socket.remoteAddress || req.ip || '0.0.0.0';
+        const userAgent = req.headers['user-agent'] || 'Unknown Browser';
+
+        await agreementService.acceptAgreement({
+          businessId: result.user.business.id,
+          userId: result.user.id,
+          versionId: req.body.agreementVersionId || activeAgreement.version.id,
+          ipAddress: ip,
+          userAgent: userAgent,
+          statement: req.body.agreementStatement || activeAgreement.mandatory_statement,
+        });
+      } catch (agreeErr) {
+        console.error('[AUTH] Failed to record agreement acceptance during registration:', agreeErr);
+      }
+    }
+
     // Set HTTP-only refresh cookie
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
