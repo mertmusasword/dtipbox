@@ -118,9 +118,6 @@ export const HomePage: React.FC = () => {
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
           <div className="home-mobile-menu">
-            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
-              <LanguageSelector variant="compact" />
-            </div>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
             <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>{t('nav.businesses')}</a>
