@@ -20,7 +20,9 @@ COPY packages/frontend/ packages/frontend/
 # Generate Prisma client
 RUN npx prisma generate --schema=packages/backend/prisma/schema.prisma
 
-# Build frontend
+# Build frontend with GA4 configuration
+ARG VITE_GA_MEASUREMENT_ID="G-R74SGVQH08"
+ENV VITE_GA_MEASUREMENT_ID=$VITE_GA_MEASUREMENT_ID
 RUN npm run build:frontend
 
 # Build backend

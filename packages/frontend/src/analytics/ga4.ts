@@ -96,9 +96,9 @@ export function initGA4(customId?: string): boolean {
   if (typeof window === 'undefined') return false;
   if (isInitialized) return true;
 
-  const envId = typeof import.meta !== 'undefined' && import.meta.env
+  const envId = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GA_MEASUREMENT_ID)
     ? import.meta.env.VITE_GA_MEASUREMENT_ID
-    : undefined;
+    : 'G-R74SGVQH08';
 
   const measurementId = customId || envId;
   isDevMode = typeof import.meta !== 'undefined' && import.meta.env
