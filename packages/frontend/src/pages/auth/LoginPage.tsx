@@ -37,22 +37,20 @@ export const LoginPage: React.FC = () => {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
       <div className="glass-card" style={{ maxWidth: '440px', width: '100%', padding: '2.5rem' }}>
         {/* Brand */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <img
-            src="/logo.png"
+            src="/naponi-brand.svg"
             alt="Naponi"
             style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '16px',
-              margin: '0 auto 1rem',
+              height: '68px',
+              width: 'auto',
+              margin: '0 auto 1.5rem',
               display: 'block',
-              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
-              objectFit: 'cover'
+              filter: 'drop-shadow(0 8px 24px rgba(99, 102, 241, 0.35))',
             }}
           />
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em' }}>Naponi'ye Hoş Geldiniz</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em' }}>Giriş Yapın</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
             Bahşişlerinizi, personelinizi ve QR kodlarınızı tek panelden yönetin
           </p>
         </div>

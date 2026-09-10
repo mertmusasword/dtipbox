@@ -494,9 +494,9 @@ export const TipPage: React.FC = () => {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-          <img src="/logo.png" alt="Naponi" style={{ width: '18px', height: '18px', borderRadius: '4px' }} />
-          <span>Powered by <strong>Naponi</strong> • Dijital Bahşiş ve Ödeme Platformu</span>
+        <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.9 }} />
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Güvenli Dijital Bahşiş ve Ödeme Altyapısı</span>
         </div>
       </div>
     </div>
