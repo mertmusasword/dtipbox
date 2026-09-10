@@ -60,17 +60,18 @@ export const RegisterPage: React.FC = () => {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
       <div className="glass-card" style={{ maxWidth: '520px', width: '100%', padding: '2.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <img
-            src="/naponi-brand.svg"
-            alt="Naponi"
-            style={{
-              height: '68px',
-              width: 'auto',
-              margin: '0 auto 1.5rem',
-              display: 'block',
-              filter: 'drop-shadow(0 8px 24px rgba(99, 102, 241, 0.35))',
-            }}
-          />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <img
+              src="/naponi-brand.svg"
+              alt="Naponi"
+              style={{
+                height: '84px',
+                width: 'auto',
+                display: 'block',
+                filter: 'drop-shadow(0 10px 28px rgba(99, 102, 241, 0.4))',
+              }}
+            />
+          </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em' }}>İşletme Hesabı Oluşturun</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
             İşletmenizi kaydedin ve saniyeler içinde dijital bahşiş toplamaya başlayın
