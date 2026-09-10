@@ -119,7 +119,7 @@ async function bootstrapAdmin() {
 
 // Start server
 const PORT = env.PORT;
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`=========================================`);
   console.log(`🚀 D-TIPBOX Backend running on port ${PORT}`);
   console.log(`🌍 Environment: ${env.NODE_ENV}`);
