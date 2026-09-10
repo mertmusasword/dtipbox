@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from './LanguageContext';
 import { SupportedLanguage } from './types';
+import { trackLanguageSelected } from '../analytics';
 
 interface LanguageSelectorProps {
   variant?: 'navbar' | 'compact' | 'flagOnly' | 'footer' | 'floating';
@@ -67,6 +68,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   const handleSelect = (code: SupportedLanguage) => {
     setLanguage(code);
+    trackLanguageSelected(code);
     setIsOpen(false);
   };
 

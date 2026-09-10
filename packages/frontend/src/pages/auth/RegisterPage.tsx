@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import { trackBusinessRegisterStarted, trackBusinessRegistered } from '../../analytics';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,6 +50,10 @@ export const RegisterPage: React.FC = () => {
     }
   };
 
+  React.useEffect(() => {
+    trackBusinessRegisterStarted('register_page');
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -56,6 +61,7 @@ export const RegisterPage: React.FC = () => {
 
     try {
       await register(formData);
+      trackBusinessRegistered(formData.country, formData.currency, 'form');
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.error || t('common.error'));

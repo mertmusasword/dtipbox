@@ -15,6 +15,14 @@ import {
   Check,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import {
+  trackQrScanned,
+  trackTipFlowStarted,
+  trackTipAmountSelected,
+  trackPaymentStarted,
+  trackPaymentSuccess,
+  trackPaymentFailed,
+} from '../../analytics';
 
 export const TipPage: React.FC = () => {
   const { publicToken } = useParams<{ publicToken: string }>();
@@ -44,6 +52,8 @@ export const TipPage: React.FC = () => {
       .get(`/tip/${publicToken}`)
       .then((res) => {
         setDetails(res.data.data);
+        trackQrScanned(publicToken, res.data.data.business?.currency);
+        trackTipFlowStarted(res.data.data.business?.currency, Boolean(res.data.data.employee));
         if (res.data.data.presetAmounts?.length > 0) {
           setSelectedAmount(res.data.data.presetAmounts[1] || res.data.data.presetAmounts[0]);
         }
@@ -70,6 +80,7 @@ export const TipPage: React.FC = () => {
       return;
     }
 
+    trackPaymentStarted(selectedPaymentMethod, effectiveAmount, details?.business?.currency || 'USD');
     setSubmitting(true);
     try {
       const res = await api.post(`/tip/${publicToken}`, {
@@ -79,8 +90,15 @@ export const TipPage: React.FC = () => {
         customerName: customerName.trim() || undefined,
         customerMessage: customerMessage.trim() || undefined,
       });
+      trackPaymentSuccess(
+        res.data.data?.tip?.payment_method || selectedPaymentMethod,
+        res.data.data?.tip?.id,
+        effectiveAmount,
+        details?.business?.currency || 'USD'
+      );
       setPaymentResult(res.data.data);
     } catch (err: any) {
+      trackPaymentFailed(selectedPaymentMethod, err.response?.data?.error || 'Payment failed');
       alert(err.response?.data?.error || t('common.error'));
     } finally {
       setSubmitting(false);
@@ -358,6 +376,7 @@ export const TipPage: React.FC = () => {
                     onClick={() => {
                       setSelectedAmount(amt);
                       setCustomAmount('');
+                      trackTipAmountSelected(amt, details.business.currency);
                     }}
                     style={{
                       padding: '0.85rem 0.5rem',
@@ -383,6 +402,12 @@ export const TipPage: React.FC = () => {
               placeholder={t('tip.customAmountLabel')}
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
+              onBlur={() => {
+                const val = parseFloat(customAmount);
+                if (val > 0) {
+                  trackTipAmountSelected(val, details.business.currency);
+                }
+              }}
               className="form-input"
               style={{ textAlign: 'center', fontSize: '1rem', fontWeight: 600 }}
             />

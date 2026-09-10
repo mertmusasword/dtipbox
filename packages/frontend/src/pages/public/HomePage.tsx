@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import { trackBusinessRegisterStarted } from '../../analytics';
 
 export const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -95,14 +96,14 @@ export const HomePage: React.FC = () => {
             <Link to="/login" className="home-btn-ghost">
               {t('nav.login')}
             </Link>
-            <Link to="/register" className="home-btn-primary">
+            <Link to="/register" className="home-btn-primary" onClick={() => trackBusinessRegisterStarted('navbar_desktop_cta')}>
               {t('nav.getStarted')} <ArrowRight size={16} />
             </Link>
           </div>
 
           <div className="home-mobile-controls">
             <LanguageSelector variant="flagOnly" />
-            <Link to="/register" className="home-btn-primary home-btn-mobile-cta">
+            <Link to="/register" className="home-btn-primary home-btn-mobile-cta" onClick={() => trackBusinessRegisterStarted('navbar_mobile_cta')}>
               {t('nav.getStarted')}
             </Link>
             <button
@@ -127,7 +128,15 @@ export const HomePage: React.FC = () => {
               <Link to="/login" className="home-btn-ghost" style={{ flex: 1, textAlign: 'center' }}>
                 {t('nav.login')}
               </Link>
-              <Link to="/register" className="home-btn-primary" style={{ flex: 1, textAlign: 'center' }}>
+              <Link
+                to="/register"
+                className="home-btn-primary"
+                style={{ flex: 1, textAlign: 'center' }}
+                onClick={() => {
+                  trackBusinessRegisterStarted('mobile_drawer_cta');
+                  setMobileMenuOpen(false);
+                }}
+              >
                 {t('nav.getStarted')}
               </Link>
             </div>
@@ -158,7 +167,7 @@ export const HomePage: React.FC = () => {
               </p>
 
               <div className="home-hero-cta-group">
-                <Link to="/register" className="home-btn-primary home-btn-hero-large">
+                <Link to="/register" className="home-btn-primary home-btn-hero-large" onClick={() => trackBusinessRegisterStarted('hero_cta')}>
                   {t('home.ctaGetStarted')} <ArrowRight size={18} />
                 </Link>
                 <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>

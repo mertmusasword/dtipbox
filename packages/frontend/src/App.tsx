@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/Toast';
 import { Sidebar } from './components/Sidebar';
 import { LanguageProvider } from './i18n';
+import { AnalyticsTracker } from './analytics';
 
 // Pages
 import { HomePage } from './pages/public/HomePage';
@@ -71,6 +72,7 @@ export const App: React.FC = () => {
       <AuthProvider>
         <ToastProvider>
           <BrowserRouter>
+            <AnalyticsTracker />
             <Routes>
               {/* Public Landing & Showcase */}
               <Route path="/" element={<HomePage />} />

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { ArrowRight, Lock, Mail } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import { trackLogin } from '../../analytics';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export const LoginPage: React.FC = () => {
 
     try {
       const loggedInUser = await login(email, password);
+      trackLogin('email_password');
       if (loggedInUser.role === 'ADMIN') {
         navigate('/admin', { replace: true });
       } else if (loggedInUser.role === 'EMPLOYEE') {
