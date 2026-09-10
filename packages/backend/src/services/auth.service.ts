@@ -57,6 +57,14 @@ export async function register(input: RegisterInput) {
     throw new AppError('Email already registered', 409);
   }
 
+  if (input.role === Role.ADMIN) {
+    throw new AppError('Admin registration is not permitted', 403);
+  }
+
+  if (!input.password || input.password.length < 8 || input.password.length > 128) {
+    throw new AppError('Password must be between 8 and 128 characters', 400);
+  }
+
   const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
   const role = input.role || Role.BUSINESS;
 

@@ -80,10 +80,49 @@ export class StripeProvider implements IPaymentProvider {
   }
 
   async handleWebhook(rawBody: string | Buffer, signature?: string): Promise<WebhookEventResult> {
-    // Webhook signature verification and parsing
+    const rawBodyString = typeof rawBody === 'string' ? rawBody : rawBody.toString('utf-8');
+
+    // Webhook signature verification if webhook secret is configured
+    if (env.STRIPE_WEBHOOK_SECRET && signature) {
+      // If signature is provided, verify HMAC SHA256
+      try {
+        const parts = signature.split(',');
+        const timestampPart = parts.find((p) => p.startsWith('t='))?.split('=')[1];
+        const v1Signature = parts.find((p) => p.startsWith('v1='))?.split('=')[1];
+
+        if (timestampPart && v1Signature) {
+          // Replay attack prevention: reject events older than 300 seconds (5 minutes)
+          const eventTimestamp = parseInt(timestampPart, 10);
+          const currentTimestamp = Math.floor(Date.now() / 1000);
+          if (isNaN(eventTimestamp) || Math.abs(currentTimestamp - eventTimestamp) > 300) {
+            throw new AppError('Webhook timestamp expired or out of tolerance', 400);
+          }
+
+          const signedPayload = `${timestampPart}.${rawBodyString}`;
+          const expectedSig = crypto
+            .createHmac('sha256', env.STRIPE_WEBHOOK_SECRET)
+            .update(signedPayload)
+            .digest('hex');
+
+          const expectedBuffer = Buffer.from(expectedSig, 'utf8');
+          const signatureBuffer = Buffer.from(v1Signature, 'utf8');
+
+          if (
+            expectedBuffer.length !== signatureBuffer.length ||
+            !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)
+          ) {
+            throw new AppError('Invalid webhook signature', 400);
+          }
+        }
+      } catch (err: any) {
+        if (err instanceof AppError) throw err;
+        throw new AppError('Webhook signature verification failed', 400);
+      }
+    }
+
     let event: any;
     try {
-      event = typeof rawBody === 'string' ? JSON.parse(rawBody) : JSON.parse(rawBody.toString('utf-8'));
+      event = JSON.parse(rawBodyString);
     } catch {
       throw new AppError('Invalid webhook payload format', 400);
     }
@@ -96,9 +135,9 @@ export class StripeProvider implements IPaymentProvider {
     let status: PaymentStatus = PaymentStatus.PENDING;
     if (type === 'payment_intent.succeeded' || event.status === 'succeeded' || event.status === 'SUCCESS') {
       status = PaymentStatus.SUCCESS;
-    } else if (type === 'payment_intent.payment_failed' || event.status === 'failed') {
+    } else if (type === 'payment_intent.payment_failed' || event.status === 'failed' || event.status === 'FAILED') {
       status = PaymentStatus.FAILED;
-    } else if (type === 'payment_intent.canceled' || event.status === 'canceled') {
+    } else if (type === 'payment_intent.canceled' || event.status === 'canceled' || event.status === 'CANCELLED') {
       status = PaymentStatus.CANCELLED;
     }
 

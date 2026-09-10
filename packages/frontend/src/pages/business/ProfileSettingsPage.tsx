@@ -1,201 +1,245 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../../api/client';
-import { Business } from '../../types';
-import { CheckCircle2, Settings as SettingsIcon } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { LoadingState } from '../../components/LoadingState';
+import { ErrorState } from '../../components/ErrorState';
+import { useToast } from '../../components/Toast';
+import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe } from 'lucide-react';
 
 export const ProfileSettingsPage: React.FC = () => {
-  const [business, setBusiness] = useState<Business | null>(null);
+  const { user } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    logo: '',
-    country: 'US',
-    currency: 'USD',
-    timezone: 'America/New_York',
-    locale: 'en-US',
-    phone: '',
-    email: '',
-    address: '',
-    description: '',
+  // Account settings
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    current_password: '',
+    new_password: '',
+    confirm_password: '',
   });
 
-  useEffect(() => {
+  // Business config
+  const [businessConfig, setBusinessConfig] = useState({
+    locale: 'en-US',
+    timezone: 'America/New_York',
+    custom_tip_amounts: '',
+  });
+
+  const loadSettings = useCallback(() => {
+    setLoading(true);
+    setError(null);
     api
       .get('/business')
       .then((res) => {
-        if (res.data.data) {
-          setBusiness(res.data.data);
-          setFormData({
-            name: res.data.data.name || '',
-            logo: res.data.data.logo || '',
-            country: res.data.data.country || 'US',
-            currency: res.data.data.currency || 'USD',
-            timezone: res.data.data.timezone || 'America/New_York',
-            locale: res.data.data.locale || 'en-US',
-            phone: res.data.data.phone || '',
-            email: res.data.data.email || '',
-            address: res.data.data.address || '',
-            description: res.data.data.description || '',
-          });
-        }
+        const data = res.data.data;
+        setBusinessConfig({
+          locale: data.locale || 'en-US',
+          timezone: data.timezone || 'America/New_York',
+          custom_tip_amounts: data.tip_amounts?.join(', ') || '5, 10, 15, 20, 25',
+        });
       })
-      .catch((err) => console.error('Failed to load profile:', err))
+      .catch(() => setError('Failed to load settings'))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setSuccessMsg(null);
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
 
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordData.new_password !== passwordData.confirm_password) {
+      showToast('New passwords do not match', 'error');
+      return;
+    }
+    if (passwordData.new_password.length < 6) {
+      showToast('New password must be at least 6 characters', 'error');
+      return;
+    }
+    setChangingPassword(true);
     try {
-      const res = await api.put('/business', formData);
-      setBusiness(res.data.data);
-      setSuccessMsg('Business settings updated successfully.');
+      await api.put('/auth/password', {
+        current_password: passwordData.current_password,
+        new_password: passwordData.new_password,
+      });
+      showToast('Password changed successfully');
+      setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to update settings');
+      showToast(err.response?.data?.error || 'Failed to change password', 'error');
     } finally {
-      setSaving(false);
+      setChangingPassword(false);
+    }
+  };
+
+  const handleSaveConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.put('/business', {
+        locale: businessConfig.locale,
+        timezone: businessConfig.timezone,
+      });
+      showToast('Settings updated');
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Failed to update', 'error');
     }
   };
 
   if (loading) {
-    return <div className="page-wrapper"><div style={{ color: 'var(--text-secondary)' }}>Loading settings...</div></div>;
+    return (
+      <div className="page-wrapper">
+        <LoadingState message="Loading settings..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-wrapper">
+        <ErrorState message={error} onRetry={loadSettings} />
+      </div>
+    );
   }
 
   return (
     <div className="page-wrapper" style={{ maxWidth: '800px' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">Business Profile & Settings</h1>
-        <p className="page-subtitle" style={{ marginBottom: 0 }}>
-          Manage your brand identity, contact details, and localization preferences
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Account Settings</h1>
+          <p className="page-subtitle mb-0">
+            Security, localization, and application preferences
+          </p>
+        </div>
       </div>
 
-      {successMsg && (
-        <div style={{
-          background: 'var(--success-bg)',
-          color: '#34d399',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          padding: '0.85rem 1.25rem',
-          borderRadius: 'var(--radius-md)',
-          marginBottom: '1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          fontSize: '0.9rem',
-        }}>
-          <CheckCircle2 size={18} />
-          <span>{successMsg}</span>
+      {/* Account Info (Read Only) */}
+      <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="section-header">
+          <Shield size={20} className="section-icon" />
+          <h3 className="section-title">Account</h3>
         </div>
-      )}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div>
+            <div className="form-label">Registered Email</div>
+            <div style={{ fontSize: '0.925rem', fontWeight: 600 }}>{user?.email}</div>
+          </div>
+          <div>
+            <div className="form-label">Account Role</div>
+            <span className="badge badge-accent">{user?.role}</span>
+          </div>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div className="form-group">
-          <label className="form-label">Establishment Name</label>
-          <input
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="form-input"
-          />
+      {/* Change Password */}
+      <form onSubmit={handlePasswordChange} className="glass-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="section-header">
+          <Lock size={20} className="section-icon" />
+          <h3 className="section-title">Change Password</h3>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Logo Image URL</label>
-          <input
-            type="url"
-            placeholder="https://..."
-            value={formData.logo}
-            onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
-            className="form-input"
-          />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Country Code</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="form-group mb-0">
+            <label className="form-label">Current Password</label>
             <input
-              type="text"
+              type="password"
               required
-              value={formData.country}
-              onChange={(e) => setFormData({ ...formData, country: e.target.value.toUpperCase() })}
+              value={passwordData.current_password}
+              onChange={(e) => setPasswordData({ ...passwordData, current_password: e.target.value })}
               className="form-input"
             />
           </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Operating Currency</label>
+
+          <div className="form-grid form-grid-2">
+            <div className="form-group mb-0">
+              <label className="form-label">New Password</label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={passwordData.new_password}
+                onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
+                className="form-input"
+              />
+            </div>
+            <div className="form-group mb-0">
+              <label className="form-label">Confirm New Password</label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={passwordData.confirm_password}
+                onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
+                className="form-input"
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button type="submit" className="btn btn-secondary" disabled={changingPassword}>
+              {changingPassword ? 'Updating...' : 'Update Password'}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      {/* Locale / Timezone Config */}
+      <form onSubmit={handleSaveConfig} className="glass-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="section-header">
+          <Globe size={20} className="section-icon" />
+          <h3 className="section-title">Localization</h3>
+        </div>
+
+        <div className="form-grid form-grid-2">
+          <div className="form-group mb-0">
+            <label className="form-label">Locale</label>
             <input
               type="text"
-              required
-              value={formData.currency}
-              onChange={(e) => setFormData({ ...formData, currency: e.target.value.toUpperCase() })}
+              value={businessConfig.locale}
+              onChange={(e) => setBusinessConfig({ ...businessConfig, locale: e.target.value })}
               className="form-input"
+              placeholder="en-US"
             />
+            <div className="form-hint">Controls number, date, and currency formatting</div>
           </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
+          <div className="form-group mb-0">
             <label className="form-label">Timezone</label>
             <input
               type="text"
-              required
-              value={formData.timezone}
-              onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+              value={businessConfig.timezone}
+              onChange={(e) => setBusinessConfig({ ...businessConfig, timezone: e.target.value })}
               className="form-input"
+              placeholder="America/New_York"
             />
+            <div className="form-hint">Used for daily reset and analytics time ranges</div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Public Email</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="form-input"
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Public Phone</label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="form-input"
-            />
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Physical Address</label>
-          <input
-            type="text"
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Short Description / Customer Greeting</label>
-          <textarea
-            rows={3}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="form-textarea"
-          />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-          <button type="submit" disabled={saving} className="btn btn-primary" style={{ padding: '0.85rem 2rem' }}>
-            {saving ? 'Saving...' : 'Update Settings'}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
+          <button type="submit" className="btn btn-primary">
+            Save Localization
           </button>
         </div>
       </form>
+
+      {/* Danger Zone */}
+      <div className="glass-card" style={{ borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+        <div className="section-header">
+          <AlertTriangle size={20} style={{ color: 'var(--danger)' }} />
+          <h3 className="section-title" style={{ color: '#f87171' }}>Danger Zone</h3>
+        </div>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: 1.6 }}>
+          These actions are permanent and cannot be reversed. Contact support if you need to deactivate your business or export all data before deletion.
+        </p>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button className="btn btn-danger" disabled>
+            Deactivate Business
+          </button>
+          <button className="btn btn-danger" disabled>
+            Delete Account
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

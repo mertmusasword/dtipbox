@@ -20,6 +20,7 @@ export async function getBusinessAnalytics(businessId: string) {
     activePaymentMethodsCount,
     employees,
     tables,
+    qrCodes,
   ] = await Promise.all([
     prisma.tip.findMany({
       where: {
@@ -56,6 +57,16 @@ export async function getBusinessAnalytics(businessId: string) {
     prisma.table.findMany({
       where: { business_id: businessId },
       select: { id: true, name: true },
+    }),
+    prisma.qrCode.findMany({
+      where: { business_id: businessId },
+      select: {
+        id: true,
+        type: true,
+        public_token: true,
+        table_id: true,
+        table: { select: { name: true } },
+      },
     }),
   ]);
 
@@ -139,6 +150,29 @@ export async function getBusinessAnalytics(businessId: string) {
       count: data.count,
       total: Number(data.total.toFixed(2)),
     })),
+    qrUsage: qrCodes.map((q) => {
+      let count = 0;
+      let total = 0;
+      if (q.table_id) {
+        const tableTips = allTips.filter((t) => t.table_id === q.table_id);
+        count = tableTips.length;
+        total = tableTips.reduce((sum, t) => sum + Number(t.amount), 0);
+      } else {
+        const generalTips = allTips.filter((t) => !t.table_id);
+        count = generalTips.length;
+        total = generalTips.reduce((sum, t) => sum + Number(t.amount), 0);
+      }
+      return {
+        id: q.id,
+        token: q.public_token,
+        publicToken: q.public_token,
+        type: q.type,
+        target: q.table?.name ? `Table: ${q.table.name}` : 'General Business QR',
+        table: q.table?.name ? `Table: ${q.table.name}` : 'Venue General',
+        count,
+        total: Number(total.toFixed(2)),
+      };
+    }),
     recentTips: allTips.slice(0, 10).map((t) => ({
       id: t.id,
       amount: Number(t.amount),
@@ -204,3 +238,8 @@ export async function getEmployeeAnalytics(employeeId: string, businessId: strin
     })),
   };
 }
+
+export const analyticsService = {
+  getBusinessAnalytics,
+  getEmployeeAnalytics,
+};

@@ -116,6 +116,12 @@ export interface TipPageDetails {
     type: PaymentMethodType;
     provider?: string | null;
   }>;
+  paymentMethodsCatalog?: Array<{
+    type: PaymentMethodType;
+    isUsable: boolean;
+    status: 'USABLE' | 'DISABLED';
+    reason?: string;
+  }>;
   presetAmounts: number[];
   hasAvailablePaymentMethod: boolean;
 }
@@ -134,6 +140,7 @@ export interface BusinessAnalytics {
   employeePerformance: Array<{ name: string; count: number; total: number }>;
   tablePerformance: Array<{ name: string; count: number; total: number }>;
   paymentMethodUsage: Array<{ method: string; count: number; total: number }>;
+  qrUsage?: Array<{ token: string; label: string; table: string | null; count: number; total: number }>;
   recentTips: Array<{
     id: string;
     amount: number;

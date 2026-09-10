@@ -46,63 +46,123 @@ export const QrModal: React.FC<QrModalProps> = ({
     a.click();
   };
 
+  const generatePrintableHtml = () => `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>D-TIPBOX QR - ${businessName}${tableName ? ` (${tableName})` : ''}</title>
+        <style>
+          @page {
+            size: A4 portrait;
+            margin: 20mm;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+            text-align: center;
+            margin: 0;
+            background: #ffffff;
+            color: #0f172a;
+          }
+          .card {
+            border: 2px solid #0f172a;
+            border-radius: 28px;
+            padding: 48px 36px;
+            width: 360px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+          }
+          h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.02em;
+          }
+          .badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+          }
+          h2 {
+            font-size: 19px;
+            margin: 0 0 24px 0;
+            color: #64748b;
+            font-weight: 600;
+          }
+          .qr-img {
+            width: 250px;
+            height: 250px;
+            display: block;
+            margin: 0 auto 24px auto;
+          }
+          .instructions {
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+          }
+          .footer {
+            font-size: 11px;
+            color: #94a3b8;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>${businessName}</h1>
+          ${tableName ? `<div class="badge">${tableName}</div>` : ''}
+          <h2>Scan & Leave a Tip</h2>
+          <img class="qr-img" src="${dataUrl}" alt="QR Code" />
+          <div class="instructions">SCAN WITH PHONE CAMERA</div>
+          <div class="footer">POWERED BY D-TIPBOX</div>
+        </div>
+      </body>
+    </html>
+  `;
+
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
 
     printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>D-TIPBOX QR - ${businessName}</title>
-          <style>
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              height: 95vh;
-              text-align: center;
-              margin: 0;
-            }
-            .card {
-              border: 2px solid #0f172a;
-              border-radius: 24px;
-              padding: 40px;
-              width: 340px;
-            }
-            h1 { font-size: 26px; margin: 0 0 8px 0; color: #0f172a; }
-            h2 { font-size: 18px; margin: 0 0 24px 0; color: #475569; font-weight: 500; }
-            img { width: 280px; height: 280px; margin-bottom: 20px; }
-            .badge {
-              display: inline-block;
-              background: #f1f5f9;
-              color: #334155;
-              padding: 6px 14px;
-              border-radius: 999px;
-              font-weight: 600;
-              font-size: 14px;
-              margin-bottom: 16px;
-            }
-            .footer { font-size: 12px; color: #94a3b8; letter-spacing: 0.05em; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h1>${businessName}</h1>
-            ${tableName ? `<div class="badge">${tableName}</div>` : ''}
-            <h2>Leave a Tip</h2>
-            <img src="${dataUrl}" alt="QR Code" />
-            <div class="footer">POWERED BY D-TIPBOX</div>
-          </div>
-          <script>
-            window.onload = function() { window.print(); window.close(); }
-          </script>
-        </body>
-      </html>
+      ${generatePrintableHtml()}
+      <script>
+        window.onload = function() {
+          window.print();
+          window.close();
+        };
+      </script>
     `);
     printWindow.document.close();
+  };
+
+  const handleDownloadPdf = () => {
+    const pdfWindow = window.open('', '_blank');
+    if (!pdfWindow) return;
+
+    pdfWindow.document.write(`
+      ${generatePrintableHtml()}
+      <script>
+        window.onload = function() {
+          document.title = "dtipbox-qr-${tableName ? tableName.toLowerCase().replace(/\\s+/g, '-') : 'business'}.pdf";
+          window.print();
+        };
+      </script>
+    `);
+    pdfWindow.document.close();
   };
 
   return (
@@ -164,17 +224,21 @@ export const QrModal: React.FC<QrModalProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '0.75rem', width: '100%', justifyContent: 'center' }}>
-          <button className="btn btn-secondary" onClick={handleDownloadPng}>
-            <Download size={16} />
-            Download PNG
+        <div style={{ display: 'flex', gap: '0.6rem', width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary btn-sm" onClick={handleDownloadPng}>
+            <Download size={14} />
+            PNG
           </button>
-          <button className="btn btn-secondary" onClick={handlePrint}>
-            <Printer size={16} />
-            Print / PDF
+          <button className="btn btn-secondary btn-sm" onClick={handleDownloadPdf}>
+            <Download size={14} />
+            PDF
           </button>
-          <a href={tipUrl} target="_blank" rel="noreferrer" className="btn btn-primary">
-            <ExternalLink size={16} />
+          <button className="btn btn-secondary btn-sm" onClick={handlePrint}>
+            <Printer size={14} />
+            Print
+          </button>
+          <a href={tipUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
+            <ExternalLink size={14} />
             Open Link
           </a>
         </div>

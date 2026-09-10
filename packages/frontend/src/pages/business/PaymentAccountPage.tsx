@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../../api/client';
 import { BusinessPaymentAccount } from '../../types';
-import { Building2, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react';
+import { LoadingState } from '../../components/LoadingState';
+import { ErrorState } from '../../components/ErrorState';
+import { useToast } from '../../components/Toast';
+import { Building2, ShieldCheck } from 'lucide-react';
 
 export const PaymentAccountPage: React.FC = () => {
+  const { showToast } = useToast();
   const [account, setAccount] = useState<BusinessPaymentAccount | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     country: 'US',
@@ -20,7 +24,9 @@ export const PaymentAccountPage: React.FC = () => {
     swift_bic: '',
   });
 
-  useEffect(() => {
+  const loadAccount = useCallback(() => {
+    setLoading(true);
+    setError(null);
     api
       .get('/business/payment-account')
       .then((res) => {
@@ -38,61 +44,60 @@ export const PaymentAccountPage: React.FC = () => {
           });
         }
       })
-      .catch((err) => console.error('Failed to load bank account:', err))
+      .catch(() => setError('Failed to load bank account'))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    loadAccount();
+  }, [loadAccount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setSuccessMsg(null);
 
     try {
       const res = await api.post('/business/payment-account', formData);
       setAccount(res.data.data);
-      setSuccessMsg('Payment account details saved successfully. IBAN/Bank payment channel is now ready to activate.');
+      showToast('Payment account saved. IBAN payment channel is ready to activate.');
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to save account details');
+      showToast(err.response?.data?.error || 'Failed to save account details', 'error');
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return <div className="page-wrapper"><div style={{ color: 'var(--text-secondary)' }}>Loading bank configuration...</div></div>;
+    return (
+      <div className="page-wrapper">
+        <LoadingState message="Loading bank configuration..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-wrapper">
+        <ErrorState message={error} onRetry={loadAccount} />
+      </div>
+    );
   }
 
   return (
     <div className="page-wrapper" style={{ maxWidth: '800px' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">Business Payment Account</h1>
-        <p className="page-subtitle" style={{ marginBottom: 0 }}>
-          Direct settlement destination for all tips received by your establishment
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Business Payment Account</h1>
+          <p className="page-subtitle mb-0">
+            Direct settlement destination for all tips received by your establishment
+          </p>
+        </div>
       </div>
 
-      {successMsg && (
-        <div style={{
-          background: 'var(--success-bg)',
-          color: '#34d399',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          padding: '0.85rem 1.25rem',
-          borderRadius: 'var(--radius-md)',
-          marginBottom: '1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          fontSize: '0.9rem',
-        }}>
-          <CheckCircle2 size={18} />
-          <span>{successMsg}</span>
-        </div>
-      )}
-
       <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <ShieldCheck size={22} style={{ color: 'var(--accent-primary)' }} />
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Direct Settlement Security</h2>
+        <div className="section-header">
+          <ShieldCheck size={20} className="section-icon" />
+          <h3 className="section-title">Direct Settlement Security</h3>
         </div>
         <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
           D-TIPBOX never holds, pools, or acts as a wallet for customer funds. All digital tips transfer directly into your business bank account or linked payment provider. Individual staff members do not have private bank accounts attached.
@@ -100,8 +105,8 @@ export const PaymentAccountPage: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
+        <div className="form-grid form-grid-2">
+          <div className="form-group mb-0">
             <label className="form-label">Bank Country</label>
             <input
               type="text"
@@ -112,7 +117,7 @@ export const PaymentAccountPage: React.FC = () => {
               className="form-input"
             />
           </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
+          <div className="form-group mb-0">
             <label className="form-label">Account Holder / Entity Name</label>
             <input
               type="text"
@@ -125,7 +130,7 @@ export const PaymentAccountPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group mb-0">
           <label className="form-label">Bank Name</label>
           <input
             type="text"
@@ -136,9 +141,8 @@ export const PaymentAccountPage: React.FC = () => {
           />
         </div>
 
-        {/* Global Bank Details: Both IBAN and Account/Routing supported */}
-        <div className="form-group">
-          <label className="form-label">IBAN (International Bank Account Number — if applicable)</label>
+        <div className="form-group mb-0">
+          <label className="form-label">IBAN (International Bank Account Number)</label>
           <input
             type="text"
             value={formData.iban}
@@ -148,8 +152,8 @@ export const PaymentAccountPage: React.FC = () => {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
+        <div className="form-grid form-grid-2">
+          <div className="form-group mb-0">
             <label className="form-label">Local Account Number (non-IBAN regions)</label>
             <input
               type="text"
@@ -159,8 +163,8 @@ export const PaymentAccountPage: React.FC = () => {
               className="form-input"
             />
           </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Routing Number / Sort Code / BLZ</label>
+          <div className="form-group mb-0">
+            <label className="form-label">Routing Number / Sort Code</label>
             <input
               type="text"
               value={formData.routing_number || formData.sort_code}
@@ -171,7 +175,7 @@ export const PaymentAccountPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group mb-0">
           <label className="form-label">SWIFT / BIC Code (for cross-border routing)</label>
           <input
             type="text"
@@ -183,7 +187,7 @@ export const PaymentAccountPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-          <button type="submit" disabled={saving} className="btn btn-primary" style={{ padding: '0.85rem 2rem' }}>
+          <button type="submit" disabled={saving} className="btn btn-primary btn-lg">
             {saving ? 'Saving...' : 'Save Bank Details'}
           </button>
         </div>

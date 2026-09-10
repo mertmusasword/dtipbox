@@ -4,24 +4,50 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import bcrypt from 'bcrypt';
 import { env } from './config/env';
+import prisma from './utils/prisma';
 import apiRouter from './routes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 
-// Security headers
+// Security headers with production CSP
 app.use(
   helmet({
-    contentSecurityPolicy: env.isProd ? undefined : false,
+    contentSecurityPolicy: env.isProd
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+            imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+            connectSrc: ["'self'", 'https:', 'wss:'],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+          },
+        }
+      : false,
     crossOriginEmbedderPolicy: false,
   })
 );
 
 // CORS
+const allowedOrigins = env.CORS_ORIGIN.includes(',')
+  ? env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : [env.CORS_ORIGIN];
+
 app.use(
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (env.isDev || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+        return callback(null, true);
+      }
+      callback(new Error('Blocked by CORS policy'));
+    },
     credentials: true,
   })
 );
@@ -68,14 +94,38 @@ if (env.isProd) {
 // Global error handler
 app.use(errorHandler);
 
+// Initial admin bootstrap (ensures an ADMIN account exists in production without manual shell commands)
+async function bootstrapAdmin() {
+  try {
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
+    if (adminCount === 0) {
+      const adminEmail = env.ADMIN_EMAIL;
+      const adminPassword = env.ADMIN_PASSWORD;
+      const passwordHash = await bcrypt.hash(adminPassword, 12);
+      await prisma.user.create({
+        data: {
+          email: adminEmail,
+          password_hash: passwordHash,
+          role: 'ADMIN',
+          is_active: true,
+        },
+      });
+      console.log(`[BOOTSTRAP] Initial platform admin created: ${adminEmail}`);
+    }
+  } catch (err) {
+    console.warn('[BOOTSTRAP] Admin bootstrap skipped/deferred:', (err as Error).message);
+  }
+}
+
 // Start server
 const PORT = env.PORT;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`=========================================`);
   console.log(`🚀 D-TIPBOX Backend running on port ${PORT}`);
   console.log(`🌍 Environment: ${env.NODE_ENV}`);
   console.log(`🔗 API URL: ${env.API_URL}/api`);
   console.log(`=========================================`);
+  await bootstrapAdmin();
 });
 
 export default app;

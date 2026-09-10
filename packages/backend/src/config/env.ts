@@ -40,3 +40,13 @@ export const env = {
   isDev: process.env.NODE_ENV !== 'production',
   isProd: process.env.NODE_ENV === 'production',
 } as const;
+
+// Production security guard: fail fast if insecure placeholder secrets are used in production
+if (env.isProd) {
+  if (!env.JWT_SECRET || env.JWT_SECRET === 'dev-secret') {
+    throw new Error('[FATAL SECURITY CONFIG] In production, JWT_SECRET must be configured with a strong cryptographic secret.');
+  }
+  if (!env.JWT_REFRESH_SECRET || env.JWT_REFRESH_SECRET === 'dev-refresh-secret') {
+    throw new Error('[FATAL SECURITY CONFIG] In production, JWT_REFRESH_SECRET must be configured with a strong cryptographic secret.');
+  }
+}

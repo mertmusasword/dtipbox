@@ -1,6 +1,6 @@
 import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
-import { createAuditLog } from './audit.service';
+import { createAuditLog, getAllAuditLogs } from './audit.service';
 
 export async function getAdminBusinesses(page: number = 1, limit: number = 20) {
   const skip = (page - 1) * limit;
@@ -128,3 +128,55 @@ export async function getAdminPayments(page: number = 1, limit: number = 30) {
 
   return { tips, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
+
+export async function getAdminEmployees(page: number = 1, limit: number = 30) {
+  const skip = (page - 1) * limit;
+
+  const [employees, total] = await Promise.all([
+    prisma.employee.findMany({
+      skip,
+      take: limit,
+      where: { deleted_at: null },
+      include: {
+        business: { select: { id: true, name: true, currency: true } },
+        user: { select: { id: true, email: true } },
+        _count: { select: { tips: true } },
+      },
+      orderBy: { created_at: 'desc' },
+    }),
+    prisma.employee.count({ where: { deleted_at: null } }),
+  ]);
+
+  return { employees, total, page, limit, totalPages: Math.ceil(total / limit) };
+}
+
+export async function getAdminQrs(page: number = 1, limit: number = 30) {
+  const skip = (page - 1) * limit;
+
+  const [qrCodes, total] = await Promise.all([
+    prisma.qrCode.findMany({
+      skip,
+      take: limit,
+      include: {
+        business: { select: { id: true, name: true } },
+        table: { select: { id: true, name: true } },
+      },
+      orderBy: { created_at: 'desc' },
+    }),
+    prisma.qrCode.count(),
+  ]);
+
+  return { qrCodes, total, page, limit, totalPages: Math.ceil(total / limit) };
+}
+
+export const adminService = {
+  getAdminBusinesses,
+  getAdminBusinessDetails,
+  toggleBusinessStatus,
+  getAdminPlatformStatistics,
+  getPlatformStatistics: getAdminPlatformStatistics,
+  getAdminPayments,
+  getAdminAuditLogs: getAllAuditLogs,
+  getAdminEmployees,
+  getAdminQrs,
+};

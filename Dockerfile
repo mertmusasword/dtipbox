@@ -1,6 +1,8 @@
 # ---- Stage 1: Build ----
 FROM node:20-alpine AS builder
 
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # Copy workspace root
@@ -27,6 +29,8 @@ RUN npm run build:backend
 # ---- Stage 2: Production ----
 FROM node:20-alpine AS production
 
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # Copy workspace root package files
@@ -49,8 +53,9 @@ COPY --from=builder /app/packages/backend/dist/ packages/backend/dist/
 # Copy built frontend
 COPY --from=builder /app/packages/frontend/dist/ packages/frontend/dist/
 
-# Expose port
+# Environment defaults (can be overridden by Railway / Docker)
 ENV PORT=3000
+ENV NODE_ENV=production
 EXPOSE 3000
 
 # Run migrations and start server

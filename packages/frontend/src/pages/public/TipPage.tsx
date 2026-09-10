@@ -381,8 +381,9 @@ export const TipPage: React.FC = () => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 {['CARD', 'IBAN_TRANSFER', 'APPLE_PAY', 'GOOGLE_PAY'].map((methodKey) => {
-                  const activeItem = details.activePaymentMethods.find((m) => m.type === methodKey);
-                  const isAvailable = !!activeItem;
+                  const catalogItem = details.paymentMethodsCatalog?.find((c) => c.type === methodKey);
+                  const isAvailable = catalogItem ? catalogItem.isUsable : details.activePaymentMethods.some((m) => m.type === methodKey);
+                  const reason = catalogItem?.reason;
                   const isSelected = selectedPaymentMethod === methodKey;
 
                   let label = 'Credit / Debit Card';
@@ -413,22 +414,30 @@ export const TipPage: React.FC = () => {
                           ? '2px solid var(--accent-primary)'
                           : isAvailable
                           ? '1px solid var(--border-color)'
-                          : '1px solid rgba(255, 255, 255, 0.03)',
-                        opacity: isAvailable ? 1 : 0.45,
+                          : '1px solid rgba(255, 255, 255, 0.04)',
+                        opacity: isAvailable ? 1 : 0.5,
                         cursor: isAvailable ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s ease',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <span style={{ color: isAvailable ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
                           {icon}
                         </span>
-                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{label}</span>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{label}</div>
+                          {!isAvailable && reason && (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{reason}</div>
+                          )}
+                        </div>
                       </div>
                       <div>
                         {isAvailable ? (
-                          <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: 700 }}>🟢 Available</span>
+                          <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: 700 }}>🟢 Usable</span>
                         ) : (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>⚪ Unavailable</span>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem', background: 'rgba(255,255,255,0.06)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                            Disabled
+                          </span>
                         )}
                       </div>
                     </div>

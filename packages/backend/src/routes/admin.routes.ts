@@ -11,10 +11,17 @@ const router = Router();
 router.use(authenticate);
 router.use(authorize('ADMIN'));
 
+// Safely parse and clamp pagination parameters to prevent DoS via huge take or negative skip
+function parsePagination(query: any, defaultLimit = 20) {
+  const page = Math.max(1, parseInt(query.page as string || '1', 10) || 1);
+  const rawLimit = parseInt(query.limit as string || String(defaultLimit), 10) || defaultLimit;
+  const limit = Math.min(100, Math.max(1, rawLimit));
+  return { page, limit };
+}
+
 router.get('/businesses', async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page as string || '1', 10);
-    const limit = parseInt(req.query.limit as string || '20', 10);
+    const { page, limit } = parsePagination(req.query, 20);
     const data = await adminService.getAdminBusinesses(page, limit);
     res.json({ success: true, data });
   } catch (error) {
@@ -59,10 +66,29 @@ router.get('/statistics', async (_req, res, next) => {
   }
 });
 
+router.get('/employees', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 30);
+    const data = await adminService.getAdminEmployees(page, limit);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/qr', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 30);
+    const data = await adminService.getAdminQrs(page, limit);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/payments', async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page as string || '1', 10);
-    const limit = parseInt(req.query.limit as string || '30', 10);
+    const { page, limit } = parsePagination(req.query, 30);
     const data = await adminService.getAdminPayments(page, limit);
     res.json({ success: true, data });
   } catch (error) {
@@ -72,8 +98,7 @@ router.get('/payments', async (req, res, next) => {
 
 router.get('/audit-logs', async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page as string || '1', 10);
-    const limit = parseInt(req.query.limit as string || '50', 10);
+    const { page, limit } = parsePagination(req.query, 50);
     const data = await auditService.getAllAuditLogs(page, limit);
     res.json({ success: true, data });
   } catch (error) {

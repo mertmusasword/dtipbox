@@ -128,11 +128,104 @@ async function checkConnection(
 }
 
 /**
+ * Deactivate all payment methods for a business.
+ */
+export async function deactivateAllPaymentMethods(businessId: string, actorUserId: string) {
+  await prisma.paymentMethod.updateMany({
+    where: { business_id: businessId },
+    data: { status: 'INACTIVE' },
+  });
+
+  await createAuditLog({
+    actorUserId,
+    businessId,
+    action: 'PAYMENT_METHODS_BULK_DEACTIVATED',
+    entityType: 'payment_method',
+    entityId: businessId,
+    metadata: { allInactive: true },
+  });
+
+  return getPaymentMethods(businessId);
+}
+
+/**
+ * Set provider integration status (e.g. CONNECTED / NOT_CONNECTED).
+ * When integration becomes NOT_CONNECTED, associated payment method is automatically deactivated.
+ */
+export async function updateIntegrationStatus(
+  businessId: string,
+  actorUserId: string,
+  provider: string,
+  status: 'CONNECTED' | 'NOT_CONNECTED' | 'ERROR',
+  configuration?: any
+) {
+  const integration = await prisma.paymentIntegration.upsert({
+    where: {
+      business_id_provider: {
+        business_id: businessId,
+        provider,
+      },
+    },
+    create: {
+      business_id: businessId,
+      provider,
+      status,
+      configuration: configuration || {},
+    },
+    update: {
+      status,
+      ...(configuration ? { configuration } : {}),
+    },
+  });
+
+  // If disconnected, automatically deactivate the associated payment method to prevent invalid payments
+  if (status !== 'CONNECTED') {
+    await prisma.paymentMethod.updateMany({
+      where: {
+        business_id: businessId,
+        type: provider as PaymentMethodType,
+      },
+      data: { status: 'INACTIVE' },
+    });
+  }
+
+  await createAuditLog({
+    actorUserId,
+    businessId,
+    action: `PAYMENT_INTEGRATION_${status}`,
+    entityType: 'payment_integration',
+    entityId: integration.id,
+    metadata: { provider, status },
+  });
+
+  return integration;
+}
+
+/**
  * Get active payment methods for a business (public use — customer facing).
+ * Only returns methods that are both ACTIVE by business choice AND CONNECTED at infrastructure level.
  */
 export async function getActivePaymentMethods(businessId: string) {
   const methods = await getPaymentMethods(businessId);
   return methods.filter(
     (m) => m.status === 'ACTIVE' && m.connectionStatus === 'CONNECTED'
   );
+}
+
+/**
+ * Get customer-facing payment methods catalog with usable / disabled statuses.
+ * Shows customer which methods can be used (USABLE) vs which are disabled by business (DISABLED).
+ */
+export async function getCustomerPaymentMethodsCatalog(businessId: string) {
+  const all = await getPaymentMethods(businessId);
+  return all.map((m) => ({
+    type: m.type,
+    isUsable: m.status === 'ACTIVE' && m.connectionStatus === 'CONNECTED',
+    status: (m.status === 'ACTIVE' && m.connectionStatus === 'CONNECTED') ? 'USABLE' : 'DISABLED',
+    reason: m.connectionStatus !== 'CONNECTED'
+      ? 'Not configured by business'
+      : m.status !== 'ACTIVE'
+      ? 'Currently disabled by business'
+      : undefined,
+  }));
 }

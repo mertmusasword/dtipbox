@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { Building2, CheckCircle2, XCircle, Eye } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 
 export const AdminBusinessesPage: React.FC = () => {
+  const { id } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
   const [businesses, setBusinesses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBusiness, setSelectedBusiness] = useState<any | null>(null);
@@ -21,6 +24,12 @@ export const AdminBusinessesPage: React.FC = () => {
     loadBusinesses();
   }, []);
 
+  useEffect(() => {
+    if (id) {
+      handleViewDetail(id);
+    }
+  }, [id]);
+
   const handleToggleStatus = async (biz: any) => {
     try {
       await api.put(`/admin/businesses/${biz.id}/status`, { is_active: !biz.is_active });
@@ -36,6 +45,13 @@ export const AdminBusinessesPage: React.FC = () => {
       setSelectedBusiness(res.data.data);
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to load business details');
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedBusiness(null);
+    if (id) {
+      navigate('/admin/businesses');
     }
   };
 
@@ -109,7 +125,7 @@ export const AdminBusinessesPage: React.FC = () => {
       {selectedBusiness && (
         <Modal
           isOpen={!!selectedBusiness}
-          onClose={() => setSelectedBusiness(null)}
+          onClose={handleCloseModal}
           title={`Business Details: ${selectedBusiness.name}`}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.9rem' }}>

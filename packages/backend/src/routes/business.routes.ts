@@ -142,6 +142,8 @@ const updateEmployeeSchema = {
     position: z.string().optional(),
     avatar: z.string().url().nullable().optional(),
     is_active: z.boolean().optional(),
+    email: z.string().email().optional(),
+    password: z.string().min(6).optional(),
   }),
 };
 
@@ -290,6 +292,41 @@ router.put('/payment-methods', validate(updatePaymentMethodSchema), async (req: 
   }
 });
 
+// Bulk deactivate all payment methods for business
+router.post('/payment-methods/deactivate-all', async (req: AuthRequest, res, next) => {
+  try {
+    const methods = await paymentMethodService.deactivateAllPaymentMethods(
+      req.user!.businessId!,
+      req.user!.id
+    );
+    res.json({ success: true, data: methods });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Manage payment provider integration status (e.g. CONNECTED / NOT_CONNECTED)
+const updateIntegrationSchema = {
+  body: z.object({
+    provider: z.string().min(1),
+    status: z.enum(['CONNECTED', 'NOT_CONNECTED', 'ERROR']),
+  }),
+};
+
+router.put('/payment-methods/integrations', validate(updateIntegrationSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const integration = await paymentMethodService.updateIntegrationStatus(
+      req.user!.businessId!,
+      req.user!.id,
+      req.body.provider,
+      req.body.status
+    );
+    res.json({ success: true, data: integration });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // --- Analytics ---
 router.get('/analytics', async (req: AuthRequest, res, next) => {
   try {
@@ -303,8 +340,9 @@ router.get('/analytics', async (req: AuthRequest, res, next) => {
 // --- Audit Logs ---
 router.get('/audit-logs', async (req: AuthRequest, res, next) => {
   try {
-    const page = parseInt(req.query.page as string || '1', 10);
-    const limit = parseInt(req.query.limit as string || '50', 10);
+    const page = Math.max(1, parseInt(req.query.page as string || '1', 10) || 1);
+    const rawLimit = parseInt(req.query.limit as string || '50', 10) || 50;
+    const limit = Math.min(100, Math.max(1, rawLimit));
     const logs = await auditService.getAuditLogs(req.user!.businessId!, page, limit);
     res.json({ success: true, data: logs });
   } catch (error) {

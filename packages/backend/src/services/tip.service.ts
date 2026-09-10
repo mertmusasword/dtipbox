@@ -2,7 +2,7 @@ import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { paymentService } from './payment/core/payment.service';
 import { PaymentMethodType, PaymentStatus, Prisma } from '@prisma/client';
-import { getActivePaymentMethods } from './paymentMethod.service';
+import { getActivePaymentMethods, getCustomerPaymentMethodsCatalog } from './paymentMethod.service';
 
 interface CreateTipRequest {
   publicToken: string;
@@ -61,6 +61,7 @@ export async function getTipPageDetails(publicToken: string) {
 
   // Fetch active and connected payment methods
   const activeMethods = await getActivePaymentMethods(qr.business_id);
+  const paymentMethodsCatalog = await getCustomerPaymentMethodsCatalog(qr.business_id);
 
   // Suggested preset tip amounts depending on currency
   const currencyPresets: Record<string, number[]> = {
@@ -91,6 +92,7 @@ export async function getTipPageDetails(publicToken: string) {
       type: m.type,
       provider: m.provider,
     })),
+    paymentMethodsCatalog,
     presetAmounts: presets,
     hasAvailablePaymentMethod: activeMethods.length > 0,
   };
@@ -122,6 +124,20 @@ export async function createTip(data: CreateTipRequest) {
     });
     if (!emp) {
       throw new AppError('Selected employee is invalid or no longer active', 400);
+    }
+  }
+
+  // Validate table belongs to business if supplied
+  if (data.tableId) {
+    const tbl = await prisma.table.findFirst({
+      where: {
+        id: data.tableId,
+        business_id: qr.business_id,
+        is_active: true,
+      },
+    });
+    if (!tbl) {
+      throw new AppError('Selected table is invalid or no longer active', 400);
     }
   }
 

@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../../api/client';
 import { BusinessAnalytics, Business } from '../../types';
 import { MetricCard } from '../../components/MetricCard';
+import { LoadingState, SkeletonCard } from '../../components/LoadingState';
+import { ErrorState } from '../../components/ErrorState';
+import { EmptyState } from '../../components/EmptyState';
 import {
   DollarSign,
   TrendingUp,
@@ -12,6 +15,8 @@ import {
   QrCode,
   CreditCard,
   Plus,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -19,34 +24,48 @@ export const BusinessDashboard: React.FC = () => {
   const [analytics, setAnalytics] = useState<BusinessAnalytics | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
+    setLoading(true);
+    setError(null);
     Promise.all([api.get('/business'), api.get('/business/analytics')])
       .then(([bizRes, analyticsRes]) => {
         setBusiness(bizRes.data.data);
         setAnalytics(analyticsRes.data.data);
       })
-      .catch((err) => console.error('Dashboard load error:', err))
+      .catch(() => setError('Failed to load dashboard data. Please try again.'))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return <div className="page-wrapper"><div style={{ color: 'var(--text-secondary)' }}>Loading dashboard metrics...</div></div>;
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  if (error) {
+    return (
+      <div className="page-wrapper">
+        <ErrorState message={error} onRetry={loadData} />
+      </div>
+    );
   }
 
   const currency = business?.currency || 'USD';
 
   return (
     <div className="page-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      {/* Header */}
+      <div className="page-header">
         <div>
-          <h1 className="page-title">{business?.name || 'Business'} Dashboard</h1>
-          <p className="page-subtitle" style={{ marginBottom: 0 }}>
-            Real-time digital tipping performance and operations
+          <h1 className="page-title">
+            {loading ? 'Dashboard' : `${business?.name || 'Business'}`}
+          </h1>
+          <p className="page-subtitle mb-0">
+            Real-time digital tipping performance and operations overview
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <Link to="/business/qr-codes" className="btn btn-secondary">
+        <div className="page-header-actions">
+          <Link to="/business/qr" className="btn btn-secondary">
             <QrCode size={16} /> QR Codes
           </Link>
           <Link to="/business/employees" className="btn btn-primary">
@@ -56,67 +75,83 @@ export const BusinessDashboard: React.FC = () => {
       </div>
 
       {/* Financial Metrics */}
-      <div className="metrics-grid">
-        <MetricCard
-          label="Today's Tips"
-          value={`${currency} ${analytics?.todayTips || 0}`}
-          icon={<DollarSign size={24} />}
-          subtitle="Collected since midnight"
-        />
-        <MetricCard
-          label="Weekly Tips"
-          value={`${currency} ${analytics?.weeklyTips || 0}`}
-          icon={<TrendingUp size={24} />}
-          subtitle="Last 7 calendar days"
-        />
-        <MetricCard
-          label="Monthly Tips"
-          value={`${currency} ${analytics?.monthlyTips || 0}`}
-          icon={<Calendar size={24} />}
-          subtitle="Current calendar month"
-        />
-        <MetricCard
-          label="Total Tips Volume"
-          value={`${currency} ${analytics?.totalTips || 0}`}
-          icon={<Layers size={24} />}
-          subtitle={`${analytics?.tipCount || 0} total tips received`}
-        />
-      </div>
+      {loading ? (
+        <SkeletonCard count={4} />
+      ) : (
+        <div className="metrics-grid">
+          <MetricCard
+            label="Today's Tips"
+            value={`${currency} ${analytics?.todayTips?.toFixed(2) || '0.00'}`}
+            icon={<DollarSign size={24} />}
+            subtitle="Collected since midnight"
+          />
+          <MetricCard
+            label="Weekly Tips"
+            value={`${currency} ${analytics?.weeklyTips?.toFixed(2) || '0.00'}`}
+            icon={<TrendingUp size={24} />}
+            subtitle="Last 7 calendar days"
+          />
+          <MetricCard
+            label="Monthly Tips"
+            value={`${currency} ${analytics?.monthlyTips?.toFixed(2) || '0.00'}`}
+            icon={<Calendar size={24} />}
+            subtitle="Current calendar month"
+          />
+          <MetricCard
+            label="All-Time Volume"
+            value={`${currency} ${analytics?.totalTips?.toFixed(2) || '0.00'}`}
+            icon={<Layers size={24} />}
+            subtitle={`${analytics?.tipCount || 0} total tips received`}
+          />
+        </div>
+      )}
 
-      {/* Operations Overview */}
-      <div className="metrics-grid" style={{ marginBottom: '2rem' }}>
-        <MetricCard
-          label="Active Staff"
-          value={analytics?.employeeCount || 0}
-          icon={<Users size={24} />}
-        />
-        <MetricCard
-          label="Tables Configured"
-          value={analytics?.tableCount || 0}
-          icon={<UtensilsCrossed size={24} />}
-        />
-        <MetricCard
-          label="Active QR Codes"
-          value={analytics?.qrCount || 0}
-          icon={<QrCode size={24} />}
-        />
-        <MetricCard
-          label="Live Payment Channels"
-          value={analytics?.activePaymentMethodsCount || 0}
-          icon={<CreditCard size={24} />}
-        />
-      </div>
+      {/* Operations Metrics */}
+      {loading ? (
+        <SkeletonCard count={4} />
+      ) : (
+        <div className="metrics-grid">
+          <MetricCard
+            label="Active Staff"
+            value={analytics?.employeeCount || 0}
+            icon={<Users size={24} />}
+          />
+          <MetricCard
+            label="Tables Configured"
+            value={analytics?.tableCount || 0}
+            icon={<UtensilsCrossed size={24} />}
+          />
+          <MetricCard
+            label="Active QR Codes"
+            value={analytics?.qrCount || 0}
+            icon={<QrCode size={24} />}
+          />
+          <MetricCard
+            label="Payment Channels"
+            value={analytics?.activePaymentMethodsCount || 0}
+            icon={<CreditCard size={24} />}
+          />
+        </div>
+      )}
 
       {/* Recent Tips Table */}
       <div className="glass-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Recent Tips Activity</h2>
-          <Link to="/business/analytics" style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
-            Full Analytics →
+        <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
+          <div className="section-header mb-0">
+            <Sparkles size={20} className="section-icon" />
+            <h2 className="section-title">Recent Tips Activity</h2>
+          </div>
+          <Link
+            to="/business/analytics"
+            style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+          >
+            Full Analytics <ArrowRight size={14} />
           </Link>
         </div>
 
-        {analytics?.recentTips && analytics.recentTips.length > 0 ? (
+        {loading ? (
+          <LoadingState compact message="Loading recent tips..." />
+        ) : analytics?.recentTips && analytics.recentTips.length > 0 ? (
           <div className="table-responsive">
             <table className="data-table">
               <thead>
@@ -130,11 +165,20 @@ export const BusinessDashboard: React.FC = () => {
               <tbody>
                 {analytics.recentTips.map((tip) => (
                   <tr key={tip.id}>
-                    <td>{new Date(tip.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-                    <td style={{ fontWeight: 700 }}>
-                      {tip.currency} {tip.amount}
+                    <td style={{ color: 'var(--text-secondary)' }}>
+                      {new Date(tip.created_at).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </td>
-                    <td>{tip.payment_method.replace('_', ' ')}</td>
+                    <td style={{ fontWeight: 700 }}>
+                      {tip.currency} {Number(tip.amount).toFixed(2)}
+                    </td>
+                    <td>
+                      <span className="badge badge-neutral">
+                        {tip.payment_method.replace(/_/g, ' ')}
+                      </span>
+                    </td>
                     <td>
                       <span className="badge badge-success">Completed</span>
                     </td>
@@ -144,9 +188,16 @@ export const BusinessDashboard: React.FC = () => {
             </table>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-muted)' }}>
-            No tips received yet. Generate a QR code to start accepting digital tips!
-          </div>
+          <EmptyState
+            icon={<DollarSign size={28} />}
+            title="No tips received yet"
+            description="Generate a QR code and share it with your customers to start accepting digital tips."
+            action={
+              <Link to="/business/qr" className="btn btn-primary">
+                <QrCode size={16} /> Generate Your First QR
+              </Link>
+            }
+          />
         )}
       </div>
     </div>

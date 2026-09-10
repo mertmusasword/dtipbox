@@ -1,29 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../../api/client';
 import { Table } from '../../types';
 import { Modal } from '../../components/Modal';
+import { LoadingState } from '../../components/LoadingState';
+import { ErrorState } from '../../components/ErrorState';
+import { EmptyState } from '../../components/EmptyState';
+import { useToast } from '../../components/Toast';
 import { Plus, Trash2, Edit2, UtensilsCrossed } from 'lucide-react';
 
 export const TablesPage: React.FC = () => {
+  const { showToast } = useToast();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<Table | null>(null);
   const [tableName, setTableName] = useState('');
 
-  const loadTables = () => {
+  const loadTables = useCallback(() => {
     setLoading(true);
+    setError(null);
     api
       .get('/business/tables')
       .then((res) => setTables(res.data.data))
-      .catch((err) => console.error('Failed to load tables:', err))
+      .catch(() => setError('Failed to load tables'))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     loadTables();
-  }, []);
+  }, [loadTables]);
 
   const openCreateModal = () => {
     setEditingTable(null);
@@ -42,13 +49,15 @@ export const TablesPage: React.FC = () => {
     try {
       if (editingTable) {
         await api.put(`/business/tables/${editingTable.id}`, { name: tableName });
+        showToast(`Table "${tableName}" updated`);
       } else {
         await api.post('/business/tables', { name: tableName });
+        showToast(`Table "${tableName}" created`);
       }
       setIsModalOpen(false);
       loadTables();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Operation failed');
+      showToast(err.response?.data?.error || 'Operation failed', 'error');
     }
   };
 
@@ -56,37 +65,45 @@ export const TablesPage: React.FC = () => {
     if (!confirm(`Delete table "${table.name}"?`)) return;
     try {
       await api.delete(`/business/tables/${table.id}`);
+      showToast(`Table "${table.name}" deleted`);
       loadTables();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete table');
+      showToast(err.response?.data?.error || 'Failed to delete table', 'error');
     }
   };
 
   return (
     <div className="page-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="page-header">
         <div>
           <h1 className="page-title">Dining Tables & Sections</h1>
-          <p className="page-subtitle" style={{ marginBottom: 0 }}>
+          <p className="page-subtitle mb-0">
             Optionally organize tips by specific tables, rooms, or bar areas
           </p>
         </div>
-        <button className="btn btn-primary" onClick={openCreateModal}>
-          <Plus size={16} /> Add Table
-        </button>
+        <div className="page-header-actions">
+          <button className="btn btn-primary" onClick={openCreateModal}>
+            <Plus size={16} /> Add Table
+          </button>
+        </div>
       </div>
 
       <div className="glass-card">
         {loading ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading tables...</div>
+          <LoadingState compact message="Loading tables..." />
+        ) : error ? (
+          <ErrorState message={error} onRetry={loadTables} />
         ) : tables.length === 0 ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <UtensilsCrossed size={40} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <div>No tables defined yet.</div>
-            <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-              Tables are optional. You can add tables to generate table-specific QR codes.
-            </p>
-          </div>
+          <EmptyState
+            icon={<UtensilsCrossed size={28} />}
+            title="No tables defined yet"
+            description="Tables are optional. Add tables to generate table-specific QR codes for targeted tracking."
+            action={
+              <button className="btn btn-primary" onClick={openCreateModal}>
+                <Plus size={16} /> Add First Table
+              </button>
+            }
+          />
         ) : (
           <div className="table-responsive">
             <table className="data-table">
@@ -95,17 +112,17 @@ export const TablesPage: React.FC = () => {
                   <th>Table / Area Name</th>
                   <th>QR Codes</th>
                   <th>Tips Logged</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {tables.map((tbl) => (
                   <tr key={tbl.id}>
-                    <td style={{ fontWeight: 600 }}>{tbl.name}</td>
+                    <td className="font-bold">{tbl.name}</td>
                     <td>{tbl._count?.qr_codes || 0}</td>
                     <td>{tbl._count?.tips || 0}</td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
+                    <td className="text-right">
+                      <div className="inline-actions">
                         <button className="btn btn-secondary btn-sm" onClick={() => openEditModal(tbl)} title="Edit">
                           <Edit2 size={14} />
                         </button>
@@ -122,11 +139,7 @@ export const TablesPage: React.FC = () => {
         )}
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={editingTable ? 'Edit Table' : 'Add New Table'}
-      >
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingTable ? 'Edit Table' : 'Add New Table'}>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Table Name or Location</label>

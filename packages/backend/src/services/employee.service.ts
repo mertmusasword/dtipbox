@@ -19,6 +19,8 @@ interface UpdateEmployeeInput {
   position?: string;
   avatar?: string;
   is_active?: boolean;
+  email?: string;
+  password?: string;
 }
 
 const SALT_ROUNDS = 12;
@@ -133,15 +135,82 @@ export async function updateEmployee(
   // Verify ownership
   const existing = await prisma.employee.findFirst({
     where: { id: employeeId, business_id: businessId, deleted_at: null },
+    include: { user: true },
   });
 
   if (!existing) {
     throw new AppError('Employee not found', 404);
   }
 
+  // Handle email/password update or user account creation
+  let updatedUserId = existing.user_id;
+
+  if (input.email || input.password) {
+    const trimmedEmail = input.email ? input.email.toLowerCase().trim() : undefined;
+
+    if (existing.user) {
+      // User already exists for this employee -> update email / password
+      const updateUserData: any = {};
+      if (trimmedEmail && trimmedEmail !== existing.user.email) {
+        const emailConflict = await prisma.user.findUnique({
+          where: { email: trimmedEmail },
+        });
+        if (emailConflict && emailConflict.id !== existing.user.id) {
+          throw new AppError('Email already in use', 409);
+        }
+        updateUserData.email = trimmedEmail;
+      }
+      if (input.password) {
+        updateUserData.password_hash = await bcrypt.hash(input.password, SALT_ROUNDS);
+      }
+      if (input.is_active !== undefined) {
+        updateUserData.is_active = input.is_active;
+      }
+
+      if (Object.keys(updateUserData).length > 0) {
+        await prisma.user.update({
+          where: { id: existing.user.id },
+          data: updateUserData,
+        });
+      }
+    } else if (trimmedEmail && input.password) {
+      // Create a brand new user account for this existing employee
+      const emailConflict = await prisma.user.findUnique({
+        where: { email: trimmedEmail },
+      });
+      if (emailConflict) {
+        throw new AppError('Email already in use', 409);
+      }
+
+      const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
+      const newUser = await prisma.user.create({
+        data: {
+          email: trimmedEmail,
+          password_hash: passwordHash,
+          role: Role.EMPLOYEE,
+          is_active: input.is_active !== undefined ? input.is_active : existing.is_active,
+        },
+      });
+      updatedUserId = newUser.id;
+    }
+  } else if (input.is_active !== undefined && existing.user) {
+    // Keep user account active state in sync with employee active state
+    await prisma.user.update({
+      where: { id: existing.user.id },
+      data: { is_active: input.is_active },
+    });
+  }
+
   const employee = await prisma.employee.update({
     where: { id: employeeId },
-    data: input,
+    data: {
+      first_name: input.first_name,
+      last_name: input.last_name,
+      position: input.position,
+      avatar: input.avatar,
+      is_active: input.is_active,
+      user_id: updatedUserId,
+    },
     include: {
       user: { select: { id: true, email: true } },
     },
@@ -183,6 +252,14 @@ export async function deleteEmployee(
     where: { id: employeeId },
     data: { deleted_at: new Date(), is_active: false },
   });
+
+  // Security: Immediately deactivate employee's user account so login and token refresh are revoked
+  if (existing.user_id) {
+    await prisma.user.update({
+      where: { id: existing.user_id },
+      data: { is_active: false },
+    });
+  }
 
   await createAuditLog({
     actorUserId,

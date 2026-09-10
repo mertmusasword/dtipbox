@@ -1,32 +1,44 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as authService from '../services/auth.service';
 import { authenticate, AuthRequest } from '../middleware/auth';
-import { Role } from '@prisma/client';
 
 const router = Router();
 
+// Strict rate limiter for authentication endpoints against brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per IP per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many authentication attempts. Please try again in 15 minutes.',
+  },
+});
+
 const registerSchema = {
   body: z.object({
-    email: z.string().email(),
-    password: z.string().min(8),
-    role: z.nativeEnum(Role).optional(),
-    businessName: z.string().min(2).optional(),
+    email: z.string().email().max(255),
+    password: z.string().min(8).max(128),
+    role: z.enum(['BUSINESS', 'CUSTOMER']).optional(),
+    businessName: z.string().min(2).max(100).optional(),
     country: z.string().length(2).optional(),
     currency: z.string().min(3).max(4).optional(),
-    timezone: z.string().optional(),
+    timezone: z.string().max(50).optional(),
   }),
 };
 
 const loginSchema = {
   body: z.object({
-    email: z.string().email(),
-    password: z.string().min(1),
+    email: z.string().email().max(255),
+    password: z.string().min(1).max(128),
   }),
 };
 
-router.post('/register', validate(registerSchema), async (req, res, next) => {
+router.post('/register', authLimiter, validate(registerSchema), async (req, res, next) => {
   try {
     const result = await authService.register(req.body);
     // Set HTTP-only refresh cookie
@@ -42,7 +54,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   }
 });
 
-router.post('/login', validate(loginSchema), async (req, res, next) => {
+router.post('/login', authLimiter, validate(loginSchema), async (req, res, next) => {
   try {
     const result = await authService.login(req.body);
     res.cookie('refreshToken', result.refreshToken, {
@@ -72,7 +84,11 @@ router.post('/refresh', async (req, res, next) => {
 });
 
 router.post('/logout', (_req, res) => {
-  res.clearCookie('refreshToken');
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
   res.json({ success: true, message: 'Logged out successfully' });
 });
 

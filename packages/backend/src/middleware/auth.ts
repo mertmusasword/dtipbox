@@ -109,10 +109,17 @@ export function requireBusinessOwnership(
     return;
   }
 
-  // Admins can access any business
+  // Admins can access any business if specified via header/query or linked
   if (req.user.role === 'ADMIN') {
-    next();
-    return;
+    const adminBizId =
+      req.user.businessId ||
+      (req.query.businessId as string) ||
+      (req.headers['x-business-id'] as string);
+    if (adminBizId) {
+      req.user.businessId = adminBizId;
+      next();
+      return;
+    }
   }
 
   if (!req.user.businessId) {

@@ -5,7 +5,11 @@ const router = Router();
 
 router.post('/:provider', async (req: Request, res: Response) => {
   const provider = req.params.provider as string;
-  const signature = req.headers['stripe-signature'] as string | undefined;
+  const signature = (
+    req.headers['stripe-signature'] ||
+    req.headers['x-webhook-signature'] ||
+    req.headers['x-signature']
+  ) as string | undefined;
 
   try {
     const rawBody = (req as any).rawBody || JSON.stringify(req.body);

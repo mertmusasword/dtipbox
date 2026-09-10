@@ -1,32 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../../api/client';
 import { PaymentMethodItem, PaymentMethodType, PaymentMethodStatus } from '../../types';
-import { CreditCard, Building2, Smartphone, ShieldCheck, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
+import { LoadingState } from '../../components/LoadingState';
+import { ErrorState } from '../../components/ErrorState';
+import { useToast } from '../../components/Toast';
+import { CreditCard, Building2, Smartphone, CheckCircle2, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const PaymentMethodsPage: React.FC = () => {
+  const { showToast } = useToast();
   const [methods, setMethods] = useState<PaymentMethodItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const loadMethods = () => {
+  const loadMethods = useCallback(() => {
     setLoading(true);
+    setError(null);
     api
       .get('/business/payment-methods')
       .then((res) => setMethods(res.data.data))
-      .catch((err) => console.error('Failed to load payment methods:', err))
+      .catch(() => setError('Failed to load payment methods'))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     loadMethods();
-  }, []);
+  }, [loadMethods]);
 
   const handleToggleStatus = async (item: PaymentMethodItem) => {
     if (!item.canActivate && item.status !== 'ACTIVE') {
-      alert(
+      showToast(
         item.type === 'IBAN_TRANSFER'
-          ? 'Please configure your Business Bank Account first before activating IBAN / Bank Transfer.'
-          : 'This payment provider is not connected yet and cannot be activated.'
+          ? 'Configure your bank account first before activating IBAN / Bank Transfer.'
+          : 'This payment provider is not connected yet and cannot be activated.',
+        'error'
       );
       return;
     }
@@ -34,13 +41,11 @@ export const PaymentMethodsPage: React.FC = () => {
     const nextStatus: PaymentMethodStatus = item.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
 
     try {
-      await api.put('/business/payment-methods', {
-        type: item.type,
-        status: nextStatus,
-      });
+      await api.put('/business/payment-methods', { type: item.type, status: nextStatus });
+      showToast(`${getMethodMeta(item.type).title} ${nextStatus === 'ACTIVE' ? 'activated' : 'deactivated'}`);
       loadMethods();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to update payment method');
+      showToast(err.response?.data?.error || 'Failed to update payment method', 'error');
     }
   };
 
@@ -81,114 +86,137 @@ export const PaymentMethodsPage: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="page-wrapper">
+        <h1 className="page-title">Payment Channels & Acceptance</h1>
+        <p className="page-subtitle">Manage integration connectivity and toggle public tip availability</p>
+        <LoadingState message="Loading payment channels..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-wrapper">
+        <ErrorState message={error} onRetry={loadMethods} />
+      </div>
+    );
+  }
+
+  const handleDeactivateAll = async () => {
+    if (!confirm('Are you sure you want to deactivate ALL payment methods? Customers will not be able to leave tips until at least one method is reactivated.')) return;
+    try {
+      await api.post('/business/payment-methods/deactivate-all');
+      showToast('All payment methods deactivated');
+      loadMethods();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Failed to deactivate payment methods', 'error');
+    }
+  };
+
   return (
     <div className="page-wrapper">
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">Payment Channels & Acceptance</h1>
-        <p className="page-subtitle" style={{ marginBottom: 0 }}>
-          Manage integration connectivity and toggle public tip availability
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Payment Channels & Acceptance</h1>
+          <p className="page-subtitle mb-0">
+            Manage integration connectivity and toggle public tip availability
+          </p>
+        </div>
+        <div className="page-header-actions">
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={handleDeactivateAll}
+            title="Temporarily stop accepting all tip payment methods"
+          >
+            Disable All Methods
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        {loading ? (
-          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-            Loading payment channels...
-          </div>
-        ) : (
-          methods.map((method) => {
-            const meta = getMethodMeta(method.type);
-            const isConnected = method.connectionStatus === 'CONNECTED';
-            const isActive = method.status === 'ACTIVE';
+        {methods.map((method) => {
+          const meta = getMethodMeta(method.type);
+          const isConnected = method.connectionStatus === 'CONNECTED';
+          const isActive = method.status === 'ACTIVE';
 
-            return (
-              <div
-                key={method.type}
-                className="glass-card"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '1.5rem',
-                  gap: '1.5rem',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flex: 1, minWidth: '280px' }}>
-                  <div
-                    style={{
-                      width: '52px',
-                      height: '52px',
-                      borderRadius: 'var(--radius-md)',
-                      background: 'var(--bg-input)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: isActive ? '#10b981' : isConnected ? 'var(--text-primary)' : 'var(--text-muted)',
-                      border: '1px solid var(--border-color)',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {meta.icon}
-                  </div>
-
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{meta.title}</h3>
-                      {isConnected ? (
-                        <span className="badge badge-info" style={{ fontSize: '0.7rem' }}>
-                          <CheckCircle2 size={12} /> Connected
-                        </span>
-                      ) : (
-                        <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>
-                          <XCircle size={12} /> Not Connected
-                        </span>
-                      )}
-                    </div>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                      {meta.description}
-                    </p>
-                    {meta.configLink && !isConnected && (
-                      <Link
-                        to={meta.configLink}
-                        style={{ display: 'inline-block', fontSize: '0.8rem', color: 'var(--accent-primary)', marginTop: '0.4rem', fontWeight: 600 }}
-                      >
-                        {meta.configLabel} →
-                      </Link>
-                    )}
-                  </div>
+          return (
+            <div
+              key={method.type}
+              className="glass-card glass-card-interactive"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '1.5rem',
+                gap: '1.5rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flex: 1, minWidth: '280px' }}>
+                <div className="metric-icon" style={{
+                  color: isActive ? 'var(--success)' : isConnected ? 'var(--text-primary)' : 'var(--text-muted)',
+                }}>
+                  {meta.icon}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div>
-                    {isActive ? (
-                      <span className="badge badge-success" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}>
-                        🟢 Active (Customer Visible)
-                      </span>
-                    ) : isConnected ? (
-                      <span className="badge badge-warning" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}>
-                        🟡 Inactive (Hidden from Customer)
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>{meta.title}</h3>
+                    {isConnected ? (
+                      <span className="badge badge-info">
+                        <CheckCircle2 size={12} /> Connected
                       </span>
                     ) : (
-                      <span className="badge badge-neutral" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}>
-                        ⚪ Unavailable
+                      <span className="badge badge-neutral">
+                        <XCircle size={12} /> Not Connected
                       </span>
                     )}
                   </div>
-
-                  <button
-                    className={`btn ${isActive ? 'btn-danger' : 'btn-primary'}`}
-                    disabled={!isConnected && !isActive}
-                    onClick={() => handleToggleStatus(method)}
-                    style={{ minWidth: '120px' }}
-                  >
-                    {isActive ? 'Deactivate' : 'Activate'}
-                  </button>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                    {meta.description}
+                  </p>
+                  {meta.configLink && !isConnected && (
+                    <Link
+                      to={meta.configLink}
+                      style={{ display: 'inline-block', fontSize: '0.8rem', color: 'var(--accent-primary)', marginTop: '0.4rem', fontWeight: 600 }}
+                    >
+                      {meta.configLabel} →
+                    </Link>
+                  )}
                 </div>
               </div>
-            );
-          })
-        )}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div>
+                  {isActive ? (
+                    <span className="badge badge-success" style={{ padding: '0.4rem 0.8rem' }}>
+                      🟢 Active
+                    </span>
+                  ) : isConnected ? (
+                    <span className="badge badge-warning" style={{ padding: '0.4rem 0.8rem' }}>
+                      🟡 Inactive
+                    </span>
+                  ) : (
+                    <span className="badge badge-neutral" style={{ padding: '0.4rem 0.8rem' }}>
+                      ⚪ Unavailable
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  className={`btn ${isActive ? 'btn-danger' : 'btn-primary'}`}
+                  disabled={!isConnected && !isActive}
+                  onClick={() => handleToggleStatus(method)}
+                  style={{ minWidth: '120px' }}
+                >
+                  {isActive ? 'Deactivate' : 'Activate'}
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
