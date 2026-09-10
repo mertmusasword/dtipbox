@@ -154,9 +154,6 @@ export const HomePage: React.FC = () => {
                 <Link to="/register" className="home-btn-primary home-btn-hero-large">
                   Get Started Free <ArrowRight size={18} />
                 </Link>
-                <a href="#simulator" className="home-btn-secondary">
-                  <Smartphone size={18} /> Try Interactive Demo
-                </a>
               </div>
 
               <div className="home-hero-trust-row">
