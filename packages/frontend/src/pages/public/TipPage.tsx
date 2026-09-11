@@ -263,12 +263,21 @@ export const TipPage: React.FC = () => {
             <img
               src={details.business.logo}
               alt={details.business.name}
-              style={{ width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 1rem', objectFit: 'cover' }}
+              style={{
+                width: '76px',
+                height: '76px',
+                borderRadius: '20px',
+                margin: '0 auto 1rem',
+                objectFit: 'cover',
+                border: '2px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                display: 'block',
+              }}
             />
           ) : (
             <div style={{
-              width: '64px',
-              height: '64px',
+              width: '68px',
+              height: '68px',
               borderRadius: '20px',
               background: 'var(--accent-gradient)',
               display: 'flex',
@@ -276,8 +285,9 @@ export const TipPage: React.FC = () => {
               justifyContent: 'center',
               margin: '0 auto 1rem',
               color: '#fff',
+              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)',
             }}>
-              <Heart size={28} />
+              <Heart size={30} />
             </div>
           )}
           <h1 style={{ fontSize: '1.65rem', fontWeight: 800, letterSpacing: '-0.025em' }}>

@@ -34,7 +34,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
 const updateBusinessSchema = {
   body: z.object({
     name: z.string().min(2).optional(),
-    logo: z.string().url().nullable().optional(),
+    logo: z.string().nullable().optional(),
     country: z.string().length(2).optional(),
     currency: z.string().min(3).max(4).optional(),
     timezone: z.string().optional(),

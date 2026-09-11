@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { api } from '../../api/client';
 import { Business } from '../../types';
 import { useToast } from '../../components/Toast';
@@ -18,6 +18,9 @@ import {
   Edit3,
   Save,
   X,
+  Upload,
+  Camera,
+  Trash2,
 } from 'lucide-react';
 
 export const BusinessProfilePage: React.FC = () => {
@@ -28,6 +31,9 @@ export const BusinessProfilePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [useUrlInput, setUseUrlInput] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -41,6 +47,55 @@ export const BusinessProfilePage: React.FC = () => {
     address: '',
     description: '',
   });
+
+  const handleLogoUpload = (file: File) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      showToast('Lütfen geçerli bir logo formatı seçin (PNG, JPG, SVG veya WebP).', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Logo dosya boyutu en fazla 5 MB olabilir.', 'error');
+      return;
+    }
+
+    if (file.type === 'image/svg+xml') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData((prev) => ({ ...prev, logo: e.target?.result as string }));
+        showToast('Logo başarıyla yüklendi');
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const size = 500;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const minDim = Math.min(img.width, img.height);
+        const startX = (img.width - minDim) / 2;
+        const startY = (img.height - minDim) / 2;
+
+        ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
+
+        const mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        const quality = file.type === 'image/png' ? undefined : 0.88;
+        const optimized = canvas.toDataURL(mimeType, quality);
+        setFormData((prev) => ({ ...prev, logo: optimized }));
+        showToast('İşletme logosu başarıyla yüklendi ve uyarlandı');
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const loadBusiness = useCallback(() => {
     setLoading(true);
@@ -160,17 +215,19 @@ export const BusinessProfilePage: React.FC = () => {
               width: '80px',
               height: '80px',
               borderRadius: 'var(--radius-lg)',
-              background: business?.logo
-                ? `url(${business.logo}) center/cover`
+              background: (editing ? formData.logo : business?.logo)
+                ? `url(${editing ? formData.logo : business?.logo}) center/cover no-repeat`
                 : 'var(--accent-gradient)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
               boxShadow: '0 4px 16px var(--accent-glow)',
+              border: '2px solid rgba(255, 255, 255, 0.12)',
+              overflow: 'hidden',
             }}
           >
-            {!business?.logo && (
+            {!(editing ? formData.logo : business?.logo) && (
               <Building2 size={36} color="#fff" />
             )}
           </div>
@@ -220,15 +277,156 @@ export const BusinessProfilePage: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Logo Image URL</label>
-              <input
-                type="url"
-                placeholder="https://example.com/logo.png"
-                value={formData.logo}
-                onChange={(e) => handleChange('logo', e.target.value)}
-                className="form-input"
-              />
-              <div className="form-hint">Provide a direct link to your business logo (square recommended)</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                <label className="form-label mb-0">İşletme Logosu</label>
+                <button
+                  type="button"
+                  onClick={() => setUseUrlInput(!useUrlInput)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--accent-primary)',
+                    fontSize: '0.75rem',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    padding: 0,
+                  }}
+                >
+                  {useUrlInput ? '📁 Görsel Dosyası Yükle' : '🔗 Web URL ile Ekle'}
+                </button>
+              </div>
+
+              {useUrlInput ? (
+                <div>
+                  <input
+                    type="url"
+                    placeholder="https://example.com/logo.png"
+                    value={formData.logo}
+                    onChange={(e) => handleChange('logo', e.target.value)}
+                    className="form-input"
+                  />
+                  <div className="form-hint">Doğrudan web görsel linkini (https://...) girebilirsiniz.</div>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    border: '2px dashed var(--border-color)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '1.25rem',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/jpg,image/svg+xml"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        handleLogoUpload(e.target.files[0]);
+                      }
+                    }}
+                  />
+
+                  {formData.logo ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', justifyContent: 'center' }}>
+                      <div style={{ position: 'relative' }}>
+                        <img
+                          src={formData.logo}
+                          alt="İşletme Logosu Önizleme"
+                          style={{
+                            width: '84px',
+                            height: '84px',
+                            borderRadius: 'var(--radius-lg)',
+                            objectFit: 'cover',
+                            border: '2px solid var(--accent-primary)',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.35)',
+                            display: 'block',
+                          }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="btn btn-secondary"
+                          style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                        >
+                          <Camera size={13} /> Logoyu Değiştir
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleChange('logo', '')}
+                          className="btn btn-secondary"
+                          style={{
+                            fontSize: '0.75rem',
+                            padding: '0.35rem 0.75rem',
+                            color: '#f87171',
+                            borderColor: 'rgba(239, 68, 68, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                          }}
+                        >
+                          <Trash2 size={13} /> Logoyu Kaldır
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ cursor: 'pointer', padding: '0.5rem 0' }}
+                    >
+                      <div
+                        style={{
+                          width: '56px',
+                          height: '56px',
+                          borderRadius: 'var(--radius-lg)',
+                          background: 'rgba(99, 102, 241, 0.12)',
+                          color: 'var(--accent-primary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          margin: '0 auto 0.6rem',
+                        }}
+                      >
+                        <Upload size={24} />
+                      </div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>Logo Görseli Seç veya Sürükle</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                        Cihazınızdan logo dosyası yüklemek için tıklayın
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Öneri & Standart Kutusu */}
+                  <div
+                    style={{
+                      marginTop: '0.9rem',
+                      paddingTop: '0.75rem',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                      fontSize: '0.75rem',
+                      color: 'var(--text-muted)',
+                      lineHeight: 1.5,
+                      textAlign: 'left',
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: '0.55rem 0.75rem',
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
+                      📐 Önerilen Logo Standartları:
+                    </div>
+                    <div>• <strong>Ölçü & Oran:</strong> 1:1 Kare format (ideal olarak en az <strong>500×500 px</strong>)</div>
+                    <div>• <strong>Format & Boyut:</strong> PNG (şeffaf zemin önerilir), JPG, SVG veya WebP (maksimum <strong>5 MB</strong>)</div>
+                    <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.5)', marginTop: '0.25rem' }}>
+                      * Yüklediğiniz logo bahşiş ekranında ve işletme profilinizde yüksek çözünürlüklü ve şık görünecek şekilde otomatik olarak optimize edilir.
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="form-grid form-grid-3">
