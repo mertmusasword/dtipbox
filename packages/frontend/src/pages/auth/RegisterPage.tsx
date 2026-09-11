@@ -134,22 +134,9 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         {/* Multi-Branch / Enterprise Callout Banner */}
-        <div style={{
-          marginBottom: '1.75rem',
-          padding: '1rem 1.25rem',
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)',
-          border: '1px solid rgba(99, 102, 241, 0.32)',
-          borderRadius: '14px',
-          boxShadow: '0 4px 20px rgba(99, 102, 241, 0.1)',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.85rem',
-            flexWrap: 'wrap',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0, flex: 1 }}>
+        <div className="enterprise-banner">
+          <div className="enterprise-banner-header">
+            <div className="enterprise-banner-info">
               <div style={{
                 width: 36,
                 height: 36,
@@ -161,14 +148,15 @@ export const RegisterPage: React.FC = () => {
                 justifyContent: 'center',
                 color: '#818cf8',
                 flexShrink: 0,
+                marginTop: '2px',
               }}>
                 <Building2 size={18} />
               </div>
-              <div style={{ textAlign: dir === 'rtl' ? 'right' : 'left' }}>
-                <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.88rem', lineHeight: 1.3 }}>
+              <div style={{ textAlign: dir === 'rtl' ? 'right' : 'left', flex: 1, minWidth: 0 }}>
+                <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.88rem', lineHeight: 1.35 }}>
                   {t('auth.multiBranchPrompt')}
                 </div>
-                <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '0.15rem', lineHeight: 1.3 }}>
+                <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '0.2rem', lineHeight: 1.4 }}>
                   {t('auth.multiBranchSub')}
                 </div>
               </div>
@@ -176,25 +164,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowCorporateModal(true)}
-              style={{
-                padding: '0.5rem 0.95rem',
-                borderRadius: '9999px',
-                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: '#ffffff',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)',
-                transition: 'all 0.2s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+              className="enterprise-banner-btn"
             >
               <span>{t('auth.corporateCta')}</span>
               <ArrowRight size={14} />
