@@ -10,10 +10,12 @@ export const FloatingSupportWidget: React.FC = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Hide on tipping / checkout screens to maintain pure checkout focus
+  // Hide on tipping / checkout / auth screens
   if (
     location.pathname.startsWith('/tip/') ||
-    location.pathname.startsWith('/pay/')
+    location.pathname.startsWith('/pay/') ||
+    location.pathname === '/login' ||
+    location.pathname === '/register'
   ) {
     return null;
   }

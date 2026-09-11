@@ -92,8 +92,22 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', position: 'relative' }}>
-      <div style={{ position: 'absolute', top: '1.5rem', right: dir === 'rtl' ? 'auto' : '1.5rem', left: dir === 'rtl' ? '1.5rem' : 'auto' }}>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '4.5rem 1.5rem 2.5rem',
+      position: 'relative'
+    }}>
+      <div style={{
+        position: 'fixed',
+        top: '1.25rem',
+        right: dir === 'rtl' ? 'auto' : '1.5rem',
+        left: dir === 'rtl' ? '1.5rem' : 'auto',
+        zIndex: 99999
+      }}>
         <LanguageSelector variant="compact" />
       </div>
 

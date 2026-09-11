@@ -79,7 +79,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     <div
       ref={dropdownRef}
       className={`lang-selector-container ${variant} ${className}`}
-      style={{ position: 'relative', display: 'inline-block' }}
+      style={{ position: 'relative', display: 'inline-block', zIndex: 9999 }}
     >
       <button
         type="button"
