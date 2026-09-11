@@ -31,13 +31,15 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog" />
   </url>
 
-  <!-- 3. Dynamic Blog Articles (15 posts) -->
+  <!-- 3. Dynamic Blog Articles (30 posts) -->
   <url>
     <loc>https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber</loc>
     <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/qr-kod-ile-bahsis-nasil-alinir</loc>
@@ -45,6 +47,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/qr-kod-ile-bahsis-nasil-alinir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-accept-tips-with-qr-codes" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-accept-tips-with-qr-codes" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/restoranlarda-dijital-bahsis-sistemi-nasil-kurulur</loc>
@@ -52,6 +56,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/restoranlarda-dijital-bahsis-sistemi-nasil-kurulur" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-set-up-digital-tipping-for-restaurants" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-set-up-digital-tipping-for-restaurants" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/kafelerde-qr-kod-ile-bahsis-alma-sistemi</loc>
@@ -59,6 +65,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/kafelerde-qr-kod-ile-bahsis-alma-sistemi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/qr-code-tipping-system-for-cafes" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/qr-code-tipping-system-for-cafes" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/otellerde-dijital-bahsis-sistemi-nasil-kullanilir</loc>
@@ -66,6 +74,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/otellerde-dijital-bahsis-sistemi-nasil-kullanilir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/digital-tipping-solutions-for-hotels" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/digital-tipping-solutions-for-hotels" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/garsonlar-icin-dijital-bahsis-sistemi-nedir</loc>
@@ -73,6 +83,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/garsonlar-icin-dijital-bahsis-sistemi-nedir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/digital-tipping-guide-for-waiters-and-servers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/digital-tipping-guide-for-waiters-and-servers" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/nakit-bahsis-mi-dijital-bahsis-mi</loc>
@@ -80,6 +92,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/nakit-bahsis-mi-dijital-bahsis-mi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/cash-tips-vs-digital-tips-comparison" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/cash-tips-vs-digital-tips-comparison" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/qr-kod-ile-bahsis-sisteminin-avantajlari-ve-dezavantajlari</loc>
@@ -87,6 +101,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/qr-kod-ile-bahsis-sisteminin-avantajlari-ve-dezavantajlari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/pros-and-cons-of-qr-code-tipping" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/pros-and-cons-of-qr-code-tipping" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/isletmeler-icin-qr-kod-kullanim-alanlari</loc>
@@ -94,6 +110,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeler-icin-qr-kod-kullanim-alanlari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/qr-code-use-cases-for-hospitality-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/qr-code-use-cases-for-hospitality-businesses" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/restoranlarda-musteri-deneyimini-gelistirmenin-yollari</loc>
@@ -101,6 +119,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/restoranlarda-musteri-deneyimini-gelistirmenin-yollari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/proven-ways-to-improve-restaurant-guest-experience" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/proven-ways-to-improve-restaurant-guest-experience" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/calisan-bahsislerini-yonetmenin-yollari</loc>
@@ -108,6 +128,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/calisan-bahsislerini-yonetmenin-yollari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/dijital-bahsis-sisteminde-guvenlik-nasil-saglanir</loc>
@@ -115,6 +137,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/dijital-bahsis-sisteminde-guvenlik-nasil-saglanir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/security-in-digital-tipping-systems" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/security-in-digital-tipping-systems" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/restoranlar-icin-dijitallesme-rehberi</loc>
@@ -122,6 +146,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/restoranlar-icin-dijitallesme-rehberi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/digital-transformation-guide-for-modern-restaurants" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/digital-transformation-guide-for-modern-restaurants" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/isletmeler-icin-qr-kodlu-odeme-ve-bahsis-sistemleri</loc>
@@ -129,6 +155,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeler-icin-qr-kodlu-odeme-ve-bahsis-sistemleri" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/qr-payments-and-tipping-systems-for-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/qr-payments-and-tipping-systems-for-businesses" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz</loc>
@@ -136,6 +164,143 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/how-to-accept-tips-with-qr-codes</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/qr-kod-ile-bahsis-nasil-alinir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-accept-tips-with-qr-codes" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-accept-tips-with-qr-codes" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/how-to-set-up-digital-tipping-for-restaurants</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/restoranlarda-dijital-bahsis-sistemi-nasil-kurulur" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-set-up-digital-tipping-for-restaurants" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-set-up-digital-tipping-for-restaurants" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/qr-code-tipping-system-for-cafes</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/kafelerde-qr-kod-ile-bahsis-alma-sistemi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/qr-code-tipping-system-for-cafes" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/qr-code-tipping-system-for-cafes" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/digital-tipping-solutions-for-hotels</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/otellerde-dijital-bahsis-sistemi-nasil-kullanilir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/digital-tipping-solutions-for-hotels" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/digital-tipping-solutions-for-hotels" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/digital-tipping-guide-for-waiters-and-servers</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/garsonlar-icin-dijital-bahsis-sistemi-nedir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/digital-tipping-guide-for-waiters-and-servers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/digital-tipping-guide-for-waiters-and-servers" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/cash-tips-vs-digital-tips-comparison</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/nakit-bahsis-mi-dijital-bahsis-mi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/cash-tips-vs-digital-tips-comparison" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/cash-tips-vs-digital-tips-comparison" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/pros-and-cons-of-qr-code-tipping</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/qr-kod-ile-bahsis-sisteminin-avantajlari-ve-dezavantajlari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/pros-and-cons-of-qr-code-tipping" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/pros-and-cons-of-qr-code-tipping" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/qr-code-use-cases-for-hospitality-businesses</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeler-icin-qr-kod-kullanim-alanlari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/qr-code-use-cases-for-hospitality-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/qr-code-use-cases-for-hospitality-businesses" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/proven-ways-to-improve-restaurant-guest-experience</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/restoranlarda-musteri-deneyimini-gelistirmenin-yollari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/proven-ways-to-improve-restaurant-guest-experience" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/proven-ways-to-improve-restaurant-guest-experience" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/calisan-bahsislerini-yonetmenin-yollari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/security-in-digital-tipping-systems</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/dijital-bahsis-sisteminde-guvenlik-nasil-saglanir" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/security-in-digital-tipping-systems" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/security-in-digital-tipping-systems" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/digital-transformation-guide-for-modern-restaurants</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/restoranlar-icin-dijitallesme-rehberi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/digital-transformation-guide-for-modern-restaurants" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/digital-transformation-guide-for-modern-restaurants" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/qr-payments-and-tipping-systems-for-businesses</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeler-icin-qr-kodlu-odeme-ve-bahsis-sistemleri" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/qr-payments-and-tipping-systems-for-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/qr-payments-and-tipping-systems-for-businesses" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform" />
   </url>
 
   <!-- 4. Sektörel Çözüm Sayfaları -->

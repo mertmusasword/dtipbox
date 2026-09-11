@@ -42,6 +42,7 @@ function writeStaticRoute(routePath: string, options: {
   modifiedTime?: string;
   authorName?: string;
   jsonLd?: any[];
+  alternateLanguages?: { lang: string; url: string }[];
   contentHtml: string;
 }) {
   const targetDir = path.join(DIST_DIR, routePath);
@@ -67,9 +68,18 @@ function writeStaticRoute(routePath: string, options: {
     html = html.replace('</head>', `<link rel="canonical" href="${options.canonicalUrl}" />\n</head>`);
   }
 
+  // 3B. Alternate Hreflang Tags
+  let alternateHreflangs = '';
+  if (options.alternateLanguages && options.alternateLanguages.length > 0) {
+    alternateHreflangs = options.alternateLanguages
+      .map(({ lang, url }) => `<link rel="alternate" hreflang="${lang}" href="${url}" />`)
+      .join('\n    ');
+  }
+
   // 4. Open Graph & Twitter
   const extraMetas = `
-    <!-- Dynamic Pre-rendered Open Graph -->
+    <!-- Dynamic Pre-rendered Open Graph & Alternate Links -->
+    ${alternateHreflangs}
     <meta property="og:title" content="${options.title}" />
     <meta property="og:description" content="${options.description}" />
     <meta property="og:url" content="${options.canonicalUrl}" />
@@ -163,11 +173,32 @@ writeStaticRoute('blog', {
 // 2. GENERATE /blog/:slug/index.html
 // =============================================================================
 BLOG_POSTS.forEach((post) => {
+  const isEn = post.language === 'en';
+  const alternateLanguages: { lang: string; url: string }[] = [];
+  if (post.alternateSlugs) {
+    if (post.alternateSlugs.tr) {
+      alternateLanguages.push({
+        lang: 'tr',
+        url: `https://www.naponi.com/blog/${post.alternateSlugs.tr}`,
+      });
+    }
+    if (post.alternateSlugs.en) {
+      alternateLanguages.push({
+        lang: 'en',
+        url: `https://www.naponi.com/blog/${post.alternateSlugs.en}`,
+      });
+      alternateLanguages.push({
+        lang: 'x-default',
+        url: `https://www.naponi.com/blog/${post.alternateSlugs.en}`,
+      });
+    }
+  }
+
   const jsonLd: any[] = [
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://www.naponi.com/' },
+        { '@type': 'ListItem', position: 1, name: isEn ? 'Home' : 'Ana Sayfa', item: 'https://www.naponi.com/' },
         { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.naponi.com/blog' },
         { '@type': 'ListItem', position: 3, name: post.category, item: `https://www.naponi.com/blog/category/${encodeURIComponent(post.category)}` },
         { '@type': 'ListItem', position: 4, name: post.title, item: post.canonicalUrl },
@@ -181,6 +212,7 @@ BLOG_POSTS.forEach((post) => {
       url: post.canonicalUrl,
       datePublished: post.datePublished,
       dateModified: post.dateModified,
+      inLanguage: post.language,
       author: {
         '@type': 'Organization',
         name: post.author.name,
@@ -218,7 +250,7 @@ BLOG_POSTS.forEach((post) => {
   const faqHtml = post.faq
     ? `
       <section style="margin-top: 3rem;">
-        <h2>Sıkça Sorulan Sorular</h2>
+        <h2>${isEn ? 'Frequently Asked Questions' : 'Sıkça Sorulan Sorular'}</h2>
         ${post.faq
           .map(
             (f) => `
@@ -236,21 +268,21 @@ BLOG_POSTS.forEach((post) => {
   const contentHtml = `
     <main class="blog-container" style="padding-top: 5rem; padding-bottom: 5rem;">
       <nav aria-label="Breadcrumb">
-        <a href="/">Ana Sayfa</a> &gt; <a href="/blog">Blog</a> &gt; <a href="/blog/category/${encodeURIComponent(post.category)}">${post.category}</a> &gt; <span>${post.title}</span>
+        <a href="/">${isEn ? 'Home' : 'Ana Sayfa'}</a> &gt; <a href="/blog">Blog</a> &gt; <a href="/blog/category/${encodeURIComponent(post.category)}">${post.category}</a> &gt; <span>${post.title}</span>
       </nav>
       <header class="article-header" style="margin-top: 2rem;">
         <span class="blog-card-category">${post.category}</span>
         <h1 class="article-title">${post.title}</h1>
         <p class="article-lead">${post.excerpt}</p>
         <div style="color: #94a3b8; font-size: 0.9rem;">
-          Yazar: ${post.author.name} • Yayın Tarihi: ${post.datePublished} • ${post.readingTime}
+          ${isEn ? `Author: ${post.author.name} • Published: ${post.datePublished} • ${post.readingTime}` : `Yazar: ${post.author.name} • Yayın Tarihi: ${post.datePublished} • ${post.readingTime}`}
         </div>
       </header>
       <article class="article-body">
         ${post.content}
         ${faqHtml}
         <div style="margin-top: 3rem; text-align: center;">
-          <a href="/register" class="home-btn-primary">İşletmenizde Dijital Bahşişe Başlayın &rarr;</a>
+          <a href="/register" class="home-btn-primary">${isEn ? 'Start Accepting Digital Tips Today &rarr;' : 'İşletmenizde Dijital Bahşişe Başlayın &rarr;'}</a>
         </div>
       </article>
     </main>
@@ -265,6 +297,7 @@ BLOG_POSTS.forEach((post) => {
     modifiedTime: post.dateModified,
     authorName: post.author.name,
     jsonLd,
+    alternateLanguages,
     contentHtml,
   });
 });
@@ -418,15 +451,29 @@ Object.values(SEO_TOOLS).forEach((tool) => {
 function generateDynamicSitemap() {
   const today = new Date().toISOString().split('T')[0];
 
-  const blogUrls = BLOG_POSTS.map(
-    (post) => `  <url>
+  const blogUrls = BLOG_POSTS.map((post) => {
+    let xhtmlLinks = '';
+    if (post.alternateSlugs) {
+      if (post.alternateSlugs.tr) {
+        xhtmlLinks += `\n    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/${post.alternateSlugs.tr}" />`;
+      }
+      if (post.alternateSlugs.en) {
+        xhtmlLinks += `\n    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/${post.alternateSlugs.en}" />`;
+        xhtmlLinks += `\n    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/${post.alternateSlugs.en}" />`;
+      }
+    } else {
+      xhtmlLinks += `\n    <xhtml:link rel="alternate" hreflang="${post.language}" href="${post.canonicalUrl}" />`;
+    }
+
+    const isPillar = post.slug.includes('what-is-digital-tipping') || post.slug.includes('dijital-bahsis-nedir');
+
+    return `  <url>
     <loc>${post.canonicalUrl}</loc>
     <lastmod>${post.dateModified || post.datePublished || today}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>${post.isPillar ? '0.9' : '0.85'}</priority>
-    <xhtml:link rel="alternate" hreflang="tr" href="${post.canonicalUrl}" />
-  </url>`
-  ).join('\n');
+    <priority>${isPillar ? '0.9' : '0.85'}</priority>${xhtmlLinks}
+  </url>`;
+  }).join('\n');
 
   const sectorUrls = Object.values(SECTOR_SOLUTIONS).map(
     (sector) => `  <url>

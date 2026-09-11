@@ -17,6 +17,7 @@ export interface SeoHeadProps {
   keywords?: string[];
   breadcrumbs?: BreadcrumbItem[];
   faqSchema?: { question: string; answer: string }[];
+  alternateLanguages?: { lang: string; url: string }[];
   noindex?: boolean;
 }
 
@@ -57,6 +58,7 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
   keywords,
   breadcrumbs,
   faqSchema,
+  alternateLanguages,
   noindex = false,
 }) => {
   useEffect(() => {
@@ -74,6 +76,20 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
 
     // 4. Canonical URL
     updateOrCreateCanonical(canonicalUrl);
+
+    // 4B. Alternate Hreflang Tags
+    if (alternateLanguages && alternateLanguages.length > 0) {
+      alternateLanguages.forEach(({ lang, url }) => {
+        let link = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) as HTMLLinkElement | null;
+        if (!link) {
+          link = document.createElement('link');
+          link.setAttribute('rel', 'alternate');
+          link.setAttribute('hreflang', lang);
+          document.head.appendChild(link);
+        }
+        link.setAttribute('href', url);
+      });
+    }
 
     // 5. Open Graph Meta Tags
     updateOrCreateMeta('og:title', title, true);
@@ -193,6 +209,7 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
     keywords,
     breadcrumbs,
     faqSchema,
+    alternateLanguages,
     noindex,
   ]);
 

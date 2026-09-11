@@ -42,7 +42,7 @@ import { SupportTicketModal } from '../../components/SupportTicketModal';
 import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Mobile Nav Drawer State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -843,34 +843,44 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="articles">
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Sektör Rehberleri & Bilgi Merkezi</span>
-            <h2 className="home-section-title">Dijital Bahşiş ve Hizmet Sektörü Rehberleri</h2>
+            <span className="home-section-tag">
+              {language === 'tr' ? 'Sektör Rehberleri & Bilgi Merkezi' : 'Industry Guides & Insights'}
+            </span>
+            <h2 className="home-section-title">
+              {language === 'tr'
+                ? 'Dijital Bahşiş ve Hizmet Sektörü Rehberleri'
+                : 'Digital Tipping & Hospitality Operational Guides'}
+            </h2>
             <p className="home-section-desc">
-              Restoran, kafe ve otellerde temassız bahşiş yönetimi, personel motivasyonu ve yeni nesil ödeme teknolojileri hakkında en güncel yazılarımız.
+              {language === 'tr'
+                ? 'Restoran, kafe ve otellerde temassız bahşiş yönetimi, personel motivasyonu ve yeni nesil ödeme teknolojileri hakkında en güncel yazılarımız.'
+                : 'Actionable strategies for restaurants, cafes, and hotels on contactless tipping, tip pool fairness, and frontline team retention.'}
             </p>
           </div>
 
           <div className="blog-posts-grid" style={{ marginBottom: '2.5rem' }}>
-            {BLOG_POSTS.slice(0, 3).map((post) => (
-              <article key={post.slug} className="blog-card">
-                <div className="blog-card-category">{post.category}</div>
-                <h3 className="blog-card-title">
-                  <Link to={`/blog/${post.slug}`}>{post.title}</Link>
-                </h3>
-                <p className="blog-card-excerpt">{post.excerpt}</p>
-                <div className="blog-card-footer">
-                  <span>{post.readingTime}</span>
-                  <Link to={`/blog/${post.slug}`} className="blog-card-readmore">
-                    Devamını Oku &rarr;
-                  </Link>
-                </div>
-              </article>
-            ))}
+            {BLOG_POSTS.filter((p) => p.language === (language === 'tr' ? 'tr' : 'en'))
+              .slice(0, 3)
+              .map((post) => (
+                <article key={post.slug} className="blog-card">
+                  <div className="blog-card-category">{post.category}</div>
+                  <h3 className="blog-card-title">
+                    <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+                  </h3>
+                  <p className="blog-card-excerpt">{post.excerpt}</p>
+                  <div className="blog-card-footer">
+                    <span>{post.readingTime}</span>
+                    <Link to={`/blog/${post.slug}`} className="blog-card-readmore">
+                      {language === 'tr' ? 'Devamını Oku →' : 'Read Article →'}
+                    </Link>
+                  </div>
+                </article>
+              ))}
           </div>
 
           <div style={{ textAlign: 'center' }}>
             <Link to="/blog" className="home-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.75rem' }}>
-              <span>Tüm Rehberleri ve Makaleleri İnceleyin</span>
+              <span>{language === 'tr' ? 'Tüm Rehberleri ve Makaleleri İnceleyin' : 'Explore All Guides & Articles'}</span>
               <ArrowRight size={16} />
             </Link>
           </div>

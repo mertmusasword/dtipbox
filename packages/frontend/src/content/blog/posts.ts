@@ -34,6 +34,8 @@ export interface BlogPost {
   isFeatured: boolean;
   faq?: BlogFaqItem[];
   relatedSlugs: string[];
+  translationGroup?: string;
+  alternateSlugs?: Record<string, string>;
 }
 
 export const BLOG_CATEGORIES = [
@@ -55,7 +57,7 @@ export const DEFAULT_AUTHOR: BlogAuthor = {
   bio: 'Naponi içerik ekibi; restoran, otel ve hizmet işletmelerinde dijital ödeme sistemleri, temassız bahşiş modelleri ve personel yönetimi konularında pratik ve uygulanabilir rehberler hazırlar.',
 };
 
-export const BLOG_POSTS: BlogPost[] = [
+export const BLOG_POSTS_TR: BlogPost[] = [
   // ===========================================================================
   // 1. PILLAR CONTENT: Dijital Bahşiş Nedir? İşletmeler İçin Dijital Bahşiş Rehberi
   // ===========================================================================
@@ -1188,3 +1190,40 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
 ];
+
+import { BLOG_POSTS_EN, BLOG_CATEGORIES_EN, DEFAULT_AUTHOR_EN } from './posts-en';
+export { BLOG_POSTS_EN, BLOG_CATEGORIES_EN, DEFAULT_AUTHOR_EN };
+
+const TRANSLATION_MAP_TR_EN: Record<string, string> = {
+  'dijital-bahsis-nedir-isletmeler-icin-rehber': 'what-is-digital-tipping-guide-for-businesses',
+  'qr-kod-ile-bahsis-nasil-alinir': 'how-to-accept-tips-with-qr-codes',
+  'restoranlarda-dijital-bahsis-sistemi-nasil-kurulur': 'how-to-set-up-digital-tipping-for-restaurants',
+  'kafelerde-qr-kod-ile-bahsis-alma-sistemi': 'qr-code-tipping-system-for-cafes',
+  'otellerde-dijital-bahsis-sistemi-nasil-kullanilir': 'digital-tipping-solutions-for-hotels',
+  'garsonlar-icin-dijital-bahsis-sistemi-nedir': 'digital-tipping-guide-for-waiters-and-servers',
+  'nakit-bahsis-mi-dijital-bahsis-mi': 'cash-tips-vs-digital-tips-comparison',
+  'qr-kod-ile-bahsis-sisteminin-avantajlari-ve-dezavantajlari': 'pros-and-cons-of-qr-code-tipping',
+  'isletmeler-icin-qr-kod-kullanim-alanlari': 'qr-code-use-cases-for-hospitality-businesses',
+  'restoranlarda-musteri-deneyimini-gelistirmenin-yollari': 'proven-ways-to-improve-restaurant-guest-experience',
+  'calisan-bahsislerini-yonetmenin-yollari': 'how-to-manage-staff-tips-individual-qr-vs-tip-pooling',
+  'dijital-bahsis-sisteminde-guvenlik-nasil-saglanir': 'security-in-digital-tipping-systems',
+  'restoranlar-icin-dijitallesme-rehberi': 'digital-transformation-guide-for-modern-restaurants',
+  'isletmeler-icin-qr-kodlu-odeme-ve-bahsis-sistemleri': 'qr-payments-and-tipping-systems-for-businesses',
+  'isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz': 'how-to-choose-the-right-digital-tipping-platform',
+};
+
+BLOG_POSTS_TR.forEach((p) => {
+  const enSlug = TRANSLATION_MAP_TR_EN[p.slug];
+  if (enSlug) {
+    p.alternateSlugs = { en: enSlug, tr: p.slug };
+  }
+});
+
+BLOG_POSTS_EN.forEach((p) => {
+  const trSlug = Object.keys(TRANSLATION_MAP_TR_EN).find((k) => TRANSLATION_MAP_TR_EN[k] === p.slug);
+  if (trSlug) {
+    p.alternateSlugs = { tr: trSlug, en: p.slug };
+  }
+});
+
+export const BLOG_POSTS: BlogPost[] = [...BLOG_POSTS_TR, ...BLOG_POSTS_EN];

@@ -55,6 +55,16 @@ export const BlogDetailPage: React.FC = () => {
     }
   };
 
+  const isEn = post.language === 'en';
+  const alternateLangs = post.alternateSlugs
+    ? Object.entries(post.alternateSlugs).map(([lang, s]) => ({
+        lang,
+        url: `https://www.naponi.com/blog/${s}`,
+      }))
+    : [];
+
+  const alternatePostSlug = isEn ? post.alternateSlugs?.tr : post.alternateSlugs?.en;
+
   return (
     <div className="home-wrapper">
       <SeoHead
@@ -67,11 +77,12 @@ export const BlogDetailPage: React.FC = () => {
         authorName={post.author.name}
         keywords={[post.targetKeyword, ...post.secondaryKeywords]}
         breadcrumbs={[
-          { name: 'Ana Sayfa', url: 'https://www.naponi.com/' },
+          { name: isEn ? 'Home' : 'Ana Sayfa', url: 'https://www.naponi.com/' },
           { name: 'Blog', url: 'https://www.naponi.com/blog' },
           { name: post.category, url: `https://www.naponi.com/blog/category/${encodeURIComponent(post.category)}` },
           { name: post.title, url: post.canonicalUrl },
         ]}
+        alternateLanguages={alternateLangs}
         faqSchema={post.faq}
       />
 
@@ -82,15 +93,15 @@ export const BlogDetailPage: React.FC = () => {
             <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
           </Link>
           <div className="home-nav-actions">
-            <Link to="/blog" className="home-btn-ghost">Tüm Yazılar</Link>
-            <Link to="/tools/tip-calculator" className="home-btn-ghost">Bahşiş Hesaplayıcı</Link>
-            <Link to="/login" className="home-btn-ghost">Giriş</Link>
+            <Link to="/blog" className="home-btn-ghost">{isEn ? 'All Articles' : 'Tüm Yazılar'}</Link>
+            <Link to="/tools/tip-calculator" className="home-btn-ghost">{isEn ? 'Tip Calculator' : 'Bahşiş Hesaplayıcı'}</Link>
+            <Link to="/login" className="home-btn-ghost">{isEn ? 'Log in' : 'Giriş'}</Link>
             <Link
               to="/register"
               className="home-btn-primary"
               onClick={() => trackBlogCtaClick(`blog_detail_nav_${post.slug}`, '/register')}
             >
-              Hemen Başlayın <ArrowRight size={16} />
+              {isEn ? 'Get Started' : 'Hemen Başlayın'} <ArrowRight size={16} />
             </Link>
           </div>
         </nav>
@@ -99,7 +110,7 @@ export const BlogDetailPage: React.FC = () => {
       <main className="blog-container" style={{ paddingTop: '7.5rem', paddingBottom: '5rem' }}>
         {/* Breadcrumb Navigation */}
         <nav className="blog-breadcrumbs" aria-label="Breadcrumb">
-          <Link to="/">Ana Sayfa</Link>
+          <Link to="/">{isEn ? 'Home' : 'Ana Sayfa'}</Link>
           <span>/</span>
           <Link to="/blog">Blog</Link>
           <span>/</span>
@@ -108,11 +119,31 @@ export const BlogDetailPage: React.FC = () => {
           <span className="current">{post.title}</span>
         </nav>
 
-        {/* Back Link */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        {/* Back Link & Language Alternate Pill */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
           <Link to="/blog" style={{ color: '#94a3b8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem' }}>
-            <ArrowLeft size={16} /> Blog Ana Sayfasına Dön
+            <ArrowLeft size={16} /> {isEn ? 'Back to Blog Index' : 'Blog Ana Sayfasına Dön'}
           </Link>
+          {alternatePostSlug && (
+            <Link
+              to={`/blog/${alternatePostSlug}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '6px 14px',
+                borderRadius: '999px',
+                fontSize: '0.84rem',
+                fontWeight: 600,
+                background: 'rgba(99, 102, 241, 0.15)',
+                color: '#a5b4fc',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+                textDecoration: 'none',
+              }}
+            >
+              {isEn ? '🇹🇷 Bu makaleyi Türkçe oku' : '🇬🇧 Read this guide in English'} &rarr;
+            </Link>
+          )}
         </div>
 
         {/* Article Header */}
@@ -136,12 +167,12 @@ export const BlogDetailPage: React.FC = () => {
             </div>
 
             <div className="article-meta-details">
-              <span title="Yayın Tarihi">
+              <span title="Date">
                 <Calendar size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
                 {post.datePublished}
               </span>
               <span>•</span>
-              <span title="Tahmini Okuma Süresi">
+              <span title="Reading Time">
                 <Clock size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
                 {post.readingTime}
               </span>
@@ -149,10 +180,10 @@ export const BlogDetailPage: React.FC = () => {
                 type="button"
                 className="article-share-btn"
                 onClick={handleShare}
-                title="Yazıyı Paylaş"
+                title="Share"
               >
                 {copied ? <Check size={14} /> : <Share2 size={14} />}
-                <span>{copied ? 'Kopyalandı!' : 'Paylaş'}</span>
+                <span>{isEn ? (copied ? 'Copied!' : 'Share') : (copied ? 'Kopyalandı!' : 'Paylaş')}</span>
               </button>
             </div>
           </div>
@@ -166,7 +197,9 @@ export const BlogDetailPage: React.FC = () => {
 
         {/* Tags */}
         <div className="article-tags-wrapper">
-          <span style={{ fontSize: '0.88rem', color: '#94a3b8', marginRight: '0.5rem' }}>Etiketler:</span>
+          <span style={{ fontSize: '0.88rem', color: '#94a3b8', marginRight: '0.5rem' }}>
+            {isEn ? 'Tags:' : 'Etiketler:'}
+          </span>
           {post.tags.map((tag) => (
             <span key={tag} className="article-tag-item">
               #{tag}
@@ -190,9 +223,9 @@ export const BlogDetailPage: React.FC = () => {
         {post.faq && post.faq.length > 0 && (
           <section style={{ marginTop: '4rem' }}>
             <div style={{ marginBottom: '1.75rem' }}>
-              <span className="home-section-tag">Sıkça Sorulan Sorular</span>
+              <span className="home-section-tag">{isEn ? 'FAQ' : 'Sıkça Sorulan Sorular'}</span>
               <h2 style={{ fontSize: '1.75rem', color: '#fff', marginTop: '0.5rem' }}>
-                Bu Konu Hakkında Merak Edilenler
+                {isEn ? 'Frequently Asked Questions' : 'Bu Konu Hakkında Merak Edilenler'}
               </h2>
             </div>
 
@@ -216,23 +249,27 @@ export const BlogDetailPage: React.FC = () => {
 
         {/* In-Article Conversion Banner */}
         <div className="blog-cta-box" style={{ marginTop: '4.5rem' }}>
-          <h3>İşletmenizde Dijital Bahşişe Geçin</h3>
+          <h3>{isEn ? 'Empower Your Venue with Digital Tipping' : 'İşletmenizde Dijital Bahşişe Geçin'}</h3>
           <p>
-            Müşterileriniz nakitsiz kalsa dahi ekibiniz hak ettiği bahşişi eksiksiz alsın. Donanım maliyeti olmadan 2 dakikada ücretsiz kaydolun.
+            {isEn
+              ? 'Ensure your team never misses out on gratuities when guests carry no cash. Zero hardware costs, 2-minute setup.'
+              : 'Müşterileriniz nakitsiz kalsa dahi ekibiniz hak ettiği bahşişi eksiksiz alsın. Donanım maliyeti olmadan 2 dakikada ücretsiz kaydolun.'}
           </p>
           <Link
             to="/register"
             className="blog-btn-cta"
             onClick={() => trackBlogCtaClick(`blog_article_cta_${post.slug}`, '/register')}
           >
-            Hemen Ücretsiz Başlayın &rarr;
+            {isEn ? 'Get Started Free →' : 'Hemen Ücretsiz Başlayın →'}
           </Link>
         </div>
 
         {/* Related Articles */}
         {relatedPosts.length > 0 && (
           <section style={{ marginTop: '5rem' }}>
-            <h3 style={{ fontSize: '1.5rem', color: '#fff', marginBottom: '1.5rem' }}>İlgili Diğer Rehberler</h3>
+            <h3 style={{ fontSize: '1.5rem', color: '#fff', marginBottom: '1.5rem' }}>
+              {isEn ? 'Related Guides & Insights' : 'İlgili Diğer Rehberler'}
+            </h3>
             <div className="blog-posts-grid">
               {relatedPosts.map((rp) => (
                 <article key={rp.slug} className="blog-card">
@@ -248,8 +285,12 @@ export const BlogDetailPage: React.FC = () => {
                   <p className="blog-card-excerpt">{rp.excerpt}</p>
                   <div className="blog-card-footer">
                     <span>{rp.readingTime}</span>
-                    <Link to={`/blog/${rp.slug}`} className="blog-card-readmore">
-                      Devamını Oku &rarr;
+                    <Link
+                      to={`/blog/${rp.slug}`}
+                      className="blog-card-readmore"
+                      onClick={() => trackBlogRelatedArticleClick(post.slug, rp.slug)}
+                    >
+                      {isEn ? 'Read Article →' : 'Devamını Oku →'}
                     </Link>
                   </div>
                 </article>
