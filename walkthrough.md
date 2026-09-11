@@ -100,7 +100,7 @@ Test komutu: `npx tsx packages/backend/src/scripts/test-agreement-system.ts`
    * **Ticari Unvan:** `Naponi İnternet Alışveriş ve Mağazacılık İthalat İhracat Limited Şirketi`
    * **Vergi Kimlik No:** `6291105866`
    * **Kayıtlı Merkez / Adres:** `Bakırköy Dünya Ticaret Merkezi, Bakırköy / İstanbul, Türkiye`
-   * **İletişim:** `destek@naponi.com`
+   * **İletişim:** `info@naponi.com`
 2. **Kambiyo ve Sınır Ötesi Tahsilat:** İleride yurt dışından kartlı bahşiş alınması durumunda MASAK ve TCMB genelgeleri uyarınca kimlik teyidi (KYC) eşikleri incelenmelidir.
 3. **KVKK Yurtdışı Veri Aktarımı:** AWS/Vercel/Railway gibi yurt dışı bulut altyapıları kullanıldığında, KVKK m. 9 uyarınca taahhütname veya standart sözleşme bildirimi gerekebilmektedir.
 

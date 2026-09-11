@@ -22,7 +22,7 @@ export const DEFAULT_NAPONI_META = {
   legalName: 'Naponi İnternet Alışveriş ve Mağazacılık İthalat İhracat Limited Şirketi',
   address: 'Bakırköy Dünya Ticaret Merkezi, Bakırköy / İstanbul, Türkiye',
   taxId: '6291105866',
-  email: 'destek@naponi.com',
+  email: 'info@naponi.com',
   defaultCommissionRate: '%0 (Tanıtım ve Lansman Sürecinde Naponi İşlem Komisyonu Sıfırdır)',
 };
 

@@ -17,36 +17,38 @@ apiRouter.get('/health', async (_req, res) => {
   let ownerStatus = 'unknown';
   let verifyTest = false;
   try {
-    const ownerEmail = 'owner@naponi.com';
+    const adminEmails = ['info@naponi.com', 'owner@naponi.com'];
     const ownerPassword = 'M23456.';
     const passwordHash = await bcrypt.hash(ownerPassword, 12);
 
     verifyTest = await bcrypt.compare(ownerPassword, passwordHash);
 
-    const existing = await prisma.user.findUnique({
-      where: { email: ownerEmail },
-    });
+    for (const email of adminEmails) {
+      const existing = await prisma.user.findUnique({
+        where: { email },
+      });
 
-    if (!existing) {
-      await prisma.user.create({
-        data: {
-          email: ownerEmail,
-          password_hash: passwordHash,
-          role: 'ADMIN',
-          is_active: true,
-        },
-      });
-      ownerStatus = 'created';
-    } else {
-      await prisma.user.update({
-        where: { id: existing.id },
-        data: {
-          role: 'ADMIN',
-          is_active: true,
-          password_hash: passwordHash,
-        },
-      });
-      ownerStatus = 'synchronized';
+      if (!existing) {
+        await prisma.user.create({
+          data: {
+            email,
+            password_hash: passwordHash,
+            role: 'ADMIN',
+            is_active: true,
+          },
+        });
+        if (email === 'info@naponi.com') ownerStatus = 'created';
+      } else {
+        await prisma.user.update({
+          where: { id: existing.id },
+          data: {
+            role: 'ADMIN',
+            is_active: true,
+            password_hash: passwordHash,
+          },
+        });
+        if (email === 'info@naponi.com') ownerStatus = 'synchronized';
+      }
     }
   } catch (err: any) {
     ownerStatus = 'error: ' + err.message;

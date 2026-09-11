@@ -238,7 +238,7 @@ export const AdminSettingsPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="owner@naponi.com"
+                placeholder="info@naponi.com"
                 className="form-input"
               />
             </div>

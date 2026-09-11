@@ -21,7 +21,7 @@ export const env = {
   JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '7d',
 
   // Admin
-  ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'owner@naponi.com',
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'info@naponi.com',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'M23456.',
 
   // Stripe
