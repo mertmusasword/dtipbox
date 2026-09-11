@@ -6,7 +6,6 @@ import {
   AlertCircle,
   Copy,
   Check,
-  ExternalLink,
   Lock,
   X,
 } from 'lucide-react';
@@ -16,7 +15,7 @@ interface AgreementModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAccepted?: () => void;
-  forceRequired?: boolean; // When true, modal cannot be simply dismissed without accepting
+  forceRequired?: boolean;
 }
 
 export const AgreementModal: React.FC<AgreementModalProps> = ({
@@ -30,7 +29,6 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
   const [agreementData, setAgreementData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAcceptedLocally, setIsAcceptedLocally] = useState(false);
-  const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [acceptanceResult, setAcceptanceResult] = useState<any>(null);
   const [copiedHash, setCopiedHash] = useState(false);
 
@@ -43,7 +41,6 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
     if (isOpen) {
       fetchAgreement();
       setIsAcceptedLocally(false);
-      setIsScrolledToBottom(false);
       setAcceptanceResult(null);
       setError(null);
     }
@@ -68,15 +65,6 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
       );
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-    // User reached near bottom (within 40px)
-    if (scrollTop + clientHeight >= scrollHeight - 40) {
-      setIsScrolledToBottom(true);
     }
   };
 
@@ -117,31 +105,84 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm animate-in fade-in duration-200"
+      className="modal-overlay"
+      style={{
+        zIndex: 99999,
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(5, 10, 25, 0.85)',
+        backdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.25rem',
+      }}
       onClick={forceRequired ? undefined : onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+        className="modal-content"
+        style={{
+          maxWidth: '850px',
+          width: '100%',
+          maxHeight: '90vh',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: 'var(--bg-surface, #0f172a)',
+          border: '1px solid var(--border-color, rgba(255, 255, 255, 0.12))',
+          borderRadius: '18px',
+          boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.75)',
+          overflow: 'hidden',
+          padding: 0,
+          color: 'var(--text-primary, #f8fafc)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6" />
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            borderBottom: '1px solid var(--border-color, rgba(255, 255, 255, 0.1))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'rgba(255, 255, 255, 0.02)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '12px',
+                background: 'rgba(99, 102, 241, 0.15)',
+                color: 'var(--color-primary, #6366f1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <ShieldCheck size={24} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, letterSpacing: '-0.01em' }}>
                   Naponi İşletme Hizmet ve Kullanım Sözleşmesi
                 </h2>
                 {agreementData?.version && (
-                  <span className="px-2 py-0.5 text-xs font-semibold rounded-md bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  <span
+                    className="badge badge-info"
+                    style={{
+                      fontSize: '0.75rem',
+                      padding: '0.2rem 0.5rem',
+                      fontWeight: 700,
+                    }}
+                  >
                     v{agreementData.version.version}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary, #94a3b8)', margin: '0.2rem 0 0 0' }}>
                 Dijital Onay, Hukuki Yükümlülükler ve Elektronik İspat Kaydı (HMK m. 193)
               </p>
             </div>
@@ -150,185 +191,268 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
           {!forceRequired && (
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+              style={{
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: 'none',
+                color: 'var(--text-muted, #94a3b8)',
+                cursor: 'pointer',
+                padding: '0.45rem',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s',
+              }}
               aria-label="Kapat"
             >
-              <X className="w-5 h-5" />
+              <X size={20} />
             </button>
           )}
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-hidden p-6 flex flex-col min-h-0">
+        <div style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column' }}>
           {loading ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-16 gap-3">
-              <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-slate-500">Sözleşme yükleniyor...</p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', gap: '0.75rem' }}>
+              <div className="spinner" style={{ width: '32px', height: '32px' }} />
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Sözleşme yükleniyor...</p>
             </div>
           ) : error ? (
-            <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-semibold text-sm">Hata Oluştu</h4>
-                <p className="text-sm mt-1">{error}</p>
-                <button
-                  onClick={fetchAgreement}
-                  className="mt-3 text-xs font-semibold underline hover:no-underline"
-                >
-                  Yeniden Dene
-                </button>
+            <div style={{ padding: '1.25rem', borderRadius: '12px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <AlertCircle size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '0.9rem' }}>Hata Oluştu</h4>
+                  <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.5 }}>{error}</p>
+                  <button
+                    type="button"
+                    onClick={fetchAgreement}
+                    className="btn btn-secondary"
+                    style={{ marginTop: '0.85rem', fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+                  >
+                    Yeniden Dene
+                  </button>
+                </div>
               </div>
             </div>
           ) : acceptanceResult ? (
             /* Digital Confirmation Receipt Card */
-            <div className="flex-1 overflow-y-auto py-6 px-4 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 ring-8 ring-emerald-50 dark:ring-emerald-950/20">
-                <CheckCircle2 className="w-9 h-9" />
+            <div style={{ textAlign: 'center', padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  color: '#10b981',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem',
+                }}
+              >
+                <CheckCircle2 size={36} />
               </div>
-              <h3 className="text-xl font-bold mb-1">
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.4rem 0' }}>
                 Sözleşme Başarıyla Onaylandı
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mb-6">
-                Naponi İşletme Hizmet ve Kullanım Sözleşmesi elektronik imza ve zaman damgasıyla kayıt altına alınmıştır.
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto 1.5rem auto', lineHeight: 1.5 }}>
+                Naponi İşletme Hizmet ve Kullanım Sözleşmesi elektronik imza ve zaman damgasıyla güvenli olarak kayıt altına alınmıştır.
               </p>
 
-              <div className="w-full max-w-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70 rounded-xl p-5 text-left text-xs space-y-3 font-mono">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
-                  <span className="text-slate-500 font-sans font-medium">Doğrulama Protokolü:</span>
-                  <span className="font-semibold text-blue-600 dark:text-blue-400 font-sans">
-                    HMK m. 193 Kesin Delil
-                  </span>
+              <div
+                style={{
+                  width: '100%',
+                  maxWidth: '560px',
+                  background: 'var(--bg-input, rgba(255, 255, 255, 0.04))',
+                  border: '1px solid var(--border-color, rgba(255, 255, 255, 0.1))',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  textAlign: 'left',
+                  fontSize: '0.8rem',
+                  lineHeight: '1.8',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))', paddingBottom: '0.4rem', marginBottom: '0.5rem' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Hukuki Delil Niteliği:</span>
+                  <span style={{ fontWeight: 700, color: 'var(--color-primary, #6366f1)' }}>HMK m. 193 Kesin Delil</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-sans">Sözleşme Versiyonu:</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    v{acceptanceResult.acceptance?.version}
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Sözleşme Versiyonu:</span>
+                  <span style={{ fontWeight: 700 }}>v{acceptanceResult.acceptance?.version}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-sans">Onay Zamanı (UTC):</span>
-                  <span className="text-slate-800 dark:text-slate-200">
-                    {new Date(acceptanceResult.acceptance?.accepted_at).toLocaleString('tr-TR')}
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Onay Tarihi & Saati:</span>
+                  <span>{new Date(acceptanceResult.acceptance?.accepted_at).toLocaleString('tr-TR')}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-sans">Kaydedilen IP:</span>
-                  <span className="text-slate-800 dark:text-slate-200">
-                    {acceptanceResult.acceptance?.ip_address}
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Kaydedilen IP:</span>
+                  <code style={{ fontFamily: 'monospace' }}>{acceptanceResult.acceptance?.ip_address}</code>
                 </div>
-                <div>
-                  <span className="text-slate-500 font-sans block mb-1">Belge SHA-256 Kriptografik Hash:</span>
-                  <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2">
-                    <span className="truncate select-all text-[11px] text-slate-700 dark:text-slate-300">
+                <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))' }}>
+                  <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.2rem' }}>
+                    Belge SHA-256 Kriptografik Hash:
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '0.4rem 0.6rem', borderRadius: '6px' }}>
+                    <code style={{ fontFamily: 'monospace', fontSize: '0.72rem', flex: 1, wordBreak: 'break-all' }}>
                       {acceptanceResult.verification?.content_hash || acceptanceResult.acceptance?.content_hash}
-                    </span>
+                    </code>
                     <button
+                      type="button"
                       onClick={() => copyHash(acceptanceResult.verification?.content_hash || acceptanceResult.acceptance?.content_hash)}
-                      className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 shrink-0"
-                      title="Hash'i Kopyala"
+                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.2rem' }}
+                      title="Kopyala"
                     >
-                      {copiedHash ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedHash ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 flex gap-3">
-                <button
-                  onClick={onClose}
-                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition-all shadow-lg shadow-blue-500/25"
-                >
-                  Tamam, Devam Et
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-primary"
+                style={{ marginTop: '1.5rem', padding: '0.65rem 2rem' }}
+              >
+                Tamam, Devam Et
+              </button>
             </div>
           ) : (
             /* Agreement Reading & Confirmation View */
-            <>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
               {agreementData?.is_accepted ? (
-                <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div
+                  style={{
+                    padding: '0.75rem 1rem',
+                    marginBottom: '1rem',
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontSize: '0.82rem',
+                    color: '#10b981',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={18} />
                     <span>
-                      Bu sözleşme versiyonu (v{agreementData.version.version}) işletmeniz tarafından{' '}
-                      <strong>{new Date(agreementData.accepted_at).toLocaleDateString('tr-TR')}</strong> tarihinde dijital olarak kabul edilmiştir.
+                      Bu sözleşme versiyonu (v{agreementData.version?.version}) işletmeniz tarafından onaylanmıştır.
                     </span>
                   </div>
-                  <span className="font-mono text-[10px] bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded">
-                    Kabul Kaydı Aktif
-                  </span>
+                  <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>Kabul Kaydı Aktif</span>
                 </div>
               ) : (
-                <div className="mb-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
-                  <span>Lütfen sözleşme metnini sonuna kadar inceleyiniz.</span>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <Lock className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Elektronik İspat ve Onay Protokolü</span>
-                  </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontSize: '0.8rem',
+                    color: 'var(--text-muted)',
+                    marginBottom: '0.75rem',
+                  }}
+                >
+                  <span>Lütfen sözleşme maddelerini inceleyiniz.</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#f59e0b' }}>
+                    <Lock size={14} /> Elektronik Onay Protokolü
+                  </span>
                 </div>
               )}
 
-              {/* Scrollable Text View */}
+              {/* Scrollable Legal Content Area */}
               <div
                 ref={scrollRef}
-                onScroll={handleScroll}
-                className="flex-1 overflow-y-auto p-5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-sm leading-relaxed font-sans text-slate-800 dark:text-slate-200 selection:bg-blue-500/20"
-                style={{ scrollBehavior: 'smooth' }}
+                style={{
+                  flex: 1,
+                  minHeight: '340px',
+                  maxHeight: '420px',
+                  overflowY: 'auto',
+                  padding: '1.25rem',
+                  background: 'var(--bg-input, rgba(0, 0, 0, 0.25))',
+                  border: '1px solid var(--border-color, rgba(255, 255, 255, 0.1))',
+                  borderRadius: '12px',
+                  fontSize: '0.85rem',
+                  lineHeight: '1.7',
+                  color: 'var(--text-primary, #e2e8f0)',
+                  whiteSpace: 'pre-wrap',
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                }}
               >
-                <div className="whitespace-pre-wrap font-sans space-y-4">
-                  {agreementData?.content}
-                </div>
+                {agreementData?.content}
               </div>
 
               {/* Acceptance Actions */}
               {!agreementData?.is_accepted && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 space-y-4">
-                  <label className="flex items-start gap-3 cursor-pointer select-none group">
+                <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))' }}>
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.65rem',
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      color: 'var(--text-primary)',
+                      marginBottom: '1rem',
+                      lineHeight: '1.4',
+                    }}
+                  >
                     <input
                       type="checkbox"
                       checked={isAcceptedLocally}
                       onChange={(e) => setIsAcceptedLocally(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300 dark:border-slate-700 focus:ring-blue-500 focus:ring-2 cursor-pointer"
+                      style={{
+                        marginTop: '0.2rem',
+                        width: '18px',
+                        height: '18px',
+                        cursor: 'pointer',
+                        accentColor: 'var(--color-primary, #6366f1)',
+                      }}
                     />
-                    <span className="text-xs font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
-                      {MANDATORY_STATEMENT}
-                    </span>
+                    <span style={{ fontWeight: 600 }}>{MANDATORY_STATEMENT}</span>
                   </label>
 
-                  <div className="flex items-center justify-between gap-4">
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 max-w-sm">
-                      Onayınız ile birlikte IP adresiniz, tarayıcı bilgisi ve SHA-256 belge özeti HMK m. 193 uyarınca bağlayıcı kayıt altına alınır.
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, maxWidth: '420px', lineHeight: 1.4 }}>
+                      Onayınız ile birlikte IP adresiniz, cihaz bilgisi ve SHA-256 belge özeti HMK m. 193 uyarınca bağlayıcı kayıt altına alınır.
                     </p>
 
-                    <div className="flex items-center gap-3">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       {!forceRequired && (
                         <button
                           type="button"
                           onClick={onClose}
-                          className="px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                          className="btn btn-secondary"
+                          style={{ fontSize: '0.82rem', padding: '0.5rem 1rem' }}
                         >
-                          Vazgeç
+                          Kapat
                         </button>
                       )}
                       <button
                         type="button"
                         onClick={handleAccept}
                         disabled={!isAcceptedLocally || submitting}
-                        className={`px-5 py-2.5 rounded-xl font-medium text-xs transition-all flex items-center gap-2 ${
-                          isAcceptedLocally && !submitting
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25'
-                            : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
-                        }`}
+                        className="btn btn-primary"
+                        style={{
+                          fontSize: '0.82rem',
+                          padding: '0.5rem 1.25rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          opacity: !isAcceptedLocally || submitting ? 0.6 : 1,
+                          cursor: !isAcceptedLocally || submitting ? 'not-allowed' : 'pointer',
+                        }}
                       >
                         {submitting ? (
                           <>
-                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <div className="spinner" style={{ width: '14px', height: '14px' }} />
                             <span>Kaydediliyor...</span>
                           </>
                         ) : (
                           <>
-                            <ShieldCheck className="w-4 h-4" />
+                            <ShieldCheck size={16} />
                             <span>Sözleşmeyi Onayla</span>
                           </>
                         )}
@@ -337,7 +461,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                   </div>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>

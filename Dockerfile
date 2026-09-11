@@ -60,5 +60,5 @@ ENV PORT=3000
 ENV NODE_ENV=production
 EXPOSE 3000
 
-# Run migrations and start server
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=packages/backend/prisma/schema.prisma && node packages/backend/dist/index.js"]
+# Run migrations/db push and start server
+CMD ["sh", "-c", "npx prisma db push --schema=packages/backend/prisma/schema.prisma && node packages/backend/dist/index.js"]

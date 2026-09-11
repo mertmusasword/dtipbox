@@ -19,10 +19,98 @@ export function computeContentHash(content: string): string {
 }
 
 /**
+ * Ensure database tables exist automatically via raw SQL (Self-healing DDL)
+ */
+export async function ensureAgreementTablesExist(): Promise<void> {
+  try {
+    await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        CREATE TYPE "AgreementStatus" AS ENUM ('DRAFT', 'PUBLISHED', 'ARCHIVED');
+      EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+      DO $$ BEGIN
+        CREATE TYPE "AgreementType" AS ENUM ('MERCHANT_TERMS', 'PRIVACY_POLICY', 'KVKK_DISCLOSURE');
+      EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+      CREATE TABLE IF NOT EXISTS "agreements" (
+          "id" TEXT NOT NULL,
+          "code" TEXT NOT NULL,
+          "name" TEXT NOT NULL,
+          "type" "AgreementType" NOT NULL DEFAULT 'MERCHANT_TERMS',
+          "description" TEXT,
+          "is_active" BOOLEAN NOT NULL DEFAULT true,
+          "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT "agreements_pkey" PRIMARY KEY ("id")
+      );
+
+      CREATE TABLE IF NOT EXISTS "agreement_versions" (
+          "id" TEXT NOT NULL,
+          "agreement_id" TEXT NOT NULL,
+          "version" TEXT NOT NULL,
+          "title" TEXT NOT NULL,
+          "content_markdown" TEXT NOT NULL,
+          "content_hash" TEXT NOT NULL,
+          "status" "AgreementStatus" NOT NULL DEFAULT 'DRAFT',
+          "requires_reacceptance" BOOLEAN NOT NULL DEFAULT true,
+          "effective_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "published_at" TIMESTAMP(3),
+          "created_by_user_id" TEXT,
+          "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT "agreement_versions_pkey" PRIMARY KEY ("id")
+      );
+
+      CREATE TABLE IF NOT EXISTS "agreement_acceptances" (
+          "id" TEXT NOT NULL,
+          "business_id" TEXT NOT NULL,
+          "user_id" TEXT NOT NULL,
+          "agreement_version_id" TEXT NOT NULL,
+          "accepted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "ip_address" TEXT NOT NULL,
+          "user_agent" TEXT NOT NULL,
+          "content_hash" TEXT NOT NULL,
+          "snapshot_html" TEXT,
+          "statement" TEXT NOT NULL,
+          "metadata" JSONB,
+          CONSTRAINT "agreement_acceptances_pkey" PRIMARY KEY ("id")
+      );
+
+      CREATE UNIQUE INDEX IF NOT EXISTS "agreements_code_key" ON "agreements"("code");
+      CREATE INDEX IF NOT EXISTS "agreement_versions_status_idx" ON "agreement_versions"("status");
+      CREATE UNIQUE INDEX IF NOT EXISTS "agreement_versions_agreement_id_version_key" ON "agreement_versions"("agreement_id", "version");
+      CREATE INDEX IF NOT EXISTS "agreement_acceptances_business_id_idx" ON "agreement_acceptances"("business_id");
+      CREATE INDEX IF NOT EXISTS "agreement_acceptances_agreement_version_id_idx" ON "agreement_acceptances"("agreement_version_id");
+      CREATE INDEX IF NOT EXISTS "agreement_acceptances_accepted_at_idx" ON "agreement_acceptances"("accepted_at");
+      CREATE UNIQUE INDEX IF NOT EXISTS "agreement_acceptances_business_id_agreement_version_id_key" ON "agreement_acceptances"("business_id", "agreement_version_id");
+
+      DO $$ BEGIN
+        ALTER TABLE "agreement_versions" ADD CONSTRAINT "agreement_versions_agreement_id_fkey" FOREIGN KEY ("agreement_id") REFERENCES "agreements"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+      DO $$ BEGIN
+        ALTER TABLE "agreement_acceptances" ADD CONSTRAINT "agreement_acceptances_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "businesses"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+      DO $$ BEGIN
+        ALTER TABLE "agreement_acceptances" ADD CONSTRAINT "agreement_acceptances_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+      DO $$ BEGIN
+        ALTER TABLE "agreement_acceptances" ADD CONSTRAINT "agreement_acceptances_agreement_version_id_fkey" FOREIGN KEY ("agreement_version_id") REFERENCES "agreement_versions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN null; END $$;
+    `);
+  } catch (err) {
+    console.error('[AGREEMENT] Auto-migration execution error:', err);
+  }
+}
+
+/**
  * Initialize / Bootstrap the master Merchant Agreement and initial 1.0.0 published version
  */
 export async function bootstrapDefaultAgreement(): Promise<void> {
   try {
+    await ensureAgreementTablesExist();
+
     let agreement = await prisma.agreement.findUnique({
       where: { code: MERCHANT_SERVICE_AGREEMENT_CODE },
     });
@@ -76,21 +164,8 @@ export async function bootstrapDefaultAgreement(): Promise<void> {
  * Get active published agreement, optional interpolation for specific business
  */
 export async function getActiveAgreement(businessId?: string) {
-  const agreement = await prisma.agreement.findUnique({
-    where: { code: MERCHANT_SERVICE_AGREEMENT_CODE },
-    include: {
-      versions: {
-        where: { status: AgreementStatus.PUBLISHED },
-        orderBy: { effective_date: 'desc' },
-        take: 1,
-      },
-    },
-  });
-
-  if (!agreement || agreement.versions.length === 0) {
-    // If not seeded yet, run bootstrap and retry
-    await bootstrapDefaultAgreement();
-    const seeded = await prisma.agreement.findUnique({
+  try {
+    let agreement = await prisma.agreement.findUnique({
       where: { code: MERCHANT_SERVICE_AGREEMENT_CODE },
       include: {
         versions: {
@@ -100,13 +175,78 @@ export async function getActiveAgreement(businessId?: string) {
         },
       },
     });
-    if (!seeded || seeded.versions.length === 0) {
-      throw new Error('Aktif sözleşme versiyonu bulunamadı.');
+
+    if (!agreement || agreement.versions.length === 0) {
+      await bootstrapDefaultAgreement();
+      agreement = await prisma.agreement.findUnique({
+        where: { code: MERCHANT_SERVICE_AGREEMENT_CODE },
+        include: {
+          versions: {
+            where: { status: AgreementStatus.PUBLISHED },
+            orderBy: { effective_date: 'desc' },
+            take: 1,
+          },
+        },
+      });
     }
-    return formatAgreementResponse(seeded, seeded.versions[0], businessId);
+
+    if (agreement && agreement.versions.length > 0) {
+      return formatAgreementResponse(agreement, agreement.versions[0], businessId);
+    }
+  } catch (err: any) {
+    console.warn('[AGREEMENT] Database error in getActiveAgreement, attempting auto-fix:', err.message);
+    try {
+      await ensureAgreementTablesExist();
+      await bootstrapDefaultAgreement();
+      const retryAgreement = await prisma.agreement.findUnique({
+        where: { code: MERCHANT_SERVICE_AGREEMENT_CODE },
+        include: {
+          versions: {
+            where: { status: AgreementStatus.PUBLISHED },
+            orderBy: { effective_date: 'desc' },
+            take: 1,
+          },
+        },
+      });
+      if (retryAgreement && retryAgreement.versions.length > 0) {
+        return formatAgreementResponse(retryAgreement, retryAgreement.versions[0], businessId);
+      }
+    } catch (retryErr) {
+      console.error('[AGREEMENT] Retry failed:', retryErr);
+    }
   }
 
-  return formatAgreementResponse(agreement, agreement.versions[0], businessId);
+  // Graceful Fallback if DB table is completely unreachable
+  const defaultHash = computeContentHash(MERCHANT_AGREEMENT_RAW_TEMPLATE);
+  const fallbackInterpolated = interpolateAgreementText(
+    MERCHANT_AGREEMENT_RAW_TEMPLATE,
+    { businessName: 'İşletme' },
+    MERCHANT_SERVICE_AGREEMENT_INITIAL_VERSION
+  );
+
+  return {
+    agreement: {
+      id: 'fallback-agr-id',
+      code: MERCHANT_SERVICE_AGREEMENT_CODE,
+      name: 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi',
+      type: 'MERCHANT_TERMS',
+    },
+    version: {
+      id: 'fallback-ver-id',
+      version: MERCHANT_SERVICE_AGREEMENT_INITIAL_VERSION,
+      title: 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi',
+      effective_date: new Date().toISOString(),
+      published_at: new Date().toISOString(),
+      content_hash: defaultHash,
+      requires_reacceptance: true,
+    },
+    content: fallbackInterpolated,
+    raw_content_hash: defaultHash,
+    mandatory_statement: MANDATORY_ACCEPTANCE_STATEMENT,
+    is_accepted: false,
+    accepted_at: null,
+    acceptance_id: null,
+  };
 }
 
 async function formatAgreementResponse(
