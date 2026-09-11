@@ -1,4 +1,6 @@
 import { Router, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { env } from '../config/env';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import {
   getActiveAgreement,
@@ -32,13 +34,29 @@ router.get('/active', async (req: AuthRequest, res: Response): Promise<void> => 
     const authHeader = req.headers.authorization;
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      try {
-        await new Promise<void>((resolve) => {
-          authenticate(req, res, () => resolve());
-        });
-        businessId = req.user?.businessId;
-      } catch {
-        // Continue unauthenticated if token invalid
+      const token = authHeader.split(' ')[1];
+      if (token && token !== 'null' && token !== 'undefined') {
+        try {
+          const decoded = jwt.verify(token, env.JWT_SECRET) as {
+            userId: string;
+            email: string;
+            role: string;
+          };
+          if (decoded?.userId) {
+            const user = await prisma.user.findUnique({
+              where: { id: decoded.userId },
+              include: {
+                business: { select: { id: true } },
+                employee: { select: { id: true, business_id: true } },
+              },
+            });
+            if (user?.is_active) {
+              businessId = user.business?.id || user.employee?.business_id;
+            }
+          }
+        } catch {
+          // Token expired or invalid - silently continue as unauthenticated guest
+        }
       }
     }
 

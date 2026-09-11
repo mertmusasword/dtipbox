@@ -283,6 +283,7 @@ export const RegisterPage: React.FC = () => {
 
         <AgreementModal
           isOpen={showAgreementModal}
+          isRegistrationFlow={true}
           onClose={() => setShowAgreementModal(false)}
           onAccepted={() => {
             setAcceptedAgreement(true);

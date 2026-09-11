@@ -16,6 +16,7 @@ interface AgreementModalProps {
   onClose: () => void;
   onAccepted?: () => void;
   forceRequired?: boolean;
+  isRegistrationFlow?: boolean;
 }
 
 export const AgreementModal: React.FC<AgreementModalProps> = ({
@@ -23,6 +24,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
   onClose,
   onAccepted,
   forceRequired = false,
+  isRegistrationFlow = false,
 }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -70,6 +72,14 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
 
   const handleAccept = async () => {
     if (!isAcceptedLocally) return;
+
+    // During registration, account is not created yet; acceptance is passed in the register payload
+    if (isRegistrationFlow) {
+      if (onAccepted) onAccepted();
+      onClose();
+      return;
+    }
+
     if (!agreementData?.version?.id) return;
 
     try {
@@ -449,6 +459,11 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                           <>
                             <div className="spinner" style={{ width: '14px', height: '14px' }} />
                             <span>Kaydediliyor...</span>
+                          </>
+                        ) : isRegistrationFlow ? (
+                          <>
+                            <Check size={16} />
+                            <span>Okudum, Kabul Ediyorum</span>
                           </>
                         ) : (
                           <>

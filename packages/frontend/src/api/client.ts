@@ -40,7 +40,11 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshErr) {
         setAccessToken(null);
-        if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/tip/')) {
+        if (
+          window.location.pathname !== '/login' &&
+          window.location.pathname !== '/register' &&
+          !window.location.pathname.startsWith('/tip/')
+        ) {
           window.location.href = '/login';
         }
       }
