@@ -134,13 +134,16 @@ export const RegisterPage: React.FC = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">{t('auth.countryLabel')}</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'flex-start' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ display: 'block', marginBottom: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {t('auth.countryLabel')}
+              </label>
               <select
                 value={formData.country}
                 onChange={(e) => handleCountryChange(e.target.value)}
                 className="form-select"
+                style={{ width: '100%', height: '44px' }}
               >
                 {countries.map((c) => (
                   <option key={c.code} value={c.code}>
@@ -150,8 +153,10 @@ export const RegisterPage: React.FC = () => {
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">{t('auth.currencyLabel')}</label>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ display: 'block', marginBottom: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {t('auth.currencyLabel')}
+              </label>
               <input
                 type="text"
                 required
@@ -159,6 +164,7 @@ export const RegisterPage: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, currency: e.target.value.toUpperCase() })}
                 placeholder="USD, EUR, TRY..."
                 className="form-input"
+                style={{ width: '100%', height: '44px' }}
               />
             </div>
           </div>
