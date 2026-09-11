@@ -177,6 +177,7 @@ export async function createTip(data: CreateTipRequest) {
       id: tip.id,
       amount: tip.amount,
       currency: tip.currency,
+      payment_method: tip.payment_method,
       status: paymentResult.status,
       created_at: tip.created_at,
     },

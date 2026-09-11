@@ -43,7 +43,7 @@ const tr = {
     comingSoon: 'Çok Yakında',
     inDevelopment: 'Geliştiriliyor',
     verified: 'Doğrulandı',
-    unverified: 'Doğrulanmadı',
+    unverified: 'Doğrulama Bekliyor',
   },
   nav: {
     home: 'Anasayfa',

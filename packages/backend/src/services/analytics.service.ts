@@ -32,6 +32,7 @@ export async function getBusinessAnalytics(businessId: string) {
         amount: true,
         currency: true,
         payment_method: true,
+        payment_status: true,
         employee_id: true,
         table_id: true,
         created_at: true,
@@ -178,6 +179,7 @@ export async function getBusinessAnalytics(businessId: string) {
       amount: Number(t.amount),
       currency: t.currency,
       payment_method: t.payment_method,
+      status: t.payment_status,
       created_at: t.created_at,
     })),
   };

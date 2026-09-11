@@ -12,6 +12,7 @@ import * as analyticsService from '../services/analytics.service';
 import * as auditService from '../services/audit.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType } from '@prisma/client';
 import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
+import prisma from '../utils/prisma';
 
 const router = Router();
 
@@ -434,6 +435,38 @@ router.get('/audit-logs', async (req: AuthRequest, res, next) => {
     const limit = Math.min(100, Math.max(1, rawLimit));
     const logs = await auditService.getAuditLogs(req.user!.businessId!, page, limit);
     res.json({ success: true, data: logs });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Verify Tip (Confirm incoming IBAN bank transfer) ---
+router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
+  try {
+    const tipId = req.params.id as string;
+    const businessId = req.user!.businessId!;
+
+    const tip = await prisma.tip.findFirst({
+      where: { id: tipId, business_id: businessId },
+    });
+
+    if (!tip) {
+      res.status(404).json({ success: false, error: 'Bahşiş kaydı bulunamadı.' });
+      return;
+    }
+
+    const updatedTip = await prisma.tip.update({
+      where: { id: tip.id },
+      data: {
+        payment_status: 'SUCCESS',
+      },
+    });
+
+    res.json({
+      success: true,
+      data: updatedTip,
+      message: 'Banka transferi başarıyla onaylandı ve kesinleştirildi.',
+    });
   } catch (error) {
     next(error);
   }

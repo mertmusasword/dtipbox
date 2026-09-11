@@ -142,7 +142,10 @@ export const TipPage: React.FC = () => {
 
   // --- Payment Confirmation Screen ---
   if (paymentResult) {
-    const isIban = paymentResult.tip.payment_method === 'IBAN_TRANSFER';
+    const isIban =
+      paymentResult.tip?.payment_method === 'IBAN_TRANSFER' ||
+      paymentResult.payment?.paymentMethod === 'IBAN_TRANSFER' ||
+      Boolean(paymentResult.payment?.ibanDetails);
     const ibanDetails = paymentResult.payment?.ibanDetails;
 
     return (
@@ -191,8 +194,10 @@ export const TipPage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>{t('common.status')}:</span>
-              <span className={`badge ${isIban ? 'badge-warning' : 'badge-success'}`}>
-                {paymentResult.payment?.status === 'UNVERIFIED' ? t('common.unverified') : (paymentResult.payment?.status || t('common.success'))}
+              <span className={`badge ${isIban || paymentResult.payment?.status === 'UNVERIFIED' ? 'badge-warning' : 'badge-success'}`}>
+                {paymentResult.payment?.status === 'UNVERIFIED'
+                  ? (isIban ? 'Doğrulama Bekliyor (Banka Transferi)' : t('common.unverified'))
+                  : (paymentResult.payment?.status || t('common.success'))}
               </span>
             </div>
 
@@ -229,14 +234,14 @@ export const TipPage: React.FC = () => {
           </div>
 
           <button
-            className="btn btn-secondary"
+            className={isIban ? "btn btn-primary" : "btn btn-secondary"}
             style={{ width: '100%' }}
             onClick={() => {
               setPaymentResult(null);
               setCustomAmount('');
             }}
           >
-            {t('common.retry')}
+            {isIban ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}
           </button>
         </div>
       </div>

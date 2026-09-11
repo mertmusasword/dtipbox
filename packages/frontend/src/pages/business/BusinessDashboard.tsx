@@ -52,6 +52,20 @@ export const BusinessDashboard: React.FC = () => {
       .finally(() => setLoading(false));
   }, [t]);
 
+  const [verifyingId, setVerifyingId] = useState<string | null>(null);
+
+  const handleVerifyTip = async (tipId: string) => {
+    try {
+      setVerifyingId(tipId);
+      await api.put(`/business/tips/${tipId}/verify`);
+      loadData();
+    } catch {
+      alert('Bahşiş onaylanırken bir hata oluştu.');
+    } finally {
+      setVerifyingId(null);
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -216,7 +230,22 @@ export const BusinessDashboard: React.FC = () => {
                       </span>
                     </td>
                     <td>
-                      <span className="badge badge-success">{t('common.success')}</span>
+                      {tip.status === 'UNVERIFIED' ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span className="badge badge-warning">Onay Bekliyor</span>
+                          <button
+                            type="button"
+                            onClick={() => handleVerifyTip(tip.id)}
+                            disabled={verifyingId === tip.id}
+                            className="btn btn-primary"
+                            style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem', whiteSpace: 'nowrap' }}
+                          >
+                            {verifyingId === tip.id ? '...' : 'Havale Alındı'}
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="badge badge-success">{t('common.success')}</span>
+                      )}
                     </td>
                   </tr>
                 ))}
