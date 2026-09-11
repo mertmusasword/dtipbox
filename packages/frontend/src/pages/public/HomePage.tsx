@@ -344,11 +344,10 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="how-it-works">
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Frictionless Workflow</span>
-            <h2 className="home-section-title">How NAPONI Works</h2>
+            <span className="home-section-tag">{t('home.stepsTag')}</span>
+            <h2 className="home-section-title">{t('home.stepsTitle')}</h2>
             <p className="home-section-desc">
-              Designed from the ground up to eliminate hardware costs and customer friction.
-              Go live in 2 minutes with no technical expertise required.
+              {t('home.stepsSubtitle')}
             </p>
           </div>
 
@@ -358,9 +357,9 @@ export const HomePage: React.FC = () => {
               <div className="home-step-icon-wrap">
                 <Building2 size={26} />
               </div>
-              <h3 className="home-step-title">1. Create & Deploy</h3>
+              <h3 className="home-step-title">{t('home.step1Title')}</h3>
               <p className="home-step-text">
-                Register your business, add your team members, configure your payout IBAN or payment gateway, and instantly download high-resolution QR codes for tables, counters, or room keys.
+                {t('home.step1Desc')}
               </p>
             </div>
 
@@ -369,9 +368,9 @@ export const HomePage: React.FC = () => {
               <div className="home-step-icon-wrap">
                 <QrCode size={26} />
               </div>
-              <h3 className="home-step-title">2. Scan With Camera</h3>
+              <h3 className="home-step-title">{t('home.step2Title')}</h3>
               <p className="home-step-text">
-                Guests simply point their iOS or Android camera at the QR code. Your custom-branded, lightning-fast web checkout opens in under 0.8 seconds.
+                {t('home.step2Desc')}
               </p>
             </div>
 
@@ -380,9 +379,9 @@ export const HomePage: React.FC = () => {
               <div className="home-step-icon-wrap">
                 <Sparkles size={26} />
               </div>
-              <h3 className="home-step-title">3. Tip & Celebrate</h3>
+              <h3 className="home-step-title">{t('home.step3Title')}</h3>
               <p className="home-step-text">
-                The guest chooses an individual staff member or team pool, selects an amount, and taps Apple Pay, Google Pay, or card. Funds route directly to your account.
+                {t('home.step3Desc')}
               </p>
             </div>
           </div>
@@ -395,10 +394,10 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="experience" style={{ background: 'rgba(17, 24, 39, 0.3)' }}>
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Zero Friction</span>
-            <h2 className="home-section-title">No App. No Account. Just Scan & Tip.</h2>
+            <span className="home-section-tag">{t('home.frictionTag')}</span>
+            <h2 className="home-section-title">{t('home.frictionTitle')}</h2>
             <p className="home-section-desc">
-              Every extra screen is a lost tip. Compare the old friction-heavy app model with NAPONI’s instant browser experience.
+              {t('home.frictionSubtitle')}
             </p>
           </div>
 
@@ -408,29 +407,29 @@ export const HomePage: React.FC = () => {
               <div className="home-compare-header">
                 <div>
                   <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '0.25rem' }}>
-                    Legacy App Tipping
+                    {t('home.legacyAppTitle')}
                   </h3>
-                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Old clunky customer experience</span>
+                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{t('home.legacyAppSub')}</span>
                 </div>
-                <span className="home-compare-tag negative">6+ Minutes</span>
+                <span className="home-compare-tag negative">{t('home.legacyAppBadge')}</span>
               </div>
 
               <ul className="home-compare-list">
                 <li className="home-compare-item">
                   <XCircle size={18} className="icon-x" />
-                  <span>Customer forced to search App Store & download 85MB app</span>
+                  <span>{t('home.legacyAppItem1')}</span>
                 </li>
                 <li className="home-compare-item">
                   <XCircle size={18} className="icon-x" />
-                  <span>Account registration, password creation & SMS verification</span>
+                  <span>{t('home.legacyAppItem2')}</span>
                 </li>
                 <li className="home-compare-item">
                   <XCircle size={18} className="icon-x" />
-                  <span>Manually typing 16-digit credit card number & billing address</span>
+                  <span>{t('home.legacyAppItem3')}</span>
                 </li>
                 <li className="home-compare-item">
                   <XCircle size={18} className="icon-x" />
-                  <span>75% of customers abandon the tip before finishing</span>
+                  <span>{t('home.legacyAppItem4')}</span>
                 </li>
               </ul>
             </div>
@@ -440,29 +439,29 @@ export const HomePage: React.FC = () => {
               <div className="home-compare-header">
                 <div>
                   <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '0.25rem' }}>
-                    The NAPONI Experience
+                    {t('home.naponiExpTitle')}
                   </h3>
-                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Pure contactless simplicity</span>
+                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{t('home.naponiExpSub')}</span>
                 </div>
-                <span className="home-compare-tag positive">6 Seconds</span>
+                <span className="home-compare-tag positive">{t('home.naponiExpBadge')}</span>
               </div>
 
               <ul className="home-compare-list">
                 <li className="home-compare-item">
                   <CheckCircle2 size={18} className="icon-check" />
-                  <span>Zero app downloads — works natively in camera & browser</span>
+                  <span>{t('home.naponiExpItem1')}</span>
                 </li>
                 <li className="home-compare-item">
                   <CheckCircle2 size={18} className="icon-check" />
-                  <span>No login, no password, no spam emails or marketing cookies</span>
+                  <span>{t('home.naponiExpItem2')}</span>
                 </li>
                 <li className="home-compare-item">
                   <CheckCircle2 size={18} className="icon-check" />
-                  <span>1-tap Apple Pay, Google Pay, or localized bank checkout</span>
+                  <span>{t('home.naponiExpItem3')}</span>
                 </li>
                 <li className="home-compare-item">
                   <CheckCircle2 size={18} className="icon-check" />
-                  <span>96% completion rate with immediate staff tip recognition</span>
+                  <span>{t('home.naponiExpItem4')}</span>
                 </li>
               </ul>
             </div>
@@ -476,10 +475,10 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="benefits">
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Business Architecture</span>
-            <h2 className="home-section-title">Engineered for Transparency & Growth</h2>
+            <span className="home-section-tag">{t('home.benefitsTag')}</span>
+            <h2 className="home-section-title">{t('home.benefitsTitle')}</h2>
             <p className="home-section-desc">
-              Everything your venue needs to manage cashless tips across multiple branches, shifts, and team structures.
+              {t('home.benefitsSubtitle')}
             </p>
           </div>
 
@@ -488,9 +487,9 @@ export const HomePage: React.FC = () => {
               <div className="home-feature-icon">
                 <Wallet size={24} />
               </div>
-              <h3 className="home-feature-title">Direct Bank Settlement</h3>
+              <h3 className="home-feature-title">{t('home.benefit1Title')}</h3>
               <p className="home-feature-desc">
-                NAPONI is not a middleman custodial wallet holding your money. Tips settle directly into your configured business account or payment rail.
+                {t('home.benefit1Desc')}
               </p>
             </div>
 
@@ -498,9 +497,9 @@ export const HomePage: React.FC = () => {
               <div className="home-feature-icon">
                 <Users size={24} />
               </div>
-              <h3 className="home-feature-title">Employee-Level Tip Tracking</h3>
+              <h3 className="home-feature-title">{t('home.benefit2Title')}</h3>
               <p className="home-feature-desc">
-                Empower your servers, bartenders, and housekeeping staff. Distribute tips to specific team members or pool them automatically per shift.
+                {t('home.benefit2Desc')}
               </p>
             </div>
 
@@ -508,9 +507,9 @@ export const HomePage: React.FC = () => {
               <div className="home-feature-icon">
                 <QrCode size={24} />
               </div>
-              <h3 className="home-feature-title">Dynamic QR Management</h3>
+              <h3 className="home-feature-title">{t('home.benefit3Title')}</h3>
               <p className="home-feature-desc">
-                Assign unique QR codes per table, room, or counter. Regenerate or deactivate codes instantly from your dashboard with one click.
+                {t('home.benefit3Desc')}
               </p>
             </div>
 
@@ -518,9 +517,9 @@ export const HomePage: React.FC = () => {
               <div className="home-feature-icon">
                 <TrendingUp size={24} />
               </div>
-              <h3 className="home-feature-title">Real-Time Analytics</h3>
+              <h3 className="home-feature-title">{t('home.benefit4Title')}</h3>
               <p className="home-feature-desc">
-                Track tip velocity, peak tipping hours, average tip percentages, and employee leaderboards through an executive-grade dashboard.
+                {t('home.benefit4Desc')}
               </p>
             </div>
 
@@ -528,9 +527,9 @@ export const HomePage: React.FC = () => {
               <div className="home-feature-icon">
                 <CreditCard size={24} />
               </div>
-              <h3 className="home-feature-title">Multi-Payment Flexibility</h3>
+              <h3 className="home-feature-title">{t('home.benefit5Title')}</h3>
               <p className="home-feature-desc">
-                Accept major credit cards, Apple Pay, Google Pay, and localized bank transfer rails without managing multiple POS terminals.
+                {t('home.benefit5Desc')}
               </p>
             </div>
 
@@ -538,9 +537,9 @@ export const HomePage: React.FC = () => {
               <div className="home-feature-icon">
                 <ShieldCheck size={24} />
               </div>
-              <h3 className="home-feature-title">Zero Hardware Investment</h3>
+              <h3 className="home-feature-title">{t('home.benefit6Title')}</h3>
               <p className="home-feature-desc">
-                Forget expensive card terminals with monthly rental fees and paper rolls. NAPONI operates entirely via digital QR infrastructure.
+                {t('home.benefit6Desc')}
               </p>
             </div>
           </div>
@@ -554,20 +553,20 @@ export const HomePage: React.FC = () => {
         <div className="home-container">
           <div className="home-stats-banner">
             <div>
-              <div className="home-stat-num">+38%</div>
-              <div className="home-stat-label">Higher Average Tips</div>
+              <div className="home-stat-num">{t('home.stat1Num')}</div>
+              <div className="home-stat-label">{t('home.stat1Label')}</div>
             </div>
             <div>
-              <div className="home-stat-num">0 Sec</div>
-              <div className="home-stat-label">Customer Sign-Up Time</div>
+              <div className="home-stat-num">{t('home.stat2Num')}</div>
+              <div className="home-stat-label">{t('home.stat2Label')}</div>
             </div>
             <div>
-              <div className="home-stat-num">100%</div>
-              <div className="home-stat-label">Direct Settlement</div>
+              <div className="home-stat-num">{t('home.stat3Num')}</div>
+              <div className="home-stat-label">{t('home.stat3Label')}</div>
             </div>
             <div>
-              <div className="home-stat-num">10+</div>
-              <div className="home-stat-label">Supported Currencies</div>
+              <div className="home-stat-num">{t('home.stat4Num')}</div>
+              <div className="home-stat-label">{t('home.stat4Label')}</div>
             </div>
           </div>
         </div>
@@ -578,12 +577,12 @@ export const HomePage: React.FC = () => {
           ==================================================================== */}
       <section className="home-section" style={{ paddingTop: 0, paddingBottom: 60 }}>
         <div className="home-container" style={{ textAlign: 'center' }}>
-          <span className="home-section-tag">Universal Compatibility</span>
+          <span className="home-section-tag">{t('home.payTag')}</span>
           <h2 className="home-section-title" style={{ fontSize: '2rem' }}>
-            Accept Any Payment Method In Seconds
+            {t('home.payTitle')}
           </h2>
           <p className="home-section-desc" style={{ maxWidth: 620, margin: '0 auto 2rem' }}>
-            Customers can pay instantly using their preferred payment methods, with no barriers to completing their tip.
+            {t('home.paySubtitle')}
           </p>
 
           <div className="home-pay-badges-row">
@@ -605,7 +604,7 @@ export const HomePage: React.FC = () => {
             </div>
             <div className="home-pay-badge-item">
               <Zap size={18} />
-              <span>Direct Bank Transfer</span>
+              <span>{t('home.payDirectBank')}</span>
             </div>
           </div>
         </div>
@@ -617,10 +616,10 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="industries" style={{ background: 'rgba(17, 24, 39, 0.3)' }}>
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Versatile Solutions</span>
-            <h2 className="home-section-title">Built for High-Touch Service Venues</h2>
+            <span className="home-section-tag">{t('home.industriesTag')}</span>
+            <h2 className="home-section-title">{t('home.industriesTitle')}</h2>
             <p className="home-section-desc">
-              Whether you manage a single neighborhood bistro or an international hotel brand, NAPONI elevates guest appreciation across every sector.
+              {t('home.industriesSubtitle')}
             </p>
           </div>
 
@@ -629,9 +628,9 @@ export const HomePage: React.FC = () => {
               <div className="home-industry-icon">
                 <Utensils size={22} />
               </div>
-              <h3 className="home-industry-title">Restaurants & Fine Dining</h3>
+              <h3 className="home-industry-title">{t('home.indRestaurantsTitle')}</h3>
               <p className="home-industry-desc">
-                Place branded QR stands on tables or bill folders. Enable individual server tips or shift-based pooling with zero bill confusion.
+                {t('home.indRestaurantsDesc')}
               </p>
             </div>
 
@@ -639,9 +638,9 @@ export const HomePage: React.FC = () => {
               <div className="home-industry-icon">
                 <Coffee size={22} />
               </div>
-              <h3 className="home-industry-title">Specialty Cafes & Bakeries</h3>
+              <h3 className="home-industry-title">{t('home.indCafesTitle')}</h3>
               <p className="home-industry-desc">
-                Speed up counter queues. Customers scan the counter QR and tip while their barista crafts their specialty flat white.
+                {t('home.indCafesDesc')}
               </p>
             </div>
 
@@ -649,9 +648,9 @@ export const HomePage: React.FC = () => {
               <div className="home-industry-icon">
                 <Hotel size={22} />
               </div>
-              <h3 className="home-industry-title">Hotels & Hospitality</h3>
+              <h3 className="home-industry-title">{t('home.indHotelsTitle')}</h3>
               <p className="home-industry-desc">
-                Empower bellhops, housekeeping, room service, and concierge staff to receive cashless tips via keycard slips or room displays.
+                {t('home.indHotelsDesc')}
               </p>
             </div>
 
@@ -659,9 +658,9 @@ export const HomePage: React.FC = () => {
               <div className="home-industry-icon">
                 <Wine size={22} />
               </div>
-              <h3 className="home-industry-title">Bars, Pubs & Nightlife</h3>
+              <h3 className="home-industry-title">{t('home.indBarsTitle')}</h3>
               <p className="home-industry-desc">
-                High-volume bar tipping without holding up drink orders. Quick contactless payments even in dim, crowded environments.
+                {t('home.indBarsDesc')}
               </p>
             </div>
 
@@ -669,9 +668,9 @@ export const HomePage: React.FC = () => {
               <div className="home-industry-icon">
                 <Scissors size={22} />
               </div>
-              <h3 className="home-industry-title">Salons, Barbers & Spas</h3>
+              <h3 className="home-industry-title">{t('home.indBarbersTitle')}</h3>
               <p className="home-industry-desc">
-                Clients easily show appreciation to their personal stylists, therapists, and estheticians directly at the styling station or reception.
+                {t('home.indBarbersDesc')}
               </p>
             </div>
 
@@ -679,9 +678,9 @@ export const HomePage: React.FC = () => {
               <div className="home-industry-icon">
                 <Car size={22} />
               </div>
-              <h3 className="home-industry-title">Valet, Drivers & Delivery</h3>
+              <h3 className="home-industry-title">{t('home.indValetTitle')}</h3>
               <p className="home-industry-desc">
-                Mobile-ready tipping for valet attendants, tour guides, and private transport when guests rarely carry physical cash.
+                {t('home.indValetDesc')}
               </p>
             </div>
           </div>
@@ -726,8 +725,8 @@ export const HomePage: React.FC = () => {
                   <Layers size={18} />
                 </div>
                 <div>
-                  <strong>Çoklu Şube & Departman Yönetimi</strong>
-                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>Tüm şubelerinizi ve lokasyonlarınızı tek merkezden izleyin</div>
+                  <strong>{t('home.corpPill1Title')}</strong>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>{t('home.corpPill1Desc')}</div>
                 </div>
               </div>
               <div className="home-corporate-pill">
@@ -735,8 +734,8 @@ export const HomePage: React.FC = () => {
                   <Users size={18} />
                 </div>
                 <div>
-                  <strong>Personel & Bahşiş Dağıtımı</strong>
-                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>Bireysel, vardiya veya ortak havuz modelleri</div>
+                  <strong>{t('home.corpPill2Title')}</strong>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>{t('home.corpPill2Desc')}</div>
                 </div>
               </div>
               <div className="home-corporate-pill">
@@ -744,8 +743,8 @@ export const HomePage: React.FC = () => {
                   <CreditCard size={18} />
                 </div>
                 <div>
-                  <strong>Özel POS & ERP Entegrasyonu</strong>
-                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>Mevcut kasa ve adisyon sistemlerinize tam uyum</div>
+                  <strong>{t('home.corpPill3Title')}</strong>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>{t('home.corpPill3Desc')}</div>
                 </div>
               </div>
               <div className="home-corporate-pill">
@@ -753,8 +752,8 @@ export const HomePage: React.FC = () => {
                   <ShieldCheck size={18} />
                 </div>
                 <div>
-                  <strong>Kurumsal SLA & Özel Temsilci</strong>
-                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>Öncelikli destek ve 7/24 teknik altyapı güvencesi</div>
+                  <strong>{t('home.corpPill4Title')}</strong>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>{t('home.corpPill4Desc')}</div>
                 </div>
               </div>
             </div>
@@ -768,12 +767,12 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="global">
         <div className="home-container">
           <div className="home-global-box">
-            <span className="home-section-tag">Global Readiness</span>
+            <span className="home-section-tag">{t('home.globalTag')}</span>
             <h2 className="home-section-title" style={{ maxWidth: 700, margin: '0 auto 1rem' }}>
-              Built for Businesses and Travelers Worldwide
+              {t('home.globalTitle')}
             </h2>
             <p className="home-section-desc" style={{ maxWidth: 640, margin: '0 auto' }}>
-              International tourism demands seamless cross-border tipping. NAPONI is architected to handle multiple currencies, global tourist cards, and international payment rails effortlessly.
+              {t('home.globalSubtitle')}
             </p>
 
             <div className="home-currency-tags">
@@ -796,10 +795,10 @@ export const HomePage: React.FC = () => {
       <section className="home-section" style={{ background: 'rgba(17, 24, 39, 0.25)' }}>
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag">Enterprise Security</span>
-            <h2 className="home-section-title">Zero Custody. Bank-Grade Protection.</h2>
+            <span className="home-section-tag">{t('home.securityTag')}</span>
+            <h2 className="home-section-title">{t('home.securityTitle')}</h2>
             <p className="home-section-desc">
-              Your security and regulatory peace of mind are built into every level of the NAPONI platform.
+              {t('home.securitySubtitle')}
             </p>
           </div>
 
@@ -808,9 +807,9 @@ export const HomePage: React.FC = () => {
               <div className="home-trust-icon-large">
                 <Lock size={26} />
               </div>
-              <h3 className="home-trust-title">Non-Custodial Architecture</h3>
+              <h3 className="home-trust-title">{t('home.sec1Title')}</h3>
               <p className="home-trust-desc">
-                NAPONI never stores customer deposits or holds merchant funds. All payments route directly to your verified destination account.
+                {t('home.sec1Desc')}
               </p>
             </div>
 
@@ -818,9 +817,9 @@ export const HomePage: React.FC = () => {
               <div className="home-trust-icon-large">
                 <ShieldCheck size={26} />
               </div>
-              <h3 className="home-trust-title">End-to-End Encryption</h3>
+              <h3 className="home-trust-title">{t('home.sec2Title')}</h3>
               <p className="home-trust-desc">
-                All communications and QR checkout interactions are guarded by 256-bit TLS/SSL encryption and cryptographically salted tokens.
+                {t('home.sec2Desc')}
               </p>
             </div>
 
@@ -828,9 +827,9 @@ export const HomePage: React.FC = () => {
               <div className="home-trust-icon-large">
                 <CreditCard size={26} />
               </div>
-              <h3 className="home-trust-title">PCI-DSS Compliant Rails</h3>
+              <h3 className="home-trust-title">{t('home.sec3Title')}</h3>
               <p className="home-trust-desc">
-                Card information never touches our servers. Tipping transactions are tokenized via certified Level 1 PCI-DSS compliant providers.
+                {t('home.sec3Desc')}
               </p>
             </div>
           </div>
@@ -844,17 +843,13 @@ export const HomePage: React.FC = () => {
         <div className="home-container">
           <div className="home-section-header">
             <span className="home-section-tag">
-              {language === 'tr' ? 'Sektör Rehberleri & Bilgi Merkezi' : 'Industry Guides & Insights'}
+              {t('home.blogTag')}
             </span>
             <h2 className="home-section-title">
-              {language === 'tr'
-                ? 'Dijital Bahşiş ve Hizmet Sektörü Rehberleri'
-                : 'Digital Tipping & Hospitality Operational Guides'}
+              {t('home.blogTitle')}
             </h2>
             <p className="home-section-desc">
-              {language === 'tr'
-                ? 'Restoran, kafe ve otellerde temassız bahşiş yönetimi, personel motivasyonu ve yeni nesil ödeme teknolojileri hakkında en güncel yazılarımız.'
-                : 'Actionable strategies for restaurants, cafes, and hotels on contactless tipping, tip pool fairness, and frontline team retention.'}
+              {t('home.blogSubtitle')}
             </p>
           </div>
 
@@ -871,7 +866,7 @@ export const HomePage: React.FC = () => {
                   <div className="blog-card-footer">
                     <span>{post.readingTime}</span>
                     <Link to={`/blog/${post.slug}`} className="blog-card-readmore">
-                      {language === 'tr' ? 'Devamını Oku →' : 'Read Article →'}
+                      {t('home.blogReadMore')}
                     </Link>
                   </div>
                 </article>
@@ -880,7 +875,7 @@ export const HomePage: React.FC = () => {
 
           <div style={{ textAlign: 'center' }}>
             <Link to="/blog" className="home-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.75rem' }}>
-              <span>{language === 'tr' ? 'Tüm Rehberleri ve Makaleleri İnceleyin' : 'Explore All Guides & Articles'}</span>
+              <span>{t('home.blogExploreAll')}</span>
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -985,27 +980,27 @@ export const HomePage: React.FC = () => {
               </p>
               <div className="home-footer-status-pill">
                 <span className="pulse-dot" />
-                <span>All Systems Operational</span>
+                <span>{t('home.footerStatus')}</span>
               </div>
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">Product</h4>
+              <h4 className="home-footer-col-title">{t('home.footerProduct')}</h4>
               <ul className="home-footer-links">
                 <li><a href="#how-it-works">{t('nav.features')}</a></li>
                 <li><a href="#experience">{t('nav.solutions')}</a></li>
-                <li><Link to="/solutions/restaurants">{language === 'tr' ? 'Restoranlar' : 'Restaurants'}</Link></li>
-                <li><Link to="/solutions/hotels">{language === 'tr' ? 'Oteller' : 'Hotels'}</Link></li>
-                <li><Link to="/solutions/cafes">{language === 'tr' ? 'Kafeler' : 'Cafes'}</Link></li>
-                <li><Link to="/tools/tip-calculator">{language === 'tr' ? 'Bahşiş Hesaplayıcı' : 'Tip Calculator'}</Link></li>
-                <li><Link to="/tools/tip-split-calculator">{language === 'tr' ? 'Bahşiş Bölüştürücü' : 'Tip Split Calculator'}</Link></li>
+                <li><Link to="/solutions/restaurants">{t('nav.restaurants')}</Link></li>
+                <li><Link to="/solutions/hotels">{t('nav.hotels')}</Link></li>
+                <li><Link to="/solutions/cafes">{t('nav.cafes')}</Link></li>
+                <li><Link to="/tools/tip-calculator">{t('nav.tipCalculator')}</Link></li>
+                <li><Link to="/tools/tip-split-calculator">{t('nav.tipSplitter')}</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">Platform & Resources</h4>
+              <h4 className="home-footer-col-title">{t('home.footerPlatform')}</h4>
               <ul className="home-footer-links">
-                <li><Link to="/blog">{language === 'tr' ? 'Blog & Rehberler' : 'Blog & Guides'}</Link></li>
+                <li><Link to="/blog">{t('nav.blogGuides')}</Link></li>
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
                 <li><Link to="/login">{t('nav.login')}</Link></li>
                 <li>
@@ -1023,7 +1018,7 @@ export const HomePage: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">Language & Region</h4>
+              <h4 className="home-footer-col-title">{t('home.footerLanguage')}</h4>
               <div style={{ marginTop: '0.5rem' }}>
                 <LanguageSelector variant="compact" direction="up" />
               </div>
@@ -1035,10 +1030,10 @@ export const HomePage: React.FC = () => {
               © {new Date().getFullYear()} NAPONI. {t('home.footerRights')}
             </div>
             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-              <Link to="/blog" style={{ color: '#64748b', textDecoration: 'none' }}>Blog</Link>
-              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>{language === 'tr' ? 'Sektörler' : 'Sectors'}</Link>
-              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>{language === 'tr' ? 'Hesaplayıcı' : 'Calculator'}</Link>
-              <a href="#faq" style={{ color: '#64748b', textDecoration: 'none' }}>FAQ</a>
+              <Link to="/blog" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.blogGuides')}</Link>
+              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.sectors')}</Link>
+              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.calculator')}</Link>
+              <a href="#faq" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.faq')}</a>
               <a href="#how-it-works" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.features')}</a>
             </div>
           </div>
