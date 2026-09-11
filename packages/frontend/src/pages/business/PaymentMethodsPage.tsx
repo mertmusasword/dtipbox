@@ -279,6 +279,14 @@ export const PaymentMethodsPage: React.FC = () => {
           </p>
         </div>
         <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setShowSupportModal(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', borderColor: 'rgba(99, 102, 241, 0.4)', color: '#818cf8' }}
+          >
+            <Headphones size={16} /> {t('support.posHelpBtn')}
+          </button>
           <button className="btn btn-secondary" onClick={() => setShowGuideModal(true)}>
             <BookOpen size={16} /> {t('payments.guideBtn') || 'Entegrasyon Rehberi'}
           </button>

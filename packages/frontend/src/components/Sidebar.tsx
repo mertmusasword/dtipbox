@@ -21,11 +21,13 @@ import {
   Headphones,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
+import { SupportTicketModal } from './SupportTicketModal';
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   if (!user) return null;
 
@@ -84,11 +86,37 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label={t('nav.bankAccount')} onClick={closeMobile} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
+              <button
+                type="button"
+                className="sidebar-nav-item"
+                onClick={() => {
+                  closeMobile();
+                  setSupportOpen(true);
+                }}
+                style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', color: '#818cf8', display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+              >
+                <Headphones size={18} />
+                <span>{t('support.widgetBtn')}</span>
+              </button>
             </>
           )}
 
           {isEmployee && (
-            <NavItem to="/employee/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.myTipsStats')} onClick={closeMobile} />
+            <>
+              <NavItem to="/employee/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.myTipsStats')} onClick={closeMobile} />
+              <button
+                type="button"
+                className="sidebar-nav-item"
+                onClick={() => {
+                  closeMobile();
+                  setSupportOpen(true);
+                }}
+                style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', color: '#818cf8', display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+              >
+                <Headphones size={18} />
+                <span>{t('support.widgetBtn')}</span>
+              </button>
+            </>
           )}
 
           {isAdmin && (
@@ -139,6 +167,11 @@ export const Sidebar: React.FC = () => {
           </button>
         </div>
       </aside>
+
+      <SupportTicketModal
+        isOpen={supportOpen}
+        onClose={() => setSupportOpen(false)}
+      />
     </>
   );
 };

@@ -31,12 +31,14 @@ import {
   Layers,
   Percent,
   Send,
-  Briefcase
+  Briefcase,
+  Headphones,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted } from '../../analytics';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
+import { SupportTicketModal } from '../../components/SupportTicketModal';
 
 export const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -46,6 +48,9 @@ export const HomePage: React.FC = () => {
 
   // Corporate Application Modal State
   const [corporateModalOpen, setCorporateModalOpen] = useState(false);
+
+  // Support Ticket Modal State
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
 
   // Hero Simulator Interactive State
   const [simAmount, setSimAmount] = useState<number>(10);
@@ -99,6 +104,15 @@ export const HomePage: React.FC = () => {
 
           <div className="home-nav-actions">
             <LanguageSelector variant="navbar" />
+            <button
+              type="button"
+              className="home-btn-ghost"
+              onClick={() => setSupportModalOpen(true)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer', padding: '0.55rem 0.95rem' }}
+            >
+              <Headphones size={15} />
+              <span>{t('support.widgetBtn')}</span>
+            </button>
             <Link to="/login" className="home-btn-ghost">
               {t('nav.login')}
             </Link>
@@ -130,7 +144,19 @@ export const HomePage: React.FC = () => {
             <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>{t('nav.businesses')}</a>
             <a href="#simulator" onClick={() => setMobileMenuOpen(false)}>{t('nav.simulator')}</a>
             <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            <button
+              type="button"
+              className="home-btn-ghost"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setSupportModalOpen(true);
+              }}
+              style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.5rem 0' }}
+            >
+              <Headphones size={16} />
+              <span>{t('support.widgetBtn')}</span>
+            </button>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
               <Link to="/login" className="home-btn-ghost" style={{ flex: 1, textAlign: 'center' }}>
                 {t('nav.login')}
               </Link>
@@ -928,6 +954,16 @@ export const HomePage: React.FC = () => {
               <ul className="home-footer-links">
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
                 <li><Link to="/login">{t('nav.login')}</Link></li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setSupportModalOpen(true)}
+                    style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0, fontSize: 'inherit', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                  >
+                    <Headphones size={13} />
+                    <span>{t('support.widgetBtn')}</span>
+                  </button>
+                </li>
                 <li><a href="#faq">{t('nav.faq')}</a></li>
               </ul>
             </div>
@@ -956,6 +992,12 @@ export const HomePage: React.FC = () => {
       <CorporateApplicationModal
         isOpen={corporateModalOpen}
         onClose={() => setCorporateModalOpen(false)}
+      />
+
+      {/* Support Ticket Modal */}
+      <SupportTicketModal
+        isOpen={supportModalOpen}
+        onClose={() => setSupportModalOpen(false)}
       />
     </div>
   );
