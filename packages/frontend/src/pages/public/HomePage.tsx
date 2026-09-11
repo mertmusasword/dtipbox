@@ -994,18 +994,18 @@ export const HomePage: React.FC = () => {
               <ul className="home-footer-links">
                 <li><a href="#how-it-works">{t('nav.features')}</a></li>
                 <li><a href="#experience">{t('nav.solutions')}</a></li>
-                <li><Link to="/solutions/restaurants">Restoranlar</Link></li>
-                <li><Link to="/solutions/hotels">Oteller</Link></li>
-                <li><Link to="/solutions/cafes">Kafeler</Link></li>
-                <li><Link to="/tools/tip-calculator">Bahşiş Hesaplayıcı</Link></li>
-                <li><Link to="/tools/tip-split-calculator">Bahşiş Bölüştürücü</Link></li>
+                <li><Link to="/solutions/restaurants">{language === 'tr' ? 'Restoranlar' : 'Restaurants'}</Link></li>
+                <li><Link to="/solutions/hotels">{language === 'tr' ? 'Oteller' : 'Hotels'}</Link></li>
+                <li><Link to="/solutions/cafes">{language === 'tr' ? 'Kafeler' : 'Cafes'}</Link></li>
+                <li><Link to="/tools/tip-calculator">{language === 'tr' ? 'Bahşiş Hesaplayıcı' : 'Tip Calculator'}</Link></li>
+                <li><Link to="/tools/tip-split-calculator">{language === 'tr' ? 'Bahşiş Bölüştürücü' : 'Tip Split Calculator'}</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="home-footer-col-title">Platform & Resources</h4>
               <ul className="home-footer-links">
-                <li><Link to="/blog">Blog & Rehberler</Link></li>
+                <li><Link to="/blog">{language === 'tr' ? 'Blog & Rehberler' : 'Blog & Guides'}</Link></li>
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
                 <li><Link to="/login">{t('nav.login')}</Link></li>
                 <li>
@@ -1036,8 +1036,8 @@ export const HomePage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               <Link to="/blog" style={{ color: '#64748b', textDecoration: 'none' }}>Blog</Link>
-              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>Sektörler</Link>
-              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>Hesaplayıcı</Link>
+              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>{language === 'tr' ? 'Sektörler' : 'Sectors'}</Link>
+              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>{language === 'tr' ? 'Hesaplayıcı' : 'Calculator'}</Link>
               <a href="#faq" style={{ color: '#64748b', textDecoration: 'none' }}>FAQ</a>
               <a href="#how-it-works" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.features')}</a>
             </div>

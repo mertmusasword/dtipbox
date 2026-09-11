@@ -105,7 +105,15 @@ d-tipbox (Monorepo)
 
 ### 4.4. Sector Solutions & SEO Tools
 * **6 Sector Landing Pages:** `/solutions/restaurants`, `/solutions/cafes`, `/solutions/hotels`, `/solutions/bars`, `/solutions/barbers`, `/solutions/valet`.
+  * **Bilingual Support:** Full English content (`sectors-en.ts`) and Turkish content (`sectors.ts`).
+  * `SolutionPage.tsx` dynamically switches copy, breadcrumbs, workflows, and FAQs based on `useLanguage()`.
+  * Bidirectional hreflang meta tags (`tr`, `en`, `x-default`) on every sector route.
 * **2 Free Interactive Calculators:** `/tools/tip-calculator`, `/tools/tip-split-calculator`.
+  * **Multi-Currency Support:** Built-in switcher for `$ (USD)`, `€ (EUR)`, `£ (GBP)`, `₺ (TRY)`, `¥ (JPY)` with smart default matching user locale.
+  * **Bilingual UI & FAQ:** Complete localized interface and hospitality guidelines in English and Turkish.
+  * Bidirectional hreflang tags (`tr`, `en`, `x-default`) on every tool route.
+* **Root Homepage Pre-Rendering:**
+  * `dist/index.html` is pre-rendered with semantic HTML (H1, H2, features, sector directory, tool links, FAQ, and footer) ensuring crawlers index complete text even without executing JS.
 
 ---
 

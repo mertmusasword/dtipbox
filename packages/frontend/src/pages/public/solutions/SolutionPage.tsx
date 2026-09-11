@@ -22,8 +22,10 @@ import {
 } from 'lucide-react';
 import { SeoHead } from '../../../components/SeoHead';
 import { SECTOR_SOLUTIONS } from '../../../content/solutions/sectors';
+import { SECTOR_SOLUTIONS_EN } from '../../../content/solutions/sectors-en';
 import { BLOG_POSTS } from '../../../content/blog/posts';
 import { trackBlogCtaClick } from '../../../analytics';
+import { useLanguage, LanguageSelector } from '../../../i18n';
 import '../../../styles/home.css';
 
 const ICON_MAP: Record<string, any> = {
@@ -46,13 +48,17 @@ const ICON_MAP: Record<string, any> = {
 export const SolutionPage: React.FC = () => {
   const { sector } = useParams<{ sector: string }>();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const { language, t } = useLanguage();
+  const isEn = language !== 'tr';
 
   if (!sector || !SECTOR_SOLUTIONS[sector]) {
     return <Navigate to="/" replace />;
   }
 
-  const data = SECTOR_SOLUTIONS[sector];
-  const relatedPosts = BLOG_POSTS.filter((p) => data.relatedBlogSlugs.includes(p.slug));
+  const data = (isEn ? SECTOR_SOLUTIONS_EN[sector] : SECTOR_SOLUTIONS[sector]) || SECTOR_SOLUTIONS[sector];
+  const relatedPosts = BLOG_POSTS.filter(
+    (p) => data.relatedBlogSlugs.includes(p.slug) && p.language === (isEn ? 'en' : 'tr')
+  );
 
   return (
     <div className="home-wrapper">
@@ -62,29 +68,39 @@ export const SolutionPage: React.FC = () => {
         canonicalUrl={data.canonicalUrl}
         keywords={[data.targetKeyword, ...data.secondaryKeywords]}
         breadcrumbs={[
-          { name: 'Ana Sayfa', url: 'https://www.naponi.com/' },
-          { name: 'Sektörel Çözümler', url: 'https://www.naponi.com/#industries' },
+          { name: isEn ? 'Home' : 'Ana Sayfa', url: 'https://www.naponi.com/' },
+          { name: isEn ? 'Sectors' : 'Sektörel Çözümler', url: 'https://www.naponi.com/#industries' },
           { name: data.sectorName, url: data.canonicalUrl },
+        ]}
+        alternateLanguages={[
+          { lang: 'tr', url: `https://www.naponi.com/solutions/${data.slug}` },
+          { lang: 'en', url: `https://www.naponi.com/solutions/${data.slug}` },
+          { lang: 'x-default', url: `https://www.naponi.com/solutions/${data.slug}` },
         ]}
         faqSchema={data.faqs}
       />
 
       {/* Navigation */}
       <header className="home-nav-wrapper">
-        <nav className="home-nav">
+        <nav className="home-nav" aria-label="Solution Navigation">
           <Link to="/" className="home-nav-brand">
             <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
           </Link>
           <div className="home-nav-actions">
+            <LanguageSelector variant="navbar" />
             <Link to="/blog" className="home-btn-ghost">Blog</Link>
-            <Link to="/tools/tip-calculator" className="home-btn-ghost">Hesaplayıcı</Link>
-            <Link to="/login" className="home-btn-ghost">Giriş Yap</Link>
+            <Link to="/tools/tip-calculator" className="home-btn-ghost">
+              {isEn ? 'Tip Calculator' : 'Hesaplayıcı'}
+            </Link>
+            <Link to="/login" className="home-btn-ghost">
+              {isEn ? 'Login' : 'Giriş Yap'}
+            </Link>
             <Link
               to="/register"
               className="home-btn-primary"
               onClick={() => trackBlogCtaClick(`solution_nav_${data.slug}`, '/register')}
             >
-              Hemen Başlayın <ArrowRight size={16} />
+              {isEn ? 'Get Started' : 'Hemen Başlayın'} <ArrowRight size={16} />
             </Link>
           </div>
         </nav>
@@ -94,9 +110,9 @@ export const SolutionPage: React.FC = () => {
         {/* Breadcrumb Bar */}
         <div className="home-container">
           <nav className="blog-breadcrumbs" aria-label="Breadcrumb">
-            <Link to="/">Ana Sayfa</Link>
+            <Link to="/">{isEn ? 'Home' : 'Ana Sayfa'}</Link>
             <span>/</span>
-            <a href="/#industries">Sektörler</a>
+            <a href="/#industries">{isEn ? 'Sectors' : 'Sektörler'}</a>
             <span>/</span>
             <span className="current">{data.sectorName}</span>
           </nav>
@@ -121,10 +137,10 @@ export const SolutionPage: React.FC = () => {
                 className="home-btn-primary home-btn-hero-large"
                 onClick={() => trackBlogCtaClick(`solution_hero_${data.slug}`, '/register')}
               >
-                2 Dakikada QR Alın <ArrowRight size={18} />
+                {isEn ? 'Get Started in 2 Minutes' : '2 Dakikada QR Alın'} <ArrowRight size={18} />
               </Link>
               <Link to="/tools/tip-calculator" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
-                Bahşiş Hesaplayıcı
+                {isEn ? 'Free Tip Calculator' : 'Bahşiş Hesaplayıcı'}
               </Link>
             </div>
           </div>
@@ -135,7 +151,7 @@ export const SolutionPage: React.FC = () => {
           <div className="home-container">
             <div className="home-section-header">
               <span className="home-section-tag" style={{ color: '#f87171', background: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
-                Sektörel Zorluk
+                {isEn ? 'Industry Challenge' : 'Sektörel Zorluk'}
               </span>
               <h2 className="home-section-title">{data.problemTitle}</h2>
               <p className="home-section-desc">{data.problemDescription}</p>
@@ -158,7 +174,7 @@ export const SolutionPage: React.FC = () => {
         <section className="home-section">
           <div className="home-container">
             <div className="home-section-header">
-              <span className="home-section-tag">Naponi Çözümü</span>
+              <span className="home-section-tag">{isEn ? 'Naponi Solution' : 'Naponi Çözümü'}</span>
               <h2 className="home-section-title">{data.solutionTitle}</h2>
               <p className="home-section-desc">{data.solutionDescription}</p>
             </div>
@@ -184,9 +200,11 @@ export const SolutionPage: React.FC = () => {
         <section className="home-section" style={{ background: 'rgba(17, 24, 39, 0.3)' }}>
           <div className="home-container">
             <div className="home-section-header">
-              <span className="home-section-tag">Kolay Kurulum</span>
-              <h2 className="home-section-title">Nasıl Çalışır?</h2>
-              <p className="home-section-desc">Donanım yatırımı yapmadan 3 adımda canlıya geçin.</p>
+              <span className="home-section-tag">{isEn ? 'Easy Onboarding' : 'Kolay Kurulum'}</span>
+              <h2 className="home-section-title">{isEn ? 'How It Works' : 'Nasıl Çalışır?'}</h2>
+              <p className="home-section-desc">
+                {isEn ? 'Launch in 3 steps with zero hardware investment.' : 'Donanım yatırımı yapmadan 3 adımda canlıya geçin.'}
+              </p>
             </div>
 
             <div className="home-steps-grid">
@@ -205,8 +223,10 @@ export const SolutionPage: React.FC = () => {
         <section className="home-section">
           <div className="home-container">
             <div className="home-section-header">
-              <span className="home-section-tag">Kullanım Senaryoları</span>
-              <h2 className="home-section-title">{data.sectorName} İçin Özel Alanlar</h2>
+              <span className="home-section-tag">{isEn ? 'Use Cases' : 'Kullanım Senaryoları'}</span>
+              <h2 className="home-section-title">
+                {isEn ? `Tailored for ${data.sectorName}` : `${data.sectorName} İçin Özel Alanlar`}
+              </h2>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', maxWidth: 960, margin: '0 auto' }}>
@@ -226,8 +246,8 @@ export const SolutionPage: React.FC = () => {
         <section className="home-section" style={{ background: 'rgba(17, 24, 39, 0.25)' }}>
           <div className="home-container">
             <div className="home-section-header">
-              <span className="home-section-tag">SSS</span>
-              <h2 className="home-section-title">Sıkça Sorulan Sorular</h2>
+              <span className="home-section-tag">{isEn ? 'FAQ' : 'SSS'}</span>
+              <h2 className="home-section-title">{isEn ? 'Frequently Asked Questions' : 'Sıkça Sorulan Sorular'}</h2>
             </div>
 
             <div className="home-faq-accordion" style={{ maxWidth: 840, margin: '0 auto' }}>
@@ -253,8 +273,8 @@ export const SolutionPage: React.FC = () => {
           <section className="home-section">
             <div className="home-container">
               <div className="home-section-header">
-                <span className="home-section-tag">Rehberler</span>
-                <h2 className="home-section-title">İlgili Blog Makaleleri</h2>
+                <span className="home-section-tag">{isEn ? 'Guides' : 'Rehberler'}</span>
+                <h2 className="home-section-title">{isEn ? 'Related Industry Guides' : 'İlgili Blog Makaleleri'}</h2>
               </div>
 
               <div className="blog-posts-grid" style={{ maxWidth: 1040, margin: '0 auto' }}>
@@ -268,7 +288,7 @@ export const SolutionPage: React.FC = () => {
                     <div className="blog-card-footer">
                       <span>{post.readingTime}</span>
                       <Link to={`/blog/${post.slug}`} className="blog-card-readmore">
-                        Devamını Oku &rarr;
+                        {isEn ? 'Read Article →' : 'Devamını Oku →'}
                       </Link>
                     </div>
                   </article>
@@ -283,10 +303,14 @@ export const SolutionPage: React.FC = () => {
           <div className="home-container">
             <div className="home-cta-banner">
               <h2 className="home-cta-title">
-                {data.sectorName} İçin Dijital Bahşişi Başlatın
+                {isEn
+                  ? `Start Digital Tipping for ${data.sectorName}`
+                  : `${data.sectorName} İçin Dijital Bahşişi Başlatın`}
               </h2>
               <p className="home-cta-sub">
-                Nakit bahşiş kaybına son verin. 2 dakikada ücretsiz işletme hesabınızı açın ve QR kodlarınızı hemen indirin.
+                {isEn
+                  ? 'Eliminate lost tips in cashless operations. Create your free account in 2 minutes and download your QR stands.'
+                  : 'Nakit bahşiş kaybına son verin. 2 dakikada ücretsiz işletme hesabınızı açın ve QR kodlarınızı hemen indirin.'}
               </p>
               <div className="home-cta-btn-wrap">
                 <Link
@@ -294,10 +318,10 @@ export const SolutionPage: React.FC = () => {
                   className="home-btn-primary home-btn-hero-large"
                   onClick={() => trackBlogCtaClick(`solution_bottom_${data.slug}`, '/register')}
                 >
-                  Ücretsiz Kaydolun <ArrowRight size={18} />
+                  {isEn ? 'Get Started Free' : 'Ücretsiz Kaydolun'} <ArrowRight size={18} />
                 </Link>
                 <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
-                  Giriş Yap
+                  {isEn ? 'Login' : 'Giriş Yap'}
                 </Link>
               </div>
             </div>
@@ -309,13 +333,13 @@ export const SolutionPage: React.FC = () => {
       <footer className="home-footer">
         <div className="home-container">
           <div className="home-footer-bottom">
-            <div>© {new Date().getFullYear()} NAPONI. Tüm hakları saklıdır.</div>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
+            <div>© {new Date().getFullYear()} NAPONI. {isEn ? 'All rights reserved.' : 'Tüm hakları saklıdır.'}</div>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               <Link to="/blog" style={{ color: '#64748b', textDecoration: 'none' }}>Blog</Link>
-              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>Restoranlar</Link>
-              <Link to="/solutions/cafes" style={{ color: '#64748b', textDecoration: 'none' }}>Kafeler</Link>
-              <Link to="/solutions/hotels" style={{ color: '#64748b', textDecoration: 'none' }}>Oteller</Link>
-              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>Hesaplayıcı</Link>
+              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'Restaurants' : 'Restoranlar'}</Link>
+              <Link to="/solutions/cafes" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'Cafes' : 'Kafeler'}</Link>
+              <Link to="/solutions/hotels" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'Hotels' : 'Oteller'}</Link>
+              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'Tip Calculator' : 'Hesaplayıcı'}</Link>
             </div>
           </div>
         </div>
