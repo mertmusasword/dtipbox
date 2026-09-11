@@ -42,7 +42,7 @@ import { SupportTicketModal } from '../../components/SupportTicketModal';
 
 export const PaymentMethodsPage: React.FC = () => {
   const { showToast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // State
   const [methods, setMethods] = useState<PaymentMethodItem[]>([]);
@@ -369,7 +369,7 @@ export const PaymentMethodsPage: React.FC = () => {
           </div>
 
           <div className="payments-bank-actions">
-            <Link to="/business/payment-account" className="btn btn-secondary btn-sm" style={{ textAlign: 'center' }}>
+            <Link to="/business/payment-account" className="btn btn-secondary">
               {t('payments.configureBankBtn')}
             </Link>
             {ibanMethod && (
@@ -377,9 +377,10 @@ export const PaymentMethodsPage: React.FC = () => {
                 className={`btn ${ibanMethod.status === 'ACTIVE' ? 'btn-danger' : 'btn-primary'}`}
                 disabled={!ibanMethod.canActivate && ibanMethod.status !== 'ACTIVE'}
                 onClick={() => handleToggleMethodStatus(ibanMethod)}
-                style={{ minWidth: '120px' }}
               >
-                {ibanMethod.status === 'ACTIVE' ? t('common.inactive') : t('common.active')}
+                {ibanMethod.status === 'ACTIVE'
+                  ? (language === 'tr' ? 'Ödeme Kanalını Pasife Al' : 'Deactivate Channel')
+                  : (language === 'tr' ? 'Ödeme Kanalını Aktifleştir' : 'Activate Channel')}
               </button>
             )}
           </div>
