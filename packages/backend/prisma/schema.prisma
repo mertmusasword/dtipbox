@@ -93,6 +93,21 @@ enum CorporateApplicationStatus {
   REJECTED
 }
 
+enum SupportTicketStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketCategory {
+  POS_INTEGRATION
+  ACCOUNT_BILLING
+  TECHNICAL_SUPPORT
+  GENERAL_INQUIRY
+  FEEDBACK_SUGGESTION
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -448,4 +463,32 @@ model CorporateApplication {
   @@index([created_at])
   @@map("corporate_applications")
 }
+
+model SupportTicket {
+  id            String                @id @default(uuid())
+  user_id       String?
+  business_id   String?
+  name          String
+  email         String
+  phone         String?
+  business_name String?
+  category      SupportTicketCategory @default(GENERAL_INQUIRY)
+  subject       String
+  message       String                @db.Text
+  status        SupportTicketStatus   @default(NEW)
+  admin_notes   String?               @db.Text
+  ip_address    String?
+
+  created_at    DateTime              @default(now())
+  updated_at    DateTime              @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([created_at])
+  @@index([email])
+  @@index([user_id])
+  @@index([business_id])
+  @@map("support_tickets")
+}
+
 

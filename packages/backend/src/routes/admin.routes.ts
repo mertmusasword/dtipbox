@@ -7,6 +7,7 @@ import * as auditService from '../services/audit.service';
 import * as providerService from '../services/payment/provider.service';
 import * as agreementService from '../services/agreement.service';
 import * as corporateService from '../services/corporate.service';
+import * as supportService from '../services/support.service';
 import { ProviderCatalogStatus, ProviderRequestStatus } from '@prisma/client';
 
 const router = Router();
@@ -293,6 +294,53 @@ router.patch('/corporate-applications/:id/status', validate(updateStatusSchema),
 router.delete('/corporate-applications/:id', async (req, res, next) => {
   try {
     const result = await corporateService.deleteCorporateApplication(req.params.id as string);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ==================== Support Tickets ====================
+
+// 1. List support tickets with pagination, status & category filters and search
+router.get('/support-tickets', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 20);
+    const status = req.query.status as any;
+    const category = req.query.category as any;
+    const search = req.query.search as string;
+    const data = await supportService.getSupportTickets(page, limit, status, category, search);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 2. Update support ticket status & admin notes
+const updateTicketStatusSchema = {
+  body: z.object({
+    status: z.enum(['NEW', 'IN_PROGRESS', 'RESOLVED', 'CLOSED']),
+    adminNotes: z.string().optional(),
+  }),
+};
+
+router.patch('/support-tickets/:id/status', validate(updateTicketStatusSchema), async (req, res, next) => {
+  try {
+    const updated = await supportService.updateSupportTicketStatus(
+      req.params.id as string,
+      req.body.status,
+      req.body.adminNotes
+    );
+    res.json({ success: true, data: updated, message: 'Destek talebi durumu güncellendi' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 3. Delete support ticket
+router.delete('/support-tickets/:id', async (req, res, next) => {
+  try {
+    const result = await supportService.deleteSupportTicket(req.params.id as string);
     res.json(result);
   } catch (error) {
     next(error);

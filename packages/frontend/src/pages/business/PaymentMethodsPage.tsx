@@ -34,9 +34,11 @@ import {
   Compass,
   Check,
   ArrowRight,
+  Headphones,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
+import { SupportTicketModal } from '../../components/SupportTicketModal';
 
 export const PaymentMethodsPage: React.FC = () => {
   const { showToast } = useToast();
@@ -56,6 +58,7 @@ export const PaymentMethodsPage: React.FC = () => {
   const [showCredentialsModal, setShowCredentialsModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
   const [guideActiveTab, setGuideActiveTab] = useState<'tr' | 'global' | 'asia'>('tr');
   const [guideProviderKey, setGuideProviderKey] = useState<'iyzico' | 'paytr' | 'stripe' | 'square' | 'paypal'>('iyzico');
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
@@ -326,13 +329,22 @@ export const PaymentMethodsPage: React.FC = () => {
           </div>
         </div>
 
-        <button
-          className="btn btn-secondary btn-sm"
-          onClick={() => setShowGuideModal(true)}
-          style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-        >
-          <BookOpen size={14} /> {t('payments.guideBtn') || 'Rehberi Aç'} <ArrowRight size={14} />
-        </button>
+        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => setShowGuideModal(true)}
+            style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            <BookOpen size={14} /> {t('payments.guideBtn') || 'Rehberi Aç'} <ArrowRight size={14} />
+          </button>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setShowSupportModal(true)}
+            style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
+          >
+            <Headphones size={14} /> {t('support.posHelpBtn') || 'Entegrasyon Desteği Al'}
+          </button>
+        </div>
       </div>
 
       {/* SECTION 1: DIRECT BANK / IBAN SETTLEMENT */}
@@ -1218,6 +1230,14 @@ export const PaymentMethodsPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* SUPPORT TICKET MODAL */}
+      <SupportTicketModal
+        isOpen={showSupportModal}
+        onClose={() => setShowSupportModal(false)}
+        initialCategory="POS_INTEGRATION"
+        initialSubject="POS Entegrasyon Desteği Talebi"
+      />
     </div>
   );
 };

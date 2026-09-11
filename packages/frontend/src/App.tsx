@@ -31,6 +31,8 @@ import { AdminAuditPage } from './pages/admin/AdminAuditPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 import { AdminAgreementsPage } from './pages/admin/AdminAgreementsPage';
 import { AdminCorporateApplicationsPage } from './pages/admin/AdminCorporateApplicationsPage';
+import { AdminSupportTicketsPage } from './pages/admin/AdminSupportTicketsPage';
+import { FloatingSupportWidget } from './components/FloatingSupportWidget';
 import { Role } from './types';
 
 // Protected Route Guard
@@ -118,6 +120,7 @@ export const App: React.FC = () => {
                 <Route path="/admin/payments" element={<AdminPaymentsPage />} />
                 <Route path="/admin/payment-providers" element={<AdminPaymentProvidersPage />} />
                 <Route path="/admin/corporate-applications" element={<AdminCorporateApplicationsPage />} />
+                <Route path="/admin/support-tickets" element={<AdminSupportTicketsPage />} />
                 <Route path="/admin/agreements" element={<AdminAgreementsPage />} />
                 <Route path="/admin/statistics" element={<AdminDashboard />} />
                 <Route path="/admin/audit" element={<AdminAuditPage />} />
@@ -127,6 +130,7 @@ export const App: React.FC = () => {
               {/* Catch-all redirect */}
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
+            <FloatingSupportWidget />
           </BrowserRouter>
         </ToastProvider>
       </AuthProvider>
