@@ -70,6 +70,7 @@ apiRouter.use('/employee', employeeRoutes);
 apiRouter.use('/tip', tipRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/payment/webhook', webhookRoutes);
+apiRouter.use('/payments/webhook', webhookRoutes);
 apiRouter.use('/agreements', agreementRoutes);
 
 export default apiRouter;

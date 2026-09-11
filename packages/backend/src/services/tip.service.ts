@@ -144,6 +144,60 @@ export async function createTip(data: CreateTipRequest) {
   // Determine effective table ID (either from QR or from customer selection)
   const effectiveTableId = qr.table_id || data.tableId || null;
 
+  // Anti-duplicate protection: prevent duplicate tip creation if submitted multiple times within 5 seconds
+  const fiveSecondsAgo = new Date(Date.now() - 5000);
+  const recentDuplicate = await prisma.tip.findFirst({
+    where: {
+      business_id: qr.business_id,
+      employee_id: data.employeeId || null,
+      table_id: effectiveTableId,
+      amount: new Prisma.Decimal(data.amount),
+      payment_method: data.paymentMethod,
+      customer_name: data.customerName || null,
+      customer_message: data.customerMessage || null,
+      created_at: { gte: fiveSecondsAgo },
+    },
+    orderBy: { created_at: 'desc' },
+  });
+
+  if (recentDuplicate) {
+    let duplicatePaymentResult: any = {
+      transactionId: recentDuplicate.provider_transaction_id || `DUP_${recentDuplicate.id}`,
+      status: recentDuplicate.payment_status,
+    };
+    if (data.paymentMethod === PaymentMethodType.IBAN_TRANSFER) {
+      const paymentAccount = await prisma.businessPaymentAccount.findUnique({
+        where: { business_id: qr.business_id },
+      });
+      if (paymentAccount) {
+        const referenceCode = `TIP-${recentDuplicate.id.slice(0, 8).toUpperCase()}`;
+        duplicatePaymentResult = {
+          transactionId: recentDuplicate.provider_transaction_id || `IBAN_${referenceCode}`,
+          status: recentDuplicate.payment_status,
+          instructions: `Please transfer ${data.amount} ${qr.business.currency} to the following bank account with reference code "${referenceCode}".`,
+          ibanDetails: {
+            accountHolderName: paymentAccount.account_holder_name,
+            iban: paymentAccount.iban,
+            bankName: paymentAccount.bank_name,
+            swiftBic: paymentAccount.swift_bic,
+            referenceCode,
+          },
+        };
+      }
+    }
+    return {
+      tip: {
+        id: recentDuplicate.id,
+        amount: recentDuplicate.amount,
+        currency: recentDuplicate.currency,
+        payment_method: recentDuplicate.payment_method,
+        status: recentDuplicate.payment_status,
+        created_at: recentDuplicate.created_at,
+      },
+      payment: duplicatePaymentResult,
+    };
+  }
+
   // Create initial tip entry in PENDING state
   const tip = await prisma.tip.create({
     data: {

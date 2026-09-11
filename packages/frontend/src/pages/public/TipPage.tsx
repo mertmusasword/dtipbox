@@ -147,6 +147,13 @@ export const TipPage: React.FC = () => {
       paymentResult.payment?.paymentMethod === 'IBAN_TRANSFER' ||
       Boolean(paymentResult.payment?.ibanDetails);
     const ibanDetails = paymentResult.payment?.ibanDetails;
+    const paymentStatus = paymentResult.payment?.status || paymentResult.tip?.status || (isIban ? 'UNVERIFIED' : 'SUCCESS');
+    const isSuccess = paymentStatus === 'SUCCESS';
+    const isFailed = paymentStatus === 'FAILED';
+    const isCancelled = paymentStatus === 'CANCELLED';
+    const isPending = paymentStatus === 'PENDING';
+    const isUnverified = isIban || paymentStatus === 'UNVERIFIED';
+    const paymentUrl = paymentResult.payment?.paymentUrl;
 
     return (
       <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
@@ -155,27 +162,71 @@ export const TipPage: React.FC = () => {
         </div>
 
         <div className="glass-card" style={{ maxWidth: '480px', width: '100%', padding: '2.5rem', textAlign: 'center' }}>
+          {/* Status Icon */}
           <div style={{
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            background: isIban ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-            color: isIban ? '#f59e0b' : '#10b981',
+            background: isUnverified
+              ? 'rgba(245, 158, 11, 0.15)'
+              : isSuccess
+              ? 'rgba(16, 185, 129, 0.15)'
+              : isFailed
+              ? 'rgba(239, 68, 68, 0.15)'
+              : isCancelled
+              ? 'rgba(107, 114, 128, 0.15)'
+              : 'rgba(59, 130, 246, 0.15)',
+            color: isUnverified
+              ? '#f59e0b'
+              : isSuccess
+              ? '#10b981'
+              : isFailed
+              ? '#ef4444'
+              : isCancelled
+              ? '#9ca3af'
+              : '#3b82f6',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 1.5rem',
           }}>
-            {isIban ? <Building2 size={32} /> : <CheckCircle2 size={32} />}
+            {isUnverified ? (
+              <Building2 size={32} />
+            ) : isSuccess ? (
+              <CheckCircle2 size={32} />
+            ) : isFailed ? (
+              <AlertCircle size={32} />
+            ) : isCancelled ? (
+              <AlertCircle size={32} />
+            ) : (
+              <Sparkles size={32} />
+            )}
           </div>
 
+          {/* Status Title & Subtitle */}
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-            {isIban ? t('tip.transferInstructions') : t('tip.successTitle')}
+            {isUnverified
+              ? t('tip.transferInstructions')
+              : isSuccess
+              ? t('tip.successTitle')
+              : isFailed
+              ? 'Ödeme Tamamlanamadı'
+              : isCancelled
+              ? 'Ödeme İptal Edildi'
+              : 'Ödeme Bekleniyor'}
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-            {isIban
+            {isUnverified
               ? t('tip.bankNotice')
-              : t('tip.successSubtitle')}
+              : isSuccess
+              ? t('tip.successSubtitle')
+              : isFailed
+              ? 'Ödeme işlemi onaylanamadı. Lütfen bilgilerinizi kontrol edip tekrar deneyiniz.'
+              : isCancelled
+              ? 'Ödeme işlemi iptal edildi.'
+              : paymentUrl
+              ? 'Lütfen güvenli ödeme bağlantısını kullanarak ödemenizi tamamlayınız.'
+              : 'Ödeme provizyonu bekleniyor.'}
           </p>
 
           <div style={{
@@ -194,14 +245,28 @@ export const TipPage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>{t('common.status')}:</span>
-              <span className={`badge ${isIban || paymentResult.payment?.status === 'UNVERIFIED' ? 'badge-warning' : 'badge-success'}`}>
-                {paymentResult.payment?.status === 'UNVERIFIED'
-                  ? (isIban ? 'Doğrulama Bekliyor (Banka Transferi)' : t('common.unverified'))
-                  : (paymentResult.payment?.status || t('common.success'))}
+              <span className={`badge ${
+                isSuccess
+                  ? 'badge-success'
+                  : isUnverified || isPending
+                  ? 'badge-warning'
+                  : isCancelled
+                  ? 'badge-neutral'
+                  : 'badge-danger'
+              }`}>
+                {isUnverified
+                  ? 'Doğrulama Bekliyor (Banka Transferi)'
+                  : isSuccess
+                  ? t('common.success')
+                  : isPending
+                  ? 'İşlem Bekleniyor'
+                  : isCancelled
+                  ? 'İptal Edildi'
+                  : 'Başarısız'}
               </span>
             </div>
 
-            {isIban && ibanDetails && (
+            {isUnverified && ibanDetails && (
               <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
                 <div style={{ marginBottom: '0.75rem' }}>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.accountHolder')}</div>
@@ -233,15 +298,27 @@ export const TipPage: React.FC = () => {
             )}
           </div>
 
+          {paymentUrl && isPending && (
+            <a
+              href={paymentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{ width: '100%', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            >
+              Ödemeyi Tamamla <ArrowRight size={16} />
+            </a>
+          )}
+
           <button
-            className={isIban ? "btn btn-primary" : "btn btn-secondary"}
+            className={isSuccess || isUnverified ? "btn btn-primary" : "btn btn-secondary"}
             style={{ width: '100%' }}
             onClick={() => {
               setPaymentResult(null);
               setCustomAmount('');
             }}
           >
-            {isIban ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}
+            {isSuccess || isUnverified ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}
           </button>
         </div>
       </div>

@@ -224,11 +224,30 @@ export class StripeProvider implements IPaymentProvider {
     const tipId = object.metadata?.tipId;
 
     let status: PaymentStatus = PaymentStatus.PENDING;
-    if (type === 'payment_intent.succeeded' || event.status === 'succeeded' || event.status === 'SUCCESS') {
+    if (
+      type === 'payment_intent.succeeded' ||
+      object.status === 'succeeded' ||
+      object.status === 'SUCCESS' ||
+      event.status === 'succeeded' ||
+      event.status === 'SUCCESS'
+    ) {
       status = PaymentStatus.SUCCESS;
-    } else if (type === 'payment_intent.payment_failed' || event.status === 'failed' || event.status === 'FAILED') {
+    } else if (
+      type === 'payment_intent.payment_failed' ||
+      object.status === 'failed' ||
+      object.status === 'FAILED' ||
+      object.status === 'requires_payment_method' ||
+      event.status === 'failed' ||
+      event.status === 'FAILED'
+    ) {
       status = PaymentStatus.FAILED;
-    } else if (type === 'payment_intent.canceled' || event.status === 'canceled' || event.status === 'CANCELLED') {
+    } else if (
+      type === 'payment_intent.canceled' ||
+      object.status === 'canceled' ||
+      object.status === 'CANCELLED' ||
+      event.status === 'canceled' ||
+      event.status === 'CANCELLED'
+    ) {
       status = PaymentStatus.CANCELLED;
     }
 

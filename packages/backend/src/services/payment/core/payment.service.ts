@@ -7,6 +7,7 @@ import { IPaymentProvider } from './provider.interface';
 import { PaymentMethodType, PaymentStatus } from '@prisma/client';
 import { createAuditLog } from '../../audit.service';
 import { decryptJson } from '../../../utils/crypto.util';
+import { providerRegistry } from './providerRegistry';
 
 export class PaymentService {
   private providers: Map<string, IPaymentProvider> = new Map();
@@ -24,7 +25,7 @@ export class PaymentService {
   }
 
   getProvider(name: string): IPaymentProvider {
-    const provider = this.providers.get(name.toLowerCase());
+    const provider = this.providers.get(name.toLowerCase()) || providerRegistry.getAdapter(name.toLowerCase());
     if (!provider) {
       throw new AppError(`Payment provider '${name}' is not supported`, 400);
     }
