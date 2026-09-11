@@ -305,7 +305,7 @@ export const RegisterPage: React.FC = () => {
               className="form-input"
             />
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
-              En az 6 karakter olmalıdır.
+              {t('auth.passwordTooShort')}
             </div>
           </div>
 
@@ -327,7 +327,7 @@ export const RegisterPage: React.FC = () => {
                 gap: '0.75rem',
                 cursor: 'pointer',
                 fontSize: '0.85rem',
-                lineHeight: '1.45',
+                lineHeight: '1.5',
                 color: 'var(--text-primary)',
               }}
             >
@@ -345,52 +345,31 @@ export const RegisterPage: React.FC = () => {
                   flexShrink: 0,
                 }}
               />
-              <span>
-                {language === 'tr' ? (
-                  <>
-                    Okudum ve{' '}
-                    <button
-                      type="button"
-                      onClick={() => setShowAgreementModal(true)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        color: '#3b82f6',
-                        fontWeight: 700,
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem',
-                        display: 'inline',
-                      }}
-                    >
-                      Naponi İşletme Hizmet ve Kullanım Sözleşmesi
-                    </button>
-                    'ni kabul ediyorum.
-                  </>
-                ) : (
-                  <>
-                    I have read and agree to the{' '}
-                    <button
-                      type="button"
-                      onClick={() => setShowAgreementModal(true)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        color: '#3b82f6',
-                        fontWeight: 700,
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem',
-                        display: 'inline',
-                      }}
-                    >
-                      Naponi Merchant Services Agreement
-                    </button>
-                    .
-                  </>
-                )}
+              <span style={{ display: 'inline', wordBreak: 'break-word', lineHeight: '1.5' }}>
+                {t('auth.agreementPrefix')}{' '}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowAgreementModal(true);
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: '#60a5fa',
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '3px',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    display: 'inline',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {t('auth.agreementLink')}
+                </button>
               </span>
             </label>
 
@@ -410,7 +389,7 @@ export const RegisterPage: React.FC = () => {
                 gap: '0.5rem',
               }}>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  🛡️ {language === 'tr' ? 'HMK m. 193 Elektronik İspat & Onay' : 'Electronic Proof & Consent (HMK 193)'}
+                  🛡️ {t('auth.agreementBadge')}
                 </span>
                 <button
                   type="button"
@@ -418,16 +397,16 @@ export const RegisterPage: React.FC = () => {
                   className="btn btn-secondary"
                   style={{
                     fontSize: '0.75rem',
-                    padding: '0.35rem 0.75rem',
+                    padding: '0.4rem 0.75rem',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.35rem',
+                    gap: '0.4rem',
                     borderRadius: '8px',
                     width: '100%',
                   }}
                 >
-                  <FileText size={13} /> {language === 'tr' ? 'Sözleşmeyi İncele (20 Madde)' : 'Review Agreement (20 Articles)'}
+                  <FileText size={13} /> {t('auth.agreementBtn')}
                 </button>
               </div>
             </div>

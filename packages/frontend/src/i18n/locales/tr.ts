@@ -112,6 +112,10 @@ const tr = {
     multiBranchSub: 'Tüm lokasyonlarınızı tek panelden yönetmek için kurumsal başvuru yapın',
     corporateCta: 'Kurumsal Başvuru',
     singleBranchPrompt: 'Tek şubeli bir işletmeyseniz, aşağıdaki bilgileri doldurarak hemen ücretsiz kaydolabilir ve sisteminizi kullanmaya başlayabilirsiniz.',
+    agreementPrefix: 'Okudum ve kabul ediyorum:',
+    agreementLink: 'Naponi İşletme Hizmet Sözleşmesi',
+    agreementBadge: 'Elektronik İspat ve Onay (HMK 193)',
+    agreementBtn: 'Sözleşmeyi İncele (20 Madde)',
   },
   home: {
     metaTitle: 'Naponi — İşletmeler İçin Doğrudan QR Dijital Bahşiş Platformu',

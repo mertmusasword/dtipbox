@@ -112,6 +112,10 @@ const fr = {
     multiBranchSub: 'Demandez des solutions d’entreprise pour gérer tous vos établissements',
     corporateCta: 'Candidature Entreprise',
     singleBranchPrompt: 'Vous gérez un seul établissement ? Remplissez simplement les informations ci-dessous pour créer votre compte gratuitement.',
+    agreementPrefix: "J'ai lu et j'accepte le",
+    agreementLink: 'Contrat de services commerçants Naponi',
+    agreementBadge: 'Preuve électronique et consentement (HMK 193)',
+    agreementBtn: 'Consulter le contrat (20 articles)',
   },
   home: {
     metaTitle: 'Naponi — Plateforme mondiale de pourboires numériques directs par QR Code',

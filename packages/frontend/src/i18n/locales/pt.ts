@@ -112,6 +112,10 @@ const pt = {
     multiBranchSub: 'Candidate-se a soluções empresariais para gerir todas as localizações',
     corporateCta: 'Candidatura Empresarial',
     singleBranchPrompt: 'Possui apenas uma unidade? Basta preencher os dados abaixo para criar sua conta gratuita e começar de imediato.',
+    agreementPrefix: 'Li e concordo com o',
+    agreementLink: 'Contrato de Serviços para Comerciantes Naponi',
+    agreementBadge: 'Prova Eletrônica e Consentimento (HMK 193)',
+    agreementBtn: 'Ver Contrato (20 Artigos)',
   },
   home: {
     metaTitle: 'Naponi — Plataforma Global de Gorjetas Digitais Diretas via QR Code',

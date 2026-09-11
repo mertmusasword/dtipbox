@@ -112,6 +112,10 @@ const id = {
     multiBranchSub: 'Daftar solusi perusahaan untuk mengelola semua lokasi dari satu portal',
     corporateCta: 'Pengajuan Korporat',
     singleBranchPrompt: 'Hanya memiliki satu cabang? Cukup isi informasi di bawah ini untuk mendaftar gratis dan mulai seketika.',
+    agreementPrefix: 'Saya telah membaca dan menyetujui',
+    agreementLink: 'Perjanjian Layanan Pedagang Naponi',
+    agreementBadge: 'Bukti Elektronik & Persetujuan (HMK 193)',
+    agreementBtn: 'Tinjau Perjanjian (20 Pasal)',
   },
   home: {
     metaTitle: 'Naponi — Platform Tip Digital Langsung Melalui QR Code untuk Bisnis Global',

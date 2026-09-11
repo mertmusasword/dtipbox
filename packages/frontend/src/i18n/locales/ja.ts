@@ -112,6 +112,10 @@ const ja = {
     multiBranchSub: '全店舗を一元管理できるエンタープライズソリューションをお申し込みください',
     corporateCta: '法人申込',
     singleBranchPrompt: '1店舗のみを運営されている場合は、以下のフォームに必要な情報を入力してそのまま無料登録へお進みください。',
+    agreementPrefix: '以下を読み、同意します:',
+    agreementLink: 'Naponi 加盟店利用規約',
+    agreementBadge: '電子証明および同意 (HMK 193)',
+    agreementBtn: '利用規約を確認 (全20条)',
   },
   home: {
     metaTitle: 'Naponi — 世界中の飲食・サービス業のための直接QRデジタルチッププラットフォーム',

@@ -112,6 +112,10 @@ const en = {
     multiBranchSub: 'Apply for enterprise solutions to manage all locations from a unified portal',
     corporateCta: 'Corporate Application',
     singleBranchPrompt: 'Operating a single location? Fill in the details below to complete your setup and start receiving tips immediately.',
+    agreementPrefix: 'I have read and agree to the',
+    agreementLink: 'Naponi Merchant Services Agreement',
+    agreementBadge: 'Electronic Proof & Consent (HMK 193)',
+    agreementBtn: 'Review Agreement (20 Articles)',
   },
   home: {
     metaTitle: 'Naponi — Direct QR Digital Tipping Platform for Global Businesses',

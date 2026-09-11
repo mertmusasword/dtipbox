@@ -112,6 +112,10 @@ const es = {
     multiBranchSub: 'Solicite soluciones corporativas para gestionar todas sus ubicaciones',
     corporateCta: 'Solicitud Corporativa',
     singleBranchPrompt: '¿Tiene una sola sucursal? Complete los datos a continuación para registrarse gratis y comenzar de inmediato.',
+    agreementPrefix: 'He leído y acepto el',
+    agreementLink: 'Contrato de Servicios para Comercios de Naponi',
+    agreementBadge: 'Prueba Electrónica y Consentimiento (HMK 193)',
+    agreementBtn: 'Revisar Contrato (20 Artículos)',
   },
   home: {
     metaTitle: 'Naponi — Plataforma global de propinas digitales con código QR directo',

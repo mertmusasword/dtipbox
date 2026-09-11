@@ -112,6 +112,10 @@ const de = {
     multiBranchSub: 'Bewerben Sie sich für Unternehmenslösungen zur zentralen Verwaltung',
     corporateCta: 'Unternehmensantrag',
     singleBranchPrompt: 'Haben Sie einen einzelnen Standort? Füllen Sie einfach die folgenden Angaben aus, um sich direkt kostenlos zu registrieren.',
+    agreementPrefix: 'Ich habe gelesen und akzeptiere die',
+    agreementLink: 'Naponi Händler-Dienstleistungsvereinbarung',
+    agreementBadge: 'Elektronischer Nachweis & Zustimmung (HMK 193)',
+    agreementBtn: 'Vertrag einsehen (20 Artikel)',
   },
   home: {
     metaTitle: 'Naponi — Direkte digitale QR-Trinkgeldplattform für Gastronomiebetriebe',
