@@ -111,6 +111,7 @@ const tr = {
     multiBranchPrompt: 'Birden fazla şubeniz mi var?',
     multiBranchSub: 'Tüm lokasyonlarınızı tek panelden yönetmek için kurumsal başvuru yapın',
     corporateCta: 'Kurumsal Başvuru',
+    singleBranchPrompt: 'Tek şubeli bir işletmeyseniz, aşağıdaki bilgileri doldurarak hemen ücretsiz kaydolabilir ve sisteminizi kullanmaya başlayabilirsiniz.',
   },
   home: {
     metaTitle: 'Naponi — İşletmeler İçin Doğrudan QR Dijital Bahşiş Platformu',

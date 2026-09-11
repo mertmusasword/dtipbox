@@ -111,6 +111,7 @@ const id = {
     multiBranchPrompt: 'Apakah Anda memiliki banyak cabang?',
     multiBranchSub: 'Daftar solusi perusahaan untuk mengelola semua lokasi dari satu portal',
     corporateCta: 'Pengajuan Korporat',
+    singleBranchPrompt: 'Hanya memiliki satu cabang? Cukup isi informasi di bawah ini untuk mendaftar gratis dan mulai seketika.',
   },
   home: {
     metaTitle: 'Naponi — Platform Tip Digital Langsung Melalui QR Code untuk Bisnis Global',

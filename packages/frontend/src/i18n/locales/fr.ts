@@ -111,6 +111,7 @@ const fr = {
     multiBranchPrompt: 'Avez-vous plusieurs succursales ?',
     multiBranchSub: 'Demandez des solutions d’entreprise pour gérer tous vos établissements',
     corporateCta: 'Candidature Entreprise',
+    singleBranchPrompt: 'Vous gérez un seul établissement ? Remplissez simplement les informations ci-dessous pour créer votre compte gratuitement.',
   },
   home: {
     metaTitle: 'Naponi — Plateforme mondiale de pourboires numériques directs par QR Code',

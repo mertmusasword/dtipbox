@@ -111,6 +111,7 @@ const pt = {
     multiBranchPrompt: 'Tem várias filiais?',
     multiBranchSub: 'Candidate-se a soluções empresariais para gerir todas as localizações',
     corporateCta: 'Candidatura Empresarial',
+    singleBranchPrompt: 'Possui apenas uma unidade? Basta preencher os dados abaixo para criar sua conta gratuita e começar de imediato.',
   },
   home: {
     metaTitle: 'Naponi — Plataforma Global de Gorjetas Digitais Diretas via QR Code',

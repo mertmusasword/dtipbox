@@ -111,6 +111,7 @@ const es = {
     multiBranchPrompt: '¿Tiene múltiples sucursales?',
     multiBranchSub: 'Solicite soluciones corporativas para gestionar todas sus ubicaciones',
     corporateCta: 'Solicitud Corporativa',
+    singleBranchPrompt: '¿Tiene una sola sucursal? Complete los datos a continuación para registrarse gratis y comenzar de inmediato.',
   },
   home: {
     metaTitle: 'Naponi — Plataforma global de propinas digitales con código QR directo',

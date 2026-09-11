@@ -111,6 +111,7 @@ const en = {
     multiBranchPrompt: 'Do you have multiple branches?',
     multiBranchSub: 'Apply for enterprise solutions to manage all locations from a unified portal',
     corporateCta: 'Corporate Application',
+    singleBranchPrompt: 'Operating a single location? Fill in the details below to complete your setup and start receiving tips immediately.',
   },
   home: {
     metaTitle: 'Naponi — Direct QR Digital Tipping Platform for Global Businesses',

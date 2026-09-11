@@ -111,6 +111,7 @@ const de = {
     multiBranchPrompt: 'Haben Sie mehrere Filialen?',
     multiBranchSub: 'Bewerben Sie sich für Unternehmenslösungen zur zentralen Verwaltung',
     corporateCta: 'Unternehmensantrag',
+    singleBranchPrompt: 'Haben Sie einen einzelnen Standort? Füllen Sie einfach die folgenden Angaben aus, um sich direkt kostenlos zu registrieren.',
   },
   home: {
     metaTitle: 'Naponi — Direkte digitale QR-Trinkgeldplattform für Gastronomiebetriebe',

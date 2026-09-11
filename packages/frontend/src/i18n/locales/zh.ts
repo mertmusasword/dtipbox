@@ -111,6 +111,7 @@ const zh = {
     multiBranchPrompt: '您拥有多家分店吗？',
     multiBranchSub: '申请企业解决方案，通过统一门户管理所有门店',
     corporateCta: '企业申请',
+    singleBranchPrompt: '如果您是单家门店/单网点企业，请直接在下方填写信息并注册，即可立即开始使用。',
   },
   home: {
     metaTitle: 'Naponi — 面向全球商户的免 App 直连二维码数字小费平台',

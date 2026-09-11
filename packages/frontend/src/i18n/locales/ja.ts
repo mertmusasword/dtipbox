@@ -111,6 +111,7 @@ const ja = {
     multiBranchPrompt: '複数の店舗をお持ちですか？',
     multiBranchSub: '全店舗を一元管理できるエンタープライズソリューションをお申し込みください',
     corporateCta: '法人申込',
+    singleBranchPrompt: '1店舗のみを運営されている場合は、以下のフォームに必要な情報を入力してそのまま無料登録へお進みください。',
   },
   home: {
     metaTitle: 'Naponi — 世界中の飲食・サービス業のための直接QRデジタルチッププラットフォーム',
