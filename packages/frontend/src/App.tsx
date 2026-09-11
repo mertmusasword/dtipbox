@@ -33,6 +33,7 @@ import { AdminAgreementsPage } from './pages/admin/AdminAgreementsPage';
 import { AdminCorporateApplicationsPage } from './pages/admin/AdminCorporateApplicationsPage';
 import { AdminSupportTicketsPage } from './pages/admin/AdminSupportTicketsPage';
 import { FloatingSupportWidget } from './components/FloatingSupportWidget';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Role } from './types';
 
 // Protected Route Guard
@@ -64,7 +65,9 @@ const ProtectedLayout: React.FC<{ allowedRoles?: Role[] }> = ({ allowedRoles }) 
     <div className="app-container">
       <Sidebar />
       <main className="main-content">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
     </div>
   );

@@ -131,9 +131,13 @@ export const AdminSupportTicketsPage: React.FC = () => {
       if (searchQuery.trim()) params.search = searchQuery.trim();
 
       const res = await api.get('/admin/support-tickets', { params });
-      if (res.data.success) {
-        setTickets(res.data.data);
-        if (res.data.meta?.statusCounts) {
+      if (res.data?.success) {
+        const payload = res.data.data;
+        const items = Array.isArray(payload) ? payload : (payload?.items || []);
+        setTickets(items);
+        if (payload?.statusCounts) {
+          setStatusCounts(payload.statusCounts);
+        } else if (res.data.meta?.statusCounts) {
           setStatusCounts(res.data.meta.statusCounts);
         }
       }
@@ -177,6 +181,7 @@ export const AdminSupportTicketsPage: React.FC = () => {
     try {
       const res = await api.patch(`/admin/support-tickets/${activeTicket.id}/status`, {
         status: editStatus,
+        adminNotes: editNotes,
         admin_notes: editNotes,
       });
       if (res.data.success) {
@@ -203,6 +208,8 @@ export const AdminSupportTicketsPage: React.FC = () => {
       alert(err.response?.data?.message || 'Silme işlemi başarısız');
     }
   };
+
+  const safeTickets = Array.isArray(tickets) ? tickets : [];
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1440px', margin: '0 auto', minHeight: '85vh' }}>
@@ -354,14 +361,14 @@ export const AdminSupportTicketsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading && tickets.length === 0 ? (
+              {loading && safeTickets.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                     <div className="spinner" style={{ margin: '0 auto 0.75rem' }} />
                     <div>Destek talepleri getiriliyor...</div>
                   </td>
                 </tr>
-              ) : tickets.length === 0 ? (
+              ) : safeTickets.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                     <Headphones size={36} style={{ margin: '0 auto 0.75rem', opacity: 0.4 }} />
@@ -370,7 +377,7 @@ export const AdminSupportTicketsPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                tickets.map((t) => {
+                safeTickets.map((t) => {
                   const sCfg = STATUS_CONFIG[t.status] || STATUS_CONFIG.NEW;
                   const cCfg = CATEGORY_CONFIG[t.category] || CATEGORY_CONFIG.GENERAL_INQUIRY;
 

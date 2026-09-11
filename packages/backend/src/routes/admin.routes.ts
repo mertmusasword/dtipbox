@@ -321,15 +321,17 @@ const updateTicketStatusSchema = {
   body: z.object({
     status: z.enum(['NEW', 'IN_PROGRESS', 'RESOLVED', 'CLOSED']),
     adminNotes: z.string().optional(),
+    admin_notes: z.string().optional(),
   }),
 };
 
 router.patch('/support-tickets/:id/status', validate(updateTicketStatusSchema), async (req, res, next) => {
   try {
+    const adminNotes = req.body.adminNotes || req.body.admin_notes;
     const updated = await supportService.updateSupportTicketStatus(
       req.params.id as string,
       req.body.status,
-      req.body.adminNotes
+      adminNotes
     );
     res.json({ success: true, data: updated, message: 'Destek talebi durumu güncellendi' });
   } catch (error) {
