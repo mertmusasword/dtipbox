@@ -5,6 +5,9 @@
 
 User-agent: *
 Allow: /
+Allow: /blog
+Allow: /solutions/
+Allow: /tools/
 Allow: /login
 Allow: /register
 

@@ -11,6 +11,11 @@ import { HomePage } from './pages/public/HomePage';
 import { TipPage } from './pages/public/TipPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
+import { BlogIndexPage } from './pages/public/blog/BlogIndexPage';
+import { BlogDetailPage } from './pages/public/blog/BlogDetailPage';
+import { SolutionPage } from './pages/public/solutions/SolutionPage';
+import { TipCalculatorPage } from './pages/public/tools/TipCalculatorPage';
+import { TipSplitCalculatorPage } from './pages/public/tools/TipSplitCalculatorPage';
 import { BusinessDashboard } from './pages/business/BusinessDashboard';
 import { BusinessProfilePage } from './pages/business/BusinessProfilePage';
 import { EmployeesPage } from './pages/business/EmployeesPage';
@@ -83,6 +88,18 @@ export const App: React.FC = () => {
             <Routes>
               {/* Public Landing & Showcase */}
               <Route path="/" element={<HomePage />} />
+
+              {/* Public Blog & Content Hub */}
+              <Route path="/blog" element={<BlogIndexPage />} />
+              <Route path="/blog/:slug" element={<BlogDetailPage />} />
+              <Route path="/blog/category/:category" element={<BlogIndexPage />} />
+
+              {/* Public Industry Solutions */}
+              <Route path="/solutions/:sector" element={<SolutionPage />} />
+
+              {/* Public SEO Tools */}
+              <Route path="/tools/tip-calculator" element={<TipCalculatorPage />} />
+              <Route path="/tools/tip-split-calculator" element={<TipSplitCalculatorPage />} />
 
               {/* Public Customer Tip Routes */}
               <Route path="/tip/:publicToken" element={<TipPage />} />

@@ -14,7 +14,14 @@ export type GAEventName =
   | 'tip_amount_selected'
   | 'payment_started'
   | 'payment_success'
-  | 'payment_failed';
+  | 'payment_failed'
+  | 'blog_view'
+  | 'blog_cta_click'
+  | 'blog_search'
+  | 'blog_category_click'
+  | 'blog_related_article_click'
+  | 'tool_used'
+  | 'register_from_blog';
 
 export interface PageViewParams {
   page_path: string;

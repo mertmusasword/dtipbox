@@ -292,6 +292,55 @@ export function trackPaymentFailed(payment_type: string, error_reason?: string):
   trackEvent('payment_failed', params);
 }
 
+/**
+ * 12. blog_view — Track blog article views
+ */
+export function trackBlogView(slug: string, title: string, category: string): void {
+  trackEvent('blog_view', { slug, title, category });
+}
+
+/**
+ * 13. blog_cta_click — Track clicks on conversion CTA buttons inside articles & solutions
+ */
+export function trackBlogCtaClick(cta_name: string, target_url: string): void {
+  trackEvent('blog_cta_click', { cta_name, target_url });
+}
+
+/**
+ * 14. blog_search — Track searches in blog hub
+ */
+export function trackBlogSearch(query: string, result_count: number): void {
+  trackEvent('blog_search', { query, result_count });
+}
+
+/**
+ * 15. blog_category_click — Track category filtering in blog
+ */
+export function trackBlogCategoryClick(category: string): void {
+  trackEvent('blog_category_click', { category });
+}
+
+/**
+ * 16. blog_related_article_click — Track internal navigation between articles
+ */
+export function trackBlogRelatedArticleClick(from_slug: string, to_slug: string): void {
+  trackEvent('blog_related_article_click', { from_slug, to_slug });
+}
+
+/**
+ * 17. tool_used — Track interactions with interactive SEO tools
+ */
+export function trackToolUsed(tool_slug: string, details?: Record<string, any>): void {
+  trackEvent('tool_used', { tool_slug, ...(details || {}) });
+}
+
+/**
+ * 18. register_from_blog — Track conversions originating from content
+ */
+export function trackRegisterFromBlog(source_page: string): void {
+  trackEvent('register_from_blog', { source_page });
+}
+
 // =============================================================================
 // Testing & Telemetry Inspection Helpers
 // =============================================================================

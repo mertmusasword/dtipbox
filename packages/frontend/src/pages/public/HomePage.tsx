@@ -39,6 +39,7 @@ import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted } from '../../analytics';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 import { SupportTicketModal } from '../../components/SupportTicketModal';
+import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -837,6 +838,46 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
+          10B. LATEST BLOG ARTICLES (SON YAZILAR & REHBERLER)
+          ==================================================================== */}
+      <section className="home-section" id="articles">
+        <div className="home-container">
+          <div className="home-section-header">
+            <span className="home-section-tag">Sektör Rehberleri & Bilgi Merkezi</span>
+            <h2 className="home-section-title">Dijital Bahşiş ve Hizmet Sektörü Rehberleri</h2>
+            <p className="home-section-desc">
+              Restoran, kafe ve otellerde temassız bahşiş yönetimi, personel motivasyonu ve yeni nesil ödeme teknolojileri hakkında en güncel yazılarımız.
+            </p>
+          </div>
+
+          <div className="blog-posts-grid" style={{ marginBottom: '2.5rem' }}>
+            {BLOG_POSTS.slice(0, 3).map((post) => (
+              <article key={post.slug} className="blog-card">
+                <div className="blog-card-category">{post.category}</div>
+                <h3 className="blog-card-title">
+                  <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+                </h3>
+                <p className="blog-card-excerpt">{post.excerpt}</p>
+                <div className="blog-card-footer">
+                  <span>{post.readingTime}</span>
+                  <Link to={`/blog/${post.slug}`} className="blog-card-readmore">
+                    Devamını Oku &rarr;
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <Link to="/blog" className="home-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.75rem' }}>
+              <span>Tüm Rehberleri ve Makaleleri İnceleyin</span>
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
           11. FREQUENTLY ASKED QUESTIONS (FAQ)
           ==================================================================== */}
       <section className="home-section" id="faq">
@@ -943,15 +984,18 @@ export const HomePage: React.FC = () => {
               <ul className="home-footer-links">
                 <li><a href="#how-it-works">{t('nav.features')}</a></li>
                 <li><a href="#experience">{t('nav.solutions')}</a></li>
-                <li><a href="#benefits">{t('nav.businesses')}</a></li>
-                <li><a href="#simulator">{t('nav.simulator')}</a></li>
-                <li><a href="#faq">{t('nav.faq')}</a></li>
+                <li><Link to="/solutions/restaurants">Restoranlar</Link></li>
+                <li><Link to="/solutions/hotels">Oteller</Link></li>
+                <li><Link to="/solutions/cafes">Kafeler</Link></li>
+                <li><Link to="/tools/tip-calculator">Bahşiş Hesaplayıcı</Link></li>
+                <li><Link to="/tools/tip-split-calculator">Bahşiş Bölüştürücü</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">Platform</h4>
+              <h4 className="home-footer-col-title">Platform & Resources</h4>
               <ul className="home-footer-links">
+                <li><Link to="/blog">Blog & Rehberler</Link></li>
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
                 <li><Link to="/login">{t('nav.login')}</Link></li>
                 <li>
@@ -980,7 +1024,10 @@ export const HomePage: React.FC = () => {
             <div>
               © {new Date().getFullYear()} NAPONI. {t('home.footerRights')}
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <Link to="/blog" style={{ color: '#64748b', textDecoration: 'none' }}>Blog</Link>
+              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>Sektörler</Link>
+              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>Hesaplayıcı</Link>
               <a href="#faq" style={{ color: '#64748b', textDecoration: 'none' }}>FAQ</a>
               <a href="#how-it-works" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.features')}</a>
             </div>
