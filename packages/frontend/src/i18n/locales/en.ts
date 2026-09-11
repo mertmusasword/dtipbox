@@ -107,6 +107,9 @@ const en = {
     registerSuccess: 'Account created successfully! Welcome to Naponi.',
     logoutSuccess: 'You have been logged out.',
     securityTip: 'We use industry-standard encryption. Your password is never stored in plain text.',
+    multiBranchPrompt: 'Do you have multiple branches?',
+    multiBranchSub: 'Apply for enterprise solutions to manage all locations from a unified portal',
+    corporateCta: 'Corporate Application',
   },
   home: {
     metaTitle: 'Naponi — Direct QR Digital Tipping Platform for Global Businesses',

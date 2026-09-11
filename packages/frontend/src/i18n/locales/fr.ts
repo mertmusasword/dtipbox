@@ -107,6 +107,9 @@ const fr = {
     registerSuccess: 'Compte créé avec succès ! Bienvenue sur Naponi.',
     logoutSuccess: 'Vous avez été déconnecté.',
     securityTip: 'Nous utilisons un chiffrement conforme aux normes de l’industrie. Votre mot de passe n’est jamais stocké en clair.',
+    multiBranchPrompt: 'Avez-vous plusieurs succursales ?',
+    multiBranchSub: 'Demandez des solutions d’entreprise pour gérer tous vos établissements',
+    corporateCta: 'Candidature Entreprise',
   },
   home: {
     metaTitle: 'Naponi — Plateforme mondiale de pourboires numériques directs par QR Code',

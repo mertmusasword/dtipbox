@@ -107,6 +107,9 @@ const zh = {
     registerSuccess: '账号创建成功！欢迎加入 Naponi。',
     logoutSuccess: '已安全退出。',
     securityTip: '我们采用金融级加密技术，您的密码绝不会以明文形式存储。',
+    multiBranchPrompt: '您拥有多家分店吗？',
+    multiBranchSub: '申请企业解决方案，通过统一门户管理所有门店',
+    corporateCta: '企业申请',
   },
   home: {
     metaTitle: 'Naponi — 面向全球商户的免 App 直连二维码数字小费平台',

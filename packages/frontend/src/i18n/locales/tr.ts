@@ -107,6 +107,9 @@ const tr = {
     registerSuccess: 'Hesap başarıyla oluşturuldu! Naponi\'ye hoş geldiniz.',
     logoutSuccess: 'Çıkış yapıldı.',
     securityTip: 'Endüstri standardı şifreleme kullanıyoruz. Şifreniz asla düz metin olarak saklanmaz.',
+    multiBranchPrompt: 'Birden fazla şubeniz mi var?',
+    multiBranchSub: 'Tüm lokasyonlarınızı tek panelden yönetmek için kurumsal başvuru yapın',
+    corporateCta: 'Kurumsal Başvuru',
   },
   home: {
     metaTitle: 'Naponi — İşletmeler İçin Doğrudan QR Dijital Bahşiş Platformu',

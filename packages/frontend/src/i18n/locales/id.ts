@@ -107,6 +107,9 @@ const id = {
     registerSuccess: 'Akun berhasil dibuat! Selamat datang di Naponi.',
     logoutSuccess: 'Anda telah berhasil keluar.',
     securityTip: 'Kami menerapkan standar enkripsi industri. Kata sandi Anda tidak pernah disimpan dalam teks biasa.',
+    multiBranchPrompt: 'Apakah Anda memiliki banyak cabang?',
+    multiBranchSub: 'Daftar solusi perusahaan untuk mengelola semua lokasi dari satu portal',
+    corporateCta: 'Pengajuan Korporat',
   },
   home: {
     metaTitle: 'Naponi — Platform Tip Digital Langsung Melalui QR Code untuk Bisnis Global',

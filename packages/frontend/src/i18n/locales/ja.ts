@@ -107,6 +107,9 @@ const ja = {
     registerSuccess: 'アカウントが作成されました！Naponiへようこそ。',
     logoutSuccess: 'ログアウトしました。',
     securityTip: '業界標準の強力な暗号化を採用しています。パスワードが平文で保存されることはありません。',
+    multiBranchPrompt: '複数の店舗をお持ちですか？',
+    multiBranchSub: '全店舗を一元管理できるエンタープライズソリューションをお申し込みください',
+    corporateCta: '法人申込',
   },
   home: {
     metaTitle: 'Naponi — 世界中の飲食・サービス業のための直接QRデジタルチッププラットフォーム',

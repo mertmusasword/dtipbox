@@ -36,6 +36,7 @@ import {
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted } from '../../analytics';
+import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 
 export const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -43,79 +44,14 @@ export const HomePage: React.FC = () => {
   // Mobile Nav Drawer State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Corporate Application Modal State
+  const [corporateModalOpen, setCorporateModalOpen] = useState(false);
+
   // Hero Simulator Interactive State
   const [simAmount, setSimAmount] = useState<number>(10);
   const [simStaff, setSimStaff] = useState<string>('Alex R. (Server)');
   const [simPayment, setSimPayment] = useState<'apple' | 'card' | 'wire'>('apple');
   const [simSuccess, setSimSuccess] = useState<boolean>(false);
-
-  // Corporate Modal & Application State
-  const [corporateModalOpen, setCorporateModalOpen] = useState(false);
-  const [corporateSubmitting, setCorporateSubmitting] = useState(false);
-  const [corporateSuccess, setCorporateSuccess] = useState(false);
-  const [corporateError, setCorporateError] = useState<string | null>(null);
-  const [corporateForm, setCorporateForm] = useState({
-    company_name: '',
-    contact_name: '',
-    phone: '',
-    email: '',
-    sector: '',
-    branch_count: 2,
-    message: '',
-    _hp: ''
-  });
-
-  const handleCorporateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (corporateForm._hp) {
-      setCorporateSuccess(true);
-      return;
-    }
-    setCorporateSubmitting(true);
-    setCorporateError(null);
-    try {
-      const res = await fetch('/api/corporate-applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          company_name: corporateForm.company_name.trim(),
-          contact_name: corporateForm.contact_name.trim(),
-          phone: corporateForm.phone.trim(),
-          email: corporateForm.email.trim(),
-          sector: corporateForm.sector.trim(),
-          branch_count: Number(corporateForm.branch_count) || 1,
-          message: corporateForm.message.trim() || undefined
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Başvuru gönderilirken bir hata oluştu');
-      }
-      setCorporateSuccess(true);
-    } catch (err: any) {
-      setCorporateError(err.message || 'Başvuru gönderilemedi. Lütfen tekrar deneyin.');
-    } finally {
-      setCorporateSubmitting(false);
-    }
-  };
-
-  const handleCloseCorporateModal = () => {
-    setCorporateModalOpen(false);
-    if (corporateSuccess) {
-      setCorporateSuccess(false);
-      setCorporateForm({
-        company_name: '',
-        contact_name: '',
-        phone: '',
-        email: '',
-        sector: '',
-        branch_count: 2,
-        message: '',
-        _hp: ''
-      });
-    }
-    setCorporateError(null);
-  };
 
   // FAQ Accordion State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -1016,201 +952,11 @@ export const HomePage: React.FC = () => {
         </div>
       </footer>
 
-      {/* ====================================================================
-          15. CORPORATE APPLICATION MODAL
-          ==================================================================== */}
-      {corporateModalOpen && (
-        <div className="corporate-modal-backdrop" onClick={handleCloseCorporateModal}>
-          <div className="corporate-modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="corporate-modal-close-btn"
-              onClick={handleCloseCorporateModal}
-              aria-label={t('common.close')}
-            >
-              <X size={20} />
-            </button>
-
-            {corporateSuccess ? (
-              <div className="corporate-success-view">
-                <div className="corporate-success-icon-wrap">
-                  <CheckCircle2 size={40} />
-                </div>
-                <h3 style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: '0.75rem', color: '#ffffff' }}>
-                  {t('home.applicationSuccessTitle')}
-                </h3>
-                <p style={{ color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6, maxWidth: 480, margin: '0 auto 2rem' }}>
-                  {t('home.applicationSuccessDesc')}
-                </p>
-                <button
-                  type="button"
-                  className="home-btn-primary"
-                  style={{ minWidth: 160 }}
-                  onClick={handleCloseCorporateModal}
-                >
-                  {t('common.close')}
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div style={{ paddingRight: '2rem' }}>
-                  <div className="home-corporate-tag" style={{ marginBottom: '0.75rem' }}>
-                    <Building2 size={14} />
-                    <span>{t('home.corporateBadge')}</span>
-                  </div>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.4rem' }}>
-                    {t('home.corporateModalTitle')}
-                  </h3>
-                  <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.5 }}>
-                    {t('home.corporateModalSubtitle')}
-                  </p>
-                </div>
-
-                {corporateError && (
-                  <div style={{
-                    marginTop: '1.25rem',
-                    padding: '0.85rem 1rem',
-                    borderRadius: 10,
-                    background: 'rgba(239, 68, 68, 0.15)',
-                    border: '1px solid rgba(239, 68, 68, 0.35)',
-                    color: '#fca5a5',
-                    fontSize: '0.88rem'
-                  }}>
-                    {corporateError}
-                  </div>
-                )}
-
-                <form onSubmit={handleCorporateSubmit}>
-                  {/* Honeypot field for spam prevention */}
-                  <input
-                    type="text"
-                    name="_hp"
-                    value={corporateForm._hp}
-                    onChange={(e) => setCorporateForm({ ...corporateForm, _hp: e.target.value })}
-                    style={{ display: 'none' }}
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-
-                  <div className="corporate-form-grid">
-                    <div>
-                      <label className="corporate-form-label">
-                        {t('home.companyName')} *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        className="corporate-form-input"
-                        placeholder="Örn: BigChefs Grubu, Sunset Hospitality"
-                        value={corporateForm.company_name}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, company_name: e.target.value })}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="corporate-form-label">
-                        {t('home.contactName')} *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        className="corporate-form-input"
-                        placeholder="Örn: Ahmet Yılmaz"
-                        value={corporateForm.contact_name}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, contact_name: e.target.value })}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="corporate-form-label">
-                        {t('home.phone')} *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        className="corporate-form-input"
-                        placeholder="+90 5XX XXX XX XX"
-                        value={corporateForm.phone}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, phone: e.target.value })}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="corporate-form-label">
-                        {t('home.email')} *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        className="corporate-form-input"
-                        placeholder="yetkili@sirket.com"
-                        value={corporateForm.email}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, email: e.target.value })}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="corporate-form-label">
-                        {t('home.sector')} *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        className="corporate-form-input"
-                        placeholder="Restoran, Otel, Kafe, Kuaför, Vale..."
-                        value={corporateForm.sector}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, sector: e.target.value })}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="corporate-form-label">
-                        {t('home.branchCount')} *
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        required
-                        className="corporate-form-input"
-                        placeholder="Örn: 5"
-                        value={corporateForm.branch_count}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, branch_count: parseInt(e.target.value) || 1 })}
-                      />
-                    </div>
-
-                    <div className="corporate-form-field-full">
-                      <label className="corporate-form-label">
-                        {t('home.needsMessage')}
-                      </label>
-                      <textarea
-                        className="corporate-form-textarea"
-                        placeholder="Özel entegrasyon talepleriniz, şube yapınız veya sormak istedikleriniz..."
-                        value={corporateForm.message}
-                        onChange={(e) => setCorporateForm({ ...corporateForm, message: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={corporateSubmitting}
-                    className="corporate-form-submit-btn"
-                  >
-                    {corporateSubmitting ? (
-                      <span>{t('common.loading')}</span>
-                    ) : (
-                      <>
-                        <Send size={18} />
-                        <span>{t('home.submitApplication')}</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Corporate Application Modal */}
+      <CorporateApplicationModal
+        isOpen={corporateModalOpen}
+        onClose={() => setCorporateModalOpen(false)}
+      />
     </div>
   );
 };

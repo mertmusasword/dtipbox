@@ -107,6 +107,9 @@ const de = {
     registerSuccess: 'Konto erfolgreich erstellt! Willkommen bei Naponi.',
     logoutSuccess: 'Sie wurden erfolgreich abgemeldet.',
     securityTip: 'Wir nutzen modernste Verschlüsselungsstandards. Ihr Passwort wird niemals im Klartext gespeichert.',
+    multiBranchPrompt: 'Haben Sie mehrere Filialen?',
+    multiBranchSub: 'Bewerben Sie sich für Unternehmenslösungen zur zentralen Verwaltung',
+    corporateCta: 'Unternehmensantrag',
   },
   home: {
     metaTitle: 'Naponi — Direkte digitale QR-Trinkgeldplattform für Gastronomiebetriebe',

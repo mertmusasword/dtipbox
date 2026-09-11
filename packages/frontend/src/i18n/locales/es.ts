@@ -107,6 +107,9 @@ const es = {
     registerSuccess: '¡Cuenta creada con éxito! Bienvenido a Naponi.',
     logoutSuccess: 'Sesión cerrada.',
     securityTip: 'Utilizamos cifrado bancario estándar. Su contraseña nunca se almacena en texto plano.',
+    multiBranchPrompt: '¿Tiene múltiples sucursales?',
+    multiBranchSub: 'Solicite soluciones corporativas para gestionar todas sus ubicaciones',
+    corporateCta: 'Solicitud Corporativa',
   },
   home: {
     metaTitle: 'Naponi — Plataforma global de propinas digitales con código QR directo',

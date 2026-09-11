@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { ArrowRight, FileText, ShieldCheck } from 'lucide-react';
+import { ArrowRight, FileText, ShieldCheck, Building2 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted, trackBusinessRegistered } from '../../analytics';
 import { AgreementModal } from '../../components/AgreementModal';
+import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [acceptedAgreement, setAcceptedAgreement] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [showCorporateModal, setShowCorporateModal] = useState(false);
 
   const countries = [
     { code: 'US', name: 'United States', currency: 'USD', timezone: 'America/New_York' },
@@ -115,6 +117,71 @@ export const RegisterPage: React.FC = () => {
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
             {t('auth.registerSubtitle')}
           </p>
+        </div>
+
+        {/* Multi-Branch / Enterprise Callout Banner */}
+        <div style={{
+          marginBottom: '1.75rem',
+          padding: '0.95rem 1.15rem',
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)',
+          border: '1px solid rgba(99, 102, 241, 0.32)',
+          borderRadius: '14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '0.85rem',
+          boxShadow: '0 4px 20px rgba(99, 102, 241, 0.1)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+            <div style={{
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: 'rgba(99, 102, 241, 0.2)',
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#818cf8',
+              flexShrink: 0,
+            }}>
+              <Building2 size={18} />
+            </div>
+            <div style={{ textAlign: dir === 'rtl' ? 'right' : 'left' }}>
+              <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.88rem', lineHeight: 1.3 }}>
+                {t('auth.multiBranchPrompt')}
+              </div>
+              <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '0.15rem', lineHeight: 1.3 }}>
+                {t('auth.multiBranchSub')}
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowCorporateModal(true)}
+            style={{
+              padding: '0.5rem 0.95rem',
+              borderRadius: '9999px',
+              background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: '#ffffff',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)',
+              transition: 'all 0.2s',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
+            <span>{t('auth.corporateCta')}</span>
+            <ArrowRight size={14} />
+          </button>
         </div>
 
         {error && (
@@ -308,6 +375,13 @@ export const RegisterPage: React.FC = () => {
             setAcceptedAgreement(true);
             setShowAgreementModal(false);
           }}
+        />
+
+        <CorporateApplicationModal
+          isOpen={showCorporateModal}
+          onClose={() => setShowCorporateModal(false)}
+          defaultCompanyName={formData.businessName}
+          defaultEmail={formData.email}
         />
 
         <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>

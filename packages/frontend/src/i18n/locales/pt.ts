@@ -107,6 +107,9 @@ const pt = {
     registerSuccess: 'Conta criada com sucesso! Seja bem-vindo à Naponi.',
     logoutSuccess: 'Você foi desconectado com sucesso.',
     securityTip: 'Utilizamos criptografia com padrões de nível bancário. Sua senha nunca é armazenada em texto simples.',
+    multiBranchPrompt: 'Tem várias filiais?',
+    multiBranchSub: 'Candidate-se a soluções empresariais para gerir todas as localizações',
+    corporateCta: 'Candidatura Empresarial',
   },
   home: {
     metaTitle: 'Naponi — Plataforma Global de Gorjetas Digitais Diretas via QR Code',
