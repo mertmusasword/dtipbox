@@ -75,6 +75,9 @@ export async function getBusinessAnalytics(businessId: string) {
   let weeklyAmount = 0;
   let monthlyAmount = 0;
   let totalAmount = 0;
+  let confirmedTipCount = 0;
+  let pendingTipCount = 0;
+  let pendingAmount = 0;
 
   const employeeMap = new Map<string, { name: string; count: number; total: number }>();
   for (const emp of employees) {
@@ -94,37 +97,44 @@ export async function getBusinessAnalytics(businessId: string) {
 
   for (const tip of allTips) {
     const amt = Number(tip.amount);
-    totalAmount += amt;
 
-    const createdAt = new Date(tip.created_at);
-    if (createdAt >= startOfToday) todayAmount += amt;
-    if (createdAt >= startOfWeek) weeklyAmount += amt;
-    if (createdAt >= startOfMonth) monthlyAmount += amt;
+    if (tip.payment_status === PaymentStatus.SUCCESS) {
+      totalAmount += amt;
+      confirmedTipCount += 1;
 
-    // Employee aggregation
-    if (tip.employee_id && employeeMap.has(tip.employee_id)) {
-      const e = employeeMap.get(tip.employee_id)!;
-      e.count += 1;
-      e.total += amt;
+      const createdAt = new Date(tip.created_at);
+      if (createdAt >= startOfToday) todayAmount += amt;
+      if (createdAt >= startOfWeek) weeklyAmount += amt;
+      if (createdAt >= startOfMonth) monthlyAmount += amt;
+
+      // Employee aggregation
+      if (tip.employee_id && employeeMap.has(tip.employee_id)) {
+        const e = employeeMap.get(tip.employee_id)!;
+        e.count += 1;
+        e.total += amt;
+      }
+
+      // Table aggregation
+      if (tip.table_id && tableMap.has(tip.table_id)) {
+        const t = tableMap.get(tip.table_id)!;
+        t.count += 1;
+        t.total += amt;
+      }
+
+      // Method aggregation
+      const method = tip.payment_method;
+      if (!paymentMethodUsage[method]) {
+        paymentMethodUsage[method] = { count: 0, total: 0 };
+      }
+      paymentMethodUsage[method].count += 1;
+      paymentMethodUsage[method].total += amt;
+    } else if (tip.payment_status === PaymentStatus.UNVERIFIED) {
+      pendingTipCount += 1;
+      pendingAmount += amt;
     }
-
-    // Table aggregation
-    if (tip.table_id && tableMap.has(tip.table_id)) {
-      const t = tableMap.get(tip.table_id)!;
-      t.count += 1;
-      t.total += amt;
-    }
-
-    // Method aggregation
-    const method = tip.payment_method;
-    if (!paymentMethodUsage[method]) {
-      paymentMethodUsage[method] = { count: 0, total: 0 };
-    }
-    paymentMethodUsage[method].count += 1;
-    paymentMethodUsage[method].total += amt;
   }
 
-  const tipCount = allTips.length;
+  const tipCount = confirmedTipCount;
   const averageTip = tipCount > 0 ? Number((totalAmount / tipCount).toFixed(2)) : 0;
 
   return {
@@ -134,6 +144,8 @@ export async function getBusinessAnalytics(businessId: string) {
     totalTips: Number(totalAmount.toFixed(2)),
     tipCount,
     averageTip,
+    pendingTipCount,
+    pendingTipAmount: Number(pendingAmount.toFixed(2)),
     employeeCount,
     tableCount,
     qrCount,
@@ -155,11 +167,11 @@ export async function getBusinessAnalytics(businessId: string) {
       let count = 0;
       let total = 0;
       if (q.table_id) {
-        const tableTips = allTips.filter((t) => t.table_id === q.table_id);
+        const tableTips = allTips.filter((t) => t.table_id === q.table_id && t.payment_status === PaymentStatus.SUCCESS);
         count = tableTips.length;
         total = tableTips.reduce((sum, t) => sum + Number(t.amount), 0);
       } else {
-        const generalTips = allTips.filter((t) => !t.table_id);
+        const generalTips = allTips.filter((t) => !t.table_id && t.payment_status === PaymentStatus.SUCCESS);
         count = generalTips.length;
         total = generalTips.reduce((sum, t) => sum + Number(t.amount), 0);
       }
@@ -208,18 +220,22 @@ export async function getEmployeeAnalytics(employeeId: string, businessId: strin
   let weeklyAmount = 0;
   let monthlyAmount = 0;
   let totalAmount = 0;
+  let confirmedTipCount = 0;
 
   for (const tip of tips) {
-    const amt = Number(tip.amount);
-    totalAmount += amt;
+    if (tip.payment_status === PaymentStatus.SUCCESS) {
+      const amt = Number(tip.amount);
+      totalAmount += amt;
+      confirmedTipCount += 1;
 
-    const createdAt = new Date(tip.created_at);
-    if (createdAt >= startOfToday) todayAmount += amt;
-    if (createdAt >= startOfWeek) weeklyAmount += amt;
-    if (createdAt >= startOfMonth) monthlyAmount += amt;
+      const createdAt = new Date(tip.created_at);
+      if (createdAt >= startOfToday) todayAmount += amt;
+      if (createdAt >= startOfWeek) weeklyAmount += amt;
+      if (createdAt >= startOfMonth) monthlyAmount += amt;
+    }
   }
 
-  const tipCount = tips.length;
+  const tipCount = confirmedTipCount;
   const averageTip = tipCount > 0 ? Number((totalAmount / tipCount).toFixed(2)) : 0;
 
   return {

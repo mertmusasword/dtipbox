@@ -85,9 +85,9 @@ export async function getAdminPlatformStatistics() {
     prisma.business.count({ where: { is_active: true } }),
     prisma.employee.count({ where: { deleted_at: null } }),
     prisma.qrCode.count(),
-    prisma.tip.count({ where: { payment_status: { in: ['SUCCESS', 'UNVERIFIED'] } } }),
+    prisma.tip.count({ where: { payment_status: 'SUCCESS' } }),
     prisma.tip.findMany({
-      where: { payment_status: { in: ['SUCCESS', 'UNVERIFIED'] } },
+      where: { payment_status: 'SUCCESS' },
       select: { amount: true, currency: true },
     }),
   ]);

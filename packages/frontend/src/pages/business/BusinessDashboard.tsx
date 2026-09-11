@@ -154,7 +154,11 @@ export const BusinessDashboard: React.FC = () => {
             label={t('business.totalTips')}
             value={formatCurrency(analytics?.totalTips || 0, currency)}
             icon={<Layers size={24} />}
-            subtitle={`${analytics?.tipCount || 0} ${t('business.tipCount')}`}
+            subtitle={
+              analytics?.pendingTipCount && analytics.pendingTipCount > 0
+                ? `${analytics.tipCount || 0} ${t('business.tipCount')} (${analytics.pendingTipCount} onay bekliyor)`
+                : `${analytics?.tipCount || 0} ${t('business.tipCount')}`
+            }
           />
         </div>
       )}

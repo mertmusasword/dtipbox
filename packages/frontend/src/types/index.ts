@@ -193,6 +193,8 @@ export interface BusinessAnalytics {
   totalTips: number;
   tipCount: number;
   averageTip: number;
+  pendingTipCount?: number;
+  pendingTipAmount?: number;
   employeeCount: number;
   tableCount: number;
   qrCount: number;
