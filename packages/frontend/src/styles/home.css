@@ -1650,8 +1650,22 @@
   .support-floating-btn {
     bottom: 18px;
     right: 18px;
-    padding: 10px 14px;
-    font-size: 0.82rem;
+    padding: 12px;
+    font-size: 0;
+    gap: 0;
+    width: 46px;
+    height: 46px;
+    justify-content: center;
+  }
+  .support-floating-btn > span:last-child {
+    display: none;
+  }
+  .support-floating-btn > .support-pulse-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 7px;
+    height: 7px;
   }
   [dir="rtl"] .support-floating-btn {
     right: auto;

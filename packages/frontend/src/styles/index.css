@@ -1240,8 +1240,22 @@ h1, h2, h3, h4, h5, h6,
   .support-floating-btn {
     bottom: 18px !important;
     right: 18px !important;
-    padding: 10px 14px !important;
-    font-size: 0.82rem !important;
+    padding: 12px !important;
+    font-size: 0 !important;
+    gap: 0 !important;
+    width: 46px !important;
+    height: 46px !important;
+    justify-content: center !important;
+  }
+  .support-floating-btn > span:last-child {
+    display: none !important;
+  }
+  .support-floating-btn > .support-pulse-dot {
+    position: absolute !important;
+    top: 4px !important;
+    right: 4px !important;
+    width: 7px !important;
+    height: 7px !important;
   }
   [dir="rtl"] .support-floating-btn {
     right: auto !important;
