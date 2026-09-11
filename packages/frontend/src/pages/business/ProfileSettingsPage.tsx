@@ -191,31 +191,31 @@ export const ProfileSettingsPage: React.FC = () => {
       <form onSubmit={handleSaveConfig} className="glass-card" style={{ marginBottom: '1.5rem' }}>
         <div className="section-header">
           <Globe size={20} className="section-icon" />
-          <h3 className="section-title">{t('nav.settings')}</h3>
+          <h3 className="section-title">Bölgesel ve Zaman Ayarları</h3>
         </div>
 
         <div className="form-grid form-grid-2">
           <div className="form-group mb-0">
-            <label className="form-label">{t('common.details')}</label>
+            <label className="form-label">Dil & Biçim Kodu (Locale)</label>
             <input
               type="text"
               value={businessConfig.locale}
               onChange={(e) => setBusinessConfig({ ...businessConfig, locale: e.target.value })}
               className="form-input"
-              placeholder="en-US"
+              placeholder="tr-TR, en-US..."
             />
-            <div className="form-hint">Controls number, date, and currency formatting</div>
+            <div className="form-hint">Sayı, tarih ve para birimi sembollerinin biçimini belirler (Örn: tr-TR, en-US)</div>
           </div>
           <div className="form-group mb-0">
-            <label className="form-label">{t('common.time')}</label>
+            <label className="form-label">Saat Dilimi (Timezone)</label>
             <input
               type="text"
               value={businessConfig.timezone}
               onChange={(e) => setBusinessConfig({ ...businessConfig, timezone: e.target.value })}
               className="form-input"
-              placeholder="America/New_York"
+              placeholder="Europe/Istanbul"
             />
-            <div className="form-hint">Used for daily reset and analytics time ranges</div>
+            <div className="form-hint">Gün sonu devirleri, vardiya kapanışları ve raporlama saat aralıkları için kullanılır</div>
           </div>
         </div>
 
