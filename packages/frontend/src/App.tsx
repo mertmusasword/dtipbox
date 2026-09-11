@@ -5,6 +5,7 @@ import { ToastProvider } from './components/Toast';
 import { Sidebar } from './components/Sidebar';
 import { LanguageProvider } from './i18n';
 import { AnalyticsTracker } from './analytics';
+import { ScrollToTop } from './components/ScrollToTop';
 
 // Pages
 import { HomePage } from './pages/public/HomePage';
@@ -84,6 +85,7 @@ export const App: React.FC = () => {
       <AuthProvider>
         <ToastProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <AnalyticsTracker />
             <Routes>
               {/* Public Landing & Showcase */}
