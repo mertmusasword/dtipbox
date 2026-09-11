@@ -297,21 +297,8 @@ export const PaymentMethodsPage: React.FC = () => {
       </div>
 
       {/* QUICK INTEGRATION ADVISORY BANNER */}
-      <div
-        className="glass-card"
-        style={{
-          marginBottom: '1.5rem',
-          padding: '1.1rem 1.35rem',
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%)',
-          border: '1px solid rgba(99, 102, 241, 0.22)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div className="payments-guide-banner">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0, flex: 1 }}>
           <div
             style={{
               width: '42px',
@@ -327,17 +314,17 @@ export const PaymentMethodsPage: React.FC = () => {
           >
             <Compass size={22} />
           </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', lineHeight: 1.3 }}>
               {t('payments.guideBannerTitle') || 'Hangi Sağlayıcıyı Seçmelisiniz? Nasıl Bağlanır?'}
             </div>
-            <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+            <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem', lineHeight: 1.4 }}>
               {t('payments.guideBannerDesc') || 'Sanal POS bağlama, API anahtarlarını bulma ve 3 adımda doğrudan kartlı bahşiş alma rehberi.'}
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="payments-guide-actions">
           <button
             className="btn btn-secondary btn-sm"
             onClick={() => setShowGuideModal(true)}
@@ -356,15 +343,15 @@ export const PaymentMethodsPage: React.FC = () => {
       </div>
 
       {/* SECTION 1: DIRECT BANK / IBAN SETTLEMENT */}
-      <div className="glass-card" style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div className="metric-icon" style={{ color: ibanMethod?.status === 'ACTIVE' ? 'var(--success)' : 'var(--text-primary)' }}>
+      <div className="glass-card payments-bank-card">
+        <div className="payments-bank-header">
+          <div className="payments-bank-info">
+            <div className="metric-icon" style={{ color: ibanMethod?.status === 'ACTIVE' ? 'var(--success)' : 'var(--text-primary)', marginTop: '2px', flexShrink: 0 }}>
               <Building2 size={24} />
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>{t('payments.bankTransferTitle')}</h3>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div className="payments-bank-title-row">
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, lineHeight: 1.3 }}>{t('payments.bankTransferTitle')}</h3>
                 {ibanMethod?.connectionStatus === 'CONNECTED' ? (
                   <span className="badge badge-info">
                     <CheckCircle2 size={12} /> {t('payments.bankConfigured')}
@@ -375,14 +362,14 @@ export const PaymentMethodsPage: React.FC = () => {
                   </span>
                 )}
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.25rem 0 0' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0', lineHeight: 1.45 }}>
                 {t('payments.bankTransferDesc')}
               </p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Link to="/business/payment-account" className="btn btn-secondary btn-sm">
+          <div className="payments-bank-actions">
+            <Link to="/business/payment-account" className="btn btn-secondary btn-sm" style={{ textAlign: 'center' }}>
               {t('payments.configureBankBtn')}
             </Link>
             {ibanMethod && (
@@ -442,12 +429,12 @@ export const PaymentMethodsPage: React.FC = () => {
                     gap: '1rem',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                      <div className="metric-icon" style={{ color: isConnected ? 'var(--success)' : 'var(--danger)' }}>
+                  <div className="payments-gateway-header">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', flex: 1, minWidth: 0 }}>
+                      <div className="metric-icon" style={{ color: isConnected ? 'var(--success)' : 'var(--danger)', marginTop: '2px', flexShrink: 0 }}>
                         <CreditCard size={24} />
                       </div>
-                      <div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
                           <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
                             {meta?.display_name || intItem.provider}
@@ -469,7 +456,7 @@ export const PaymentMethodsPage: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0' }}>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0', lineHeight: 1.45 }}>
                           {meta?.description || 'Payment gateway integration'}
                         </p>
                         {intItem.last_tested_at && (
@@ -485,19 +472,20 @@ export const PaymentMethodsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <div className="payments-gateway-actions">
                       {meta && (
                         <button
                           className="btn btn-secondary btn-sm"
                           onClick={() => handleOpenConnect(meta)}
                           title="Configure API Keys & Run Test"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                         >
                           <RefreshCw size={14} /> Test / Configure
                         </button>
                       )}
                       <button
                         className="btn btn-secondary btn-sm"
-                        style={{ color: 'var(--danger)' }}
+                        style={{ color: 'var(--danger)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                         onClick={() => handleDisconnect(intItem.provider, meta?.display_name || intItem.provider)}
                         title="Disconnect Integration"
                       >
@@ -507,21 +495,10 @@ export const PaymentMethodsPage: React.FC = () => {
                   </div>
 
                   {/* Payment Methods Controlled by this Provider */}
-                  <div
-                    style={{
-                      background: 'var(--bg-input)',
-                      padding: '1rem 1.25rem',
-                      borderRadius: 'var(--radius-md)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '1rem',
-                    }}
-                  >
-                    <div>
+                  <div className="payments-acceptance-box">
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Acceptance Status (Credit Cards, Apple Pay, Google Pay)</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
                         {isConnected
                           ? isCardActive
                             ? '🟢 Publicly Active: Customers can tip with credit cards & 1-touch mobile wallets.'

@@ -698,6 +698,164 @@ input, select, textarea {
   border-radius: 8px;
 }
 
+/* ===================== Payment Methods Page Responsive ===================== */
+.payments-guide-banner {
+  margin-bottom: 1.5rem;
+  padding: 1.15rem 1.35rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.payments-guide-actions {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.payments-bank-card {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+}
+
+.payments-bank-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.payments-bank-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.payments-bank-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.payments-bank-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.payments-gateway-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.payments-gateway-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.payments-acceptance-box {
+  background: var(--bg-input);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .payments-guide-banner {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .payments-guide-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .payments-guide-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .payments-bank-card {
+    padding: 1.15rem 1rem;
+  }
+  .payments-bank-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.15rem;
+  }
+  .payments-bank-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+  .payments-bank-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .payments-bank-actions .btn {
+    width: 100%;
+    min-width: 0 !important;
+    text-align: center;
+    justify-content: center;
+    padding: 0.65rem 0.5rem;
+    font-size: 0.82rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .payments-gateway-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .payments-gateway-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .payments-gateway-actions .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.65rem 0.5rem;
+  }
+
+  .payments-acceptance-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+  .payments-acceptance-box .btn {
+    width: 100%;
+    min-width: 0 !important;
+    padding: 0.65rem 1rem;
+  }
+}
+
+
 
 
 /* ===================== Modal ===================== */
