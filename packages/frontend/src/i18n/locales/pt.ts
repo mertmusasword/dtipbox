@@ -239,7 +239,12 @@ const pt = {
   },
   payments: {
     pageTitle: 'Canais e Provedores de Pagamento',
-    pageSubtitle: 'Configure a liquidação bancária direta, conecte gateways de POS e gerencie formas de pagamento dos clientes',
+    pageSubtitle: 'Configure a liquidação bancária direta, conecte gateways de pagamento regionais e gerencie os métodos de pagamento',
+    guideBtn: 'Guia de Integração',
+    guideBannerTitle: 'Precisa de ajuda para escolher ou conectar um provedor?',
+    guideBannerDesc: 'Confira nosso guia rápido de 3 passos para obter chaves de API e receber gorjetas diretas.',
+    guideModalTitle: 'Guia Rápido de Integração para Empresas',
+    guideModalSubtitle: 'Receba gorjetas de cartão diretamente na sua própria conta sem intermediários.',
     bankTransferTitle: 'Liquidação Bancária Direta (IBAN / Transferência)',
     bankTransferDesc: 'As gorjetas caem diretamente na sua conta bancária empresarial verificada. Transferências permanecem como pendentes até você confirmá-las.',
     bankConfigured: 'Conta Bancária Configurada',

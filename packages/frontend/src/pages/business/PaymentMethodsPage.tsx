@@ -27,6 +27,13 @@ import {
   Filter,
   Layers,
   ChevronRight,
+  BookOpen,
+  HelpCircle,
+  ShieldCheck,
+  Zap,
+  Compass,
+  Check,
+  ArrowRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
@@ -48,6 +55,9 @@ export const PaymentMethodsPage: React.FC = () => {
   const [showCatalogModal, setShowCatalogModal] = useState(false);
   const [showCredentialsModal, setShowCredentialsModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
+  const [guideActiveTab, setGuideActiveTab] = useState<'tr' | 'global' | 'asia'>('tr');
+  const [guideProviderKey, setGuideProviderKey] = useState<'iyzico' | 'paytr' | 'stripe' | 'square' | 'paypal'>('iyzico');
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
 
   // Catalog Filters
@@ -265,11 +275,64 @@ export const PaymentMethodsPage: React.FC = () => {
             {t('payments.pageSubtitle')}
           </p>
         </div>
-        <div className="page-header-actions">
+        <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary" onClick={() => setShowGuideModal(true)}>
+            <BookOpen size={16} /> {t('payments.guideBtn') || 'Entegrasyon Rehberi'}
+          </button>
           <button className="btn btn-primary" onClick={() => setShowCatalogModal(true)}>
             <Plus size={16} /> {t('payments.addProviderBtn')}
           </button>
         </div>
+      </div>
+
+      {/* QUICK INTEGRATION ADVISORY BANNER */}
+      <div
+        className="glass-card"
+        style={{
+          marginBottom: '1.5rem',
+          padding: '1.1rem 1.35rem',
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%)',
+          border: '1px solid rgba(99, 102, 241, 0.22)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div
+            style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '12px',
+              background: 'rgba(99, 102, 241, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--primary)',
+              flexShrink: 0,
+            }}
+          >
+            <Compass size={22} />
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+              {t('payments.guideBannerTitle') || 'Hangi Sağlayıcıyı Seçmelisiniz? Nasıl Bağlanır?'}
+            </div>
+            <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+              {t('payments.guideBannerDesc') || 'Sanal POS bağlama, API anahtarlarını bulma ve 3 adımda doğrudan kartlı bahşiş alma rehberi.'}
+            </div>
+          </div>
+        </div>
+
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={() => setShowGuideModal(true)}
+          style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+        >
+          <BookOpen size={14} /> {t('payments.guideBtn') || 'Rehberi Aç'} <ArrowRight size={14} />
+        </button>
       </div>
 
       {/* SECTION 1: DIRECT BANK / IBAN SETTLEMENT */}
@@ -855,6 +918,303 @@ export const PaymentMethodsPage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* MODAL 4: QUICK INTEGRATION GUIDE (REHBER) */}
+      {showGuideModal && (
+        <div className="modal-backdrop" onClick={() => setShowGuideModal(false)}>
+          <div
+            className="modal-content"
+            style={{ maxWidth: '820px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: 'rgba(99, 102, 241, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--primary)',
+                  }}
+                >
+                  <BookOpen size={20} />
+                </div>
+                <div>
+                  <h3 className="modal-title" style={{ margin: 0 }}>
+                    {t('payments.guideModalTitle') || 'İşletmeler İçin Hızlı Entegrasyon Rehberi'}
+                  </h3>
+                  <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0' }}>
+                    {t('payments.guideModalSubtitle') || 'Aracı havuz olmadan kartlı bahşişleri doğrudan kendi banka/POS hesabınıza aktarın.'}
+                  </p>
+                </div>
+              </div>
+              <button className="modal-close" onClick={() => setShowGuideModal(false)}>
+                &times;
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '0.5rem 0' }}>
+              {/* 1. THREE CORE PRINCIPLES */}
+              <div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Zap size={16} color="var(--primary)" /> 3 Temel Prensip (Nasıl Çalışır?)
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+                  <div
+                    style={{
+                      background: 'var(--bg-input)',
+                      padding: '0.9rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--success)' }}>
+                      <Check size={16} /> 1. Aracı Havuz Yok
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
+                      Bahşişler doğrudan bağladığınız sanal POS (iyzico, PayTR, Stripe vb.) hesabınıza yatar. Naponi parada günlerce bekleme yapmaz.
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'var(--bg-input)',
+                      padding: '0.9rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)' }}>
+                      <ShieldCheck size={16} /> 2. Sıfır Kart Riski
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
+                      Müşterinizin kart bilgileri Naponi sunucularında asla tutulmaz. Tüm ödemeler PCI-DSS Seviye 1 güvenceli ödeme devleri üzerinden akar.
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'var(--bg-input)',
+                      padding: '0.9rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: '#ec4899' }}>
+                      <Smartphone size={16} /> 3. Otomatik QR Etkileşimi
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
+                      Sağlayıcınızı test edip kaydettiğiniz anda işletmenizdeki ve masalarınızdaki tüm QR kodlar kartla bahşişe anında açılır.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. WHICH PROVIDER TO CHOOSE */}
+              <div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Globe2 size={16} color="var(--primary)" /> Hangi Sağlayıcıyı Seçmeliyim?
+                </h4>
+
+                {/* Region Tabs */}
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${guideActiveTab === 'tr' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setGuideActiveTab('tr')}
+                  >
+                    🇹🇷 Türkiye (TL & Yerel Kartlar)
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${guideActiveTab === 'global' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setGuideActiveTab('global')}
+                  >
+                    🌍 Global / Batı Pazarı (USD, EUR, GBP)
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${guideActiveTab === 'asia' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setGuideActiveTab('asia')}
+                  >
+                    🇨🇳 Asya & Turist Hub'ları
+                  </button>
+                </div>
+
+                {/* Tab Contents */}
+                <div
+                  style={{
+                    background: 'var(--bg-input)',
+                    padding: '1rem 1.25rem',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border-color)',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  {guideActiveTab === 'tr' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <div>
+                        <strong>🥇 iyzico Sanal POS:</strong> Türkiye'deki en popüler çözümdür. Troy, Maximum, Bonus, Axess vb. tüm yerel kartlar ve yurtdışı kartlar geçerlidir. Bireysel şahıs şirketleri de çok kolay hesap açabilir.
+                      </div>
+                      <div>
+                        <strong>🥈 PayTR Sanal POS:</strong> Rekabetçi komisyon oranları ve ertesi gün nakit ödeme avantajıyla öne çıkar. Hızlı entegrasyon için idealdir.
+                      </div>
+                    </div>
+                  )}
+
+                  {guideActiveTab === 'global' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <div>
+                        <strong>Stripe:</strong> 40+ ülkede Apple Pay, Google Pay ve tüm küresel kartları tek tıkla kabul etmek için dünyanın altın standardıdır.
+                      </div>
+                      <div>
+                        <strong>Square:</strong> ABD, Kanada, İngiltere ve Avustralya'daki kafe, restoran ve barlar için çok yaygındır.
+                      </div>
+                      <div>
+                        <strong>PayPal:</strong> 200'den fazla ülkede müşterilerin güvenle kullandığı küresel cüzdandır.
+                      </div>
+                      <div>
+                        <strong>Adyen & Moneris:</strong> Kurumsal ölçekteki işletmeler ve Kanada pazarındaki işletmeler için idealdir.
+                      </div>
+                    </div>
+                  )}
+
+                  {guideActiveTab === 'asia' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <div>
+                        <strong>Alipay Global:</strong> Çinli turistlerin ve Asya-Pasifik seyahatçilerinin ana ödeme yöntemidir. QR kodla anında tahsilat sağlar.
+                      </div>
+                      <div>
+                        <strong>WeChat Pay:</strong> Milyarlarca aktif kullanıcısı olan WeChat ekosisteminin mobil cüzdanıdır. Turistik bölgeler için tavsiye edilir.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 3. STEP-BY-STEP KEY FINDER */}
+              <div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <HelpCircle size={16} color="var(--primary)" /> API Anahtarlarımı Nereden Bulurum?
+                </h4>
+
+                {/* Provider Selector for Guide */}
+                <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+                  {(['iyzico', 'paytr', 'stripe', 'square', 'paypal'] as const).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`btn btn-sm ${guideProviderKey === key ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ textTransform: 'capitalize', fontSize: '0.75rem' }}
+                      onClick={() => setGuideProviderKey(key)}
+                    >
+                      {key}
+                    </button>
+                  ))}
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(99, 102, 241, 0.05)',
+                    padding: '1rem 1.25rem',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid rgba(99, 102, 241, 0.2)',
+                    fontSize: '0.825rem',
+                  }}
+                >
+                  {guideProviderKey === 'iyzico' && (
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <li><strong>iyzico Kontrol Paneline</strong> (veya Sandbox test paneline) giriş yapın.</li>
+                      <li>Sol menüde yer alan <strong>Ayarlar &rarr; Firma Ayarları</strong> sekmesine tıklayın.</li>
+                      <li>Sayfanın en altındaki <strong>API Anahtarı (API Key)</strong> ve <strong>Güvenlik Anahtarı (Secret Key)</strong> değerlerini kopyalayın.</li>
+                      <li>Bu sayfadaki iyzico kartında <strong>"Bağla"</strong> butonuna tıklayıp anahtarları yapıştırın ve <strong>"Bağlantıyı Test Et ve Kaydet"</strong>e basın.</li>
+                    </ol>
+                  )}
+
+                  {guideProviderKey === 'paytr' && (
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <li><strong>PayTR Mağaza Yönetim Paneline</strong> giriş yapın.</li>
+                      <li>Üst menüden <strong>Destek & Entegrasyon &rarr; Entegrasyon Bilgileri</strong> sayfasına gidin.</li>
+                      <li>Burada yer alan <strong>Mağaza No (Merchant ID)</strong>, <strong>Mağaza Parolası (Merchant Key)</strong> ve <strong>Mağaza Gizli Anahtarı (Merchant Salt)</strong> değerlerini kopyalayın.</li>
+                      <li>Bu sayfadaki PayTR kartında <strong>"Bağla"</strong> butonuna tıklayıp yapıştırın ve kaydedin.</li>
+                    </ol>
+                  )}
+
+                  {guideProviderKey === 'stripe' && (
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <li><strong>Stripe Dashboard</strong> (dashboard.stripe.com) sayfasına giriş yapın.</li>
+                      <li>Sol alt taraftaki <strong>Developers &rarr; API keys</strong> bölümünü açın.</li>
+                      <li><strong>Publishable key</strong> (<code>pk_live_...</code> veya <code>pk_test_...</code>) ve <strong>Secret key</strong> (<code>sk_live_...</code> veya <code>sk_test_...</code>) değerlerini alın.</li>
+                      <li>Stripe kartındaki <strong>"Bağla"</strong> butonuna tıklayarak anahtarlarınızı kaydedin.</li>
+                    </ol>
+                  )}
+
+                  {guideProviderKey === 'square' && (
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <li><strong>Square Developer Dashboard</strong> (developer.squareup.com) sayfasına gidin.</li>
+                      <li>Uygulamanızı seçip <strong>Credentials</strong> sekmesinden <strong>Application ID</strong> ve <strong>Access Token</strong> alın.</li>
+                      <li><strong>Locations</strong> sekmesinden işletmenizin <strong>Location ID</strong> değerini kopyalayın.</li>
+                      <li>Square kartında <strong>"Bağla"</strong> formuna girerek testi tamamlayın.</li>
+                    </ol>
+                  )}
+
+                  {guideProviderKey === 'paypal' && (
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <li><strong>PayPal Developer Dashboard</strong> (developer.paypal.com/dashboard) adresine gidin.</li>
+                      <li><strong>Apps & Credentials</strong> bölümünden uygulamanızı seçin (veya Create App ile oluşturun).</li>
+                      <li><strong>Client ID</strong> ve <strong>Client Secret</strong> değerlerini kopyalayın.</li>
+                      <li>PayPal kartındaki <strong>"Bağla"</strong> modalına yapıştırın.</li>
+                    </ol>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+                marginTop: '1.25rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid var(--border-color)',
+              }}
+            >
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                💡 Yardıma ihtiyacınız olursa <a href="mailto:info@naponi.com" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>info@naponi.com</a> üzerinden bize ulaşabilirsiniz.
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowGuideModal(false)}
+                >
+                  {t('common.close') || 'Kapat'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setShowGuideModal(false);
+                    setShowCatalogModal(true);
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  <Plus size={16} /> {t('payments.browseProvidersBtn') || 'Sağlayıcıları İncele ve Bağla'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

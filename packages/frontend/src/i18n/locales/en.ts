@@ -240,6 +240,11 @@ const en = {
   payments: {
     pageTitle: 'Payment Channels & Providers',
     pageSubtitle: 'Configure direct bank settlement, connect regional POS gateways, and manage customer payment methods',
+    guideBtn: 'Integration Guide',
+    guideBannerTitle: 'Need Help Choosing or Connecting a Provider?',
+    guideBannerDesc: 'Explore our quick 3-step guide on obtaining API keys and receiving direct tips.',
+    guideModalTitle: 'Quick Integration Guide for Merchants',
+    guideModalSubtitle: 'Receive card tips directly into your own merchant account with zero middleman holding.',
     bankTransferTitle: 'Direct Bank Settlement (IBAN / Wire)',
     bankTransferDesc: 'Tips transfer directly to your verified business bank account. Unverified transfers stay flagged until confirmed by you.',
     bankConfigured: 'Bank Configured',

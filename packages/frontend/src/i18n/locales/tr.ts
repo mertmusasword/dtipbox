@@ -240,6 +240,11 @@ const tr = {
   payments: {
     pageTitle: 'Ödeme Kanalları & Sağlayıcılar',
     pageSubtitle: 'Doğrudan banka hesabınızı yapılandırın, sanal POS sağlayıcılarını bağlayın ve ödeme kabulünü yönetin',
+    guideBtn: 'Entegrasyon Rehberi',
+    guideBannerTitle: 'Hangi Sağlayıcıyı Seçmelisiniz? Nasıl Bağlanır?',
+    guideBannerDesc: 'Sanal POS bağlama, API anahtarlarını bulma ve 3 adımda doğrudan kartlı bahşiş alma rehberi.',
+    guideModalTitle: 'İşletmeler İçin Hızlı Entegrasyon Rehberi',
+    guideModalSubtitle: 'Aracı havuz olmadan kartlı bahşişleri doğrudan kendi banka/POS hesabınıza aktarın.',
     bankTransferTitle: 'Doğrudan Banka Transferi (IBAN / FAST / EFT)',
     bankTransferDesc: 'Bahşişler doğrudan işletmenizin doğrulanmış banka hesabına geçer. Doğrulanmamış transferler siz onaylayana kadar beklemede kalır.',
     bankConfigured: 'Banka Bilgileri Kayıtlı',
