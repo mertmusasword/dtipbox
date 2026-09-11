@@ -10,7 +10,7 @@ export async function getBusinessAnalytics(businessId: string) {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   // Consider successful or unverified (bank transfer accepted for record) tips in metrics
-  const validStatuses: PaymentStatus[] = [PaymentStatus.SUCCESS, PaymentStatus.UNVERIFIED];
+  const validStatuses: PaymentStatus[] = [PaymentStatus.SUCCESS, PaymentStatus.UNVERIFIED, PaymentStatus.CANCELLED];
 
   const [
     allTips,

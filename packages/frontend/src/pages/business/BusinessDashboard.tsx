@@ -53,6 +53,7 @@ export const BusinessDashboard: React.FC = () => {
   }, [t]);
 
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
 
   const handleVerifyTip = async (tipId: string) => {
     try {
@@ -63,6 +64,21 @@ export const BusinessDashboard: React.FC = () => {
       alert('Bahşiş onaylanırken bir hata oluştu.');
     } finally {
       setVerifyingId(null);
+    }
+  };
+
+  const handleRejectTip = async (tipId: string) => {
+    const confirmed = window.confirm('Bu bahşiş için banka havalesi ulaşmadıysa kaydı iptal etmek istiyor musunuz?');
+    if (!confirmed) return;
+
+    try {
+      setRejectingId(tipId);
+      await api.put(`/business/tips/${tipId}/reject`);
+      loadData();
+    } catch {
+      alert('Bahşiş iptal edilirken bir hata oluştu.');
+    } finally {
+      setRejectingId(null);
     }
   };
 
@@ -235,18 +251,36 @@ export const BusinessDashboard: React.FC = () => {
                     </td>
                     <td>
                       {tip.status === 'UNVERIFIED' ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap' }}>
                           <span className="badge badge-warning">Onay Bekliyor</span>
                           <button
                             type="button"
                             onClick={() => handleVerifyTip(tip.id)}
-                            disabled={verifyingId === tip.id}
+                            disabled={verifyingId === tip.id || rejectingId === tip.id}
                             className="btn btn-primary"
                             style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem', whiteSpace: 'nowrap' }}
                           >
                             {verifyingId === tip.id ? '...' : 'Havale Alındı'}
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRejectTip(tip.id)}
+                            disabled={verifyingId === tip.id || rejectingId === tip.id}
+                            className="btn btn-secondary"
+                            style={{
+                              fontSize: '0.72rem',
+                              padding: '0.2rem 0.5rem',
+                              whiteSpace: 'nowrap',
+                              color: '#f87171',
+                              borderColor: 'rgba(239, 68, 68, 0.35)',
+                            }}
+                            title="Havale Gelmedi / İptal Et"
+                          >
+                            {rejectingId === tip.id ? '...' : 'Alınmadı'}
+                          </button>
                         </div>
+                      ) : tip.status === 'CANCELLED' ? (
+                        <span className="badge badge-danger">İptal Edildi</span>
                       ) : (
                         <span className="badge badge-success">{t('common.success')}</span>
                       )}

@@ -472,4 +472,36 @@ router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
   }
 });
 
+// --- Reject Tip (Mark IBAN bank transfer as not received / cancelled) ---
+router.put('/tips/:id/reject', async (req: AuthRequest, res, next) => {
+  try {
+    const tipId = req.params.id as string;
+    const businessId = req.user!.businessId!;
+
+    const tip = await prisma.tip.findFirst({
+      where: { id: tipId, business_id: businessId },
+    });
+
+    if (!tip) {
+      res.status(404).json({ success: false, error: 'Bahşiş kaydı bulunamadı.' });
+      return;
+    }
+
+    const updatedTip = await prisma.tip.update({
+      where: { id: tip.id },
+      data: {
+        payment_status: 'CANCELLED',
+      },
+    });
+
+    res.json({
+      success: true,
+      data: updatedTip,
+      message: 'Banka transferi alınmadı olarak işaretlendi ve iptal edildi.',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
