@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { api } from '../../api/client';
 import { Employee } from '../../types';
 import { Modal } from '../../components/Modal';
@@ -7,7 +7,7 @@ import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
-import { Plus, Trash2, Edit2, UserCheck, UserX, Users } from 'lucide-react';
+import { Plus, Trash2, Edit2, UserCheck, UserX, Users, Upload, Camera } from 'lucide-react';
 
 export const EmployeesPage: React.FC = () => {
   const { showToast } = useToast();
@@ -19,6 +19,8 @@ export const EmployeesPage: React.FC = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [useUrlInput, setUseUrlInput] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -27,6 +29,44 @@ export const EmployeesPage: React.FC = () => {
     email: '',
     password: '',
   });
+
+  const handleImageUpload = (file: File) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      showToast('Lütfen JPG, PNG veya WebP formatında bir görsel seçin.', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Görsel boyutu en fazla 5 MB olabilir.', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Optimal center crop and resize to 400x400
+        const canvas = document.createElement('canvas');
+        const size = 400;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const minDim = Math.min(img.width, img.height);
+        const startX = (img.width - minDim) / 2;
+        const startY = (img.height - minDim) / 2;
+
+        ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
+
+        const optimized = canvas.toDataURL('image/jpeg', 0.85);
+        setFormData((prev) => ({ ...prev, avatar: optimized }));
+        showToast('Fotoğraf başarıyla yüklendi ve uyarlandı');
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const loadEmployees = useCallback(() => {
     setLoading(true);
@@ -44,12 +84,14 @@ export const EmployeesPage: React.FC = () => {
 
   const openCreateModal = () => {
     setEditingEmployee(null);
+    setUseUrlInput(false);
     setFormData({ first_name: '', last_name: '', position: '', avatar: '', email: '', password: '' });
     setIsModalOpen(true);
   };
 
   const openEditModal = (emp: Employee) => {
     setEditingEmployee(emp);
+    setUseUrlInput(false);
     setFormData({
       first_name: emp.first_name,
       last_name: emp.last_name,
@@ -250,14 +292,158 @@ export const EmployeesPage: React.FC = () => {
           </div>
 
           <div className="form-group mb-0">
-            <label className="form-label">{t('business.avatarUrl')}</label>
-            <input
-              type="url"
-              placeholder="https://..."
-              value={formData.avatar}
-              onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-              className="form-input"
-            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+              <label className="form-label mb-0">{t('business.avatarUrl')}</label>
+              <button
+                type="button"
+                onClick={() => setUseUrlInput(!useUrlInput)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--accent-primary)',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  padding: 0,
+                }}
+              >
+                {useUrlInput ? '📁 Görsel Dosyası Yükle' : '🔗 URL ile Ekle'}
+              </button>
+            </div>
+
+            {useUrlInput ? (
+              <div>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/..."
+                  value={formData.avatar}
+                  onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
+                  className="form-input"
+                />
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+                  Doğrudan web görsel bağlantısı (https://...) girebilirsiniz.
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  border: '2px dashed var(--border-color)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '1.25rem',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  textAlign: 'center',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/jpg"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleImageUpload(e.target.files[0]);
+                    }
+                  }}
+                />
+
+                {formData.avatar ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', justifyContent: 'center' }}>
+                    <div style={{ position: 'relative' }}>
+                      <img
+                        src={formData.avatar}
+                        alt="Önizleme"
+                        style={{
+                          width: '76px',
+                          height: '76px',
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          border: '2px solid var(--accent-primary)',
+                          boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+                          display: 'block',
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="btn btn-secondary"
+                        style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                      >
+                        <Camera size={13} /> Fotoğrafı Değiştir
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, avatar: '' })}
+                        className="btn btn-secondary"
+                        style={{
+                          fontSize: '0.75rem',
+                          padding: '0.35rem 0.75rem',
+                          color: '#f87171',
+                          borderColor: 'rgba(239, 68, 68, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                        }}
+                      >
+                        <Trash2 size={13} /> Fotoğrafı Kaldır
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{ cursor: 'pointer', padding: '0.5rem 0' }}
+                  >
+                    <div
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        background: 'rgba(99, 102, 241, 0.12)',
+                        color: 'var(--accent-primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 0.6rem',
+                      }}
+                    >
+                      <Upload size={24} />
+                    </div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>Fotoğraf Seç veya Sürükle</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                      Cihazınızdan görsel yüklemek için tıklayın
+                    </div>
+                  </div>
+                )}
+
+                {/* Öneri & Standart Kutusu */}
+                <div
+                  style={{
+                    marginTop: '0.9rem',
+                    paddingTop: '0.75rem',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                    fontSize: '0.75rem',
+                    color: 'var(--text-muted)',
+                    lineHeight: 1.5,
+                    textAlign: 'left',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    borderRadius: 'var(--radius-sm)',
+                    padding: '0.55rem 0.75rem',
+                  }}
+                >
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
+                    📐 Önerilen Görsel Standartları:
+                  </div>
+                  <div>• <strong>Ölçü & Oran:</strong> 1:1 Kare format (ideal olarak en az <strong>400×400 px</strong>)</div>
+                  <div>• <strong>Format & Boyut:</strong> JPG, PNG veya WebP (maksimum <strong>5 MB</strong>)</div>
+                  <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.5)', marginTop: '0.25rem' }}>
+                    * Yüklediğiniz görsel bahşiş ekranındaki personel kartlarına taşma yapmayacak şekilde otomatik olarak optimize edilir.
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', marginTop: '0.5rem' }}>

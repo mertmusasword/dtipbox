@@ -337,19 +337,31 @@ export const TipPage: React.FC = () => {
                         <img
                           src={emp.avatar}
                           alt={emp.first_name}
-                          style={{ width: '44px', height: '44px', borderRadius: '50%', margin: '0 auto 0.5rem', objectFit: 'cover' }}
+                          style={{
+                            width: '52px',
+                            height: '52px',
+                            borderRadius: '50%',
+                            margin: '0 auto 0.5rem',
+                            objectFit: 'cover',
+                            border: isSelected ? '2px solid var(--accent-primary)' : '2px solid rgba(255, 255, 255, 0.12)',
+                            boxShadow: isSelected ? '0 0 14px rgba(99, 102, 241, 0.45)' : '0 2px 8px rgba(0, 0, 0, 0.25)',
+                            display: 'block',
+                          }}
                         />
                       ) : (
                         <div style={{
-                          width: '44px',
-                          height: '44px',
+                          width: '52px',
+                          height: '52px',
                           borderRadius: '50%',
-                          background: 'rgba(255, 255, 255, 0.1)',
+                          background: isSelected ? 'rgba(99, 102, 241, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                          border: isSelected ? '2px solid var(--accent-primary)' : '2px solid rgba(255, 255, 255, 0.08)',
+                          color: isSelected ? '#a5b4fc' : 'var(--text-primary)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           margin: '0 auto 0.5rem',
                           fontWeight: 700,
+                          fontSize: '1.15rem',
                         }}>
                           {emp.first_name[0]}
                         </div>

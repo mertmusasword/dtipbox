@@ -111,12 +111,13 @@ app.use('/api', limiter);
 // Body parsing with raw buffer preservation for webhook signature checks
 app.use(
   express.json({
+    limit: '10mb',
     verify: (req: any, _res, buf) => {
       req.rawBody = buf.toString();
     },
   })
 );
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // Mount API routes
