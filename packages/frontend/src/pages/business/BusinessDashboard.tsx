@@ -19,13 +19,16 @@ import {
   Sparkles,
   ShieldAlert,
   FileText,
+  Check,
+  X,
+  Clock,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import { AgreementModal } from '../../components/AgreementModal';
 
 export const BusinessDashboard: React.FC = () => {
-  const { t, formatCurrency, formatTime } = useLanguage();
+  const { t, formatCurrency, formatTime, language } = useLanguage();
   const [analytics, setAnalytics] = useState<BusinessAnalytics | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
@@ -225,71 +228,151 @@ export const BusinessDashboard: React.FC = () => {
         {loading ? (
           <LoadingState compact message={t('common.loading')} />
         ) : analytics?.recentTips && analytics.recentTips.length > 0 ? (
-          <div className="table-responsive">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>{t('common.time')}</th>
-                  <th>{t('common.amount')}</th>
-                  <th>{t('nav.paymentMethods')}</th>
-                  <th>{t('common.status')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {analytics.recentTips.map((tip) => (
-                  <tr key={tip.id}>
-                    <td style={{ color: 'var(--text-secondary)' }}>
-                      {formatTime(tip.created_at)}
-                    </td>
-                    <td style={{ fontWeight: 700 }}>
-                      {formatCurrency(Number(tip.amount), tip.currency || currency)}
-                    </td>
-                    <td>
-                      <span className="badge badge-neutral">
-                        {tip.payment_method.replace(/_/g, ' ')}
-                      </span>
-                    </td>
-                    <td>
+          <>
+            {/* Desktop Table View */}
+            <div className="desktop-tips-table table-responsive">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>{t('common.time')}</th>
+                    <th>{t('common.amount')}</th>
+                    <th>{t('nav.paymentMethods')}</th>
+                    <th>{t('common.status')}</th>
+                    <th style={{ textAlign: 'right' }}>{t('common.actions')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analytics.recentTips.map((tip) => (
+                    <tr key={tip.id}>
+                      <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                        {formatTime(tip.created_at)}
+                      </td>
+                      <td style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        {formatCurrency(Number(tip.amount), tip.currency || business?.currency || 'TRY')}
+                      </td>
+                      <td>
+                        <span className="badge badge-neutral">
+                          {tip.payment_method.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        {tip.status === 'UNVERIFIED' ? (
+                          <span className="badge badge-warning">
+                            {language === 'tr' ? 'Onay Bekliyor' : 'Pending'}
+                          </span>
+                        ) : tip.status === 'CANCELLED' ? (
+                          <span className="badge badge-danger">
+                            {language === 'tr' ? 'İptal Edildi' : 'Cancelled'}
+                          </span>
+                        ) : (
+                          <span className="badge badge-success">{t('common.success')}</span>
+                        )}
+                      </td>
+                      <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        {tip.status === 'UNVERIFIED' ? (
+                          <div className="inline-actions" style={{ justifyContent: 'flex-end', gap: '0.4rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleVerifyTip(tip.id)}
+                              disabled={verifyingId === tip.id || rejectingId === tip.id}
+                              className="btn btn-primary"
+                              style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap' }}
+                            >
+                              <Check size={13} />
+                              <span>{verifyingId === tip.id ? '...' : (language === 'tr' ? 'Havale Alındı' : 'Confirm')}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRejectTip(tip.id)}
+                              disabled={verifyingId === tip.id || rejectingId === tip.id}
+                              className="btn btn-secondary"
+                              style={{
+                                fontSize: '0.75rem',
+                                padding: '0.3rem 0.65rem',
+                                whiteSpace: 'nowrap',
+                                color: '#f87171',
+                                borderColor: 'rgba(239, 68, 68, 0.35)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                              }}
+                              title={language === 'tr' ? 'Havale Gelmedi / İptal Et' : 'Reject / Cancel'}
+                            >
+                              <X size={13} />
+                              <span>{rejectingId === tip.id ? '...' : (language === 'tr' ? 'Alınmadı' : 'Reject')}</span>
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="mobile-tips-list">
+              {analytics.recentTips.map((tip) => (
+                <div key={tip.id} className="mobile-tip-card">
+                  <div className="mobile-tip-card-top">
+                    <div className="mobile-tip-card-amount">
+                      {formatCurrency(Number(tip.amount), tip.currency || business?.currency || 'TRY')}
+                    </div>
+                    <div>
                       {tip.status === 'UNVERIFIED' ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap' }}>
-                          <span className="badge badge-warning">Onay Bekliyor</span>
-                          <button
-                            type="button"
-                            onClick={() => handleVerifyTip(tip.id)}
-                            disabled={verifyingId === tip.id || rejectingId === tip.id}
-                            className="btn btn-primary"
-                            style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem', whiteSpace: 'nowrap' }}
-                          >
-                            {verifyingId === tip.id ? '...' : 'Havale Alındı'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleRejectTip(tip.id)}
-                            disabled={verifyingId === tip.id || rejectingId === tip.id}
-                            className="btn btn-secondary"
-                            style={{
-                              fontSize: '0.72rem',
-                              padding: '0.2rem 0.5rem',
-                              whiteSpace: 'nowrap',
-                              color: '#f87171',
-                              borderColor: 'rgba(239, 68, 68, 0.35)',
-                            }}
-                            title="Havale Gelmedi / İptal Et"
-                          >
-                            {rejectingId === tip.id ? '...' : 'Alınmadı'}
-                          </button>
-                        </div>
+                        <span className="badge badge-warning">
+                          {language === 'tr' ? 'Onay Bekliyor' : 'Pending'}
+                        </span>
                       ) : tip.status === 'CANCELLED' ? (
-                        <span className="badge badge-danger">İptal Edildi</span>
+                        <span className="badge badge-danger">
+                          {language === 'tr' ? 'İptal Edildi' : 'Cancelled'}
+                        </span>
                       ) : (
                         <span className="badge badge-success">{t('common.success')}</span>
                       )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </div>
+
+                  <div className="mobile-tip-card-meta">
+                    <span className="badge badge-neutral" style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem' }}>
+                      {tip.payment_method.replace(/_/g, ' ')}
+                    </span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', marginLeft: '0.25rem' }}>
+                      <Clock size={13} />
+                      {formatTime(tip.created_at)}
+                    </span>
+                  </div>
+
+                  {tip.status === 'UNVERIFIED' && (
+                    <div className="mobile-tip-card-actions">
+                      <button
+                        type="button"
+                        onClick={() => handleVerifyTip(tip.id)}
+                        disabled={verifyingId === tip.id || rejectingId === tip.id}
+                        className="btn btn-primary"
+                      >
+                        <Check size={16} />
+                        <span>{verifyingId === tip.id ? '...' : (language === 'tr' ? 'Havale Alındı' : 'Confirm')}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRejectTip(tip.id)}
+                        disabled={verifyingId === tip.id || rejectingId === tip.id}
+                        className="btn btn-secondary"
+                        style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.35)' }}
+                        title={language === 'tr' ? 'Havale Gelmedi / İptal Et' : 'Reject / Cancel'}
+                      >
+                        <X size={16} />
+                        <span>{rejectingId === tip.id ? '...' : (language === 'tr' ? 'Alınmadı' : 'Reject')}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <EmptyState
             icon={<DollarSign size={28} />}

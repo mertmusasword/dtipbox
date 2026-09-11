@@ -483,6 +483,7 @@ input, select, textarea {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .badge-success { background: var(--success-bg); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
@@ -501,6 +502,7 @@ input, select, textarea {
 
 .data-table {
   width: 100%;
+  min-width: 580px;
   border-collapse: collapse;
   text-align: left;
 }
@@ -535,6 +537,87 @@ input, select, textarea {
 .data-table tbody tr:last-child td {
   border-bottom: none;
 }
+
+/* ===================== Responsive Tips View ===================== */
+.desktop-tips-table {
+  display: block;
+}
+
+.mobile-tips-list {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .desktop-tips-table {
+    display: none;
+  }
+  .mobile-tips-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+.mobile-tip-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.mobile-tip-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.mobile-tip-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mobile-tip-card-amount {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.mobile-tip-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.mobile-tip-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  margin-top: 0.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mobile-tip-card-actions .btn {
+  flex: 1;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 8px;
+}
+
 
 /* ===================== Modal ===================== */
 .modal-overlay {
@@ -1028,7 +1111,7 @@ input, select, textarea {
 
 @media (max-width: 768px) {
   .page-wrapper {
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 1rem 5.5rem;
   }
 
   .page-title {
