@@ -261,12 +261,12 @@ export function interpolateAgreementText(
     '{{NAPONI_ADDRESS}}': naponiAddress,
     '{{NAPONI_TAX_ID}}': naponiTaxId,
     '{{NAPONI_EMAIL}}': naponiEmail,
-    '{{BUSINESS_NAME}}': data.businessName || 'Belirtilmedi',
-    '{{BUSINESS_ADDRESS}}': data.businessAddress || 'Belirtilmedi',
-    '{{BUSINESS_TAX_ID}}': data.businessTaxId || 'Belirtilmedi',
-    '{{AUTHORIZED_PERSON}}': data.authorizedPerson || 'Yetkili Temsilci',
-    '{{BUSINESS_EMAIL}}': data.businessEmail || 'Belirtilmedi',
-    '{{BUSINESS_PHONE}}': data.businessPhone || 'Belirtilmedi',
+    '{{BUSINESS_NAME}}': data.businessName || 'Not specified',
+    '{{BUSINESS_ADDRESS}}': data.businessAddress || 'Not specified',
+    '{{BUSINESS_TAX_ID}}': data.businessTaxId || 'Not specified',
+    '{{AUTHORIZED_PERSON}}': data.authorizedPerson || 'Authorized Representative',
+    '{{BUSINESS_EMAIL}}': data.businessEmail || 'Not specified',
+    '{{BUSINESS_PHONE}}': data.businessPhone || 'Not specified',
     '{{COMMISSION_RATE}}': commissionRate,
     '{{MANDATORY_STATEMENT}}': MANDATORY_ACCEPTANCE_STATEMENT,
   };
@@ -277,3 +277,120 @@ export function interpolateAgreementText(
 
   return content;
 }
+
+export const GLOBAL_MANDATORY_ACCEPTANCE_STATEMENT =
+  "I have read and agree to the Naponi Global Merchant Services and Digital Tipping Agreement.";
+
+export const GLOBAL_MERCHANT_AGREEMENT_RAW_TEMPLATE = `# NAPONI GLOBAL MERCHANT SERVICES AND DIGITAL TIPPING AGREEMENT
+
+**Agreement Code:** MSA-GLOBAL-{{VERSION}}  
+**Effective Date:** {{EFFECTIVE_DATE}}  
+**Version:** {{VERSION}}
+
+---
+
+### 1. PARTIES AND DEFINITIONS
+
+#### 1.1. Parties
+This Naponi Global Merchant Services and Digital Tipping Agreement ("**Agreement**") is entered into by and between:
+
+1. **Service Provider:** {{NAPONI_LEGAL_NAME}} (Address: {{NAPONI_ADDRESS}}, Tax / Registration ID: {{NAPONI_TAX_ID}}, Email: {{NAPONI_EMAIL}}) (hereinafter referred to as "**Naponi**").
+2. **Merchant:** The business entity or individual accepting this Agreement via digital confirmation;  
+   - **Business Legal / Trading Name:** {{BUSINESS_NAME}}  
+   - **Registered Address:** {{BUSINESS_ADDRESS}}  
+   - **Tax / Business ID:** {{BUSINESS_TAX_ID}}  
+   - **Authorized Representative:** {{AUTHORIZED_PERSON}}  
+   - **Email:** {{BUSINESS_EMAIL}}  
+   - **Phone:** {{BUSINESS_PHONE}}  
+   (hereinafter referred to as the "**Merchant**").
+
+Naponi and the Merchant may individually be referred to as a "**Party**" and collectively as the "**Parties**".
+
+#### 1.2. Definitions
+* **Platform / System:** The cloud, web, mobile, and API-based software infrastructure developed by Naponi for digital tipping, QR routing, staff allocation, and hospitality interactions.
+* **Customer / Guest:** Any guest, patron, or client interacting with the Platform at the Merchant's physical or digital location to send gratuities or process payments.
+* **Tip / Gratuity:** A voluntary monetary gift paid by a Customer at their sole discretion in appreciation of service received, intended for staff members or the Merchant's tipping pool.
+* **Payment Service Provider (PSP):** Licensed financial institutions, acquirers, banks, or payment gateways (such as Stripe, Square, Moneris, Adyen, etc.) that provide payment processing and settlement services.
+* **QR Code:** A digital or physical two-dimensional code assigned to the Merchant, a venue branch, or specific staff/tables that redirects Customers to the tipping and payment portal.
+* **Digital Acceptance:** The electronic consent and acknowledgment recorded through the Platform interface, including timestamp, IP address, and cryptographic SHA-256 hash.
+
+---
+
+### 2. SCOPE OF SERVICES AND REGULATORY STATUS
+
+2.1. Naponi provides the Merchant with access to a software technology routing platform enabling contactless digital tipping and payment redirection via mobile web without requiring app downloads.  
+2.2. **Technology Provider Status:** Naponi is a technology and software platform provider, **not** a bank, money transmitter, or licensed depository institution. Naponi does not hold deposits, manage client bank accounts, or issue electronic money.  
+2.3. All payment processing, card tokenization, authorization, clearing, and fund disbursements are handled directly by integrated, licensed Payment Service Providers or acquiring banks.  
+2.4. Naponi shall employ reasonable commercial efforts to ensure continuous, high-availability service but is not liable for disruptions caused by third-party telecommunications, cloud service failures, bank downtime, or external cyber incidents.
+
+---
+
+### 3. MERCHANT OBLIGATIONS AND COMPLIANCE
+
+3.1. **Accuracy of Information:** The Merchant warrants that all business registration, identity, tax, banking (IBAN/ACH/wire), and contact details submitted are accurate, complete, and kept up-to-date.  
+3.2. **Authorized QR Placement:** The Merchant shall display Naponi QR codes solely within authorized premises and ensure QR codes are safeguarded against physical tampering or redirection.  
+3.3. **Staff Consent:** The Merchant affirms that staff member names, photos, and profiles uploaded to the Platform have been provided with the full consent of the employees in compliance with applicable employment and privacy laws.  
+3.4. **Voluntary Tipping Policy:** The Merchant guarantees that Customers are not coerced into paying gratuities, and tips are never disguised as compulsory service charges or taxes.  
+3.5. **Tax and Fiscal Responsibility:** The Merchant is solely responsible for determining, reporting, and remitting any applicable income tax, VAT, sales tax, payroll contributions, or employment taxes related to received tips. Naponi does not provide tax or accounting advice.  
+3.6. **Licenses and Permits:** The Merchant represents that it holds all required municipal, state, and national commercial licenses to operate its venue.
+
+---
+
+### 4. TRANSACTIONS, CHARGEBACKS, AND REFUNDS
+
+4.1. **Voluntary Payments:** Tips submitted through the Platform are voluntary payments made by Customers. Pre-set tip percentages or custom input fields are provided strictly for user convenience.  
+4.2. **Disputes and Chargebacks:** The Merchant acknowledges that cardholder disputes and chargebacks are governed by the rules and timelines of the applicable Payment Service Provider and card networks (Visa, Mastercard, Amex). The Merchant is liable for all chargeback fees and reversed transactions incurred.  
+4.3. **Transaction Logs:** Naponi maintains secure, auditable logs of routing requests, timestamps, and interaction IDs for fraud prevention, dispute assistance, and legal compliance.
+
+---
+
+### 5. FEES, COMMISSIONS, AND BILLING
+
+5.1. **Naponi Platform Fee:** The platform commission or software subscription fee payable by the Merchant is: **{{COMMISSION_RATE}}**.  
+5.2. **Processing Fees:** Gateway, interchange, and scheme fees charged by third-party Payment Service Providers are independent of Naponi platform fees and governed by the Merchant's direct agreement with the respective PSP.  
+5.3. **Price Changes:** Naponi reserves the right to adjust its pricing structure upon at least thirty (30) days' prior notice via email or platform dashboard. Continued use of the Platform after the effective date constitutes acceptance of the new fee schedule.
+
+---
+
+### 6. PAYMENT GATEWAY INTEGRATIONS AND SECURITY
+
+6.1. The Merchant may connect its existing merchant accounts (e.g. Stripe, Square, Moneris, etc.) or utilize Naponi-supported payment gateways.  
+6.2. **Credentials Confidentiality:** The Merchant is solely responsible for safeguarding its API keys, secret tokens, and webhook secrets.  
+6.3. **PCI-DSS Compliance:** In strict adherence to PCI-DSS standards, Naponi never stores full primary account numbers (PAN), CVV codes, or card PINs on its servers.
+
+---
+
+### 7. INTELLECTUAL PROPERTY AND BRAND ASSETS
+
+7.1. All trademarks, software code, algorithms, visual designs, and brand elements of Naponi remain the exclusive intellectual property of Naponi.  
+7.2. The Merchant is granted a limited, revocable, non-exclusive, non-transferable license to display Naponi badges and QR materials during the term of this Agreement.
+
+---
+
+### 8. DATA PROTECTION AND PRIVACY (GDPR / GLOBAL COMPLIANCE)
+
+8.1. Both Parties agree to comply with all applicable data protection legislation, including the EU/UK General Data Protection Regulation (GDPR), CCPA, and equivalent global privacy laws.  
+8.2. Naponi processes Customer and Merchant data strictly in accordance with its published Privacy Policy, employing TLS encryption and access control safeguards.
+
+---
+
+### 9. ELECTRONIC CONSENT AND AUDIT EVIDENCE
+
+9.1. The Parties acknowledge that digital acceptance through the Platform constitutes valid, legally binding electronic consent under applicable electronic transactions legislation (including the US E-SIGN Act, EU eIDAS Regulation, and UNCITRAL Model Law on Electronic Commerce).  
+9.2. Digital audit records, including the client IP address, user agent, server timestamp, and SHA-256 document hash, shall constitute conclusive electronic evidence in any legal proceeding.
+
+---
+
+### 10. TERM, TERMINATION, AND GOVERNING LAW
+
+10.1. **Term:** This Agreement becomes effective upon digital acceptance and remains in force until terminated by either Party.  
+10.2. **Termination:** Either Party may terminate this Agreement at any time with or without cause upon written notice or account closure.  
+10.3. **Limitation of Liability:** To the maximum extent permitted by applicable law, Naponi's total aggregate liability arising out of this Agreement shall not exceed the total platform fees paid by the Merchant to Naponi during the three (3) months preceding the claim.  
+10.4. **Governing Law:** This Agreement shall be governed by and construed in accordance with international commercial principles and applicable laws, without prejudice to mandatory local consumer protection rules where applicable.
+
+---
+
+### 11. ENTIRE AGREEMENT AND EXECUTION
+
+This Agreement constitutes the entire understanding between the Parties concerning digital tipping platform services. Digital acceptance by confirming on the Platform shall have the same legal force and effect as a handwritten signature.
+`;

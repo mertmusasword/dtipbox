@@ -60,7 +60,8 @@ router.get('/active', async (req: AuthRequest, res: Response): Promise<void> => 
       }
     }
 
-    const data = await getActiveAgreement(businessId);
+    const lang = (req.query.lang as string) || 'tr';
+    const data = await getActiveAgreement(businessId, lang);
     res.json({ success: true, data });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });

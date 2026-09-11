@@ -6,6 +6,8 @@ import {
   MERCHANT_SERVICE_AGREEMENT_INITIAL_VERSION,
   MERCHANT_AGREEMENT_RAW_TEMPLATE,
   MANDATORY_ACCEPTANCE_STATEMENT,
+  GLOBAL_MANDATORY_ACCEPTANCE_STATEMENT,
+  GLOBAL_MERCHANT_AGREEMENT_RAW_TEMPLATE,
   interpolateAgreementText,
   DEFAULT_NAPONI_META,
 } from '../templates/merchantAgreementText';
@@ -161,9 +163,9 @@ export async function bootstrapDefaultAgreement(): Promise<void> {
 }
 
 /**
- * Get active published agreement, optional interpolation for specific business
+ * Get active published agreement, optional interpolation for specific business, multilingual support
  */
-export async function getActiveAgreement(businessId?: string) {
+export async function getActiveAgreement(businessId?: string, lang: string = 'tr') {
   try {
     let agreement = await prisma.agreement.findUnique({
       where: { code: MERCHANT_SERVICE_AGREEMENT_CODE },
@@ -191,7 +193,7 @@ export async function getActiveAgreement(businessId?: string) {
     }
 
     if (agreement && agreement.versions.length > 0) {
-      return formatAgreementResponse(agreement, agreement.versions[0], businessId);
+      return formatAgreementResponse(agreement, agreement.versions[0], businessId, lang);
     }
   } catch (err: any) {
     console.warn('[AGREEMENT] Database error in getActiveAgreement, attempting auto-fix:', err.message);
@@ -209,7 +211,7 @@ export async function getActiveAgreement(businessId?: string) {
         },
       });
       if (retryAgreement && retryAgreement.versions.length > 0) {
-        return formatAgreementResponse(retryAgreement, retryAgreement.versions[0], businessId);
+        return formatAgreementResponse(retryAgreement, retryAgreement.versions[0], businessId, lang);
       }
     } catch (retryErr) {
       console.error('[AGREEMENT] Retry failed:', retryErr);
@@ -217,10 +219,12 @@ export async function getActiveAgreement(businessId?: string) {
   }
 
   // Graceful Fallback if DB table is completely unreachable
-  const defaultHash = computeContentHash(MERCHANT_AGREEMENT_RAW_TEMPLATE);
+  const isGlobal = lang !== 'tr';
+  const fallbackTemplate = isGlobal ? GLOBAL_MERCHANT_AGREEMENT_RAW_TEMPLATE : MERCHANT_AGREEMENT_RAW_TEMPLATE;
+  const defaultHash = computeContentHash(fallbackTemplate);
   const fallbackInterpolated = interpolateAgreementText(
-    MERCHANT_AGREEMENT_RAW_TEMPLATE,
-    { businessName: 'İşletme' },
+    fallbackTemplate,
+    { businessName: isGlobal ? 'Merchant' : 'İşletme' },
     MERCHANT_SERVICE_AGREEMENT_INITIAL_VERSION
   );
 
@@ -228,13 +232,13 @@ export async function getActiveAgreement(businessId?: string) {
     agreement: {
       id: 'fallback-agr-id',
       code: MERCHANT_SERVICE_AGREEMENT_CODE,
-      name: 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi',
+      name: isGlobal ? 'Naponi Global Merchant Services Agreement' : 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi',
       type: 'MERCHANT_TERMS',
     },
     version: {
       id: 'fallback-ver-id',
       version: MERCHANT_SERVICE_AGREEMENT_INITIAL_VERSION,
-      title: 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi',
+      title: isGlobal ? 'Naponi Global Merchant Services & Digital Tipping Agreement' : 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi',
       effective_date: new Date().toISOString(),
       published_at: new Date().toISOString(),
       content_hash: defaultHash,
@@ -242,7 +246,7 @@ export async function getActiveAgreement(businessId?: string) {
     },
     content: fallbackInterpolated,
     raw_content_hash: defaultHash,
-    mandatory_statement: MANDATORY_ACCEPTANCE_STATEMENT,
+    mandatory_statement: isGlobal ? GLOBAL_MANDATORY_ACCEPTANCE_STATEMENT : MANDATORY_ACCEPTANCE_STATEMENT,
     is_accepted: false,
     accepted_at: null,
     acceptance_id: null,
@@ -252,11 +256,18 @@ export async function getActiveAgreement(businessId?: string) {
 async function formatAgreementResponse(
   agreement: any,
   version: any,
-  businessId?: string
+  businessId?: string,
+  lang: string = 'tr'
 ) {
+  const isGlobal = lang !== 'tr';
+  const rawTemplate = isGlobal ? GLOBAL_MERCHANT_AGREEMENT_RAW_TEMPLATE : version.content_markdown;
+  const rawHash = isGlobal ? computeContentHash(rawTemplate) : version.content_hash;
+  const mandatoryStatement = isGlobal ? GLOBAL_MANDATORY_ACCEPTANCE_STATEMENT : MANDATORY_ACCEPTANCE_STATEMENT;
+  const agreementTitle = isGlobal ? 'Naponi Global Merchant Services & Digital Tipping Agreement' : version.title;
+
   let isAccepted = false;
   let acceptanceRecord: any = null;
-  let interpolatedContent = version.content_markdown;
+  let businessData: any = { businessName: isGlobal ? 'Merchant' : 'İşletme' };
 
   if (businessId) {
     const business = await prisma.business.findUnique({
@@ -265,17 +276,13 @@ async function formatAgreementResponse(
     });
 
     if (business) {
-      interpolatedContent = interpolateAgreementText(
-        version.content_markdown,
-        {
-          businessName: business.name,
-          businessAddress: business.address || 'Kayıtlı işletme adresi',
-          businessEmail: business.email || business.owner.email,
-          businessPhone: business.phone || 'Belirtilmedi',
-          authorizedPerson: business.owner.email,
-        },
-        version.version
-      );
+      businessData = {
+        businessName: business.name,
+        businessAddress: business.address || (isGlobal ? 'Registered business address' : 'Kayıtlı işletme adresi'),
+        businessEmail: business.email || business.owner.email,
+        businessPhone: business.phone || (isGlobal ? 'Not specified' : 'Belirtilmedi'),
+        authorizedPerson: business.owner.email,
+      };
     }
 
     acceptanceRecord = await prisma.agreementAcceptance.findUnique({
@@ -290,25 +297,31 @@ async function formatAgreementResponse(
     isAccepted = !!acceptanceRecord;
   }
 
+  const interpolatedContent = interpolateAgreementText(
+    rawTemplate,
+    businessData,
+    version.version
+  );
+
   return {
     agreement: {
       id: agreement.id,
       code: agreement.code,
-      name: agreement.name,
+      name: isGlobal ? 'Naponi Global Merchant Services Agreement' : agreement.name,
       type: agreement.type,
     },
     version: {
       id: version.id,
       version: version.version,
-      title: version.title,
+      title: agreementTitle,
       effective_date: version.effective_date,
       published_at: version.published_at,
-      content_hash: version.content_hash,
+      content_hash: rawHash,
       requires_reacceptance: version.requires_reacceptance,
     },
     content: interpolatedContent,
-    raw_content_hash: version.content_hash,
-    mandatory_statement: MANDATORY_ACCEPTANCE_STATEMENT,
+    raw_content_hash: rawHash,
+    mandatory_statement: mandatoryStatement,
     is_accepted: isAccepted,
     accepted_at: acceptanceRecord ? acceptanceRecord.accepted_at : null,
     acceptance_id: acceptanceRecord ? acceptanceRecord.id : null,

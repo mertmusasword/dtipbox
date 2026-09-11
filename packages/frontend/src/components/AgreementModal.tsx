@@ -10,6 +10,7 @@ import {
   X,
 } from 'lucide-react';
 import { api } from '../api/client';
+import { useLanguage } from '../i18n';
 
 interface AgreementModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
   forceRequired = false,
   isRegistrationFlow = false,
 }) => {
+  const { t, language, dir } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [agreementData, setAgreementData] = useState<any>(null);
@@ -37,7 +39,10 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const MANDATORY_STATEMENT =
-    "Okudum ve Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni kabul ediyorum.";
+    agreementData?.mandatory_statement ||
+    (language === 'tr'
+      ? "Okudum ve Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni kabul ediyorum."
+      : "I have read and agree to the Naponi Global Merchant Services and Digital Tipping Agreement.");
 
   useEffect(() => {
     if (isOpen) {
@@ -46,13 +51,15 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
       setAcceptanceResult(null);
       setError(null);
     }
-  }, [isOpen]);
+  }, [isOpen, language]);
 
   const fetchAgreement = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await api.get('/agreements/active');
+      const res = await api.get('/agreements/active', {
+        params: { lang: language },
+      });
       if (res.data?.success) {
         setAgreementData(res.data.data);
         if (res.data.data.is_accepted) {
@@ -63,7 +70,9 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
       setError(
         err.response?.data?.error ||
           err.message ||
-          'Sözleşme yüklenirken bir hata oluştu.'
+          (language === 'tr'
+            ? 'Sözleşme yüklenirken bir hata oluştu.'
+            : 'An error occurred while loading the agreement.')
       );
     } finally {
       setLoading(false);
@@ -177,7 +186,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
                 <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, letterSpacing: '-0.01em' }}>
-                  Naponi İşletme Hizmet ve Kullanım Sözleşmesi
+                  {agreementData?.version?.title || (language === 'tr' ? 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi' : 'Naponi Global Merchant Services Agreement')}
                 </h2>
                 {agreementData?.version && (
                   <span
@@ -193,7 +202,9 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                 )}
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary, #94a3b8)', margin: '0.2rem 0 0 0' }}>
-                Dijital Onay, Hukuki Yükümlülükler ve Elektronik İspat Kaydı (HMK m. 193)
+                {language === 'tr'
+                  ? 'Dijital Onay, Hukuki Yükümlülükler ve Elektronik İspat Kaydı (HMK m. 193)'
+                  : 'Digital Consent, Legal Obligations & Electronic Proof Record (HMK 193)'}
               </p>
             </div>
           </div>
@@ -213,7 +224,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                 justifyContent: 'center',
                 transition: 'all 0.15s',
               }}
-              aria-label="Kapat"
+              aria-label={t('common.close')}
             >
               <X size={20} />
             </button>
@@ -225,14 +236,18 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', gap: '0.75rem' }}>
               <div className="spinner" style={{ width: '32px', height: '32px' }} />
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Sözleşme yükleniyor...</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                {language === 'tr' ? 'Sözleşme yükleniyor...' : 'Loading agreement...'}
+              </p>
             </div>
           ) : error ? (
             <div style={{ padding: '1.25rem', borderRadius: '12px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                 <AlertCircle size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '0.9rem' }}>Hata Oluştu</h4>
+                  <h4 style={{ margin: '0 0 0.35rem 0', fontWeight: 700, fontSize: '0.9rem' }}>
+                    {language === 'tr' ? 'Hata Oluştu' : 'An Error Occurred'}
+                  </h4>
                   <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.5 }}>{error}</p>
                   <button
                     type="button"
@@ -240,7 +255,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                     className="btn btn-secondary"
                     style={{ marginTop: '0.85rem', fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
                   >
-                    Yeniden Dene
+                    {language === 'tr' ? 'Yeniden Dene' : 'Try Again'}
                   </button>
                 </div>
               </div>
@@ -264,10 +279,12 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                 <CheckCircle2 size={36} />
               </div>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.4rem 0' }}>
-                Sözleşme Başarıyla Onaylandı
+                {language === 'tr' ? 'Sözleşme Başarıyla Onaylandı' : 'Agreement Successfully Confirmed'}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto 1.5rem auto', lineHeight: 1.5 }}>
-                Naponi İşletme Hizmet ve Kullanım Sözleşmesi elektronik imza ve zaman damgasıyla güvenli olarak kayıt altına alınmıştır.
+                {language === 'tr'
+                  ? 'Naponi İşletme Hizmet ve Kullanım Sözleşmesi elektronik imza ve zaman damgasıyla güvenli olarak kayıt altına alınmıştır.'
+                  : 'The Naponi Merchant Services Agreement has been securely registered with digital consent and timestamp.'}
               </p>
 
               <div
@@ -284,24 +301,34 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))', paddingBottom: '0.4rem', marginBottom: '0.5rem' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Hukuki Delil Niteliği:</span>
-                  <span style={{ fontWeight: 700, color: 'var(--color-primary, #6366f1)' }}>HMK m. 193 Kesin Delil</span>
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {language === 'tr' ? 'Hukuki Delil Niteliği:' : 'Legal Evidence Status:'}
+                  </span>
+                  <span style={{ fontWeight: 700, color: 'var(--color-primary, #6366f1)' }}>
+                    {language === 'tr' ? 'HMK m. 193 Kesin Delil' : 'Binding Electronic Evidence'}
+                  </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Sözleşme Versiyonu:</span>
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {language === 'tr' ? 'Sözleşme Versiyonu:' : 'Agreement Version:'}
+                  </span>
                   <span style={{ fontWeight: 700 }}>v{acceptanceResult.acceptance?.version}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Onay Tarihi & Saati:</span>
-                  <span>{new Date(acceptanceResult.acceptance?.accepted_at).toLocaleString('tr-TR')}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {language === 'tr' ? 'Onay Tarihi & Saati:' : 'Accepted Date & Time:'}
+                  </span>
+                  <span>{new Date(acceptanceResult.acceptance?.accepted_at).toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US')}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Kaydedilen IP:</span>
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {language === 'tr' ? 'Kaydedilen IP:' : 'Recorded IP:'}
+                  </span>
                   <code style={{ fontFamily: 'monospace' }}>{acceptanceResult.acceptance?.ip_address}</code>
                 </div>
                 <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.2rem' }}>
-                    Belge SHA-256 Kriptografik Hash:
+                    {language === 'tr' ? 'Belge SHA-256 Kriptografik Hash:' : 'Document SHA-256 Cryptographic Hash:'}
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '0.4rem 0.6rem', borderRadius: '6px' }}>
                     <code style={{ fontFamily: 'monospace', fontSize: '0.72rem', flex: 1, wordBreak: 'break-all' }}>
@@ -311,7 +338,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                       type="button"
                       onClick={() => copyHash(acceptanceResult.verification?.content_hash || acceptanceResult.acceptance?.content_hash)}
                       style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.2rem' }}
-                      title="Kopyala"
+                      title={t('common.copy')}
                     >
                       {copiedHash ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
                     </button>
@@ -325,7 +352,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                 className="btn btn-primary"
                 style={{ marginTop: '1.5rem', padding: '0.65rem 2rem' }}
               >
-                Tamam, Devam Et
+                {language === 'tr' ? 'Tamam, Devam Et' : 'Done, Continue'}
               </button>
             </div>
           ) : (
@@ -349,10 +376,14 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={18} />
                     <span>
-                      Bu sözleşme versiyonu (v{agreementData.version?.version}) işletmeniz tarafından onaylanmıştır.
+                      {language === 'tr'
+                        ? `Bu sözleşme versiyonu (v${agreementData.version?.version}) işletmeniz tarafından onaylanmıştır.`
+                        : `This agreement version (v${agreementData.version?.version}) has been accepted by your business.`}
                     </span>
                   </div>
-                  <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>Kabul Kaydı Aktif</span>
+                  <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
+                    {language === 'tr' ? 'Kabul Kaydı Aktif' : 'Active Acceptance Record'}
+                  </span>
                 </div>
               ) : (
                 <div
@@ -365,9 +396,11 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                     marginBottom: '0.75rem',
                   }}
                 >
-                  <span>Lütfen sözleşme maddelerini inceleyiniz.</span>
+                  <span>
+                    {language === 'tr' ? 'Lütfen sözleşme maddelerini inceleyiniz.' : 'Please review the agreement terms and conditions.'}
+                  </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#f59e0b' }}>
-                    <Lock size={14} /> Elektronik Onay Protokolü
+                    <Lock size={14} /> {language === 'tr' ? 'Elektronik Onay Protokolü' : 'Electronic Consent Protocol'}
                   </span>
                 </div>
               )}
@@ -426,7 +459,9 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, maxWidth: '420px', lineHeight: 1.4 }}>
-                      Onayınız ile birlikte IP adresiniz, cihaz bilgisi ve SHA-256 belge özeti HMK m. 193 uyarınca bağlayıcı kayıt altına alınır.
+                      {language === 'tr'
+                        ? 'Onayınız ile birlikte IP adresiniz, cihaz bilgisi ve SHA-256 belge özeti HMK m. 193 uyarınca bağlayıcı kayıt altına alınır.'
+                        : 'Upon confirmation, your IP address, device metadata, and SHA-256 document hash are recorded as binding electronic consent.'}
                     </p>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -437,7 +472,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                           className="btn btn-secondary"
                           style={{ fontSize: '0.82rem', padding: '0.5rem 1rem' }}
                         >
-                          Kapat
+                          {t('common.close')}
                         </button>
                       )}
                       <button
@@ -458,17 +493,17 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                         {submitting ? (
                           <>
                             <div className="spinner" style={{ width: '14px', height: '14px' }} />
-                            <span>Kaydediliyor...</span>
+                            <span>{language === 'tr' ? 'Kaydediliyor...' : 'Saving...'}</span>
                           </>
                         ) : isRegistrationFlow ? (
                           <>
                             <Check size={16} />
-                            <span>Okudum, Kabul Ediyorum</span>
+                            <span>{language === 'tr' ? 'Okudum, Kabul Ediyorum' : 'I Read & Accept'}</span>
                           </>
                         ) : (
                           <>
                             <ShieldCheck size={16} />
-                            <span>Sözleşmeyi Onayla</span>
+                            <span>{language === 'tr' ? 'Sözleşmeyi Onayla' : 'Confirm Agreement'}</span>
                           </>
                         )}
                       </button>
