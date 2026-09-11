@@ -1,5 +1,6 @@
 import { IPaymentProvider } from './provider.interface';
 import { stripeProvider } from '../providers/stripe/stripe.provider';
+import { iyzicoProvider } from '../providers/iyzico/iyzico.provider';
 import prisma from '../../../utils/prisma';
 import { ProviderCatalogStatus, ProviderType } from '@prisma/client';
 
@@ -112,17 +113,18 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     id: 'iyzico',
     name: 'iyzico',
     display_name: 'iyzico Sanal POS',
-    description: 'PayU / iyzico Turkey virtual POS supporting local and international cards.',
+    description: 'PayU / iyzico Türkiye sanal POS altyapısı (Troy, Visa, Mastercard yerel ve uluslararası kartlar).',
     type: ProviderType.VIRTUAL_POS,
-    status: ProviderCatalogStatus.DEVELOPMENT,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['TR'],
     supported_currencies: ['TRY', 'USD', 'EUR', 'GBP'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'WEBHOOK'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'],
     required_credentials: [
-      { key: 'apiKey', label: 'API Key', type: 'text', required: true, placeholder: 'sandbox-api-key' },
-      { key: 'secretKey', label: 'Secret Key', type: 'password', required: true, placeholder: 'sandbox-secret-key' },
+      { key: 'apiKey', label: 'API Key', type: 'text', required: true, placeholder: 'sandbox-... veya canlı API anahtarınız', description: 'iyzico kontrol panelinden aldığınız API Anahtarı.' },
+      { key: 'secretKey', label: 'Secret Key', type: 'password', required: true, placeholder: 'sandbox-... veya canlı Gizli anahtarınız', description: 'iyzico kontrol panelinden aldığınız Gizli Anahtar.' },
+      { key: 'baseUrl', label: 'API Ortamı / URL', type: 'text', required: false, placeholder: 'https://sandbox-api.iyzipay.com (Boş bırakılırsa anahtara göre otomatik algılanır)', description: 'Test için: https://sandbox-api.iyzipay.com | Canlı için: https://api.iyzipay.com' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: false,
   },
   {
@@ -222,6 +224,7 @@ export class ProviderRegistry {
   constructor() {
     // Register active backend code adapters
     this.registerAdapter('stripe', stripeProvider);
+    this.registerAdapter('iyzico', iyzicoProvider);
   }
 
   registerAdapter(name: string, adapter: IPaymentProvider) {
@@ -263,6 +266,7 @@ export class ProviderRegistry {
           update: {
             display_name: item.display_name,
             description: item.description,
+            status: item.status,
             countries: item.countries,
             supported_currencies: item.supported_currencies,
             capabilities: item.capabilities,

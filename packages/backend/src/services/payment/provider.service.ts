@@ -24,9 +24,11 @@ export interface CreateProviderRequestDto {
  * Fetch provider catalog filtered by merchant country, currency, payment type, or search term.
  */
 export async function getCatalog(filters: CatalogFilterOptions = {}) {
-  // Ensure DB catalog is initialized
-  const count = await prisma.paymentProvider.count();
-  if (count === 0) {
+  // Ensure DB catalog is initialized and refreshed with latest active adapters
+  const iyzicoInDb = await prisma.paymentProvider.findFirst({
+    where: { id: 'iyzico', has_adapter: true },
+  });
+  if (!iyzicoInDb) {
     await providerRegistry.syncCatalogToDatabase();
   }
 
