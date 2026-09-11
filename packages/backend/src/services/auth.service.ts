@@ -61,8 +61,8 @@ export async function register(input: RegisterInput) {
     throw new AppError('Admin registration is not permitted', 403);
   }
 
-  if (!input.password || input.password.length < 8 || input.password.length > 128) {
-    throw new AppError('Password must be between 8 and 128 characters', 400);
+  if (!input.password || input.password.length < 6 || input.password.length > 128) {
+    throw new AppError('Şifre en az 6, en fazla 128 karakter olmalıdır', 400);
   }
 
   const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);

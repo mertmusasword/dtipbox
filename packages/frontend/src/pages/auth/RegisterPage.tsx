@@ -73,7 +73,17 @@ export const RegisterPage: React.FC = () => {
       trackBusinessRegistered(formData.country, formData.currency, 'form');
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || t('common.error'));
+      const responseData = err.response?.data;
+      if (responseData?.details && Array.isArray(responseData.details) && responseData.details.length > 0) {
+        const detailMsg = responseData.details.map((d: any) => d.message).join(' • ');
+        setError(detailMsg);
+      } else if (responseData?.error === 'Email already registered' || err.response?.status === 409) {
+        setError('Bu e-posta adresi ile kayıtlı bir işletme hesabı zaten mevcut. Lütfen giriş yapınız veya farklı bir e-posta deneyiniz.');
+      } else if (responseData?.error) {
+        setError(responseData.error);
+      } else {
+        setError(t('common.error'));
+      }
     } finally {
       setLoading(false);
     }
@@ -192,6 +202,9 @@ export const RegisterPage: React.FC = () => {
               placeholder={t('auth.passwordPlaceholder')}
               className="form-input"
             />
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+              En az 6 karakter olmalıdır.
+            </div>
           </div>
 
           {/* Legal Agreement Acceptance Checkbox */}

@@ -21,11 +21,11 @@ const authLimiter = rateLimit({
 
 const registerSchema = {
   body: z.object({
-    email: z.string().email().max(255),
-    password: z.string().min(8).max(128),
+    email: z.string().email('Geçerli bir e-posta adresi giriniz').max(255),
+    password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır').max(128),
     role: z.enum(['BUSINESS', 'CUSTOMER']).optional(),
-    businessName: z.string().min(2).max(100).optional(),
-    country: z.string().length(2).optional(),
+    businessName: z.string().min(2, 'İşletme adı en az 2 karakter olmalıdır').max(100).optional(),
+    country: z.string().length(2, 'Geçerli bir ülke kodu seçiniz').optional(),
     currency: z.string().min(3).max(4).optional(),
     timezone: z.string().max(50).optional(),
     acceptedAgreement: z.boolean().optional(),
