@@ -1257,9 +1257,12 @@ h1, h2, h3, h4, h5, h6,
     width: 7px !important;
     height: 7px !important;
   }
+  /* Panel pages: sidebar already has the support button, hide floating */
+  .support-floating-btn--panel {
+    display: none !important;
+  }
   [dir="rtl"] .support-floating-btn {
     right: auto !important;
     left: 18px !important;
   }
 }
-

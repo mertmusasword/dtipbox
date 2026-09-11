@@ -1667,10 +1667,12 @@
     width: 7px;
     height: 7px;
   }
+  /* Panel pages: sidebar already has the support button, hide floating */
+  .support-floating-btn--panel {
+    display: none;
+  }
   [dir="rtl"] .support-floating-btn {
     right: auto;
     left: 18px;
   }
 }
-
-

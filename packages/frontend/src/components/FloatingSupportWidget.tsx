@@ -18,11 +18,18 @@ export const FloatingSupportWidget: React.FC = () => {
     return null;
   }
 
+  // On panel pages the sidebar already has the support button,
+  // so we add a class to hide the floating btn on mobile
+  const isPanel =
+    location.pathname.startsWith('/business/') ||
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/employee/');
+
   return (
     <>
       <button
         type="button"
-        className="support-floating-btn"
+        className={`support-floating-btn ${isPanel ? 'support-floating-btn--panel' : ''}`}
         onClick={() => setIsOpen(true)}
         aria-label={t('support.widgetBtn')}
         title={t('support.widgetBtn')}
