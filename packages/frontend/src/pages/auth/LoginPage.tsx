@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
         <LanguageSelector variant="compact" />
       </div>
 
-      <div className="glass-card" style={{ maxWidth: '440px', width: '100%', padding: '2.5rem' }}>
+      <div className="glass-card auth-card" style={{ maxWidth: '440px', width: '100%' }}>
         {/* Brand */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem' }}>

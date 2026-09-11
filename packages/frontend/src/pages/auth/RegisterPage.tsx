@@ -10,7 +10,7 @@ import { CorporateApplicationModal } from '../../components/CorporateApplication
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
 
   const [formData, setFormData] = useState({
     businessName: '',
@@ -111,7 +111,7 @@ export const RegisterPage: React.FC = () => {
         <LanguageSelector variant="compact" />
       </div>
 
-      <div className="glass-card" style={{ maxWidth: '520px', width: '100%', padding: '2.5rem' }}>
+      <div className="glass-card auth-card" style={{ maxWidth: '520px', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem' }}>
             <Link to="/">
@@ -342,49 +342,94 @@ export const RegisterPage: React.FC = () => {
                   height: '18px',
                   cursor: 'pointer',
                   accentColor: 'var(--color-primary, #6366f1)',
+                  flexShrink: 0,
                 }}
               />
               <span>
-                Okudum ve{' '}
-                <button
-                  type="button"
-                  onClick={() => setShowAgreementModal(true)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    color: '#3b82f6',
-                    fontWeight: 700,
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    fontSize: '0.85rem',
-                    display: 'inline',
-                  }}
-                >
-                  Naponi İşletme Hizmet ve Kullanım Sözleşmesi
-                </button>
-                'ni kabul ediyorum.
+                {language === 'tr' ? (
+                  <>
+                    Okudum ve{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowAgreementModal(true)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        color: '#3b82f6',
+                        fontWeight: 700,
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        display: 'inline',
+                      }}
+                    >
+                      Naponi İşletme Hizmet ve Kullanım Sözleşmesi
+                    </button>
+                    'ni kabul ediyorum.
+                  </>
+                ) : (
+                  <>
+                    I have read and agree to the{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowAgreementModal(true)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        color: '#3b82f6',
+                        fontWeight: 700,
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        display: 'inline',
+                      }}
+                    >
+                      Naponi Merchant Services Agreement
+                    </button>
+                    .
+                  </>
+                )}
               </span>
             </label>
 
-            <div style={{ marginTop: '0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-color, rgba(255,255,255,0.06))', paddingTop: '0.5rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                HMK m. 193 Elektronik İspat & Onay
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowAgreementModal(true)}
-                className="btn btn-secondary"
-                style={{
-                  fontSize: '0.75rem',
-                  padding: '0.3rem 0.65rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
-                <FileText size={13} /> Sözleşmeyi İncele (20 Madde)
-              </button>
+            <div style={{
+              marginTop: '0.85rem',
+              borderTop: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+              paddingTop: '0.75rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.5rem',
+              }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  🛡️ {language === 'tr' ? 'HMK m. 193 Elektronik İspat & Onay' : 'Electronic Proof & Consent (HMK 193)'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowAgreementModal(true)}
+                  className="btn btn-secondary"
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '0.35rem 0.75rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.35rem',
+                    borderRadius: '8px',
+                    width: '100%',
+                  }}
+                >
+                  <FileText size={13} /> {language === 'tr' ? 'Sözleşmeyi İncele (20 Madde)' : 'Review Agreement (20 Articles)'}
+                </button>
+              </div>
             </div>
           </div>
 
