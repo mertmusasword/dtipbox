@@ -25,10 +25,10 @@ export interface CreateProviderRequestDto {
  */
 export async function getCatalog(filters: CatalogFilterOptions = {}) {
   // Ensure DB catalog is initialized and refreshed with latest active adapters
-  const iyzicoInDb = await prisma.paymentProvider.findFirst({
-    where: { id: 'iyzico', has_adapter: true },
+  const paytrInDb = await prisma.paymentProvider.findFirst({
+    where: { id: 'paytr', has_adapter: true },
   });
-  if (!iyzicoInDb) {
+  if (!paytrInDb) {
     await providerRegistry.syncCatalogToDatabase();
   }
 

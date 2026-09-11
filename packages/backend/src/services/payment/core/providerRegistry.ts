@@ -1,6 +1,7 @@
 import { IPaymentProvider } from './provider.interface';
 import { stripeProvider } from '../providers/stripe/stripe.provider';
 import { iyzicoProvider } from '../providers/iyzico/iyzico.provider';
+import { paytrProvider } from '../providers/paytr/paytr.provider';
 import prisma from '../../../utils/prisma';
 import { ProviderCatalogStatus, ProviderType } from '@prisma/client';
 
@@ -131,18 +132,19 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     id: 'paytr',
     name: 'paytr',
     display_name: 'PayTR Sanal POS',
-    description: 'Direct virtual POS gateway supporting Turkish debit/credit cards and installment schemes.',
+    description: 'PayTR doğrudan sanal POS altyapısı (Troy, Visa, Mastercard yerel ve uluslararası kartlar).',
     type: ProviderType.VIRTUAL_POS,
-    status: ProviderCatalogStatus.COMING_SOON,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['TR'],
     supported_currencies: ['TRY', 'USD', 'EUR'],
-    capabilities: ['CREATE_PAYMENT', 'WEBHOOK'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'],
     required_credentials: [
-      { key: 'merchantId', label: 'Merchant ID (Mağaza No)', type: 'text', required: true, placeholder: '123456' },
-      { key: 'merchantKey', label: 'Merchant Key', type: 'password', required: true, placeholder: 'key...' },
-      { key: 'merchantSalt', label: 'Merchant Salt', type: 'password', required: true, placeholder: 'salt...' },
+      { key: 'merchantId', label: 'Merchant ID (Mağaza No)', type: 'text', required: true, placeholder: '123456 veya sandbox-...', description: 'PayTR mağaza yönetim panelinden aldığınız Mağaza Numarası.' },
+      { key: 'merchantKey', label: 'Merchant Key (Mağaza Parolası)', type: 'password', required: true, placeholder: 'Mağaza parolanız', description: 'PayTR mağaza yönetim panelinden aldığınız API Mağaza Parolası.' },
+      { key: 'merchantSalt', label: 'Merchant Salt (Gizli Anahtar)', type: 'password', required: true, placeholder: 'Gizli anahtarınız', description: 'PayTR mağaza yönetim panelinden aldığınız Gizli Anahtar.' },
+      { key: 'testMode', label: 'Test Modu (1: Test, 0: Canlı)', type: 'text', required: false, placeholder: '1 veya 0 (Boş bırakılırsa anahtara göre algılanır)', description: 'Test işlemleri için 1, gerçek tahsilat için 0 giriniz.' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: false,
   },
   {
@@ -225,6 +227,7 @@ export class ProviderRegistry {
     // Register active backend code adapters
     this.registerAdapter('stripe', stripeProvider);
     this.registerAdapter('iyzico', iyzicoProvider);
+    this.registerAdapter('paytr', paytrProvider);
   }
 
   registerAdapter(name: string, adapter: IPaymentProvider) {
