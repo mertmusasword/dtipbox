@@ -99,7 +99,6 @@ export const HomePage: React.FC = () => {
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
             <li><a href="#benefits" className="home-nav-link">{t('nav.businesses')}</a></li>
-            <li><Link to="/blog" className="home-nav-link">Blog</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
@@ -143,7 +142,6 @@ export const HomePage: React.FC = () => {
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
             <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>{t('nav.businesses')}</a>
-            <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
             <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
             <button
               type="button"
