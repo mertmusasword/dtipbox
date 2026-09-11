@@ -2,6 +2,12 @@ import { IPaymentProvider } from './provider.interface';
 import { stripeProvider } from '../providers/stripe/stripe.provider';
 import { iyzicoProvider } from '../providers/iyzico/iyzico.provider';
 import { paytrProvider } from '../providers/paytr/paytr.provider';
+import { squareProvider } from '../providers/square/square.provider';
+import { payPalProvider } from '../providers/paypal/paypal.provider';
+import { adyenProvider } from '../providers/adyen/adyen.provider';
+import { monerisProvider } from '../providers/moneris/moneris.provider';
+import { alipayProvider } from '../providers/alipay/alipay.provider';
+import { weChatPayProvider } from '../providers/wechatpay/wechatpay.provider';
 import prisma from '../../../utils/prisma';
 import { ProviderCatalogStatus, ProviderType } from '@prisma/client';
 
@@ -80,16 +86,16 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     display_name: 'Square POS & Online',
     description: 'In-person and online card processing widely adopted in US, Canada, UK, and Australia.',
     type: ProviderType.CARD,
-    status: ProviderCatalogStatus.DEVELOPMENT,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['US', 'CA', 'GB', 'AU', 'JP', 'IE', 'ES', 'FR'],
     supported_currencies: ['USD', 'CAD', 'GBP', 'AUD', 'JPY', 'EUR'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'REFUND'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'REFUND', 'WEBHOOK'],
     required_credentials: [
       { key: 'applicationId', label: 'Application ID', type: 'text', required: true, placeholder: 'sq0idp-...' },
       { key: 'accessToken', label: 'Access Token', type: 'password', required: true, placeholder: 'EAAA...' },
       { key: 'locationId', label: 'Location ID', type: 'text', required: true, placeholder: 'L...' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: false,
   },
   {
@@ -98,16 +104,16 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     display_name: 'Moneris Solutions',
     description: "Canada's leading financial technology and debit/credit payment processor.",
     type: ProviderType.VIRTUAL_POS,
-    status: ProviderCatalogStatus.COMING_SOON,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['CA'],
     supported_currencies: ['CAD', 'USD'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'],
     required_credentials: [
       { key: 'storeId', label: 'Store ID', type: 'text', required: true, placeholder: 'moneris01' },
       { key: 'apiToken', label: 'API Token', type: 'password', required: true, placeholder: 'yesguy...' },
       { key: 'checkoutId', label: 'Checkout ID', type: 'text', required: false, placeholder: 'chkt_...' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: false,
   },
   {
@@ -153,16 +159,16 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     display_name: 'Adyen Global Platform',
     description: 'Enterprise end-to-end global payments infrastructure.',
     type: ProviderType.CARD,
-    status: ProviderCatalogStatus.COMING_SOON,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['US', 'CA', 'GB', 'EU', 'SG', 'AU', '*'],
     supported_currencies: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'SGD', 'CHF', 'JPY'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'REFUND', 'WEBHOOK'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'REFUND', 'WEBHOOK'],
     required_credentials: [
       { key: 'merchantAccount', label: 'Merchant Account', type: 'text', required: true, placeholder: 'YourMerchantAccount' },
       { key: 'apiKey', label: 'API Key', type: 'password', required: true, placeholder: 'AQEy...' },
       { key: 'clientKey', label: 'Client Key', type: 'text', required: true, placeholder: 'live_...' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: true,
   },
   {
@@ -171,15 +177,15 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     display_name: 'PayPal Commerce',
     description: 'Global wallet and card payments for consumers and merchants in 200+ markets.',
     type: ProviderType.WALLET,
-    status: ProviderCatalogStatus.COMING_SOON,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['US', 'CA', 'GB', 'DE', 'FR', 'IT', 'ES', 'AU', '*'],
     supported_currencies: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'WEBHOOK'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'],
     required_credentials: [
       { key: 'clientId', label: 'Client ID', type: 'text', required: true, placeholder: 'AZ...' },
       { key: 'clientSecret', label: 'Client Secret', type: 'password', required: true, placeholder: 'EL...' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: true,
   },
   {
@@ -188,16 +194,16 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     display_name: 'Alipay Global',
     description: 'Cross-border mobile payments for Chinese and global consumers.',
     type: ProviderType.WALLET,
-    status: ProviderCatalogStatus.COMING_SOON,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['CN', 'HK', 'SG', 'MY', 'TH', 'JP', 'US', 'GB', 'FR', 'DE', '*'],
     supported_currencies: ['USD', 'EUR', 'GBP', 'CAD', 'CNY', 'HKD', 'SGD', 'JPY'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'WEBHOOK'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'],
     required_credentials: [
       { key: 'appId', label: 'App ID', type: 'text', required: true, placeholder: '2021...' },
       { key: 'privateKey', label: 'Merchant Private Key', type: 'password', required: true, placeholder: 'MIIE...' },
       { key: 'alipayPublicKey', label: 'Alipay Public Key', type: 'password', required: true, placeholder: 'MIIB...' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: true,
   },
   {
@@ -206,16 +212,16 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
     display_name: 'WeChat Pay (微信支付)',
     description: 'Leading mobile payment wallet in China and international travel hubs.',
     type: ProviderType.WALLET,
-    status: ProviderCatalogStatus.COMING_SOON,
+    status: ProviderCatalogStatus.ACTIVE,
     countries: ['CN', 'HK', 'SG', 'MY', 'TH', 'JP', 'US', 'GB', 'FR', 'DE', '*'],
     supported_currencies: ['USD', 'EUR', 'GBP', 'CAD', 'CNY', 'HKD', 'SGD', 'JPY'],
-    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'WEBHOOK'],
+    capabilities: ['CREATE_PAYMENT', 'PAYMENT_STATUS', 'TEST_CONNECTION', 'WEBHOOK'],
     required_credentials: [
       { key: 'mchId', label: 'Merchant ID (Mch ID)', type: 'text', required: true, placeholder: '1900...' },
       { key: 'apiV3Key', label: 'API v3 Key', type: 'password', required: true, placeholder: '32-char key' },
       { key: 'serialNo', label: 'Certificate Serial Number', type: 'text', required: true, placeholder: '...' },
     ],
-    has_adapter: false,
+    has_adapter: true,
     is_global: true,
   },
 ];
@@ -228,6 +234,12 @@ export class ProviderRegistry {
     this.registerAdapter('stripe', stripeProvider);
     this.registerAdapter('iyzico', iyzicoProvider);
     this.registerAdapter('paytr', paytrProvider);
+    this.registerAdapter('square', squareProvider);
+    this.registerAdapter('paypal', payPalProvider);
+    this.registerAdapter('adyen', adyenProvider);
+    this.registerAdapter('moneris', monerisProvider);
+    this.registerAdapter('alipay', alipayProvider);
+    this.registerAdapter('wechatpay', weChatPayProvider);
   }
 
   registerAdapter(name: string, adapter: IPaymentProvider) {
