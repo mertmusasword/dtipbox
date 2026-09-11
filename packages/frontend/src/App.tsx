@@ -30,6 +30,7 @@ import { AdminPaymentProvidersPage } from './pages/admin/AdminPaymentProvidersPa
 import { AdminAuditPage } from './pages/admin/AdminAuditPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 import { AdminAgreementsPage } from './pages/admin/AdminAgreementsPage';
+import { AdminCorporateApplicationsPage } from './pages/admin/AdminCorporateApplicationsPage';
 import { Role } from './types';
 
 // Protected Route Guard
@@ -116,6 +117,7 @@ export const App: React.FC = () => {
                 <Route path="/admin/qr" element={<AdminQrsPage />} />
                 <Route path="/admin/payments" element={<AdminPaymentsPage />} />
                 <Route path="/admin/payment-providers" element={<AdminPaymentProvidersPage />} />
+                <Route path="/admin/corporate-applications" element={<AdminCorporateApplicationsPage />} />
                 <Route path="/admin/agreements" element={<AdminAgreementsPage />} />
                 <Route path="/admin/statistics" element={<AdminDashboard />} />
                 <Route path="/admin/audit" element={<AdminAuditPage />} />

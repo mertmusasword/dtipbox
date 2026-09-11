@@ -6,6 +6,7 @@ import * as adminService from '../services/admin.service';
 import * as auditService from '../services/audit.service';
 import * as providerService from '../services/payment/provider.service';
 import * as agreementService from '../services/agreement.service';
+import * as corporateService from '../services/corporate.service';
 import { ProviderCatalogStatus, ProviderRequestStatus } from '@prisma/client';
 
 const router = Router();
@@ -248,6 +249,51 @@ router.get('/agreements/pending', async (_req, res, next) => {
   try {
     const data = await agreementService.getPendingReacceptanceBusinesses();
     res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ==================== Corporate Applications ====================
+
+// 1. List corporate applications with pagination & status filter
+router.get('/corporate-applications', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 20);
+    const status = req.query.status as any;
+    const data = await corporateService.getCorporateApplications(page, limit, status);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 2. Update status & admin notes
+const updateStatusSchema = {
+  body: z.object({
+    status: z.enum(['NEW', 'CONTACTED', 'IN_DISCUSSION', 'COMPLETED', 'REJECTED']),
+    adminNotes: z.string().optional(),
+  }),
+};
+
+router.patch('/corporate-applications/:id/status', validate(updateStatusSchema), async (req, res, next) => {
+  try {
+    const updated = await corporateService.updateCorporateApplicationStatus(
+      req.params.id as string,
+      req.body.status,
+      req.body.adminNotes
+    );
+    res.json({ success: true, data: updated, message: 'Başvuru durumu güncellendi' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 3. Delete corporate application
+router.delete('/corporate-applications/:id', async (req, res, next) => {
+  try {
+    const result = await corporateService.deleteCorporateApplication(req.params.id as string);
+    res.json(result);
   } catch (error) {
     next(error);
   }

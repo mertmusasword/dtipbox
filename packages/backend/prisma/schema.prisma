@@ -85,6 +85,14 @@ enum ProviderRequestStatus {
   REJECTED
 }
 
+enum CorporateApplicationStatus {
+  NEW
+  CONTACTED
+  IN_DISCUSSION
+  COMPLETED
+  REJECTED
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -418,5 +426,26 @@ model AgreementAcceptance {
   @@index([agreement_version_id])
   @@index([accepted_at])
   @@map("agreement_acceptances")
+}
+
+model CorporateApplication {
+  id           String                     @id @default(uuid())
+  company_name String
+  contact_name String
+  phone        String
+  email        String
+  sector       String
+  branch_count String
+  message      String?                    @db.Text
+  status       CorporateApplicationStatus @default(NEW)
+  admin_notes  String?                    @db.Text
+  ip_address   String?
+
+  created_at   DateTime                   @default(now())
+  updated_at   DateTime                   @updatedAt
+
+  @@index([status])
+  @@index([created_at])
+  @@map("corporate_applications")
 }
 
