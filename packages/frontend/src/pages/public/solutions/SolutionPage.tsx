@@ -89,9 +89,6 @@ export const SolutionPage: React.FC = () => {
           <div className="home-nav-actions">
             <LanguageSelector variant="navbar" />
             <Link to="/blog" className="home-btn-ghost">Blog</Link>
-            <Link to="/tools/tip-calculator" className="home-btn-ghost">
-              {isEn ? 'Tip Calculator' : 'Hesaplayıcı'}
-            </Link>
             <Link to="/login" className="home-btn-ghost">
               {isEn ? 'Login' : 'Giriş Yap'}
             </Link>

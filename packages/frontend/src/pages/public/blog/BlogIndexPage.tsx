@@ -145,7 +145,6 @@ export const BlogIndexPage: React.FC = () => {
             <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
           </Link>
           <div className="home-nav-actions">
-            <Link to="/tools/tip-calculator" className="home-btn-ghost">{isEn ? 'Calculator' : 'Hesaplayıcı'}</Link>
             <Link to="/solutions/restaurants" className="home-btn-ghost">{isEn ? 'Restaurants' : 'Restoranlar'}</Link>
             <Link to="/login" className="home-btn-ghost">{isEn ? 'Log in' : 'Giriş Yap'}</Link>
             <Link

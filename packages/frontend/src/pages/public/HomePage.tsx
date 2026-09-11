@@ -99,8 +99,7 @@ export const HomePage: React.FC = () => {
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
             <li><a href="#benefits" className="home-nav-link">{t('nav.businesses')}</a></li>
-            <li><Link to="/tools/tip-calculator" className="home-nav-link">{t('nav.tipCalculator')}</Link></li>
-            <li><Link to="/blog" className="home-nav-link">{t('nav.blogGuides')}</Link></li>
+            <li><Link to="/blog" className="home-nav-link">Blog</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
@@ -144,8 +143,7 @@ export const HomePage: React.FC = () => {
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
             <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>{t('nav.businesses')}</a>
-            <Link to="/tools/tip-calculator" onClick={() => setMobileMenuOpen(false)}>{t('nav.tipCalculator')}</Link>
-            <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>{t('nav.blogGuides')}</Link>
+            <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
             <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
             <button
               type="button"

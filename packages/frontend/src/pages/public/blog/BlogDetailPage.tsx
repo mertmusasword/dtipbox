@@ -94,7 +94,6 @@ export const BlogDetailPage: React.FC = () => {
           </Link>
           <div className="home-nav-actions">
             <Link to="/blog" className="home-btn-ghost">{isEn ? 'All Articles' : 'Tüm Yazılar'}</Link>
-            <Link to="/tools/tip-calculator" className="home-btn-ghost">{isEn ? 'Tip Calculator' : 'Bahşiş Hesaplayıcı'}</Link>
             <Link to="/login" className="home-btn-ghost">{isEn ? 'Log in' : 'Giriş'}</Link>
             <Link
               to="/register"
