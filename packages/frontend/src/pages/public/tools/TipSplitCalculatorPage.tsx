@@ -480,8 +480,8 @@ export const TipSplitCalculatorPage: React.FC = () => {
         <div className="tool-related-links">
           <h3>{isEn ? 'Related Guides' : 'İlgili Rehberler'}</h3>
           <div className="tool-links-grid">
-            <Link to="/blog/restaurant-tip-pooling-best-practices" className="tool-link-card">
-              <strong>{isEn ? 'Restaurant Tip Pooling Best Practices' : 'Bahşiş Havuzu (Tip Pool) Nedir?'}</strong>
+            <Link to={isEn ? "/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" : "/blog/calisan-bahsislerini-yonetmenin-yollari"} className="tool-link-card">
+              <strong>{isEn ? 'Staff Tip Management & Pooling Guide' : 'Çalışan Bahşişlerini Yönetme & Havuz Rehberi'}</strong>
               <p>{isEn ? 'Models, percentages, and fair shift distribution formulas' : 'Restoranlarda adil bahşiş dağıtım modelleri ve formüller'}</p>
             </Link>
             <Link to="/tools/tip-calculator" className="tool-link-card">

@@ -19,6 +19,7 @@ import {
   FileText,
   Briefcase,
   Headphones,
+  Calculator,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
@@ -86,6 +87,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label={t('nav.bankAccount')} onClick={closeMobile} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
+              <NavItem to="/tools/tip-calculator" icon={<Calculator size={18} />} label={t('nav.tipCalculator')} onClick={closeMobile} />
               <button
                 type="button"
                 className="sidebar-nav-item"
@@ -104,6 +106,7 @@ export const Sidebar: React.FC = () => {
           {isEmployee && (
             <>
               <NavItem to="/employee/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.myTipsStats')} onClick={closeMobile} />
+              <NavItem to="/tools/tip-calculator" icon={<Calculator size={18} />} label={t('nav.tipCalculator')} onClick={closeMobile} />
               <button
                 type="button"
                 className="sidebar-nav-item"

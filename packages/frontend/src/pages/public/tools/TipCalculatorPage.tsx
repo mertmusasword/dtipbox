@@ -378,8 +378,8 @@ export const TipCalculatorPage: React.FC = () => {
         <div className="tool-related-links">
           <h3>{isEn ? 'Related Guides & Hospitality Solutions' : 'İlgili İçerikler ve Çözümler'}</h3>
           <div className="tool-links-grid">
-            <Link to="/blog/what-is-digital-tipping-complete-guide" className="tool-link-card">
-              <strong>{isEn ? 'Digital Tipping Complete Guide' : 'Restoranlarda Dijital Bahşiş Rehberi'}</strong>
+            <Link to={isEn ? "/blog/what-is-digital-tipping-guide-for-businesses" : "/blog/dijital-bahsis-nedir-isletmeler-icin-rehber"} className="tool-link-card">
+              <strong>{isEn ? 'Digital Tipping Complete Guide' : 'İşletmeler İçin Dijital Bahşiş Rehberi'}</strong>
               <p>{isEn ? 'How modern QR tipping transforms hospitality staff compensation' : 'Masanıza QR bahşiş sistemi kurmanın tüm detayları'}</p>
             </Link>
             <Link to="/tools/tip-split-calculator" className="tool-link-card">
