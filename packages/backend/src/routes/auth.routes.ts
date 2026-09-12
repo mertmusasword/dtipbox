@@ -194,7 +194,7 @@ router.get('/smtp-status', async (_req, res) => {
 router.get('/email-diagnostic', async (req, res) => {
   const to = (req.query.to as string) || 'mertmusasword@gmail.com';
   const resendApiKey = process.env.RESEND_API_KEY;
-  const resendFrom = process.env.RESEND_FROM || 'Naponi <onboarding@resend.dev>';
+  const resendFrom = process.env.RESEND_FROM || 'Naponi <info@naponi.com>';
 
   let resendResult: any = null;
   if (resendApiKey) {

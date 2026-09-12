@@ -126,7 +126,7 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
     // 1. Resend Cloud API (Over HTTPS port 443 - zero firewall blockage)
     const resendApiKey = process.env.RESEND_API_KEY;
     if (resendApiKey) {
-      const fromAddress = process.env.RESEND_FROM || 'Naponi <onboarding@resend.dev>';
+      const fromAddress = process.env.RESEND_FROM || 'Naponi <info@naponi.com>';
       try {
         const response = await fetch('https://api.resend.com/emails', {
           method: 'POST',
