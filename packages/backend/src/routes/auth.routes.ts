@@ -191,23 +191,4 @@ router.get('/smtp-status', async (_req, res) => {
   }
 });
 
-router.get('/send-preview-emails', async (req, res) => {
-  try {
-    const to = (req.query.to as string) || 'mertmusasword@gmail.com';
-    const { emailService } = await import('../services/email.service');
-
-    const businessResult = await emailService.sendBusinessWelcomeEmail(to, 'Naponi Bistro & Lounge');
-    const employeeResult = await emailService.sendEmployeeWelcomeEmail(to, 'Mert Kılıç', 'Naponi Bistro & Lounge');
-
-    res.json({
-      success: true,
-      target: to,
-      businessEmailSent: businessResult,
-      employeeEmailSent: employeeResult,
-    });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
 export default router;
