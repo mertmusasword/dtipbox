@@ -156,9 +156,8 @@ async function bootstrapAdmin() {
       where: { email: adminEmail },
     });
 
-    const passwordHash = await bcrypt.hash(adminPassword, 12);
-
     if (!existingAdmin) {
+      const passwordHash = await bcrypt.hash(adminPassword, 12);
       await prisma.user.create({
         data: {
           email: adminEmail,
@@ -169,15 +168,18 @@ async function bootstrapAdmin() {
       });
       console.log(`[BOOTSTRAP] Initial platform admin account created: ${adminEmail}`);
     } else {
-      await prisma.user.update({
-        where: { id: existingAdmin.id },
-        data: {
-          role: 'ADMIN',
-          is_active: true,
-          password_hash: passwordHash,
-        },
-      });
-      console.log(`[BOOTSTRAP] Platform admin credentials synchronized: ${adminEmail}`);
+      // Security guard: If admin account already exists, DO NOT overwrite their password.
+      // They may have changed it securely via the dashboard.
+      if (existingAdmin.role !== 'ADMIN' || !existingAdmin.is_active) {
+        await prisma.user.update({
+          where: { id: existingAdmin.id },
+          data: {
+            role: 'ADMIN',
+            is_active: true,
+          },
+        });
+        console.log(`[BOOTSTRAP] Platform admin role/status ensured: ${adminEmail}`);
+      }
     }
   } catch (err) {
     console.warn('[BOOTSTRAP] Admin bootstrap skipped/deferred:', (err as Error).message);

@@ -13,6 +13,7 @@ import {
   Heart,
   Copy,
   Check,
+  Star,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import {
@@ -44,6 +45,14 @@ export const TipPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [paymentResult, setPaymentResult] = useState<any | null>(null);
   const [copiedIban, setCopiedIban] = useState(false);
+
+  // Customer Feedback State
+  const [feedbackRating, setFeedbackRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackSkipped, setFeedbackSkipped] = useState(false);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
 
   useEffect(() => {
     if (!publicToken) return;
@@ -109,6 +118,23 @@ export const TipPage: React.FC = () => {
     navigator.clipboard.writeText(text);
     setCopiedIban(true);
     setTimeout(() => setCopiedIban(false), 2000);
+  };
+
+  const handleFeedbackSubmit = async () => {
+    if (feedbackRating < 1 || !publicToken) return;
+    setFeedbackSubmitting(true);
+    try {
+      await api.post(`/tip/${publicToken}/feedback`, {
+        tipId: paymentResult?.tip?.id,
+        rating: feedbackRating,
+        comment: feedbackComment.trim() || undefined,
+      });
+      setFeedbackSubmitted(true);
+    } catch (err: any) {
+      alert(err.response?.data?.error || t('common.error'));
+    } finally {
+      setFeedbackSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -310,12 +336,154 @@ export const TipPage: React.FC = () => {
             </a>
           )}
 
+          {/* Customer Feedback Card (Post-Tip) */}
+          {(isSuccess || isUnverified) && (
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: 'var(--radius-md)',
+              padding: '1.25rem',
+              marginBottom: '1.25rem',
+              textAlign: 'center',
+            }}>
+              {feedbackSubmitted ? (
+                <div style={{ padding: '0.5rem 0' }}>
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    color: '#10b981',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 0.75rem',
+                  }}>
+                    <CheckCircle2 size={24} />
+                  </div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.25rem', color: '#10b981' }}>
+                    {t('feedback.thankYouTitle')}
+                  </h4>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    {t('feedback.thankYouSubtitle')}
+                  </p>
+                </div>
+              ) : feedbackSkipped ? null : (
+                <div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                    {t('feedback.satisfactionQuestion')}
+                  </h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                    {t('feedback.ratingLabel')}
+                  </p>
+
+                  {/* 1-5 Star Interactive Selector */}
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const isActive = (hoverRating || feedbackRating) >= star;
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setFeedbackRating(star)}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            transition: 'transform 0.15s ease',
+                            transform: (hoverRating || feedbackRating) === star ? 'scale(1.15)' : 'scale(1)',
+                          }}
+                          aria-label={`${star} star`}
+                        >
+                          <Star
+                            size={32}
+                            style={{
+                              color: isActive ? '#f59e0b' : 'rgba(255, 255, 255, 0.2)',
+                              fill: isActive ? '#f59e0b' : 'transparent',
+                              transition: 'all 0.15s ease',
+                            }}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Optional comment textarea (appears once rating is selected) */}
+                  {feedbackRating > 0 && (
+                    <div style={{ marginBottom: '1rem', animation: 'fadeIn 0.2s ease-in-out' }}>
+                      <textarea
+                        value={feedbackComment}
+                        onChange={(e) => setFeedbackComment(e.target.value.slice(0, 500))}
+                        placeholder={t('feedback.commentPlaceholder')}
+                        rows={3}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'var(--bg-input)',
+                          border: '1px solid var(--border-color)',
+                          color: 'var(--text-primary)',
+                          fontSize: '0.88rem',
+                          resize: 'none',
+                          boxSizing: 'border-box',
+                          fontFamily: 'inherit',
+                        }}
+                      />
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                        {feedbackComment.length}/500
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={handleFeedbackSubmit}
+                      disabled={feedbackRating < 1 || feedbackSubmitting}
+                      className="btn btn-primary"
+                      style={{
+                        width: '100%',
+                        opacity: feedbackRating < 1 ? 0.5 : 1,
+                        cursor: feedbackRating < 1 ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      {feedbackSubmitting ? t('feedback.submitting') : t('feedback.submit')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFeedbackSkipped(true)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        padding: '0.35rem',
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      {t('feedback.skip')}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <button
             className={isSuccess || isUnverified ? "btn btn-primary" : "btn btn-secondary"}
             style={{ width: '100%' }}
             onClick={() => {
               setPaymentResult(null);
               setCustomAmount('');
+              setFeedbackRating(0);
+              setFeedbackComment('');
+              setFeedbackSubmitted(false);
+              setFeedbackSkipped(false);
             }}
           >
             {isSuccess || isUnverified ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}

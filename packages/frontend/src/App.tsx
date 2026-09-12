@@ -25,6 +25,7 @@ import { QrCodesPage } from './pages/business/QrCodesPage';
 import { PaymentMethodsPage } from './pages/business/PaymentMethodsPage';
 import { PaymentAccountPage } from './pages/business/PaymentAccountPage';
 import { AnalyticsPage } from './pages/business/AnalyticsPage';
+import { FeedbacksPage } from './pages/business/FeedbacksPage';
 import { ProfileSettingsPage } from './pages/business/ProfileSettingsPage';
 import { EmployeeDashboard } from './pages/employee/EmployeeDashboard';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -120,6 +121,7 @@ export const App: React.FC = () => {
                 <Route path="/business/payment-methods" element={<PaymentMethodsPage />} />
                 <Route path="/business/payment-account" element={<PaymentAccountPage />} />
                 <Route path="/business/analytics" element={<AnalyticsPage />} />
+                <Route path="/business/feedbacks" element={<FeedbacksPage />} />
                 <Route path="/business/settings" element={<ProfileSettingsPage />} />
               </Route>
 

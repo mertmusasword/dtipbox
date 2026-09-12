@@ -19,6 +19,7 @@ import {
   FileText,
   Briefcase,
   Headphones,
+  MessageSquareHeart,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
@@ -85,6 +86,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/payment-methods" icon={<CreditCard size={18} />} label={t('nav.paymentMethods')} onClick={closeMobile} />
               <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label={t('nav.bankAccount')} onClick={closeMobile} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
+              <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
               <button
                 type="button"

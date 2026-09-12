@@ -10,58 +10,25 @@ import corporateRoutes from './corporate.routes';
 import supportRoutes from './support.routes';
 
 import prisma from '../utils/prisma';
-import { env } from '../config/env';
-import bcrypt from 'bcrypt';
 
 const apiRouter = Router();
 
 apiRouter.get('/health', async (_req, res) => {
-  let ownerStatus = 'unknown';
-  let verifyTest = false;
+  let dbStatus = 'disconnected';
   try {
-    const adminEmails = ['info@naponi.com', 'owner@naponi.com'];
-    const ownerPassword = 'M23456.';
-    const passwordHash = await bcrypt.hash(ownerPassword, 12);
-
-    verifyTest = await bcrypt.compare(ownerPassword, passwordHash);
-
-    for (const email of adminEmails) {
-      const existing = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!existing) {
-        await prisma.user.create({
-          data: {
-            email,
-            password_hash: passwordHash,
-            role: 'ADMIN',
-            is_active: true,
-          },
-        });
-        if (email === 'info@naponi.com') ownerStatus = 'created';
-      } else {
-        await prisma.user.update({
-          where: { id: existing.id },
-          data: {
-            role: 'ADMIN',
-            is_active: true,
-            password_hash: passwordHash,
-          },
-        });
-        if (email === 'info@naponi.com') ownerStatus = 'synchronized';
-      }
-    }
+    // Light database ping to verify database connectivity
+    await prisma.$queryRaw`SELECT 1`;
+    dbStatus = 'connected';
   } catch (err: any) {
-    ownerStatus = 'error: ' + err.message;
+    dbStatus = 'error: ' + (err?.message || 'Database unreachable');
   }
 
-  res.json({
-    status: 'ok',
+  const isHealthy = dbStatus === 'connected';
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? 'ok' : 'degraded',
     service: 'Naponi API',
     version: '1.0.4',
-    ownerStatus,
-    verifyTest,
+    database: dbStatus,
     timestamp: new Date().toISOString(),
   });
 });

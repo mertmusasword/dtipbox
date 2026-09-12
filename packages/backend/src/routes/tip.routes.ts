@@ -68,4 +68,43 @@ router.post('/:publicToken', tipSubmissionLimiter, validate(createTipSchema), as
   }
 });
 
+const feedbackLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many feedback submissions from this device. Please try again later.',
+  },
+});
+
+const createFeedbackSchema = {
+  params: z.object({
+    publicToken: z.string().min(1).max(100),
+  }),
+  body: z.object({
+    tipId: z.string().uuid().optional(),
+    rating: z.number().int().min(1, 'Rating must be between 1 and 5').max(5, 'Rating must be between 1 and 5'),
+    comment: z.string().trim().max(500, 'Comment cannot exceed 500 characters').optional(),
+  }),
+};
+
+// Public: Submit customer rating & feedback after tip
+router.post('/:publicToken/feedback', feedbackLimiter, validate(createFeedbackSchema), async (req, res, next) => {
+  try {
+    const feedbackService = await import('../services/feedback.service');
+    const feedback = await feedbackService.createTipFeedback({
+      publicToken: req.params.publicToken as string,
+      tipId: req.body.tipId,
+      rating: req.body.rating,
+      comment: req.body.comment,
+    });
+    res.status(201).json({ success: true, data: feedback });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
+

@@ -26,6 +26,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import { AgreementModal } from '../../components/AgreementModal';
+import { CustomerFeedbacks } from '../../components/CustomerFeedbacks';
 
 export const BusinessDashboard: React.FC = () => {
   const { t, formatCurrency, formatTime, language } = useLanguage();
@@ -386,6 +387,9 @@ export const BusinessDashboard: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Customer Feedbacks & Rating Analytics */}
+      <CustomerFeedbacks />
 
       <AgreementModal
         isOpen={showAgreementModal}

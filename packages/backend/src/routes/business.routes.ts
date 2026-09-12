@@ -504,4 +504,22 @@ router.put('/tips/:id/reject', async (req: AuthRequest, res, next) => {
   }
 });
 
+// --- Customer Feedbacks & Reviews ---
+router.get('/feedbacks', async (req: AuthRequest, res, next) => {
+  try {
+    const feedbackService = await import('../services/feedback.service');
+    const data = await feedbackService.getBusinessFeedbacks(req.user!.businessId!, {
+      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
+      employeeId: req.query.employeeId as string | undefined,
+      rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
+      startDate: req.query.startDate as string | undefined,
+      endDate: req.query.endDate as string | undefined,
+    });
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

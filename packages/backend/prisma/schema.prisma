@@ -158,6 +158,7 @@ model Business {
   payment_integrations  PaymentIntegration[]
   provider_requests     PaymentProviderRequest[]
   tips                  Tip[]
+  feedbacks             Feedback[]
   audit_logs            AuditLog[]
   agreement_acceptances AgreementAcceptance[]
 
@@ -202,9 +203,10 @@ model Employee {
   deleted_at DateTime?
 
   // Relations
-  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
-  user     User?    @relation(fields: [user_id], references: [id])
-  tips     Tip[]
+  business  Business   @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  user      User?      @relation(fields: [user_id], references: [id])
+  tips      Tip[]
+  feedbacks Feedback[]
 
   @@index([business_id])
   @@index([user_id])
@@ -351,6 +353,7 @@ model Tip {
   business Business  @relation(fields: [business_id], references: [id], onDelete: Cascade)
   employee Employee? @relation(fields: [employee_id], references: [id], onDelete: SetNull)
   table    Table?    @relation(fields: [table_id], references: [id], onDelete: SetNull)
+  feedback Feedback?
 
   @@index([business_id])
   @@index([employee_id])
@@ -489,6 +492,27 @@ model SupportTicket {
   @@index([user_id])
   @@index([business_id])
   @@map("support_tickets")
+}
+
+model Feedback {
+  id          String    @id @default(uuid())
+  business_id String
+  employee_id String?
+  tip_id      String?   @unique
+  rating      Int
+  comment     String?
+  created_at  DateTime  @default(now())
+
+  // Relations
+  business    Business  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  employee    Employee? @relation(fields: [employee_id], references: [id], onDelete: SetNull)
+  tip         Tip?      @relation(fields: [tip_id], references: [id], onDelete: SetNull)
+
+  @@index([business_id])
+  @@index([employee_id])
+  @@index([created_at])
+  @@index([rating])
+  @@map("feedbacks")
 }
 
 

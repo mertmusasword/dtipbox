@@ -16,7 +16,9 @@ router.get('/dashboard', async (req: AuthRequest, res, next) => {
       throw new AppError('No employee profile associated with this account', 403);
     }
 
-    const [employee, stats] = await Promise.all([
+    const feedbackService = await import('../services/feedback.service');
+
+    const [employee, stats, feedbackData] = await Promise.all([
       prisma.employee.findUnique({
         where: { id: req.user.employeeId },
         select: {
@@ -35,6 +37,7 @@ router.get('/dashboard', async (req: AuthRequest, res, next) => {
         },
       }),
       analyticsService.getEmployeeAnalytics(req.user.employeeId, req.user.businessId),
+      feedbackService.getEmployeeFeedbacks(req.user.employeeId, req.user.businessId, 1, 10),
     ]);
 
     res.json({
@@ -42,8 +45,32 @@ router.get('/dashboard', async (req: AuthRequest, res, next) => {
       data: {
         profile: employee,
         stats,
+        feedbacks: feedbackData,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/feedbacks', async (req: AuthRequest, res, next) => {
+  try {
+    if (!req.user?.employeeId || !req.user?.businessId) {
+      throw new AppError('No employee profile associated with this account', 403);
+    }
+
+    const feedbackService = await import('../services/feedback.service');
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+
+    const data = await feedbackService.getEmployeeFeedbacks(
+      req.user.employeeId,
+      req.user.businessId,
+      page,
+      limit
+    );
+
+    res.json({ success: true, data });
   } catch (error) {
     next(error);
   }
