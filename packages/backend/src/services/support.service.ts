@@ -1,6 +1,8 @@
 import prisma from '../utils/prisma';
 import { SupportTicketStatus, SupportTicketCategory } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
+import { emailService } from './email.service';
+import { logger } from '../utils/logger';
 
 export interface CreateSupportTicketInput {
   name: string;
@@ -66,6 +68,31 @@ export async function createSupportTicket(data: CreateSupportTicketInput) {
       business_id: businessId,
       ip_address: ip,
     },
+  });
+
+  // Asynchronously dispatch confirmation to user and notification to info@naponi.com
+  Promise.allSettled([
+    emailService.sendSupportTicketConfirmationEmail({
+      to: cleanEmail,
+      name: cleanName,
+      ticketId: ticket.id,
+      subject: cleanSubject,
+      category: ticket.category,
+      message: cleanMessage,
+      businessName: cleanBusinessName || undefined,
+    }),
+    emailService.sendSupportTicketAdminNotificationEmail({
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone || undefined,
+      businessName: cleanBusinessName || undefined,
+      ticketId: ticket.id,
+      subject: cleanSubject,
+      category: ticket.category,
+      message: cleanMessage,
+    }),
+  ]).catch((err) => {
+    logger.error('Failed to dispatch support ticket emails', 'SUPPORT_TICKET', { error: String(err) });
   });
 
   return {
