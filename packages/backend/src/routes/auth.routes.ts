@@ -181,4 +181,14 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), async
   }
 });
 
+router.get('/smtp-status', async (_req, res) => {
+  try {
+    const { emailService } = await import('../services/email.service');
+    const result = await emailService.verifyConnection();
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

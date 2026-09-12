@@ -38,6 +38,42 @@ class EmailService {
     }
   }
 
+  async verifyConnection() {
+    if (!this.transporter && env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS) {
+      this.initTransporter();
+    }
+
+    if (!this.transporter) {
+      return {
+        configured: false,
+        host: env.SMTP_HOST || 'none',
+        user: env.SMTP_USER || 'none',
+        port: env.SMTP_PORT,
+        secure: env.SMTP_SECURE,
+      };
+    }
+
+    try {
+      await this.transporter.verify();
+      return {
+        configured: true,
+        verified: true,
+        host: env.SMTP_HOST,
+        user: env.SMTP_USER,
+        port: env.SMTP_PORT,
+      };
+    } catch (err: any) {
+      return {
+        configured: true,
+        verified: false,
+        error: err.message,
+        code: err.code,
+        host: env.SMTP_HOST,
+        port: env.SMTP_PORT,
+      };
+    }
+  }
+
   /**
    * Send Password Reset Email
    */
