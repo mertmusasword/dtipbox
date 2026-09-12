@@ -164,21 +164,12 @@ class EmailService {
 
           <!-- Header / Brand Section -->
           <tr>
-            <td style="padding: 36px 40px 24px 40px;">
+            <td style="padding: 32px 40px 24px 40px;">
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td align="left">
+                  <td align="left" style="vertical-align: middle;">
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
-                      <table border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="vertical-align: middle;">
-                            <img src="${env.APP_URL}/logo.png" alt="Naponi" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);" />
-                          </td>
-                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; vertical-align: middle;">
-                            Naponi
-                          </td>
-                        </tr>
-                      </table>
+                      <img src="${env.APP_URL}/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0;" />
                     </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
@@ -310,21 +301,12 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
 
           <!-- Header / Brand Section -->
           <tr>
-            <td style="padding: 36px 40px 24px 40px;">
+            <td style="padding: 32px 40px 24px 40px;">
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td align="left">
+                  <td align="left" style="vertical-align: middle;">
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
-                      <table border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="vertical-align: middle;">
-                            <img src="${env.APP_URL}/logo.png" alt="Naponi" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);" />
-                          </td>
-                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; vertical-align: middle;">
-                            Naponi
-                          </td>
-                        </tr>
-                      </table>
+                      <img src="${env.APP_URL}/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0;" />
                     </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
@@ -494,21 +476,12 @@ Sorularınız için: info@naponi.com
 
           <!-- Header / Brand Section -->
           <tr>
-            <td style="padding: 36px 40px 24px 40px;">
+            <td style="padding: 32px 40px 24px 40px;">
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td align="left">
+                  <td align="left" style="vertical-align: middle;">
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
-                      <table border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="vertical-align: middle;">
-                            <img src="${env.APP_URL}/logo.png" alt="Naponi" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);" />
-                          </td>
-                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; vertical-align: middle;">
-                            Naponi
-                          </td>
-                        </tr>
-                      </table>
+                      <img src="${env.APP_URL}/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0;" />
                     </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
