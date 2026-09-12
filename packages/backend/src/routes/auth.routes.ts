@@ -191,4 +191,46 @@ router.get('/smtp-status', async (_req, res) => {
   }
 });
 
+router.get('/email-diagnostic', async (req, res) => {
+  const to = (req.query.to as string) || 'mertmusasword@gmail.com';
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const resendFrom = process.env.RESEND_FROM || 'Naponi <onboarding@resend.dev>';
+
+  let resendResult: any = null;
+  if (resendApiKey) {
+    try {
+      const resp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: resendFrom,
+          to: [to],
+          subject: 'Naponi - Test E-Postası (Resend Doğrulama)',
+          html: '<div style="font-family:sans-serif;padding:20px;background:#0f172a;color:#f8fafc;border-radius:10px;"><h2>⚡ Naponi Resend Testi</h2><p>Resend entegrasyonu başarıyla çalışıyor!</p></div>',
+          text: 'Naponi Resend Testi - Başarıyla iletildi!',
+        }),
+      });
+      const data = await resp.json();
+      resendResult = {
+        statusCode: resp.status,
+        ok: resp.ok,
+        data,
+      };
+    } catch (err: any) {
+      resendResult = { error: err.message };
+    }
+  }
+
+  res.json({
+    hasResendApiKey: !!resendApiKey,
+    resendApiKeyPrefix: resendApiKey ? `${resendApiKey.slice(0, 6)}...` : null,
+    from: resendFrom,
+    target: to,
+    resendResult,
+  });
+});
+
 export default router;
