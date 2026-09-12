@@ -83,6 +83,27 @@ button {
 
 input, select, textarea {
   font-family: inherit;
+  color: var(--text-primary, #f8fafc);
+}
+
+.input {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary, #f8fafc);
+  border-radius: var(--radius-md, 10px);
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--primary, #6366f1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.input::placeholder {
+  color: var(--text-muted, #64748b);
 }
 
 /* ===================== Layout ===================== */

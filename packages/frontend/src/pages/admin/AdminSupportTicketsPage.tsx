@@ -258,7 +258,7 @@ export const AdminSupportTicketsPage: React.FC = () => {
         marginBottom: '1.5rem',
       }}>
         {[
-          { key: 'ALL', label: 'Tümü', count: statusCounts.ALL, color: '#e2e8f0', bg: 'rgba(255, 255, 255, 0.05)' },
+          { key: 'ALL', label: 'Tümü', count: statusCounts.ALL, color: '#818cf8', bg: 'rgba(99, 102, 241, 0.12)' },
           { key: 'NEW', label: 'Yeni', count: statusCounts.NEW, color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.1)' },
           { key: 'IN_PROGRESS', label: 'İşlemde', count: statusCounts.IN_PROGRESS, color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.1)' },
           { key: 'RESOLVED', label: 'Çözüldü', count: statusCounts.RESOLVED, color: '#34d399', bg: 'rgba(52, 211, 153, 0.1)' },
@@ -271,7 +271,7 @@ export const AdminSupportTicketsPage: React.FC = () => {
               onClick={() => setSelectedStatus(item.key)}
               style={{
                 background: isSelected ? item.bg : 'rgba(15, 23, 42, 0.6)',
-                border: isSelected ? `2px solid ${item.color}` : '1px solid var(--border-color)',
+                border: isSelected ? `2px solid ${item.color}` : '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 12,
                 padding: '1rem 1.25rem',
                 cursor: 'pointer',
@@ -292,38 +292,58 @@ export const AdminSupportTicketsPage: React.FC = () => {
       </div>
 
       {/* FILTER & SEARCH BAR */}
-      <div className="glass-card" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="glass-card" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: '260px' }}>
           <div style={{ position: 'relative', width: '100%' }}>
-            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
             <input
               type="text"
-              className="input"
               placeholder="Ad, e-posta, konu veya işletme ara..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ paddingLeft: 36, width: '100%' }}
+              style={{
+                width: '100%',
+                padding: '0.65rem 1rem 0.65rem 2.4rem',
+                borderRadius: 10,
+                background: 'rgba(15, 23, 42, 0.75)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                color: '#f8fafc',
+                fontSize: '0.9rem',
+                outline: 'none',
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s',
+              }}
             />
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Filter size={15} style={{ color: 'var(--text-secondary)' }} />
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Kategori:</span>
+            <Filter size={15} style={{ color: '#94a3b8' }} />
+            <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 600 }}>Kategori:</span>
           </div>
           <select
-            className="input"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            style={{ minWidth: 190, cursor: 'pointer' }}
+            style={{
+              minWidth: 190,
+              padding: '0.65rem 1rem',
+              borderRadius: 10,
+              background: 'rgba(15, 23, 42, 0.85)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: '#f8fafc',
+              fontSize: '0.9rem',
+              outline: 'none',
+              cursor: 'pointer',
+              boxSizing: 'border-box',
+            }}
           >
-            <option value="ALL">Tüm Kategoriler</option>
-            <option value="POS_INTEGRATION">💳 POS & Entegrasyon</option>
-            <option value="TECHNICAL_SUPPORT">🛠️ Teknik Destek</option>
-            <option value="ACCOUNT_BILLING">📄 Hesap & Faturalama</option>
-            <option value="GENERAL_INQUIRY">💬 Genel Bilgi</option>
-            <option value="FEEDBACK_SUGGESTION">✨ Öneri & İstek</option>
+            <option value="ALL" style={{ background: '#0f172a', color: '#f8fafc' }}>Tüm Kategoriler</option>
+            <option value="POS_INTEGRATION" style={{ background: '#0f172a', color: '#f8fafc' }}>💳 POS & Entegrasyon</option>
+            <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#f8fafc' }}>🛠️ Teknik Destek</option>
+            <option value="ACCOUNT_BILLING" style={{ background: '#0f172a', color: '#f8fafc' }}>📄 Hesap & Faturalama</option>
+            <option value="GENERAL_INQUIRY" style={{ background: '#0f172a', color: '#f8fafc' }}>💬 Genel Bilgi</option>
+            <option value="FEEDBACK_SUGGESTION" style={{ background: '#0f172a', color: '#f8fafc' }}>✨ Öneri & İstek</option>
           </select>
         </div>
       </div>
@@ -634,34 +654,54 @@ export const AdminSupportTicketsPage: React.FC = () => {
 
             {/* STATUS UPDATE */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.4rem', color: 'var(--text-primary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.4rem', color: '#f8fafc' }}>
                 Talep Durumu:
               </label>
               <select
-                className="input"
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value as TicketStatus)}
-                style={{ width: '100%' }}
+                style={{
+                  width: '100%',
+                  padding: '0.7rem 1rem',
+                  borderRadius: 10,
+                  background: 'rgba(15, 23, 42, 0.85)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  fontSize: '0.92rem',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  boxSizing: 'border-box',
+                }}
               >
-                <option value="NEW">🆕 Yeni</option>
-                <option value="IN_PROGRESS">⏳ İşlemde / Görüşülüyor</option>
-                <option value="RESOLVED">✅ Çözüldü / Destek Verildi</option>
-                <option value="CLOSED">🔒 Kapatıldı</option>
+                <option value="NEW" style={{ background: '#0f172a', color: '#f8fafc' }}>🆕 Yeni</option>
+                <option value="IN_PROGRESS" style={{ background: '#0f172a', color: '#f8fafc' }}>⏳ İşlemde / Görüşülüyor</option>
+                <option value="RESOLVED" style={{ background: '#0f172a', color: '#f8fafc' }}>✅ Çözüldü / Destek Verildi</option>
+                <option value="CLOSED" style={{ background: '#0f172a', color: '#f8fafc' }}>🔒 Kapatıldı</option>
               </select>
             </div>
 
             {/* INTERNAL ADMIN NOTES */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.4rem', color: 'var(--text-primary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.4rem', color: '#f8fafc' }}>
                 Yönetici Özel Notları:
               </label>
               <textarea
-                className="input"
                 rows={3}
                 placeholder="Bu destek talebine ilişkin yapılan görüşme, verilen bilgi veya iç notlarınızı yazın..."
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
-                style={{ width: '100%', resize: 'vertical' }}
+                style={{
+                  width: '100%',
+                  resize: 'vertical',
+                  padding: '0.75rem 1rem',
+                  borderRadius: 10,
+                  background: 'rgba(15, 23, 42, 0.85)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  fontSize: '0.92rem',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
 
