@@ -140,7 +140,7 @@ class EmailService {
    * Send Password Reset Email
    */
   async sendPasswordResetEmail(to: string, resetUrl: string): Promise<boolean> {
-    const subject = 'Naponi - Şifre Sıfırlama Talebi';
+    const subject = '⚡ Naponi - Şifre Sıfırlama Talebi';
 
     const htmlContent = `
 <!DOCTYPE html>
