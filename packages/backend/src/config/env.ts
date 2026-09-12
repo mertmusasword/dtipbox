@@ -8,8 +8,12 @@ export const env = {
   // Server
   PORT: parseInt(process.env.PORT || '3000', 10),
   NODE_ENV: process.env.NODE_ENV || 'development',
-  APP_URL: process.env.APP_URL || 'http://localhost:5173',
-  API_URL: process.env.API_URL || 'http://localhost:3000',
+  APP_URL: (process.env.APP_URL && !process.env.APP_URL.includes('railway.app'))
+    ? process.env.APP_URL
+    : (process.env.NODE_ENV === 'production' ? 'https://www.naponi.com' : (process.env.APP_URL || 'http://localhost:5173')),
+  API_URL: (process.env.API_URL && !process.env.API_URL.includes('railway.app'))
+    ? process.env.API_URL
+    : (process.env.NODE_ENV === 'production' ? 'https://www.naponi.com' : (process.env.API_URL || 'http://localhost:3000')),
 
   // Database
   DATABASE_URL: process.env.DATABASE_URL || '',
