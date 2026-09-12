@@ -2,29 +2,32 @@ import React, { useState } from 'react';
 import { Headphones } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../i18n';
+import { useAuth } from '../contexts/AuthContext';
 import { SupportTicketModal } from './SupportTicketModal';
 import '../styles/home.css';
 
 export const FloatingSupportWidget: React.FC = () => {
   const { t } = useLanguage();
   const location = useLocation();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Hide on tipping / checkout / auth screens
+  // Hide on tipping / checkout / auth screens AND all admin screens or for ADMIN role
   if (
     location.pathname.startsWith('/tip/') ||
     location.pathname.startsWith('/pay/') ||
     location.pathname === '/login' ||
-    location.pathname === '/register'
+    location.pathname === '/register' ||
+    location.pathname.startsWith('/admin') ||
+    user?.role === 'ADMIN'
   ) {
     return null;
   }
 
-  // On panel pages the sidebar already has the support button,
+  // On business and employee panel pages the sidebar already has the support button,
   // so we add a class to hide the floating btn on mobile
   const isPanel =
     location.pathname.startsWith('/business/') ||
-    location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/employee/');
 
   return (
