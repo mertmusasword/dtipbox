@@ -21,9 +21,12 @@ class EmailService {
             user: env.SMTP_USER,
             pass: env.SMTP_PASS,
           },
+          tls: {
+            rejectUnauthorized: false,
+          },
         });
         this.isConfigured = true;
-        logger.info('SMTP Transporter configured successfully', 'EMAIL');
+        logger.info(`SMTP Transporter configured successfully: ${env.SMTP_HOST}:${env.SMTP_PORT} (${env.SMTP_USER})`, 'EMAIL');
       } catch (err) {
         logger.error('Failed to initialize SMTP transporter', 'EMAIL', { error: String(err) });
         this.transporter = null;

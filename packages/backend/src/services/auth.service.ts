@@ -322,7 +322,12 @@ export async function requestPasswordReset(email: string) {
 
     const resetUrl = `${env.APP_URL}/reset-password?token=${rawToken}`;
     const { emailService } = await import('./email.service');
+    const { logger } = await import('../utils/logger');
+    logger.info(`Dispatching password reset email to registered user: ${user.email}`, 'AUTH');
     await emailService.sendPasswordResetEmail(user.email, resetUrl);
+  } else {
+    const { logger } = await import('../utils/logger');
+    logger.warn(`Password reset requested for unregistered/inactive email: ${normalizedEmail}`, 'AUTH');
   }
 
   // Consistent security response: do not reveal whether email exists
