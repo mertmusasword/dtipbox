@@ -171,17 +171,17 @@ class EmailService {
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
                       <table border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td style="width: 36px; height: 36px; background: linear-gradient(135deg, #0284c7, #2563eb); border-radius: 10px; text-align: center; vertical-align: middle; font-size: 20px; color: #ffffff; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);">
-                            ⚡
+                          <td style="vertical-align: middle;">
+                            <img src="${env.APP_URL}/logo.png" alt="Naponi" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);" />
                           </td>
-                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
+                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; vertical-align: middle;">
                             Naponi
                           </td>
                         </tr>
                       </table>
                     </a>
                   </td>
-                  <td align="right">
+                  <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; background-color: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); color: #38bdf8; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.3px;">
                       🔒 Güvenlik Talebi
                     </span>
@@ -317,17 +317,17 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
                       <table border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #0284c7); border-radius: 10px; text-align: center; vertical-align: middle; font-size: 20px; color: #ffffff; font-weight: bold; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
-                            ⚡
+                          <td style="vertical-align: middle;">
+                            <img src="${env.APP_URL}/logo.png" alt="Naponi" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);" />
                           </td>
-                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
+                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; vertical-align: middle;">
                             Naponi
                           </td>
                         </tr>
                       </table>
                     </a>
                   </td>
-                  <td align="right">
+                  <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.3px;">
                       🏢 İşletme Hesabı
                     </span>
@@ -501,17 +501,17 @@ Sorularınız için: info@naponi.com
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
                       <table border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td style="width: 36px; height: 36px; background: linear-gradient(135deg, #a855f7, #6366f1); border-radius: 10px; text-align: center; vertical-align: middle; font-size: 20px; color: #ffffff; font-weight: bold; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);">
-                            ⚡
+                          <td style="vertical-align: middle;">
+                            <img src="${env.APP_URL}/logo.png" alt="Naponi" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);" />
                           </td>
-                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
+                          <td style="padding-left: 12px; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; vertical-align: middle;">
                             Naponi
                           </td>
                         </tr>
                       </table>
                     </a>
                   </td>
-                  <td align="right">
+                  <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; background-color: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.3px;">
                       👤 Personel Hesabı
                     </span>
