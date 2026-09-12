@@ -123,6 +123,38 @@ ${resetUrl}
 Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
     `.trim();
 
+    // 1. Resend Cloud API (Over HTTPS port 443 - zero firewall blockage)
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (resendApiKey) {
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: process.env.RESEND_FROM || env.SMTP_FROM || 'Naponi <onboarding@resend.dev>',
+            to: [to],
+            subject,
+            html: htmlContent,
+            text: textContent,
+          }),
+        });
+
+        const data = (await response.json()) as any;
+        if (response.ok) {
+          logger.info(`Password reset email sent via Resend to ${to} (ID: ${data?.id})`, 'EMAIL');
+          return true;
+        } else {
+          logger.error(`Resend API returned error: ${JSON.stringify(data)}`, 'EMAIL');
+        }
+      } catch (resendErr: any) {
+        logger.error(`Failed to send via Resend: ${resendErr.message}`, 'EMAIL');
+      }
+    }
+
+    // 2. Standard SMTP Transporter
     if (this.isConfigured && this.transporter) {
       try {
         await this.transporter.sendMail({
@@ -132,7 +164,7 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
           text: textContent,
           html: htmlContent,
         });
-        logger.info(`Password reset email sent to ${to}`, 'EMAIL');
+        logger.info(`Password reset email sent via SMTP to ${to}`, 'EMAIL');
         return true;
       } catch (error) {
         logger.error(`Failed to send password reset email to ${to}`, 'EMAIL', { error: String(error) });
