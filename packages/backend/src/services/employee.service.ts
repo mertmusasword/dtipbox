@@ -8,6 +8,8 @@ interface CreateEmployeeInput {
   first_name: string;
   last_name: string;
   position?: string;
+  role_title?: string;
+  share_weight?: number;
   avatar?: string;
   email?: string;
   password?: string;
@@ -17,6 +19,8 @@ interface UpdateEmployeeInput {
   first_name?: string;
   last_name?: string;
   position?: string;
+  role_title?: string;
+  share_weight?: number;
   avatar?: string;
   is_active?: boolean;
   email?: string;
@@ -104,6 +108,8 @@ export async function createEmployee(
       first_name: input.first_name,
       last_name: input.last_name,
       position: input.position,
+      role_title: input.role_title,
+      share_weight: input.share_weight !== undefined ? input.share_weight : 1.0,
       avatar: input.avatar,
     },
     include: {
@@ -224,6 +230,8 @@ export async function updateEmployee(
       first_name: input.first_name,
       last_name: input.last_name,
       position: input.position,
+      role_title: input.role_title !== undefined ? input.role_title : undefined,
+      share_weight: input.share_weight !== undefined ? input.share_weight : undefined,
       avatar: input.avatar,
       is_active: input.is_active,
       user_id: updatedUserId,

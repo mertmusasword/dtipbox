@@ -108,6 +108,18 @@ enum SupportTicketCategory {
   FEEDBACK_SUGGESTION
 }
 
+enum TipDistributionMode {
+  INDIVIDUAL
+  EQUAL_POOL
+  POINT_POOL
+}
+
+enum PosFeePayer {
+  STAFF
+  BUSINESS
+  CUSTOMER
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -146,22 +158,30 @@ model Business {
   description   String?
   is_active     Boolean @default(true)
 
+  // Tip Distribution & Pool Settings
+  tip_distribution_mode   TipDistributionMode   @default(INDIVIDUAL)
+  pos_fee_payer           PosFeePayer           @default(STAFF)
+  custom_pos_fee_rate     Decimal?              @default(0.00) @db.Decimal(5, 2)
+  tax_deduction_enabled   Boolean               @default(false)
+  tax_deduction_rate      Decimal?              @default(0.00) @db.Decimal(5, 2)
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   // Relations
-  owner                 User                   @relation(fields: [owner_user_id], references: [id])
-  payment_account       BusinessPaymentAccount?
-  employees             Employee[]
-  tables                Table[]
-  qr_codes              QrCode[]
-  payment_methods       PaymentMethod[]
-  payment_integrations  PaymentIntegration[]
-  provider_requests     PaymentProviderRequest[]
-  tips                  Tip[]
-  feedbacks             Feedback[]
-  audit_logs            AuditLog[]
-  agreement_acceptances AgreementAcceptance[]
+  owner                   User                   @relation(fields: [owner_user_id], references: [id])
+  payment_account         BusinessPaymentAccount?
+  employees               Employee[]
+  tables                  Table[]
+  qr_codes                QrCode[]
+  payment_methods         PaymentMethod[]
+  payment_integrations    PaymentIntegration[]
+  provider_requests       PaymentProviderRequest[]
+  tips                    Tip[]
+  feedbacks               Feedback[]
+  audit_logs              AuditLog[]
+  agreement_acceptances   AgreementAcceptance[]
+  tip_pool_distributions  TipPoolDistribution[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -196,6 +216,8 @@ model Employee {
   first_name  String
   last_name   String
   position    String?
+  role_title  String?   // e.g. Garson, Komi, Barmen, Aşçı
+  share_weight Decimal  @default(1.00) @db.Decimal(4, 2)
   avatar      String?
   is_active   Boolean   @default(true)
 
@@ -204,10 +226,11 @@ model Employee {
   deleted_at DateTime?
 
   // Relations
-  business  Business   @relation(fields: [business_id], references: [id], onDelete: Cascade)
-  user      User?      @relation(fields: [user_id], references: [id])
-  tips      Tip[]
-  feedbacks Feedback[]
+  business        Business        @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  user            User?           @relation(fields: [user_id], references: [id])
+  tips            Tip[]
+  feedbacks       Feedback[]
+  tip_pool_shares TipPoolShare[]
 
   @@index([business_id])
   @@index([user_id])
@@ -530,6 +553,43 @@ model PasswordResetToken {
   @@index([user_id])
   @@index([token_hash])
   @@map("password_reset_tokens")
+}
+
+model TipPoolDistribution {
+  id                     String         @id @default(uuid())
+  business_id            String
+  period_start           DateTime
+  period_end             DateTime
+  gross_amount           Decimal        @db.Decimal(12, 2)
+  pos_fee_amount         Decimal        @default(0.00) @db.Decimal(12, 2)
+  tax_fee_amount         Decimal        @default(0.00) @db.Decimal(12, 2)
+  net_distributed_amount Decimal        @db.Decimal(12, 2)
+  notes                  String?
+  created_at             DateTime       @default(now())
+
+  business               Business       @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  shares                 TipPoolShare[]
+
+  @@index([business_id])
+  @@map("tip_pool_distributions")
+}
+
+model TipPoolShare {
+  id              String               @id @default(uuid())
+  distribution_id String
+  employee_id     String
+  share_weight    Decimal              @db.Decimal(4, 2)
+  gross_share     Decimal              @db.Decimal(12, 2)
+  net_share       Decimal              @db.Decimal(12, 2)
+  is_paid         Boolean              @default(false)
+  paid_at         DateTime?
+
+  distribution    TipPoolDistribution @relation(fields: [distribution_id], references: [id], onDelete: Cascade)
+  employee        Employee             @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+
+  @@index([distribution_id])
+  @@index([employee_id])
+  @@map("tip_pool_shares")
 }
 
 

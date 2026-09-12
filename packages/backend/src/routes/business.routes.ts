@@ -10,7 +10,8 @@ import * as paymentMethodService from '../services/paymentMethod.service';
 import * as providerService from '../services/payment/provider.service';
 import * as analyticsService from '../services/analytics.service';
 import * as auditService from '../services/audit.service';
-import { PaymentMethodType, PaymentMethodStatus, QrType } from '@prisma/client';
+import * as tipPoolService from '../services/tipPool.service';
+import { PaymentMethodType, PaymentMethodStatus, QrType, TipDistributionMode, PosFeePayer } from '@prisma/client';
 import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
 import prisma from '../utils/prisma';
 
@@ -122,6 +123,8 @@ const createEmployeeSchema = {
     avatar: z.string().nullable().optional(),
     email: z.string().email().optional(),
     password: z.string().min(6).optional(),
+    role_title: z.string().optional(),
+    share_weight: z.number().min(0).max(10).optional(),
   }),
 };
 
@@ -147,6 +150,8 @@ const updateEmployeeSchema = {
     is_active: z.boolean().optional(),
     email: z.string().email().optional(),
     password: z.string().min(6).optional(),
+    role_title: z.string().optional(),
+    share_weight: z.number().min(0).max(10).optional(),
   }),
 };
 
@@ -517,6 +522,114 @@ router.get('/feedbacks', async (req: AuthRequest, res, next) => {
       endDate: req.query.endDate as string | undefined,
     });
     res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Tip Distribution & Pool Settings ---
+router.get('/tip-distribution-settings', async (req: AuthRequest, res, next) => {
+  try {
+    const settings = await tipPoolService.getTipDistributionSettings(req.user!.businessId!);
+    res.json({ success: true, data: settings });
+  } catch (error) {
+    next(error);
+  }
+});
+
+const updateTipDistributionSchema = {
+  body: z.object({
+    tip_distribution_mode: z.nativeEnum(TipDistributionMode).optional(),
+    pos_fee_payer: z.nativeEnum(PosFeePayer).optional(),
+    custom_pos_fee_rate: z.number().min(0).max(100).nullable().optional(),
+    tax_deduction_enabled: z.boolean().optional(),
+    tax_deduction_rate: z.number().min(0).max(100).nullable().optional(),
+  }),
+};
+
+router.put(
+  '/tip-distribution-settings',
+  validate(updateTipDistributionSchema),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const updated = await tipPoolService.updateTipDistributionSettings(
+        req.user!.businessId!,
+        req.body
+      );
+      res.json({ success: true, data: updated });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// --- Tip Pool Simulation & Settlement ---
+router.get('/tip-pool/simulation', async (req: AuthRequest, res, next) => {
+  try {
+    let activeEmployeeIds: string[] | undefined;
+    if (req.query.activeEmployeeIds) {
+      if (Array.isArray(req.query.activeEmployeeIds)) {
+        activeEmployeeIds = req.query.activeEmployeeIds as string[];
+      } else if (typeof req.query.activeEmployeeIds === 'string') {
+        activeEmployeeIds = (req.query.activeEmployeeIds as string).split(',').map((id) => id.trim()).filter(Boolean);
+      }
+    }
+
+    const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
+    const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
+
+    const simulation = await tipPoolService.getTipPoolSimulation(req.user!.businessId!, {
+      startDate,
+      endDate,
+      activeEmployeeIds,
+    });
+    res.json({ success: true, data: simulation });
+  } catch (error) {
+    next(error);
+  }
+});
+
+const settleTipPoolSchema = {
+  body: z.object({
+    start_date: z.string().optional(),
+    end_date: z.string().optional(),
+    note: z.string().optional(),
+    active_employee_ids: z.array(z.string()).optional(),
+  }),
+};
+
+router.post(
+  '/tip-pool/settle',
+  validate(settleTipPoolSchema),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const distribution = await tipPoolService.settleTipPool(
+        req.user!.businessId!,
+        {
+          startDate: req.body.start_date,
+          endDate: req.body.end_date,
+          notes: req.body.note,
+          activeEmployeeIds: req.body.active_employee_ids,
+        }
+      );
+      res.status(201).json({
+        success: true,
+        data: distribution,
+        message: 'Bahşiş havuz dağıtımı başarıyla kesinleştirildi ve kaydedildi.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get('/tip-pool/history', async (req: AuthRequest, res, next) => {
+  try {
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+
+    const history = await tipPoolService.getTipPoolHistory(req.user!.businessId!, page, limit);
+    res.json({ success: true, data: history });
   } catch (error) {
     next(error);
   }

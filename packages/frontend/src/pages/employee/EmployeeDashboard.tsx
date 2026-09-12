@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { EmployeeAnalytics } from '../../types';
 import { MetricCard } from '../../components/MetricCard';
-import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star } from 'lucide-react';
+import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star, Split, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 
 export const EmployeeDashboard: React.FC = () => {
-  const { t, formatTime } = useLanguage();
-  const [data, setData] = useState<{ profile: any; stats: EmployeeAnalytics; feedbacks?: any } | null>(null);
+  const { t, formatTime, formatCurrency } = useLanguage();
+  const [data, setData] = useState<{ profile: any; stats: EmployeeAnalytics; feedbacks?: any; poolShares?: any[] } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +24,9 @@ export const EmployeeDashboard: React.FC = () => {
 
   const profile = data?.profile;
   const stats = data?.stats;
-  const currency = profile?.business?.currency || 'USD';
+  const poolShares = data?.poolShares || [];
+  const currency = profile?.business?.currency || 'TRY';
+  const distributionMode = profile?.business?.tip_distribution_mode || 'INDIVIDUAL';
 
   return (
     <div className="page-wrapper">
@@ -53,11 +55,28 @@ export const EmployeeDashboard: React.FC = () => {
         )}
         <div>
           <h1 className="page-title" style={{ fontSize: '1.65rem' }}>
-            Hello, {profile?.first_name} {profile?.last_name}!
+            Merhaba, {profile?.first_name} {profile?.last_name}!
           </h1>
-          <p className="page-subtitle" style={{ marginBottom: 0 }}>
-            {profile?.position || 'Staff Member'} at {profile?.business?.name}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              {profile?.position || profile?.role_title || 'Personel'} • {profile?.business?.name}
+            </span>
+            {distributionMode === 'POINT_POOL' && (
+              <span className="badge badge-accent" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                🎯 {Number(profile?.share_weight || 1.0).toFixed(2)}x Havuz Payı
+              </span>
+            )}
+            {distributionMode === 'EQUAL_POOL' && (
+              <span className="badge badge-accent" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                ⚖️ Eşit Havuz Katılımcısı
+              </span>
+            )}
+            {distributionMode === 'INDIVIDUAL' && (
+              <span className="badge badge-neutral" style={{ fontSize: '0.75rem' }}>
+                👤 Bireysel Bahşiş
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -94,6 +113,78 @@ export const EmployeeDashboard: React.FC = () => {
           subtitle={`${data?.feedbacks?.metrics?.totalReviews || 0} ${t('feedback.staffRatingReviews')}`}
         />
       </div>
+
+      {/* Pool Settlements Received (if pool active or shares exist) */}
+      {(distributionMode !== 'INDIVIDUAL' || poolShares.length > 0) && (
+        <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <Split size={20} style={{ color: 'var(--primary)' }} />
+              <div>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                  Havuz Dağıtımları & Kasa Kapanış Hak Edişleriniz
+                </h2>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+                  İşletme kasa kapanışlarında havuzdan hesabınıza tahakkuk eden net bahşişler
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {poolShares.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {poolShares.map((share: any) => (
+                <div
+                  key={share.id}
+                  style={{
+                    background: 'var(--bg-input)',
+                    padding: '1rem 1.25rem',
+                    borderRadius: 'var(--radius-md)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    borderLeft: '3px solid var(--primary)',
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                      <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#4ade80' }}>
+                        {formatCurrency(share.netShare, currency)}
+                      </span>
+                      <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>
+                        🎯 {Number(share.shareWeight).toFixed(2)}x Pay
+                      </span>
+                      <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
+                        Kesinleşti
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      Brüt Havuz Payınız: {formatCurrency(share.grossShare, currency)} • Kesintiler: -{formatCurrency(Number((share.grossShare - share.netShare).toFixed(2)), currency)}
+                    </div>
+                    {share.notes && (
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                        "{share.notes}"
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {new Date(share.date).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              Henüz kesinleşmiş bir havuz dağıtımı bulunmuyor. İşletme gün sonu kasa kapattığında hak edişiniz burada dökülecektir.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Recent Tips Directed to this Employee */}
       <div className="glass-card">

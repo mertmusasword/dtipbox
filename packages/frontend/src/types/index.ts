@@ -1,5 +1,8 @@
 export type Role = 'ADMIN' | 'BUSINESS' | 'EMPLOYEE' | 'CUSTOMER';
 
+export type TipDistributionMode = 'INDIVIDUAL' | 'EQUAL_POOL' | 'POINT_POOL';
+export type PosFeePayer = 'STAFF' | 'BUSINESS' | 'CUSTOMER';
+
 export interface User {
   id: string;
   email: string;
@@ -28,6 +31,11 @@ export interface Business {
   address?: string | null;
   description?: string | null;
   is_active: boolean;
+  tip_distribution_mode?: TipDistributionMode;
+  pos_fee_payer?: PosFeePayer;
+  custom_pos_fee_rate?: number | string | null;
+  tax_deduction_enabled?: boolean;
+  tax_deduction_rate?: number | string | null;
   payment_account?: BusinessPaymentAccount | null;
 }
 
@@ -50,6 +58,8 @@ export interface Employee {
   first_name: string;
   last_name: string;
   position?: string | null;
+  role_title?: string | null;
+  share_weight?: number | string;
   avatar?: string | null;
   is_active: boolean;
   created_at: string;
@@ -228,5 +238,70 @@ export interface EmployeeAnalytics {
     created_at: string;
     customer_name?: string | null;
     customer_message?: string | null;
+  }>;
+}
+
+export interface TipPoolSimulationEmployee {
+  employeeId: string;
+  employeeName: string;
+  position?: string | null;
+  roleTitle?: string | null;
+  shareWeight: number;
+  grossShare: number;
+  posFeeShare: number;
+  taxFeeShare: number;
+  netShare: number;
+}
+
+export interface TipPoolSimulation {
+  period: {
+    start: string;
+    end: string;
+  };
+  currency: string;
+  settings: {
+    mode: TipDistributionMode;
+    posFeePayer: PosFeePayer;
+    posFeeRate: number;
+    taxDeductionEnabled: boolean;
+    taxFeeRate: number;
+  };
+  summary: {
+    grossAmount: number;
+    tipCount: number;
+    posFeeAmount: number;
+    taxFeeAmount: number;
+    netDistributedAmount: number;
+    participatingCount: number;
+  };
+  employees: TipPoolSimulationEmployee[];
+}
+
+export interface TipPoolDistribution {
+  id: string;
+  business_id: string;
+  period_start: string;
+  period_end: string;
+  gross_amount: number | string;
+  pos_fee_amount: number | string;
+  tax_fee_amount: number | string;
+  net_distributed_amount: number | string;
+  notes?: string | null;
+  created_at: string;
+  shares?: Array<{
+    id: string;
+    employee_id: string;
+    share_weight: number | string;
+    gross_share: number | string;
+    net_share: number | string;
+    is_paid: boolean;
+    paid_at?: string | null;
+    employee?: {
+      id: string;
+      first_name: string;
+      last_name: string;
+      position?: string | null;
+      role_title?: string | null;
+    };
   }>;
 }

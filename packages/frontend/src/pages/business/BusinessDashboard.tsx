@@ -22,11 +22,13 @@ import {
   Check,
   X,
   Clock,
+  Split,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import { AgreementModal } from '../../components/AgreementModal';
 import { CustomerFeedbacks } from '../../components/CustomerFeedbacks';
+import { TipPoolSettlementModal } from '../../components/TipPoolSettlementModal';
 
 export const BusinessDashboard: React.FC = () => {
   const { t, formatCurrency, formatTime, language } = useLanguage();
@@ -36,6 +38,7 @@ export const BusinessDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [agreementAccepted, setAgreementAccepted] = useState<boolean>(true);
   const [showAgreementModal, setShowAgreementModal] = useState<boolean>(false);
+  const [showSettlementModal, setShowSettlementModal] = useState<boolean>(false);
 
   const loadData = useCallback(() => {
     setLoading(true);
@@ -113,6 +116,21 @@ export const BusinessDashboard: React.FC = () => {
           </p>
         </div>
         <div className="page-header-actions">
+          <button
+            type="button"
+            onClick={() => setShowSettlementModal(true)}
+            className="btn btn-secondary"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              borderColor: 'rgba(99, 102, 241, 0.4)',
+              color: 'var(--primary)',
+              background: 'rgba(99, 102, 241, 0.08)',
+            }}
+          >
+            <Split size={16} /> Günün Dağıtımı & Kasa Kapat
+          </button>
           <Link to="/business/qr" className="btn btn-secondary">
             <QrCode size={16} /> {t('nav.qrCodes')}
           </Link>
@@ -398,6 +416,13 @@ export const BusinessDashboard: React.FC = () => {
           setAgreementAccepted(true);
           loadData();
         }}
+      />
+
+      <TipPoolSettlementModal
+        isOpen={showSettlementModal}
+        onClose={() => setShowSettlementModal(false)}
+        currency={currency}
+        onSettled={loadData}
       />
     </div>
   );

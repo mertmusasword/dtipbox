@@ -25,6 +25,8 @@ export const EmployeesPage: React.FC = () => {
     first_name: '',
     last_name: '',
     position: '',
+    role_title: 'Garson',
+    share_weight: 1.0,
     avatar: '',
     email: '',
     password: '',
@@ -85,7 +87,16 @@ export const EmployeesPage: React.FC = () => {
   const openCreateModal = () => {
     setEditingEmployee(null);
     setUseUrlInput(false);
-    setFormData({ first_name: '', last_name: '', position: '', avatar: '', email: '', password: '' });
+    setFormData({
+      first_name: '',
+      last_name: '',
+      position: '',
+      role_title: 'Garson',
+      share_weight: 1.0,
+      avatar: '',
+      email: '',
+      password: '',
+    });
     setIsModalOpen(true);
   };
 
@@ -96,6 +107,8 @@ export const EmployeesPage: React.FC = () => {
       first_name: emp.first_name,
       last_name: emp.last_name,
       position: emp.position || '',
+      role_title: emp.role_title || 'Garson',
+      share_weight: emp.share_weight !== undefined && emp.share_weight !== null ? Number(emp.share_weight) : 1.0,
       avatar: emp.avatar || '',
       email: emp.user?.email || '',
       password: '',
@@ -111,25 +124,29 @@ export const EmployeesPage: React.FC = () => {
           first_name: formData.first_name,
           last_name: formData.last_name,
           position: formData.position || undefined,
+          role_title: formData.role_title || undefined,
+          share_weight: Number(formData.share_weight) || 1.0,
           avatar: formData.avatar || undefined,
           email: formData.email || undefined,
           password: formData.password || undefined,
         });
-        showToast(`${formData.first_name} ${formData.last_name} updated`);
+        showToast(`${formData.first_name} ${formData.last_name} güncellendi`);
       } else {
         await api.post('/business/employees', {
           ...formData,
           position: formData.position || undefined,
+          role_title: formData.role_title || undefined,
+          share_weight: Number(formData.share_weight) || 1.0,
           avatar: formData.avatar || undefined,
           email: formData.email || undefined,
           password: formData.password || undefined,
         });
-        showToast(`${formData.first_name} ${formData.last_name} added to team`);
+        showToast(`${formData.first_name} ${formData.last_name} ekibe eklendi`);
       }
       setIsModalOpen(false);
       loadEmployees();
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Operation failed', 'error');
+      showToast(err.response?.data?.error || 'İşlem başarısız oldu', 'error');
     }
   };
 
@@ -192,7 +209,7 @@ export const EmployeesPage: React.FC = () => {
               <thead>
                 <tr>
                   <th>{t('common.name')}</th>
-                  <th>{t('business.position')}</th>
+                  <th>Görev & Havuz Payı</th>
                   <th>{t('common.status')}</th>
                   <th>{t('nav.payments')}</th>
                   <th className="text-right">{t('common.actions')}</th>
@@ -218,7 +235,21 @@ export const EmployeesPage: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td>{emp.position || '—'}</td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                        <div style={{ fontWeight: 600 }}>{emp.position || emp.role_title || '—'}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
+                          {emp.role_title && (
+                            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+                              {emp.role_title}
+                            </span>
+                          )}
+                          <span className="badge badge-accent" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', fontWeight: 600 }}>
+                            🎯 {Number(emp.share_weight || 1.0).toFixed(2)}x Pay
+                          </span>
+                        </div>
+                      </div>
+                    </td>
                     <td>
                       <span className={`badge ${emp.is_active ? 'badge-success' : 'badge-neutral'}`}>
                         {emp.is_active ? t('common.active') : t('common.inactive')}
@@ -284,11 +315,72 @@ export const EmployeesPage: React.FC = () => {
             <label className="form-label">{t('business.position')}</label>
             <input
               type="text"
-              placeholder="e.g. Head Waiter, Bartender, Barista"
+              placeholder="Örn: Kıdemli Garson, Şef Barmen, Barista..."
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
               className="form-input"
             />
+          </div>
+
+          {/* Rol & Bahşiş Havuz Payı Ağırlığı */}
+          <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <label className="form-label mb-0" style={{ fontSize: '0.8rem', fontWeight: 700 }}>
+                Rol Şablonu & Havuz Payı Ağırlığı
+              </label>
+              <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600 }}>
+                Seçili Pay: {formData.share_weight}x
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+              {[
+                { label: 'Garson (1.0x)', role: 'Garson', weight: 1.0 },
+                { label: 'Barmen (0.75x)', role: 'Barmen', weight: 0.75 },
+                { label: 'Aşçı / Mutfak (0.75x)', role: 'Aşçı', weight: 0.75 },
+                { label: 'Komi (0.50x)', role: 'Komi', weight: 0.5 },
+                { label: 'Kasiyer (0.50x)', role: 'Kasiyer', weight: 0.5 },
+              ].map((template) => (
+                <button
+                  key={template.label}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, role_title: template.role, share_weight: template.weight })}
+                  className={`btn btn-sm ${formData.role_title === template.role && formData.share_weight === template.weight ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem' }}
+                >
+                  {template.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="form-grid form-grid-2" style={{ gap: '0.75rem' }}>
+              <div className="form-group mb-0">
+                <label className="form-label" style={{ fontSize: '0.75rem' }}>Rol Başlığı</label>
+                <input
+                  type="text"
+                  placeholder="Garson, Barmen, Komi..."
+                  value={formData.role_title}
+                  onChange={(e) => setFormData({ ...formData, role_title: e.target.value })}
+                  className="form-input"
+                  style={{ fontSize: '0.85rem' }}
+                />
+              </div>
+              <div className="form-group mb-0">
+                <label className="form-label" style={{ fontSize: '0.75rem' }}>Puan Ağırlığı (Kat Sayı)</label>
+                <input
+                  type="number"
+                  step="0.05"
+                  min="0.1"
+                  max="10"
+                  value={formData.share_weight}
+                  onChange={(e) => setFormData({ ...formData, share_weight: parseFloat(e.target.value) || 1.0 })}
+                  className="form-input"
+                  style={{ fontSize: '0.85rem' }}
+                />
+              </div>
+            </div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+              Havuz sisteminde personelin alacağı bahşiş payı bu katsayı ile orantılı hesaplanır.
+            </div>
           </div>
 
           <div className="form-group mb-0">
