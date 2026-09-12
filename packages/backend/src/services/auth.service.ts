@@ -91,6 +91,16 @@ export async function register(input: RegisterInput) {
 
   const tokens = generateTokens(user.id, user.email, user.role);
 
+  if (role === Role.BUSINESS && user.business) {
+    import('./email.service').then(({ emailService }) => {
+      emailService.sendBusinessWelcomeEmail(user.email, user.business!.name).catch((err) => {
+        import('../utils/logger').then(({ logger }) => {
+          logger.error('Failed to dispatch business welcome email', 'AUTH', { error: String(err) });
+        });
+      });
+    });
+  }
+
   return {
     user: {
       id: user.id,

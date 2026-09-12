@@ -120,6 +120,23 @@ export async function createEmployee(
     metadata: { name: `${input.first_name} ${input.last_name}` },
   });
 
+  // If employee has a registered email, send welcome orientation email asynchronously
+  if (input.email) {
+    prisma.business.findUnique({
+      where: { id: businessId },
+      select: { name: true },
+    }).then((biz) => {
+      const bizName = biz?.name || 'İşletmeniz';
+      import('./email.service').then(({ emailService }) => {
+        emailService.sendEmployeeWelcomeEmail(input.email!, input.first_name, bizName).catch((err) => {
+          import('../utils/logger').then(({ logger }) => {
+            logger.error('Failed to dispatch employee welcome email', 'EMPLOYEE', { error: String(err) });
+          });
+        });
+      });
+    }).catch(() => {});
+  }
+
   return employee;
 }
 
