@@ -66,7 +66,7 @@ export const AnalyticsPage: React.FC = () => {
       {loading ? (
         <SkeletonCard count={6} />
       ) : (
-        <div className="metrics-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '2rem' }}>
+        <div className="metrics-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
           <MetricCard
             label={t('business.todayTips')}
             value={formatCurrency(analytics?.todayTips || 0, currency)}
