@@ -284,3 +284,103 @@ export async function updateProfile(
   };
 }
 
+/**
+ * Request password reset link.
+ * Sends email if user exists. Always returns a generic success response to prevent email enumeration.
+ */
+export async function requestPasswordReset(email: string) {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
+
+  if (user && user.is_active) {
+    const crypto = await import('crypto');
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    // Invalidate any existing unused reset tokens for this user
+    await prisma.passwordResetToken.updateMany({
+      where: {
+        user_id: user.id,
+        used_at: null,
+      },
+      data: {
+        used_at: new Date(),
+      },
+    });
+
+    // Create new password reset token
+    await prisma.passwordResetToken.create({
+      data: {
+        user_id: user.id,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+      },
+    });
+
+    const resetUrl = `${env.APP_URL}/reset-password?token=${rawToken}`;
+    const { emailService } = await import('./email.service');
+    await emailService.sendPasswordResetEmail(user.email, resetUrl);
+  }
+
+  // Consistent security response: do not reveal whether email exists
+  return {
+    success: true,
+    message: 'Şifre sıfırlama talebiniz alındı. E-posta adresinize sıfırlama bağlantısı iletilecektir.',
+  };
+}
+
+/**
+ * Reset password using verification token.
+ */
+export async function resetPassword(rawToken: string, newPassword: string) {
+  if (!rawToken || typeof rawToken !== 'string') {
+    throw new AppError('Geçersiz veya eksik sıfırlama kodu', 400);
+  }
+
+  if (!newPassword || newPassword.length < 8 || newPassword.length > 128) {
+    throw new AppError('Yeni şifre en az 8, en fazla 128 karakter olmalıdır', 400);
+  }
+
+  const crypto = await import('crypto');
+  const tokenHash = crypto.createHash('sha256').update(rawToken.trim()).digest('hex');
+
+  const tokenRecord = await prisma.passwordResetToken.findUnique({
+    where: { token_hash: tokenHash },
+    include: { user: true },
+  });
+
+  if (!tokenRecord || tokenRecord.used_at !== null) {
+    throw new AppError('Geçersiz veya daha önce kullanılmış sıfırlama bağlantısı', 400);
+  }
+
+  if (new Date() > tokenRecord.expires_at) {
+    throw new AppError('Sıfırlama bağlantısının geçerlilik süresi (1 saat) dolmuştur', 400);
+  }
+
+  if (!tokenRecord.user || !tokenRecord.user.is_active) {
+    throw new AppError('Kullanıcı hesabı aktif değil', 400);
+  }
+
+  const newPasswordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+  // Update user password and mark token as used atomically
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: tokenRecord.user_id },
+      data: { password_hash: newPasswordHash },
+    }),
+    prisma.passwordResetToken.update({
+      where: { id: tokenRecord.id },
+      data: { used_at: new Date() },
+    }),
+  ]);
+
+  return {
+    success: true,
+    message: 'Şifreniz başarıyla güncellendi. Yeni şifrenizle giriş yapabilirsiniz.',
+  };
+}
+

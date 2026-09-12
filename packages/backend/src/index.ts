@@ -11,6 +11,7 @@ import apiRouter from './routes';
 import { errorHandler } from './middleware/errorHandler';
 import { providerRegistry } from './services/payment/core/providerRegistry';
 import { bootstrapDefaultAgreement } from './services/agreement.service';
+import { logger, requestLogger } from './utils/logger';
 
 const app = express();
 
@@ -119,6 +120,7 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+app.use(requestLogger);
 
 // Mount API routes
 app.use('/api', apiRouter);
@@ -148,7 +150,7 @@ async function bootstrapAdmin() {
     const adminPassword = env.ADMIN_PASSWORD;
 
     if (!adminEmail || !adminPassword) {
-      console.log('[BOOTSTRAP] ADMIN_EMAIL or ADMIN_PASSWORD not specified; skipping initial admin creation.');
+      logger.info('ADMIN_EMAIL or ADMIN_PASSWORD not specified; skipping initial admin creation.', 'BOOTSTRAP');
       return;
     }
 
@@ -166,10 +168,9 @@ async function bootstrapAdmin() {
           is_active: true,
         },
       });
-      console.log(`[BOOTSTRAP] Initial platform admin account created: ${adminEmail}`);
+      logger.info(`Initial platform admin account created: ${adminEmail}`, 'BOOTSTRAP');
     } else {
       // Security guard: If admin account already exists, DO NOT overwrite their password.
-      // They may have changed it securely via the dashboard.
       if (existingAdmin.role !== 'ADMIN' || !existingAdmin.is_active) {
         await prisma.user.update({
           where: { id: existingAdmin.id },
@@ -178,22 +179,18 @@ async function bootstrapAdmin() {
             is_active: true,
           },
         });
-        console.log(`[BOOTSTRAP] Platform admin role/status ensured: ${adminEmail}`);
+        logger.info(`Platform admin role/status ensured: ${adminEmail}`, 'BOOTSTRAP');
       }
     }
   } catch (err) {
-    console.warn('[BOOTSTRAP] Admin bootstrap skipped/deferred:', (err as Error).message);
+    logger.warn(`Admin bootstrap skipped/deferred: ${(err as Error).message}`, 'BOOTSTRAP');
   }
 }
 
 // Start server
 const PORT = env.PORT;
 app.listen(PORT, '0.0.0.0', async () => {
-  console.log(`=========================================`);
-  console.log(`🚀 Naponi Backend running on port ${PORT}`);
-  console.log(`🌍 Environment: ${env.NODE_ENV}`);
-  console.log(`🔗 API URL: ${env.API_URL}/api`);
-  console.log(`=========================================`);
+  logger.info(`Naponi Backend running on port ${PORT} [${env.NODE_ENV}] - API: ${env.API_URL}/api`, 'SERVER');
   await bootstrapAdmin();
   await providerRegistry.syncCatalogToDatabase();
   await bootstrapDefaultAgreement();

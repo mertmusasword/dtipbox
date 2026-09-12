@@ -36,6 +36,14 @@ export const env = {
   RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
   RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
 
+  // Email / SMTP (Optional)
+  SMTP_HOST: process.env.SMTP_HOST || '',
+  SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
+  SMTP_USER: process.env.SMTP_USER || '',
+  SMTP_PASS: process.env.SMTP_PASS || '',
+  SMTP_FROM: process.env.SMTP_FROM || 'Naponi <noreply@naponi.com>',
+  SMTP_SECURE: process.env.SMTP_SECURE === 'true',
+
   // Helpers
   isDev: process.env.NODE_ENV !== 'production',
   isProd: process.env.NODE_ENV === 'production',

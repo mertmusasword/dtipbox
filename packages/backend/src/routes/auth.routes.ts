@@ -150,4 +150,35 @@ router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
   }
 });
 
+const forgotPasswordSchema = {
+  body: z.object({
+    email: z.string().email('Geçerli bir e-posta adresi giriniz').max(255),
+  }),
+};
+
+const resetPasswordSchema = {
+  body: z.object({
+    token: z.string().min(10, 'Geçersiz sıfırlama kodu'),
+    password: z.string().min(8, 'Yeni şifre en az 8 karakter olmalıdır').max(128),
+  }),
+};
+
+router.post('/forgot-password', authLimiter, validate(forgotPasswordSchema), async (req, res, next) => {
+  try {
+    const result = await authService.requestPasswordReset(req.body.email);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/reset-password', authLimiter, validate(resetPasswordSchema), async (req, res, next) => {
+  try {
+    const result = await authService.resetPassword(req.body.token, req.body.password);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

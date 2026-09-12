@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { env } from '../config/env';
+import { logger } from '../utils/logger';
 
 /**
  * Global error handler middleware.
@@ -16,10 +17,13 @@ export function errorHandler(
     ? 'Internal server error'
     : err.message || 'Internal server error';
 
-  // Log error in development
-  if (env.isDev) {
-    console.error(`[ERROR] ${req.method} ${req.path}:`, err);
-  }
+  // Log error using structured logger
+  logger.error(err.message || 'Unhandled Express Error', 'EXPRESS_ERROR', {
+    method: req.method,
+    path: req.path,
+    statusCode,
+    stack: err.stack,
+  });
 
   res.status(statusCode).json({
     success: false,
