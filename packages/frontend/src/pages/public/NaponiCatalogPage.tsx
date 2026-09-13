@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import { 
-  Download, 
   Printer, 
   Share2, 
   ArrowLeft, 
@@ -11,11 +10,8 @@ import {
   ShieldCheck, 
   Zap, 
   Coins, 
-  BarChart3, 
-  Building2, 
   Users, 
   Globe, 
-  ArrowRight, 
   Coffee, 
   Utensils, 
   Hotel, 
@@ -26,11 +22,28 @@ import {
   QrCode as QrIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage, LanguageSelector } from '../../i18n';
+import { getCatalogContent } from '../../content/catalog/catalog-data';
 import '../../styles/catalog.css';
 
 export const NaponiCatalogPage: React.FC = () => {
+  const { language } = useLanguage();
+  const c = getCatalogContent(language);
   const [demoQrUrl, setDemoQrUrl] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Dynamically adjust page title for default PDF filename on print
+    const isTr = language === 'tr';
+    const originalTitle = document.title;
+    document.title = isTr 
+      ? 'Naponi-Kurumsal-Urun-Katalogu-2026-TR' 
+      : 'Naponi-Corporate-Product-Catalog-2026-EN';
+
+    return () => {
+      document.title = originalTitle;
+    };
+  }, [language]);
 
   useEffect(() => {
     // Generate live interactive demo QR for Slide 10
@@ -65,22 +78,27 @@ export const NaponiCatalogPage: React.FC = () => {
         <div className="catalog-toolbar-left">
           <Link to="/" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
             <ArrowLeft size={14} />
-            <span>Ana Sayfa</span>
+            <span>{c.toolbar.homeBtn}</span>
           </Link>
           <div className="catalog-toolbar-title">
-            <span>NAPONI B2B Kurumsal Ürün Kataloğu</span>
-            <span className="catalog-toolbar-badge">2026 Sürümü • 10 Sayfa</span>
+            <span>{c.toolbar.catalogTitle}</span>
+            <span className="catalog-toolbar-badge">{c.toolbar.catalogBadge}</span>
           </div>
         </div>
 
         <div className="catalog-toolbar-actions">
+          {/* In-catalog Language Selector */}
+          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <LanguageSelector variant="compact" direction="down" />
+          </div>
+
           <button type="button" className="btn btn-secondary btn-sm" onClick={handleShare}>
             {copied ? <Check size={14} color="#10b981" /> : <Share2 size={14} />}
-            <span>{copied ? 'Kopyalandı!' : 'Linki Kopyala'}</span>
+            <span>{copied ? c.toolbar.copiedBtn : c.toolbar.shareBtn}</span>
           </button>
           <button type="button" className="btn btn-primary btn-sm" onClick={handlePrint}>
             <Printer size={14} />
-            <span>📄 PDF Olarak Kaydet / Yazdır</span>
+            <span>{c.toolbar.printBtn}</span>
           </button>
         </div>
       </nav>
@@ -88,7 +106,7 @@ export const NaponiCatalogPage: React.FC = () => {
       <main className="catalog-container">
 
         {/* ==================================================================
-            SAYFA 1: KAPAK (COVER)
+            SLIDE 1: KAPAK (COVER)
             ================================================================== */}
         <section className="catalog-slide cat-cover-slide" id="slide-1">
           <div className="cat-glow-top-right"></div>
@@ -99,17 +117,17 @@ export const NaponiCatalogPage: React.FC = () => {
               <img src="/naponi-brand.svg" alt="NAPONI" style={{ height: '48px', width: 'auto' }} />
               <div className="cat-cover-badge">
                 <Sparkles size={14} />
-                <span>2026 B2B Kurumsal Ürün Kataloğu</span>
+                <span>{c.slide1.coverBadge}</span>
               </div>
             </div>
 
             <div style={{ maxWidth: '850px' }}>
               <h1 className="cat-cover-title">
-                Yeme-İçme ve Konaklama Sektörü İçin <br />
-                <span className="cat-gradient-text">Yeni Nesil Temassız Bahşiş Altyapısı</span>
+                {c.slide1.title1} <br />
+                <span className="cat-gradient-text">{c.slide1.titleHighlight}</span>
               </h1>
               <p className="cat-cover-desc">
-                Müşterilerin uygulama indirmeden 6 saniyede bahşiş bıraktığı; işletmelerin canlı vardiya havuzunu ve personel dökümlerini sıfır hata ile yönettiği akıllı finansal ekosistem.
+                {c.slide1.desc}
               </p>
             </div>
           </div>
@@ -118,39 +136,39 @@ export const NaponiCatalogPage: React.FC = () => {
             <div className="cat-cover-pills">
               <div className="cat-pill">
                 <ShieldCheck size={16} color="#34d399" />
-                <span>Emanet Para Tutulmaz (Non-Custodial)</span>
+                <span>{c.slide1.pills.nonCustodial}</span>
               </div>
               <div className="cat-pill">
                 <Zap size={16} color="#38bdf8" />
-                <span>Sıfır Donanım & POS Masrafı</span>
+                <span>{c.slide1.pills.zeroHardware}</span>
               </div>
               <div className="cat-pill">
                 <Smartphone size={16} color="#f59e0b" />
-                <span>6 Saniyede Kamera ile Ödeme</span>
+                <span>{c.slide1.pills.instantPayment}</span>
               </div>
               <div className="cat-pill">
                 <Globe size={16} color="#a78bfa" />
-                <span>11 Dilde Turist Uyumluluğu</span>
+                <span>{c.slide1.pills.globalTourism}</span>
               </div>
             </div>
 
             <div className="cat-slide-footer" style={{ marginTop: '2rem', borderTopColor: 'rgba(255,255,255,0.08)' }}>
-              <span>NAPONI TECHNOLOGIES INC. • GİZLİ VE TİCARİDİR</span>
-              <span>www.naponi.com • Sayfa 01 / 10</span>
+              <span>{c.slide1.confidential}</span>
+              <span>{c.slide1.pageLabel}</span>
             </div>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 2: SEKTÖRDEKİ SESSİZ KRİZ (PROBLEM)
+            SLIDE 2: SEKTÖRDEKİ SESSİZ KRİZ (PROBLEM)
             ================================================================== */}
         <section className="catalog-slide" id="slide-2">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Sektörel Gerçekler</span>
-              <h2 className="cat-slide-title">Geleneksel Bahşiş Modeli Neden Çöktü?</h2>
-              <p className="cat-slide-subtitle">Nakit paranın kaybolması, servis personelinin motivasyonunu düşürürken işletmecilere operasyonel kaos yaşatıyor.</p>
+              <span className="cat-slide-tag">{c.slide2.tag}</span>
+              <h2 className="cat-slide-title">{c.slide2.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide2.subtitle}</p>
             </div>
             <span className="cat-slide-number">02 / 10</span>
           </div>
@@ -159,38 +177,31 @@ export const NaponiCatalogPage: React.FC = () => {
             <div className="cat-grid-2">
               <div className="cat-compare-box bad">
                 <div className="cat-compare-header" style={{ color: '#f43f5e' }}>
-                  <span>Eski Dünyanın 4 Büyük Çıkmazı</span>
+                  <span>{c.slide2.painPointsHeader}</span>
                   <span>⚠️</span>
                 </div>
                 <ul className="cat-compare-list">
-                  <li className="cat-compare-item">
-                    <strong style={{ color: '#ffffff' }}>1. Nakit Para Neredeyse Bitti:</strong> Müşterilerin %82'si artık yanında bozuk veya nakit para taşımıyor. Bahşiş bırakmak isteseler dahi vazgeçiyorlar.
-                  </li>
-                  <li className="cat-compare-item">
-                    <strong style={{ color: '#ffffff' }}>2. POS Cihazı Baskısı ve Utancı:</strong> Masada veya kasada POS cihazından bahşiş istemek garson için utandırıcı, müşteri için baskı hissi yaratan kaba bir deneyim.
-                  </li>
-                  <li className="cat-compare-item">
-                    <strong style={{ color: '#ffffff' }}>3. Hantal Mobil Uygulamalar:</strong> Bir restoran için kimse 85MB boyutunda yabancı bir uygulama indirip üyelik ve kart formu doldurmaz (%95 terk oranı).
-                  </li>
-                  <li className="cat-compare-item">
-                    <strong style={{ color: '#ffffff' }}>4. Gece Yarısı Excel Muhasebesi:</strong> Kapanışta bahşiş havuzunu bölüştürmek saatler alıyor; adaletsizlik şüpheleri personel kaybına ve huzursuzluğa yol açıyor.
-                  </li>
+                  {c.slide2.painPoints.map((point, idx) => (
+                    <li key={idx} className="cat-compare-item">
+                      <span style={{ color: '#e2e8f0', lineHeight: 1.5 }}>{point}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
               <div className="cat-compare-box good">
                 <div className="cat-compare-header" style={{ color: '#34d399' }}>
-                  <span>İşletmenizin Kaybettiği Rakamlar</span>
+                  <span>{c.slide2.statsHeader}</span>
                   <span>📉</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', justifyContent: 'center' }}>
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px' }}>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f43f5e' }}>-%42</div>
-                    <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Müşteride nakit olmaması nedeniyle personelin her ay kaçırdığı net bahşiş geliri.</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f43f5e' }}>{c.slide2.stat1Val}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>{c.slide2.stat1Desc}</div>
                   </div>
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px' }}>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b' }}>35 Dk / Gün</div>
-                    <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Vardiya müdürünün her gün kapanışta bahşiş hesaplamaya ve dağıtmaya harcadığı gereksiz mesai.</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b' }}>{c.slide2.stat2Val}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>{c.slide2.stat2Desc}</div>
                   </div>
                 </div>
               </div>
@@ -198,21 +209,21 @@ export const NaponiCatalogPage: React.FC = () => {
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI B2B ÇÖZÜMLERİ • PROBLEM VE PAZAR ANALİZİ</span>
-            <span>Sayfa 02 / 10</span>
+            <span>{c.slide2.footer}</span>
+            <span>{c.slide2.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 3: NAPONI DENEYİMİ (ÇÖZÜM)
+            SLIDE 3: NAPONI DENEYİMİ (ÇÖZÜM)
             ================================================================== */}
         <section className="catalog-slide" id="slide-3">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Sıfır Sürtünme Çözümü</span>
-              <h2 className="cat-slide-title">6 Saniyede Bahşiş: Uygulama Yok, Şifre Yok</h2>
-              <p className="cat-slide-subtitle">Kullanıcı alışkanlıklarını zorlamayan, doğrudan telefon kamerasından çalışan dünyanın en hızlı bahşiş akışı.</p>
+              <span className="cat-slide-tag">{c.slide3.tag}</span>
+              <h2 className="cat-slide-title">{c.slide3.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide3.subtitle}</p>
             </div>
             <span className="cat-slide-number">03 / 10</span>
           </div>
@@ -224,9 +235,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon">
                   <Smartphone size={22} />
                 </div>
-                <div className="cat-card-title">1. Kamerayı Aç & Tara</div>
+                <div className="cat-card-title">{c.slide3.step1Title}</div>
                 <div className="cat-card-desc">
-                  Müşteri masadaki şık QR kodu veya garson rozetini telefonunun kamerasıyla okutur. Web arayüzü 0.8 saniyede anında açılır.
+                  {c.slide3.step1Desc}
                 </div>
               </div>
 
@@ -235,9 +246,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon blue">
                   <Users size={22} />
                 </div>
-                <div className="cat-card-title">2. Personeli & Tutarı Seç</div>
+                <div className="cat-card-title">{c.slide3.step2Title}</div>
                 <div className="cat-card-desc">
-                  Masaya bakan garsonun adını/fotoğrafını veya ortak havuzu seçer. Tek dokunuşla hazır tutarlardan birine tıklar.
+                  {c.slide3.step2Desc}
                 </div>
               </div>
 
@@ -246,9 +257,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon amber">
                   <Zap size={22} />
                 </div>
-                <div className="cat-card-title">3. 1 Tıkla Öde & Bitir</div>
+                <div className="cat-card-title">{c.slide3.step3Title}</div>
                 <div className="cat-card-desc">
-                  Apple Pay, Google Pay veya kredi kartıyla parmak izi/yüz tanıma ile saniyeler içinde öder. Doğrudan hesaba geçer.
+                  {c.slide3.step3Desc}
                 </div>
               </div>
             </div>
@@ -257,29 +268,29 @@ export const NaponiCatalogPage: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <Check size={20} color="#34d399" />
                 <span style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 600 }}>
-                  Sonuç: Müşterilerin %96'sı akışı terk etmeden bahşiş işlemini başarıyla tamamlar.
+                  {c.slide3.resultBanner}
                 </span>
               </div>
-              <span style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 800 }}>Ortalama Süre: 6.2 Saniye</span>
+              <span style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 800 }}>{c.slide3.resultTime}</span>
             </div>
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI MÜŞTERİ DENEYİMİ MİMARİSİ</span>
-            <span>Sayfa 03 / 10</span>
+            <span>{c.slide3.footer}</span>
+            <span>{c.slide3.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 4: FİZİKSEL DOKUNUŞLAR & MASA STANDLARI
+            SLIDE 4: FİZİKSEL DOKUNUŞLAR & MASA STANDLARI
             ================================================================== */}
         <section className="catalog-slide" id="slide-4">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Mekan Estetiği</span>
-              <h2 className="cat-slide-title">Mekânınızın Prestijine Yakışan Dokunuşlar</h2>
-              <p className="cat-slide-subtitle">Sıradan kağıt çıktılar değil; restoran ve otelinizin mimarisine özel yüksek kaliteli fiziksel temas noktaları.</p>
+              <span className="cat-slide-tag">{c.slide4.tag}</span>
+              <h2 className="cat-slide-title">{c.slide4.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide4.subtitle}</p>
             </div>
             <span className="cat-slide-number">04 / 10</span>
           </div>
@@ -291,11 +302,11 @@ export const NaponiCatalogPage: React.FC = () => {
                   <div style={{ width: '48px', height: '64px', margin: '0 auto 0.5rem', background: 'rgba(255,255,255,0.06)', border: '2px solid #34d399', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <QrIcon size={28} color="#34d399" />
                   </div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>Akrilik Masa Standı</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>{c.slide4.card1Tag}</span>
                 </div>
-                <div className="cat-card-title">Akrilik Pleksi & Ahşap Standlar</div>
+                <div className="cat-card-title">{c.slide4.card1Title}</div>
                 <div className="cat-card-desc">
-                  Masa numaralarına özel üretilen, suya ve güneş ışığına dayanıklı, çizilmez lüks masaüstü blokları.
+                  {c.slide4.card1Desc}
                 </div>
               </div>
 
@@ -304,11 +315,11 @@ export const NaponiCatalogPage: React.FC = () => {
                   <div style={{ width: '80px', height: '48px', margin: '0 auto 0.5rem', background: 'rgba(255,255,255,0.06)', border: '2px solid #38bdf8', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <QrIcon size={24} color="#38bdf8" />
                   </div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>Manyetik Yaka Rozeti</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>{c.slide4.card2Tag}</span>
                 </div>
-                <div className="cat-card-title">Akıllı Garson & Vale Rozetleri</div>
+                <div className="cat-card-title">{c.slide4.card2Title}</div>
                 <div className="cat-card-desc">
-                  Barmen, vale ve hareket halindeki servis ekibi için kıyafete zarar vermeyen manyetik ve şık QR rozetler.
+                  {c.slide4.card2Desc}
                 </div>
               </div>
 
@@ -317,32 +328,32 @@ export const NaponiCatalogPage: React.FC = () => {
                   <div style={{ width: '56px', height: '64px', margin: '0 auto 0.5rem', background: 'rgba(255,255,255,0.06)', border: '2px solid #f59e0b', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <QrIcon size={28} color="#f59e0b" />
                   </div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>Adisyon İçi Kart</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>{c.slide4.card3Tag}</span>
                 </div>
-                <div className="cat-card-title">Adisyon Deri Folyo Kartları</div>
+                <div className="cat-card-title">{c.slide4.card3Title}</div>
                 <div className="cat-card-desc">
-                  Hesap sümeninin içine yerleştirilen kartlar sayesinde müşteri hesabı incelerken konforlu ve özel bir şekilde bahşiş bırakır.
+                  {c.slide4.card3Desc}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI TOUCHPOINT EKİPMANLARI • 300 DPI VEKTÖREL BASKI UYUMLU</span>
-            <span>Sayfa 04 / 10</span>
+            <span>{c.slide4.footer}</span>
+            <span>{c.slide4.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 5: İŞLETME & YÖNETİCİ PANELİ (OPERASYONEL GÜÇ)
+            SLIDE 5: İŞLETME & YÖNETİCİ PANELİ (OPERASYONEL GÜÇ)
             ================================================================== */}
         <section className="catalog-slide" id="slide-5">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Yönetici Paneli</span>
-              <h2 className="cat-slide-title">Tam Görünürlük. Sıfır Gece Yarısı Hesabı.</h2>
-              <p className="cat-slide-subtitle">Vardiya sonlarında yaşanan gerginlikleri tarihe gömen şeffaf, otomatik ve gerçek zamanlı yönetim merkezi.</p>
+              <span className="cat-slide-tag">{c.slide5.tag}</span>
+              <h2 className="cat-slide-title">{c.slide5.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide5.subtitle}</p>
             </div>
             <span className="cat-slide-number">05 / 10</span>
           </div>
@@ -354,48 +365,46 @@ export const NaponiCatalogPage: React.FC = () => {
                 <span className="cat-dot y"></span>
                 <span className="cat-dot g"></span>
                 <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '0.5rem', fontWeight: 600 }}>
-                  naponi.com/portal/dashboard • The Grand Bistro & Lounge
+                  {c.slide5.mockupUrl}
                 </span>
               </div>
 
               <div className="cat-mockup-body">
                 <div className="cat-kpi-row">
                   <div className="cat-kpi-cell">
-                    <div className="cat-kpi-val" style={{ color: '#34d399' }}>₺14.850,00</div>
-                    <div className="cat-kpi-label">Bugünkü Toplam Bahşiş</div>
+                    <div className="cat-kpi-val" style={{ color: '#34d399' }}>{c.slide5.kpi1Val}</div>
+                    <div className="cat-kpi-label">{c.slide5.kpi1Label}</div>
                   </div>
                   <div className="cat-kpi-cell">
-                    <div className="cat-kpi-val" style={{ color: '#38bdf8' }}>%16.4</div>
-                    <div className="cat-kpi-label">Ortalama Bahşiş Oranı</div>
+                    <div className="cat-kpi-val" style={{ color: '#38bdf8' }}>{c.slide5.kpi2Val}</div>
+                    <div className="cat-kpi-label">{c.slide5.kpi2Label}</div>
                   </div>
                   <div className="cat-kpi-cell">
-                    <div className="cat-kpi-val" style={{ color: '#f59e0b' }}>12 Personel</div>
-                    <div className="cat-kpi-label">Aktif Vardiya Ekibi</div>
+                    <div className="cat-kpi-val" style={{ color: '#f59e0b' }}>{c.slide5.kpi3Val}</div>
+                    <div className="cat-kpi-label">{c.slide5.kpi3Label}</div>
                   </div>
                   <div className="cat-kpi-cell">
-                    <div className="cat-kpi-val" style={{ color: '#a78bfa' }}>4.9 / 5.0</div>
-                    <div className="cat-kpi-label">Misafir Memnuniyet Puanı</div>
+                    <div className="cat-kpi-val" style={{ color: '#a78bfa' }}>{c.slide5.kpi4Val}</div>
+                    <div className="cat-kpi-label">{c.slide5.kpi4Label}</div>
                   </div>
                 </div>
 
                 <div className="cat-grid-2" style={{ gap: '0.75rem' }}>
                   <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.78rem' }}>
                     <strong style={{ color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
-                      <Clock size={13} color="#38bdf8" /> Canlı Bahşiş Akışı (Gerçek Zamanlı)
+                      <Clock size={13} color="#38bdf8" /> {c.slide5.box1Title}
                     </strong>
-                    <div style={{ color: '#94a3b8', lineHeight: 1.5 }}>
-                      Masa 14 (Ahmet K.) ➔ ₺150 Apple Pay (2 dk önce)<br />
-                      Masa 08 (Selin M.) ➔ ₺250 Kredi Kartı (5 dk önce)<br />
-                      Bar Alanı (Ortak Havuz) ➔ ₺100 Google Pay (8 dk önce)
+                    <div style={{ color: '#94a3b8', lineHeight: 1.5, whiteSpace: 'pre-line' }}>
+                      {c.slide5.box1Desc}
                     </div>
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.78rem' }}>
                     <strong style={{ color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
-                      <Coins size={13} color="#34d399" /> Otomatik Vardiya Havuzu & Dağıtım
+                      <Coins size={13} color="#34d399" /> {c.slide5.box2Title}
                     </strong>
                     <div style={{ color: '#94a3b8', lineHeight: 1.5 }}>
-                      Personelin sisteme girdiği çalışma saatlerine ve pozisyon puanına (Garson: 1.0, Mutfak: 0.5) göre bahşişler gece otomatik dağıtılır.
+                      {c.slide5.box2Desc}
                     </div>
                   </div>
                 </div>
@@ -404,21 +413,21 @@ export const NaponiCatalogPage: React.FC = () => {
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI YÖNETİCİ VE MUHASEBE PANELİ (WEB TABANLI)</span>
-            <span>Sayfa 05 / 10</span>
+            <span>{c.slide5.footer}</span>
+            <span>{c.slide5.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 6: SEKTOREL ÇÖZÜMLER
+            SLIDE 6: SEKTOREL ÇÖZÜMLER
             ================================================================== */}
         <section className="catalog-slide" id="slide-6">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Çok Yönlü Uyumluluk</span>
-              <h2 className="cat-slide-title">Hizmet Sektörünün Her Alanına Uygun</h2>
-              <p className="cat-slide-subtitle">Tek bir kafeden çok şubeli lüks otel zincirlerine kadar esnek operasyonel yapı.</p>
+              <span className="cat-slide-tag">{c.slide6.tag}</span>
+              <h2 className="cat-slide-title">{c.slide6.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide6.subtitle}</p>
             </div>
             <span className="cat-slide-number">06 / 10</span>
           </div>
@@ -429,9 +438,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon">
                   <Utensils size={20} />
                 </div>
-                <div className="cat-card-title">Restoranlar</div>
+                <div className="cat-card-title">{c.slide6.sec1Title}</div>
                 <div className="cat-card-desc">
-                  Masa bazlı QR kodlar, garsona özel bahşiş atama veya mutfak-salon ortak havuzlama.
+                  {c.slide6.sec1Desc}
                 </div>
               </div>
 
@@ -439,9 +448,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon blue">
                   <Coffee size={20} />
                 </div>
-                <div className="cat-card-title">Kafeler & Fırınlar</div>
+                <div className="cat-card-title">{c.slide6.sec2Title}</div>
                 <div className="cat-card-desc">
-                  Kasa önü hızlı tarama; barista kahveyi hazırlarken müşteri saniyeler içinde teşekkür eder.
+                  {c.slide6.sec2Desc}
                 </div>
               </div>
 
@@ -449,9 +458,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon amber">
                   <Hotel size={20} />
                 </div>
-                <div className="cat-card-title">Oteller & Tatil Köyü</div>
+                <div className="cat-card-title">{c.slide6.sec3Title}</div>
                 <div className="cat-card-desc">
-                  Kat hizmetleri, bellboy, oda servisi ve resepsiyon için oda anahtarlığı veya oda içi QR.
+                  {c.slide6.sec3Desc}
                 </div>
               </div>
 
@@ -459,38 +468,38 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon red">
                   <Wine size={20} />
                 </div>
-                <div className="cat-card-title">Bar & Gece Hayatı</div>
+                <div className="cat-card-title">{c.slide6.sec4Title}</div>
                 <div className="cat-card-desc">
-                  Karanlık ve kalabalık ortamlarda bile anında okunan yüksek kontrastlı QR bardak altlıkları.
+                  {c.slide6.sec4Desc}
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: '1.25rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '14px', padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>Kuaförler, Spa, Vale & Özel Taşımacılık:</strong>
-                <span style={{ color: '#94a3b8', fontSize: '0.85rem', marginLeft: '0.5rem' }}>Bireysel hizmet veren tüm uzmanlar için kişisel QR kartvizit desteği.</span>
+                <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>{c.slide6.extraTitle}</strong>
+                <span style={{ color: '#94a3b8', fontSize: '0.85rem', marginLeft: '0.5rem' }}>{c.slide6.extraDesc}</span>
               </div>
-              <span className="catalog-toolbar-badge">Tüm Sektörler</span>
+              <span className="catalog-toolbar-badge">{c.slide6.extraBadge}</span>
             </div>
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI ENDÜSTRİYEL KULLANIM ALANLARI</span>
-            <span>Sayfa 06 / 10</span>
+            <span>{c.slide6.footer}</span>
+            <span>{c.slide6.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 7: FİNANSAL MİMARİ & GÜVENLİK
+            SLIDE 7: FİNANSAL MİMARİ & GÜVENLİK
             ================================================================== */}
         <section className="catalog-slide" id="slide-7">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Güvenlik ve Uyum</span>
-              <h2 className="cat-slide-title">Sıfır Emanet. Doğrudan Banka Takası.</h2>
-              <p className="cat-slide-subtitle">İşletmenizin ve müşterilerinizin finansal güvenliğini garanti altına alan non-custodial fintech altyapısı.</p>
+              <span className="cat-slide-tag">{c.slide7.tag}</span>
+              <h2 className="cat-slide-title">{c.slide7.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide7.subtitle}</p>
             </div>
             <span className="cat-slide-number">07 / 10</span>
           </div>
@@ -501,9 +510,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon">
                   <ShieldCheck size={22} />
                 </div>
-                <div className="cat-card-title">Emanet Para Tutulmaz (Non-Custodial)</div>
+                <div className="cat-card-title">{c.slide7.feat1Title}</div>
                 <div className="cat-card-desc">
-                  Naponi bir aracı cüzdan değildir; paranızı kendi hesaplarında tutmaz veya bloke koymaz. Fonlar doğrudan işletmenizin anlaşmalı banka hesabına aktarılır.
+                  {c.slide7.feat1Desc}
                 </div>
               </div>
 
@@ -511,9 +520,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon blue">
                   <Lock size={22} />
                 </div>
-                <div className="cat-card-title">PCI-DSS Seviye 1 Güvenlik</div>
+                <div className="cat-card-title">{c.slide7.feat2Title}</div>
                 <div className="cat-card-desc">
-                  Müşterinin kart bilgileri asla Naponi sunucularına temas etmez. Tüm işlemler uluslararası lisanslı ödeme geçitleri üzerinden 256-bit SSL ile tokenize edilir.
+                  {c.slide7.feat2Desc}
                 </div>
               </div>
 
@@ -521,9 +530,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon amber">
                   <CreditCard size={22} />
                 </div>
-                <div className="cat-card-title">Şeffaf Muhasebe & Vergi Uyumu</div>
+                <div className="cat-card-title">{c.slide7.feat3Title}</div>
                 <div className="cat-card-desc">
-                  Yasal mevzuata uygun gelir dökümleri, stopaj/vergi hesaplamaları ve muhasebe programlarına entegre edilebilir Excel/PDF dışa aktarım desteği.
+                  {c.slide7.feat3Desc}
                 </div>
               </div>
             </div>
@@ -533,27 +542,27 @@ export const NaponiCatalogPage: React.FC = () => {
                 <Zap size={20} color="#38bdf8" />
               </div>
               <div style={{ fontSize: '0.85rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                <strong>İşletme Patronları İçin Güvence:</strong> Nakit bahşişlerde yaşanan kasa açıkları, eksik para veya elden ele geçerken kaybolma riskleri dijital dekontlama sayesinde tamamen sıfırlanır.
+                <strong>{c.slide7.calloutTitle}</strong> {c.slide7.calloutDesc}
               </div>
             </div>
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI FİNANSAL GÜVENLİK PROTOKOLÜ</span>
-            <span>Sayfa 07 / 10</span>
+            <span>{c.slide7.footer}</span>
+            <span>{c.slide7.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 8: KÜRESEL UYUM & YABANCI TURİST TRAFİĞİ
+            SLIDE 8: KÜRESEL UYUM & YABANCI TURİST TRAFİĞİ
             ================================================================== */}
         <section className="catalog-slide" id="slide-8">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Uluslararası Misafirler</span>
-              <h2 className="cat-slide-title">Yabancı Turistlerden Maksimum Bahşiş Geliri</h2>
-              <p className="cat-slide-subtitle">Kendi ülkesinde bahşiş vermeye alışkın turistlerin dil ve kur bariyerini tamamen ortadan kaldırıyoruz.</p>
+              <span className="cat-slide-tag">{c.slide8.tag}</span>
+              <h2 className="cat-slide-title">{c.slide8.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide8.subtitle}</p>
             </div>
             <span className="cat-slide-number">08 / 10</span>
           </div>
@@ -564,9 +573,9 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon">
                   <Globe size={22} />
                 </div>
-                <div className="cat-card-title">11 Dilde Otomatik Arayüz</div>
+                <div className="cat-card-title">{c.slide8.feat1Title}</div>
                 <div className="cat-card-desc" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
-                  Turist telefonunun kamerasını açtığında, tarayıcısının dili neyse sayfa o dilde karşılar:
+                  {c.slide8.feat1Desc}
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {['🇹🇷 Türkçe', '🇺🇸 English', '🇩🇪 Deutsch', '🇷🇺 Русский', '🇫🇷 Français', '🇪🇸 Español', '🇸🇦 العربية', '🇨🇳 中文', '🇯🇵 日本語'].map((lang, idx) => (
@@ -581,18 +590,18 @@ export const NaponiCatalogPage: React.FC = () => {
                 <div className="cat-card-icon blue">
                   <Coins size={22} />
                 </div>
-                <div className="cat-card-title">Kendi Para Birimiyle Rahat Ödeme</div>
+                <div className="cat-card-title">{c.slide8.feat2Title}</div>
                 <div className="cat-card-desc" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
-                  Turistler Türk Lirası hesabına girmeden kendi bildikleri para birimlerinde rahatça bahşiş bırakırlar. İşletme kendi para birimiyle tahsil eder.
+                  {c.slide8.feat2Desc}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#34d399' }}>Apple / Google Pay</div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Yabancı kartlarda %100 uyum</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#34d399' }}>{c.slide8.sub1Title}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.slide8.sub1Desc}</div>
                   </div>
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#38bdf8' }}>USD, EUR, GBP</div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Uluslararası kart kabulü</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#38bdf8' }}>{c.slide8.sub2Title}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.slide8.sub2Desc}</div>
                   </div>
                 </div>
               </div>
@@ -600,21 +609,21 @@ export const NaponiCatalogPage: React.FC = () => {
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI GLOBAL TOURISM INFRASTRUCTURE</span>
-            <span>Sayfa 08 / 10</span>
+            <span>{c.slide8.footer}</span>
+            <span>{c.slide8.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 9: 3 ADIMDA CANLIYA GEÇİŞ (ONBOARDING)
+            SLIDE 9: 3 ADIMDA CANLIYA GEÇİŞ (ONBOARDING)
             ================================================================== */}
         <section className="catalog-slide" id="slide-9">
           <div className="cat-slide-header">
             <div>
-              <span className="cat-slide-tag">Hızlı Kurulum</span>
-              <h2 className="cat-slide-title">2 Dakikada Başlayın. Sıfır Risk, Sıfır Cihaz.</h2>
-              <p className="cat-slide-subtitle">Haftalarca süren bürokrasi veya POS cihaz kiralama masrafları yok. Bugün kaydolun, bu akşam bahşiş almaya başlayın.</p>
+              <span className="cat-slide-tag">{c.slide9.tag}</span>
+              <h2 className="cat-slide-title">{c.slide9.title}</h2>
+              <p className="cat-slide-subtitle">{c.slide9.subtitle}</p>
             </div>
             <span className="cat-slide-number">09 / 10</span>
           </div>
@@ -623,54 +632,54 @@ export const NaponiCatalogPage: React.FC = () => {
             <div className="cat-step-row">
               <div className="cat-step-card" style={{ borderTop: '3px solid #34d399' }}>
                 <div className="cat-step-number" style={{ color: '#34d399' }}>1</div>
-                <div className="cat-card-title">Ücretsiz Kayıt Olun</div>
+                <div className="cat-card-title">{c.slide9.step1Title}</div>
                 <div className="cat-card-desc">
-                  İşletme bilgilerinizi ve ödemelerin yatacağı banka hesabınızı (IBAN) 2 dakikada sisteme girin.
+                  {c.slide9.step1Desc}
                 </div>
               </div>
 
               <div className="cat-step-card" style={{ borderTop: '3px solid #38bdf8' }}>
                 <div className="cat-step-number" style={{ color: '#38bdf8' }}>2</div>
-                <div className="cat-card-title">Masaları & Ekibi Ekleyin</div>
+                <div className="cat-card-title">{c.slide9.step2Title}</div>
                 <div className="cat-card-desc">
-                  Panelden salon masalarınızı ve garsonlarınızı kaydedin. Renk temanıza uygun yüksek çözünürlüklü QR kodlarınızı anında indirin.
+                  {c.slide9.step2Desc}
                 </div>
               </div>
 
               <div className="cat-step-card" style={{ borderTop: '3px solid #f59e0b' }}>
                 <div className="cat-step-number" style={{ color: '#f59e0b' }}>3</div>
-                <div className="cat-card-title">Masalara Koyun & Başlayın</div>
+                <div className="cat-card-title">{c.slide9.step3Title}</div>
                 <div className="cat-card-desc">
-                  Akrilik standlarınızı veya adisyon kartlarınızı masalara yerleştirin. İlk günden bahşiş gelirlerinizin artışını canlı panelden izleyin.
+                  {c.slide9.step3Desc}
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', textAlign: 'center' }}>
               <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.85rem', borderRadius: '12px' }}>
-                <div style={{ fontWeight: 800, color: '#34d399', fontSize: '1.1rem' }}>₺0 Başlangıç Ücreti</div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Gizli masraf veya kurulum bedeli yok</div>
+                <div style={{ fontWeight: 800, color: '#34d399', fontSize: '1.1rem' }}>{c.slide9.badge1Val}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.slide9.badge1Desc}</div>
               </div>
               <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.85rem', borderRadius: '12px' }}>
-                <div style={{ fontWeight: 800, color: '#38bdf8', fontSize: '1.1rem' }}>Sıfır Taahhüt</div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>İstediğiniz an sistemi durdurabilirsiniz</div>
+                <div style={{ fontWeight: 800, color: '#38bdf8', fontSize: '1.1rem' }}>{c.slide9.badge2Val}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.slide9.badge2Desc}</div>
               </div>
               <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.85rem', borderRadius: '12px' }}>
-                <div style={{ fontWeight: 800, color: '#f59e0b', fontSize: '1.1rem' }}>7/24 Teknik Destek</div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>İşletmenize özel kurumsal müşteri temsilcisi</div>
+                <div style={{ fontWeight: 800, color: '#f59e0b', fontSize: '1.1rem' }}>{c.slide9.badge3Val}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.slide9.badge3Desc}</div>
               </div>
             </div>
           </div>
 
           <div className="cat-slide-footer">
-            <span>NAPONI ENTEGRASYON VE ONBOARDING AKIŞI</span>
-            <span>Sayfa 09 / 10</span>
+            <span>{c.slide9.footer}</span>
+            <span>{c.slide9.pageLabel}</span>
           </div>
         </section>
 
 
         {/* ==================================================================
-            SAYFA 10: ARKA KAPAK & CANLI İNTERAKTİF DEMO
+            SLIDE 10: ARKA KAPAK & CANLI İNTERAKTİF DEMO
             ================================================================== */}
         <section className="catalog-slide cat-cover-slide" id="slide-10" style={{ background: '#090d16' }}>
           <div className="cat-slide-header" style={{ marginBottom: 0 }}>
@@ -680,25 +689,25 @@ export const NaponiCatalogPage: React.FC = () => {
 
           <div className="cat-backcover">
             <div>
-              <span className="cat-slide-tag" style={{ color: '#38bdf8' }}>Deneyimi Test Edin</span>
+              <span className="cat-slide-tag" style={{ color: '#38bdf8' }}>{c.slide10.tag}</span>
               <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#ffffff', letterSpacing: '-0.02em', margin: '0.5rem 0 1rem' }}>
-                Müşterilerinizin Yaşayacağı Deneyimi <br />
-                <span className="cat-gradient-text">Hemen Şimdi Yaşayın.</span>
+                {c.slide10.title} <br />
+                <span className="cat-gradient-text">{c.slide10.titleHighlight}</span>
               </h2>
               <p style={{ fontSize: '1rem', color: '#cbd5e1', lineHeight: 1.6, maxWidth: '520px', marginBottom: '1.75rem' }}>
-                Telefonunuzun kamerasını açın ve yandaki canlı demo QR kodunu okutun. Naponi'nin hızını ve şıklığını doğrudan kendi telefonunuzda test edin.
+                {c.slide10.desc}
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem', color: '#94a3b8' }}>
-                <div>🌐 <strong>Web:</strong> <span style={{ color: '#ffffff' }}>www.naponi.com</span></div>
-                <div>✉️ <strong>Kurumsal E-Posta:</strong> <span style={{ color: '#ffffff' }}>info@naponi.com</span></div>
+                <div>🌐 <strong>{c.slide10.webLabel}:</strong> <span style={{ color: '#ffffff' }}>www.naponi.com</span></div>
+                <div>✉️ <strong>{c.slide10.emailLabel}:</strong> <span style={{ color: '#ffffff' }}>info@naponi.com</span></div>
               </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <div className="cat-qr-badge-card">
-                <div className="cat-qr-badge-title">CANLI DEMO QR</div>
-                <div className="cat-qr-badge-sub">Telefon kameranızla okutun</div>
+                <div className="cat-qr-badge-title">{c.slide10.qrBadgeTitle}</div>
+                <div className="cat-qr-badge-sub">{c.slide10.qrBadgeSub}</div>
                 {demoQrUrl ? (
                   <img 
                     src={demoQrUrl} 
@@ -707,19 +716,19 @@ export const NaponiCatalogPage: React.FC = () => {
                   />
                 ) : (
                   <div style={{ width: '210px', height: '210px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    Yükleniyor...
+                    {c.slide10.qrLoading}
                   </div>
                 )}
                 <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0f172a', letterSpacing: '0.05em', marginTop: '0.75rem' }}>
-                  6 SANİYEDE TEMASSIZ BAHŞİŞ
+                  {c.slide10.qrBottomLabel}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="cat-slide-footer" style={{ borderTopColor: 'rgba(255,255,255,0.08)' }}>
-            <span>© 2026 NAPONI TECHNOLOGIES INC. • HER HAKKI SAKLIDIR.</span>
-            <span>Sayfa 10 / 10 • Son</span>
+            <span>{c.slide10.footer}</span>
+            <span>{c.slide10.pageLabel}</span>
           </div>
         </section>
 
@@ -727,3 +736,4 @@ export const NaponiCatalogPage: React.FC = () => {
     </div>
   );
 };
+export default NaponiCatalogPage;
