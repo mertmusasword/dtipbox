@@ -88,6 +88,16 @@ d-tipbox (Monorepo)
 * **POS Integration Assistance:** Venues can request POS setup assistance via dedicated modals. (Note: Not an automated live POS sync; it is an assistance service).
 * **Corporate Multi-Branch:** Application modal for enterprise multi-location groups.
 
+### 3.7. Legal, Compliance & Cookie Consent (KVKK & GDPR)
+* **Legal Modal (`LegalModal.tsx`):** Central interactive modal supporting 4 primary documents:
+  1. KVKK Aydınlatma Metni (Turkish Law No. 6698) & GDPR Data Notice
+  2. Gizlilik Politikası / Privacy Policy (PCI-DSS Level 1 tokenization, non-custodial zero-escrow)
+  3. Kullanım Koşulları / Terms of Service (Platform rules, voluntary gratuities, Bakırköy jurisdiction)
+  4. Çerez Politikası / Cookie Policy (Essential session cookies, GA4 analytics)
+* **Language Support:** Bilingual Turkish (`tr`) and English (`en`) with official legal credentials (`Naponi İnternet Alışveriş ve Mağazacılık İth. İhr. Ltd. Şti.`, VKN: `6291105866`, Bakırköy DTM).
+* **Cookie Banner (`CookieBanner.tsx`):** Fixed bottom glassmorphism banner, non-blocking, persists consent in `localStorage` (`naponi_cookie_consent: 'accepted_all' | 'essential_only'`).
+* **Footer Accessibility:** Linked in `HomePage.tsx` footer bottom row with direct tab triggers.
+
 ---
 
 ## 4. SEO, Blog & Organic Content Engine
