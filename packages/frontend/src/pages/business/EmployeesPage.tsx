@@ -322,64 +322,125 @@ export const EmployeesPage: React.FC = () => {
             />
           </div>
 
-          {/* Rol & Bahşiş Havuz Payı Ağırlığı */}
-          <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <label className="form-label mb-0" style={{ fontSize: '0.8rem', fontWeight: 700 }}>
-                Rol Şablonu & Havuz Payı Ağırlığı
-              </label>
-              <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600 }}>
-                Seçili Pay: {formData.share_weight}x
+          {/* Bahşiş Havuz Payı Seçici (Slider & Adım Seçici) */}
+          <div
+            style={{
+              background: 'var(--bg-input)',
+              padding: '1.25rem',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+              <div>
+                <label className="form-label mb-0" style={{ fontSize: '0.85rem', fontWeight: 700 }}>
+                  Bahşiş Havuz Payı
+                </label>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                  Havuzlu dağıtımda personelin alacağı pay oranı
+                </div>
+              </div>
+              <span
+                className="badge badge-accent"
+                style={{
+                  fontSize: '0.8rem',
+                  padding: '0.3rem 0.75rem',
+                  fontWeight: 700,
+                  background: Number(formData.share_weight) === 1.0
+                    ? 'rgba(34, 197, 94, 0.15)'
+                    : Number(formData.share_weight) === 0.75
+                    ? 'rgba(99, 102, 241, 0.15)'
+                    : 'rgba(245, 158, 11, 0.15)',
+                  color: Number(formData.share_weight) === 1.0
+                    ? '#4ade80'
+                    : Number(formData.share_weight) === 0.75
+                    ? '#818cf8'
+                    : '#fbbf24',
+                  borderColor: Number(formData.share_weight) === 1.0
+                    ? 'rgba(34, 197, 94, 0.3)'
+                    : Number(formData.share_weight) === 0.75
+                    ? 'rgba(99, 102, 241, 0.3)'
+                    : 'rgba(245, 158, 11, 0.3)',
+                }}
+              >
+                {Number(formData.share_weight) === 1.0 && '🎯 Tam Pay (1.0x)'}
+                {Number(formData.share_weight) === 0.75 && '🎯 3/4 Pay (0.75x)'}
+                {Number(formData.share_weight) === 0.5 && '🎯 Yarım Pay (0.50x)'}
+                {![1.0, 0.75, 0.5].includes(Number(formData.share_weight)) && `🎯 Özel Pay (${Number(formData.share_weight).toFixed(2)}x)`}
               </span>
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+
+            {/* 3 Hızlı Adım Butonları */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr',
+                gap: '0.5rem',
+                marginBottom: '1rem',
+              }}
+            >
               {[
-                { label: 'Garson (1.0x)', role: 'Garson', weight: 1.0 },
-                { label: 'Barmen (0.75x)', role: 'Barmen', weight: 0.75 },
-                { label: 'Aşçı / Mutfak (0.75x)', role: 'Aşçı', weight: 0.75 },
-                { label: 'Komi (0.50x)', role: 'Komi', weight: 0.5 },
-                { label: 'Kasiyer (0.50x)', role: 'Kasiyer', weight: 0.5 },
-              ].map((template) => (
-                <button
-                  key={template.label}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, role_title: template.role, share_weight: template.weight })}
-                  className={`btn btn-sm ${formData.role_title === template.role && formData.share_weight === template.weight ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem' }}
-                >
-                  {template.label}
-                </button>
-              ))}
+                { label: 'Yarım Pay', sub: 'Komi, Bulaşık', weight: 0.5 },
+                { label: 'Standart Pay', sub: 'Barmen, Mutfak', weight: 0.75 },
+                { label: 'Tam Pay', sub: 'Garson, Servis', weight: 1.0 },
+              ].map((step) => {
+                const isSelected = Math.abs(Number(formData.share_weight) - step.weight) < 0.01;
+                return (
+                  <button
+                    key={step.weight}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, share_weight: step.weight })}
+                    style={{
+                      padding: '0.6rem 0.4rem',
+                      borderRadius: '8px',
+                      border: isSelected ? '1.5px solid var(--primary)' : '1px solid rgba(255, 255, 255, 0.08)',
+                      background: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? 'var(--primary)' : 'var(--text-primary)' }}>
+                      {step.label}
+                    </div>
+                    <div style={{ fontSize: '0.68rem', color: isSelected ? 'var(--primary)' : 'var(--text-muted)', marginTop: '2px' }}>
+                      %{step.weight * 100} • {step.sub}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
-            <div className="form-grid form-grid-2" style={{ gap: '0.75rem' }}>
-              <div className="form-group mb-0">
-                <label className="form-label" style={{ fontSize: '0.75rem' }}>Rol Başlığı</label>
-                <input
-                  type="text"
-                  placeholder="Garson, Barmen, Komi..."
-                  value={formData.role_title}
-                  onChange={(e) => setFormData({ ...formData, role_title: e.target.value })}
-                  className="form-input"
-                  style={{ fontSize: '0.85rem' }}
-                />
+            {/* Hassas Kaydırıcı (Slider) */}
+            <div style={{ padding: '0.25rem 0.2rem' }}>
+              <input
+                type="range"
+                min="0.25"
+                max="1.50"
+                step="0.05"
+                value={formData.share_weight}
+                onChange={(e) => setFormData({ ...formData, share_weight: parseFloat(e.target.value) || 1.0 })}
+                style={{
+                  width: '100%',
+                  cursor: 'pointer',
+                  accentColor: 'var(--primary)',
+                }}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '0.7rem',
+                  color: 'var(--text-muted)',
+                  marginTop: '0.35rem',
+                }}
+              >
+                <span>%25 (Destek)</span>
+                <span>%50 (Yarım)</span>
+                <span>%75 (Orta)</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>%100 (Tam)</span>
+                <span>%150 (Kıdemli)</span>
               </div>
-              <div className="form-group mb-0">
-                <label className="form-label" style={{ fontSize: '0.75rem' }}>Puan Ağırlığı (Kat Sayı)</label>
-                <input
-                  type="number"
-                  step="0.05"
-                  min="0.1"
-                  max="10"
-                  value={formData.share_weight}
-                  onChange={(e) => setFormData({ ...formData, share_weight: parseFloat(e.target.value) || 1.0 })}
-                  className="form-input"
-                  style={{ fontSize: '0.85rem' }}
-                />
-              </div>
-            </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-              Havuz sisteminde personelin alacağı bahşiş payı bu katsayı ile orantılı hesaplanır.
             </div>
           </div>
 
