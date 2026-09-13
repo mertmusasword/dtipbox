@@ -11,6 +11,12 @@
 * **Brand Name:** Naponi (Platform repository: `d-tipbox`)
 * **Primary Domain:** `https://www.naponi.com` (Live production CNAME: `47pjbrc6.up.railway.app`)
 * **Secondary Production Domain:** `https://dtipbox-production.up.railway.app`
+* **Official Legal Entity (Resmi Şirket Bilgileri):**
+  * **Ticari Unvan:** `Naponi İnternet Alışveriş ve Mağazacılık İthalat İhracat Limited Şirketi`
+  * **Vergi Kimlik No (VKN):** `6291105866`
+  * **Kayıtlı Merkez / Adres:** `Bakırköy Dünya Ticaret Merkezi, Bakırköy / İstanbul, Türkiye`
+  * **Resmi İletişim E-Postası:** `info@naponi.com`
+  * **Hukuki Durum:** Sözleşmeler ve KVKK metinleri `packages/backend/src/services/agreement.service.ts` üzerinde SHA-256 değişmez denetim iziyle (immutable snapshot) işletme onayına bağlıdır.
 * **Google Analytics (GA4):** `G-R74SGVQH08` (Configured in `packages/frontend/index.html` and `packages/frontend/src/analytics/`)
 * **Core Purpose:** Direct QR digital tipping and service payment platform for hospitality venues (restaurants, cafes, hotels, bars, barbers, valets) allowing cashless guests to tip frontline staff instantly without app downloads or guest accounts.
 
@@ -21,7 +27,7 @@
 ```
 d-tipbox (Monorepo)
 ├── packages/
-│   ├── frontend/        # React 18/19, TypeScript, Vite 6, Vanilla CSS (home.css, blog.css)
+│   ├── frontend/        # React 18/19, TypeScript, Vite 6, Vanilla CSS (home.css, blog.css, catalog.css)
 │   └── backend/         # Node.js, Express, TypeScript, Prisma ORM, PostgreSQL
 ├── Dockerfile           # Multi-stage production build (compiles frontend + backend into single container)
 ├── railway.toml         # Railway configuration (healthcheck: /api/health)
@@ -30,7 +36,7 @@ d-tipbox (Monorepo)
 
 * **Frontend Build Process:**
   `"build": "tsc -b && vite build && npx tsx scripts/generate-static-seo.ts"`
-  *Crucial:* After Vite bundles the SPA, `generate-static-seo.ts` executes to pre-render static HTML for all blog articles, solutions, tools, and auto-generates `sitemap.xml`.
+  *Crucial:* After Vite bundles the SPA, `generate-static-seo.ts` executes to pre-render static HTML for all blog articles, solutions, tools, catalog, and auto-generates `sitemap.xml`.
 * **Backend Serving:**
   In production, Express serves static assets from `packages/frontend/dist` with SPA history fallback, while mounting all REST endpoints under `/api/*`.
 * **Database:** Managed PostgreSQL via Railway, managed with Prisma (`packages/backend/prisma/schema.prisma`).
@@ -56,11 +62,28 @@ d-tipbox (Monorepo)
 * **Venue Master QR:** Placed at cash registers, takeaway pickup, or hotel desks.
 
 ### 3.3. Multilingual System (i18n)
-* **Supported Languages (10):** English (`en`), Turkish (`tr`), German (`de`), Spanish (`es`), French (`fr`), Portuguese (`pt`), Arabic (`ar`), Chinese (`zh`), Japanese (`ja`), Indonesian (`id`).
+* **Supported Languages (10):** English (`en`), Turkish (`tr`), German (`de`), Spanish (`es`), French (`fr`), Portuguese (`pt`), Arabic (`ar` - RTL), Chinese (`zh`), Japanese (`ja`), Indonesian (`id`).
 * **Routing / Detection:** URL query parameter `?lang=xx`, `localStorage`, and browser language fallback.
 * **Merchant Agreements:** Fully localized 10-language contracts stored in `packages/backend/src/templates/merchantAgreementText.ts`.
 
-### 3.4. Support & Enterprise Features
+### 3.4. Transactional Email Infrastructure (LIVE & FULLY CONFIGURED)
+* **Dual-Engine Architecture:** Resend Cloud API (HTTPS Port 443, zero firewall blocking) + Nodemailer SMTP (Natro SMTP & standard TLS).
+* **Production Credentials Location:** `RESEND_API_KEY` is configured in **Railway Production Environment Variables**. The local `.env` is intentionally gitignored to prevent credential leaks.
+* **Automated Triggers:**
+  * Password reset (`sendPasswordResetEmail`)
+  * Staff invitation (`sendStaffInviteEmail`)
+  * Corporate branch applications (`sendCorporateApplicationReceivedEmail`)
+  * Support tickets (`sendSupportTicketReceivedEmail`)
+  * Shift summary & daily reports (`sendShiftSummaryEmail`)
+* **Diagnostic Endpoints:** `/api/auth/smtp-status` and `/api/auth/email-diagnostic`.
+
+### 3.5. B2B Corporate Product Catalog & Presentation Deck
+* **Routes:** `/catalog`, `/katalog`, `/kurumsal-katalog`.
+* **Deck Structure:** 10 slides designed for enterprise pitching (Problem, 6s Guest Flow, Hardware Touchpoints, Executive Dashboard Mockup, Industry Verticals, Non-Custodial Architecture, Global Tourism, 2-min Onboarding, Interactive Camera QR Demo).
+* **Multilingual:** In-toolbar language switcher supporting Turkish (`tr`) and English (`en`) with fallback.
+* **1-Click Vector PDF:** Native `@media print` styles for A4 Landscape (297mm x 210mm, 300 DPI vector) with localized PDF download filename (`Naponi-Kurumsal-Urun-Katalogu-2026-TR.pdf` / `Naponi-Corporate-Product-Catalog-2026-EN.pdf`).
+
+### 3.6. Support & Enterprise Features
 * **Support Ticket System:** Built-in dashboard for support tickets and founder review (`/admin`).
 * **POS Integration Assistance:** Venues can request POS setup assistance via dedicated modals. (Note: Not an automated live POS sync; it is an assistance service).
 * **Corporate Multi-Branch:** Application modal for enterprise multi-location groups.
@@ -108,12 +131,15 @@ d-tipbox (Monorepo)
   * **Bilingual Support:** Full English content (`sectors-en.ts`) and Turkish content (`sectors.ts`).
   * `SolutionPage.tsx` dynamically switches copy, breadcrumbs, workflows, and FAQs based on `useLanguage()`.
   * Bidirectional hreflang meta tags (`tr`, `en`, `x-default`) on every sector route.
-* **2 Free Interactive Calculators:** `/tools/tip-calculator`, `/tools/tip-split-calculator`.
-  * **Multi-Currency Support:** Built-in switcher for `$ (USD)`, `€ (EUR)`, `£ (GBP)`, `₺ (TRY)`, `¥ (JPY)` with smart default matching user locale.
-  * **Bilingual UI & FAQ:** Complete localized interface and hospitality guidelines in English and Turkish.
-  * Bidirectional hreflang tags (`tr`, `en`, `x-default`) on every tool route.
+* **4 Free Interactive Calculators & Tools:**
+  * `/tools/tip-calculator`
+  * `/tools/tip-split-calculator`
+  * `/tools/restaurant-tip-pool-calculator`
+  * `/tools/free-hospitality-qr-generator`
+  * Multi-currency support, bilingual UI & FAQ, and full pre-rendering.
+* **Global Tipping Guides (10 Countries):** `/guides/tipping-in-[country]` with pre-rendered SEO and hreflang tags.
 * **Root Homepage Pre-Rendering:**
-  * `dist/index.html` is pre-rendered with semantic HTML (H1, H2, features, sector directory, tool links, FAQ, and footer) ensuring crawlers index complete text even without executing JS.
+  * `dist/index.html` is pre-rendered with semantic HTML ensuring crawlers index complete text even without executing JS.
 
 ---
 
@@ -131,6 +157,9 @@ d-tipbox (Monorepo)
   * `/blog/*`
   * `/solutions/*`
   * `/tools/*`
+  * `/guides/*`
+  * `/compare/*`
+  * `/catalog`
   * `/sitemap.xml`
 
 ---
@@ -141,3 +170,8 @@ d-tipbox (Monorepo)
 2. **No fake stats or unverified features:** Never claim live POS synchronization exists (it is an assistance request service) or that NFC hardware is supported in MVP.
 3. **Automated Publishing Workflow:** When the user approves deployment (e.g., *"yap her zaman"*), stage changes (`git add .`), commit with semantic message, and push to `origin main` to trigger Railway's automated build.
 4. **Preserve Pre-Rendering:** Never remove `npx tsx scripts/generate-static-seo.ts` from the `build` script in `packages/frontend/package.json`.
+5. **GROUND TRUTH RULE (NEVER ASSUME MISSING BASED ON LOCAL .ENV):**
+   * Live production credentials (e.g., `RESEND_API_KEY`, database credentials, live secrets) are stored in **Railway Dashboard Environment Variables** to prevent security leaks on GitHub.
+   * NEVER look at an empty local `.env` and claim that an integration (such as email, company details, or payment providers) is unconfigured or missing.
+   * Always cross-reference this `AGENTS.md` file, `git log`, and backend service implementations before stating project status.
+6. **NO GENERIC CHECKLISTS:** When asked "Eksik bir şey kaldı mı?" or assessing production readiness, do not output generic textbook checklists. Base answers strictly on the verified factual state recorded in this document.
