@@ -107,13 +107,31 @@ export const BusinessDashboard: React.FC = () => {
     <div className="page-wrapper">
       {/* Header */}
       <div className="page-header">
-        <div>
-          <h1 className="page-title">
-            {loading ? t('business.dashboardTitle') : `${business?.name || t('business.dashboardTitle')}`}
-          </h1>
-          <p className="page-subtitle mb-0">
-            {t('business.dashboardSubtitle')}
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {business?.logo && (
+            <img
+              src={business.logo}
+              alt={business.name}
+              style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                objectFit: 'cover',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                background: 'rgba(255, 255, 255, 0.03)',
+                flexShrink: 0,
+              }}
+            />
+          )}
+          <div>
+            <h1 className="page-title">
+              {loading ? t('business.dashboardTitle') : `${business?.name || t('business.dashboardTitle')}`}
+            </h1>
+            <p className="page-subtitle mb-0">
+              {t('business.dashboardSubtitle')}
+            </p>
+          </div>
         </div>
         <div className="page-header-actions">
           <button
