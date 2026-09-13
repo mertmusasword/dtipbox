@@ -577,11 +577,19 @@ router.get('/tip-pool/simulation', async (req: AuthRequest, res, next) => {
 
     const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
     const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
+    const manualCashAmount = req.query.manualCashAmount ? parseFloat(req.query.manualCashAmount as string) : undefined;
+    const manualPosAmount = req.query.manualPosAmount ? parseFloat(req.query.manualPosAmount as string) : undefined;
+    const deductPosFeeFromManualPos = req.query.deductPosFeeFromManualPos !== undefined
+      ? req.query.deductPosFeeFromManualPos === 'true'
+      : undefined;
 
     const simulation = await tipPoolService.getTipPoolSimulation(req.user!.businessId!, {
       startDate,
       endDate,
       activeEmployeeIds,
+      manualCashAmount,
+      manualPosAmount,
+      deductPosFeeFromManualPos,
     });
     res.json({ success: true, data: simulation });
   } catch (error) {
@@ -595,6 +603,9 @@ const settleTipPoolSchema = {
     end_date: z.string().optional(),
     note: z.string().optional(),
     active_employee_ids: z.array(z.string()).optional(),
+    manual_cash_amount: z.number().min(0).optional(),
+    manual_pos_amount: z.number().min(0).optional(),
+    deduct_pos_fee_from_manual_pos: z.boolean().optional(),
   }),
 };
 
@@ -610,6 +621,9 @@ router.post(
           endDate: req.body.end_date,
           notes: req.body.note,
           activeEmployeeIds: req.body.active_employee_ids,
+          manualCashAmount: req.body.manual_cash_amount,
+          manualPosAmount: req.body.manual_pos_amount,
+          deductPosFeeFromManualPos: req.body.deduct_pos_fee_from_manual_pos,
         }
       );
       res.status(201).json({

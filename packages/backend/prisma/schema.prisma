@@ -568,6 +568,8 @@ model TipPoolDistribution {
   period_start           DateTime
   period_end             DateTime
   gross_amount           Decimal        @db.Decimal(12, 2)
+  cash_amount            Decimal        @default(0.00) @db.Decimal(12, 2)
+  external_pos_amount    Decimal        @default(0.00) @db.Decimal(12, 2)
   pos_fee_amount         Decimal        @default(0.00) @db.Decimal(12, 2)
   tax_fee_amount         Decimal        @default(0.00) @db.Decimal(12, 2)
   net_distributed_amount Decimal        @db.Decimal(12, 2)
@@ -589,6 +591,8 @@ model TipPoolShare {
   share_weight    Decimal              @db.Decimal(4, 2)
   gross_share     Decimal              @db.Decimal(12, 2)
   net_share       Decimal              @db.Decimal(12, 2)
+  cash_share      Decimal              @default(0.00) @db.Decimal(12, 2)
+  digital_share   Decimal              @default(0.00) @db.Decimal(12, 2)
   is_paid         Boolean              @default(false)
   paid_at         DateTime?
 

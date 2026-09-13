@@ -251,6 +251,8 @@ export interface TipPoolSimulationEmployee {
   posFeeShare: number;
   taxFeeShare: number;
   netShare: number;
+  cashShare: number;
+  digitalShare: number;
 }
 
 export interface TipPoolSimulation {
@@ -271,10 +273,16 @@ export interface TipPoolSimulation {
   };
   summary: {
     grossAmount: number;
+    digitalGrossAmount?: number;
+    manualCashAmount?: number;
+    manualPosAmount?: number;
+    deductPosFeeFromManualPos?: boolean;
     tipCount: number;
     posFeeAmount: number;
     taxFeeAmount: number;
     netDistributedAmount: number;
+    netCashPool?: number;
+    netDigitalPool?: number;
     participatingCount: number;
   };
   employees: TipPoolSimulationEmployee[];
@@ -286,6 +294,8 @@ export interface TipPoolDistribution {
   period_start: string;
   period_end: string;
   gross_amount: number | string;
+  cash_amount?: number | string;
+  external_pos_amount?: number | string;
   pos_fee_amount: number | string;
   tax_fee_amount: number | string;
   net_distributed_amount: number | string;
@@ -297,6 +307,8 @@ export interface TipPoolDistribution {
     share_weight: number | string;
     gross_share: number | string;
     net_share: number | string;
+    cash_share?: number | string;
+    digital_share?: number | string;
     is_paid: boolean;
     paid_at?: string | null;
     employee?: {

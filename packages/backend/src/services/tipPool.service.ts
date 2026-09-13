@@ -58,9 +58,18 @@ export async function updateTipDistributionSettings(
   return updated;
 }
 
+export interface TipPoolSimulationOptions {
+  startDate?: Date;
+  endDate?: Date;
+  activeEmployeeIds?: string[];
+  manualCashAmount?: number;
+  manualPosAmount?: number;
+  deductPosFeeFromManualPos?: boolean;
+}
+
 export async function getTipPoolSimulation(
   businessId: string,
-  options?: { startDate?: Date; endDate?: Date; activeEmployeeIds?: string[] }
+  options?: TipPoolSimulationOptions
 ) {
   const business = await prisma.business.findUnique({
     where: { id: businessId },
@@ -147,14 +156,21 @@ export async function getTipPoolSimulation(
     }
   }
 
-  const grossAmount = tips.reduce((sum, tip) => sum + Number(tip.amount), 0);
+  const digitalGross = tips.reduce((sum, tip) => sum + Number(tip.amount), 0);
   const tipCount = tips.length;
+
+  const manualCashAmount = Math.max(0, Number(options?.manualCashAmount || 0));
+  const manualPosAmount = Math.max(0, Number(options?.manualPosAmount || 0));
+  const deductPosFeeFromManualPos = options?.deductPosFeeFromManualPos !== false;
+
+  const grossAmount = Number((digitalGross + manualCashAmount + manualPosAmount).toFixed(2));
 
   // POS Commission calculation
   const posFeeRate = business.custom_pos_fee_rate ? Number(business.custom_pos_fee_rate) : 2.90;
   let posFeeAmount = 0;
   if (business.pos_fee_payer === 'STAFF') {
-    posFeeAmount = Number(((grossAmount * posFeeRate) / 100).toFixed(2));
+    const commissionableAmount = digitalGross + (deductPosFeeFromManualPos ? manualPosAmount : 0);
+    posFeeAmount = Number(((commissionableAmount * posFeeRate) / 100).toFixed(2));
   }
 
   // Tax/Accounting deduction calculation
@@ -167,6 +183,11 @@ export async function getTipPoolSimulation(
   }
 
   const netDistributedAmount = Math.max(0, Number((grossAmount - posFeeAmount - taxFeeAmount).toFixed(2)));
+
+  // Cash vs Digital net pool separation
+  const cashTaxFee = (taxFeeAmount > 0 && grossAmount > 0) ? (taxFeeAmount * (manualCashAmount / grossAmount)) : 0;
+  const netCashPool = Math.max(0, Number((manualCashAmount - cashTaxFee).toFixed(2)));
+  const netDigitalPool = Math.max(0, Number((netDistributedAmount - netCashPool).toFixed(2)));
 
   // Fetch active employees
   const allEmployees = await prisma.employee.findMany({
@@ -203,6 +224,8 @@ export async function getTipPoolSimulation(
     posFeeShare: number;
     taxFeeShare: number;
     netShare: number;
+    cashShare: number;
+    digitalShare: number;
   }> = [];
 
   if (participatingEmployees.length === 0 || grossAmount === 0) {
@@ -216,6 +239,8 @@ export async function getTipPoolSimulation(
       posFeeShare: 0,
       taxFeeShare: 0,
       netShare: 0,
+      cashShare: 0,
+      digitalShare: 0,
     }));
   } else if (mode === 'EQUAL_POOL') {
     // Equal distribution among active participating employees
@@ -224,6 +249,8 @@ export async function getTipPoolSimulation(
     const netPerPerson = Number((netDistributedAmount / count).toFixed(2));
     const posPerPerson = Number((posFeeAmount / count).toFixed(2));
     const taxPerPerson = Number((taxFeeAmount / count).toFixed(2));
+    const cashPerPerson = Number((netCashPool / count).toFixed(2));
+    const digitalPerPerson = Number((netPerPerson - cashPerPerson).toFixed(2));
 
     employeeShares = participatingEmployees.map((emp) => ({
       employeeId: emp.id,
@@ -235,6 +262,8 @@ export async function getTipPoolSimulation(
       posFeeShare: posPerPerson,
       taxFeeShare: taxPerPerson,
       netShare: netPerPerson,
+      cashShare: cashPerPerson,
+      digitalShare: digitalPerPerson,
     }));
   } else if (mode === 'POINT_POOL') {
     // Weighted point/share distribution
@@ -251,6 +280,8 @@ export async function getTipPoolSimulation(
       const empNet = Number((netDistributedAmount * ratio).toFixed(2));
       const empPos = Number((posFeeAmount * ratio).toFixed(2));
       const empTax = Number((taxFeeAmount * ratio).toFixed(2));
+      const empCash = Number((netCashPool * ratio).toFixed(2));
+      const empDigital = Number((empNet - empCash).toFixed(2));
 
       return {
         employeeId: emp.id,
@@ -262,12 +293,14 @@ export async function getTipPoolSimulation(
         posFeeShare: empPos,
         taxFeeShare: empTax,
         netShare: empNet,
+        cashShare: empCash,
+        digitalShare: empDigital,
       };
     });
   } else {
     // INDIVIDUAL: Direct tips to each employee + remainder distributed
     const empGrossMap = new Map<string, number>();
-    let unassignedGross = 0;
+    let unassignedGross = manualCashAmount + manualPosAmount;
 
     for (const tip of tips) {
       const amt = Number(tip.amount);
@@ -278,7 +311,6 @@ export async function getTipPoolSimulation(
       }
     }
 
-    // Distribute unassigned table tips equally if any
     const extraPerPerson = participatingEmployees.length > 0 ? unassignedGross / participatingEmployees.length : 0;
     const deductionRatio = grossAmount > 0 ? netDistributedAmount / grossAmount : 1;
 
@@ -287,6 +319,9 @@ export async function getTipPoolSimulation(
       const empGross = Number((directGross + extraPerPerson).toFixed(2));
       const empNet = Number((empGross * deductionRatio).toFixed(2));
       const empDeduction = Number((empGross - empNet).toFixed(2));
+      const cashRatio = netDistributedAmount > 0 ? netCashPool / netDistributedAmount : 0;
+      const empCash = Number((empNet * cashRatio).toFixed(2));
+      const empDigital = Number((empNet - empCash).toFixed(2));
 
       return {
         employeeId: emp.id,
@@ -298,6 +333,8 @@ export async function getTipPoolSimulation(
         posFeeShare: Number(((empDeduction * (posFeeAmount / Math.max(1, posFeeAmount + taxFeeAmount))) || 0).toFixed(2)),
         taxFeeShare: Number(((empDeduction * (taxFeeAmount / Math.max(1, posFeeAmount + taxFeeAmount))) || 0).toFixed(2)),
         netShare: empNet,
+        cashShare: empCash,
+        digitalShare: empDigital,
       };
     });
   }
@@ -320,10 +357,16 @@ export async function getTipPoolSimulation(
     },
     summary: {
       grossAmount,
+      digitalGrossAmount: digitalGross,
+      manualCashAmount,
+      manualPosAmount,
+      deductPosFeeFromManualPos,
       tipCount,
       posFeeAmount,
       taxFeeAmount,
       netDistributedAmount,
+      netCashPool,
+      netDigitalPool,
       participatingCount: participatingEmployees.length,
     },
     employees: employeeShares,
@@ -338,6 +381,9 @@ export async function settleTipPool(
     endDate?: string;
     notes?: string;
     activeEmployeeIds?: string[];
+    manualCashAmount?: number;
+    manualPosAmount?: number;
+    deductPosFeeFromManualPos?: boolean;
   }
 ) {
   const start = data.startDate ? new Date(data.startDate) : undefined;
@@ -347,6 +393,9 @@ export async function settleTipPool(
     startDate: start,
     endDate: end,
     activeEmployeeIds: data.activeEmployeeIds,
+    manualCashAmount: data.manualCashAmount,
+    manualPosAmount: data.manualPosAmount,
+    deductPosFeeFromManualPos: data.deductPosFeeFromManualPos,
   });
 
   if (simulation.summary.grossAmount <= 0) {
@@ -361,6 +410,8 @@ export async function settleTipPool(
         period_start: new Date(simulation.period.start),
         period_end: new Date(simulation.period.end),
         gross_amount: simulation.summary.grossAmount,
+        cash_amount: simulation.summary.manualCashAmount,
+        external_pos_amount: simulation.summary.manualPosAmount,
         pos_fee_amount: simulation.summary.posFeeAmount,
         tax_fee_amount: simulation.summary.taxFeeAmount,
         net_distributed_amount: simulation.summary.netDistributedAmount,
@@ -374,6 +425,8 @@ export async function settleTipPool(
       share_weight: emp.shareWeight,
       gross_share: emp.grossShare,
       net_share: emp.netShare,
+      cash_share: emp.cashShare,
+      digital_share: emp.digitalShare,
       is_paid: false,
     }));
 

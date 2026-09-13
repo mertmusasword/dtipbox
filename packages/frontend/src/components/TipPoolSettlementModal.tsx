@@ -13,6 +13,7 @@ import {
   FileSpreadsheet,
   History,
   Info,
+  Coins,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useLanguage } from '../i18n';
@@ -41,34 +42,52 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   const [simulation, setSimulation] = useState<TipPoolSimulation | null>(null);
   const [historyList, setHistoryList] = useState<TipPoolDistribution[]>([]);
   const [excludedEmployeeIds, setExcludedEmployeeIds] = useState<string[]>([]);
+  const [manualCash, setManualCash] = useState<string>('');
+  const [manualPos, setManualPos] = useState<string>('');
+  const [deductPosFeeFromManualPos, setDeductPosFeeFromManualPos] = useState<boolean>(true);
+  const [showManualInputs, setShowManualInputs] = useState<boolean>(false);
   const [note, setNote] = useState('');
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<TipPoolDistribution | null>(null);
 
-  // Fetch simulation
-  const fetchSimulation = useCallback(async (excluded: string[] = []) => {
-    try {
-      setLoading(true);
-      const res = await api.get('/business/tip-pool/simulation');
-      if (res.data?.success && res.data.data) {
-        const sim: TipPoolSimulation = res.data.data;
-        if (excluded.length > 0) {
-          const activeIds = sim.employees
+  // Fetch simulation with optional manual parameters
+  const fetchSimulation = useCallback(
+    async (
+      excluded: string[] = excludedEmployeeIds,
+      cashVal: string = manualCash,
+      posVal: string = manualPos,
+      deductFee: boolean = deductPosFeeFromManualPos
+    ) => {
+      try {
+        setLoading(true);
+        const params: any = {};
+        if (excluded.length > 0 && simulation) {
+          const activeIds = simulation.employees
             .filter((e) => !excluded.includes(e.employeeId))
             .map((e) => e.employeeId);
-          const filteredRes = await api.get('/business/tip-pool/simulation', {
-            params: { activeEmployeeIds: activeIds.join(',') },
-          });
-          setSimulation(filteredRes.data.data);
-        } else {
-          setSimulation(sim);
+          params.activeEmployeeIds = activeIds.join(',');
         }
+        const cashNum = parseFloat(cashVal);
+        if (!isNaN(cashNum) && cashNum > 0) {
+          params.manualCashAmount = cashNum;
+        }
+        const posNum = parseFloat(posVal);
+        if (!isNaN(posNum) && posNum > 0) {
+          params.manualPosAmount = posNum;
+          params.deductPosFeeFromManualPos = deductFee;
+        }
+
+        const res = await api.get('/business/tip-pool/simulation', { params });
+        if (res.data?.success && res.data.data) {
+          setSimulation(res.data.data);
+        }
+      } catch {
+        showToast('Havuz simülasyonu yüklenemedi', 'error');
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      showToast('Havuz simülasyonu yüklenemedi', 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, [showToast]);
+    },
+    [excludedEmployeeIds, manualCash, manualPos, deductPosFeeFromManualPos, simulation, showToast]
+  );
 
   // Fetch past settlements
   const fetchHistory = useCallback(async () => {
@@ -85,19 +104,38 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setExcludedEmployeeIds([]);
+      setManualCash('');
+      setManualPos('');
+      setDeductPosFeeFromManualPos(true);
+      setShowManualInputs(false);
       setNote('');
       setSelectedHistoryItem(null);
-      fetchSimulation([]);
+      fetchSimulation([], '', '', true);
       fetchHistory();
     }
-  }, [isOpen, fetchSimulation, fetchHistory]);
+  }, [isOpen, fetchHistory]);
 
   const toggleEmployeeParticipation = (employeeId: string) => {
     const updated = excludedEmployeeIds.includes(employeeId)
       ? excludedEmployeeIds.filter((id) => id !== employeeId)
       : [...excludedEmployeeIds, employeeId];
     setExcludedEmployeeIds(updated);
-    fetchSimulation(updated);
+    fetchSimulation(updated, manualCash, manualPos, deductPosFeeFromManualPos);
+  };
+
+  const handleCashChange = (val: string) => {
+    setManualCash(val);
+    fetchSimulation(excludedEmployeeIds, val, manualPos, deductPosFeeFromManualPos);
+  };
+
+  const handlePosChange = (val: string) => {
+    setManualPos(val);
+    fetchSimulation(excludedEmployeeIds, manualCash, val, deductPosFeeFromManualPos);
+  };
+
+  const handleDeductFeeChange = (val: boolean) => {
+    setDeductPosFeeFromManualPos(val);
+    fetchSimulation(excludedEmployeeIds, manualCash, manualPos, val);
   };
 
   const handleSettle = async () => {
@@ -114,9 +152,15 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
     try {
       setSettling(true);
       const activeIds = simulation.employees.map((e) => e.employeeId);
+      const cashNum = parseFloat(manualCash);
+      const posNum = parseFloat(manualPos);
+
       await api.post('/business/tip-pool/settle', {
         note: note.trim() || undefined,
         active_employee_ids: activeIds,
+        manual_cash_amount: !isNaN(cashNum) && cashNum > 0 ? cashNum : undefined,
+        manual_pos_amount: !isNaN(posNum) && posNum > 0 ? posNum : undefined,
+        deduct_pos_fee_from_manual_pos: deductPosFeeFromManualPos,
       });
 
       showToast('Bahşişler personele başarıyla paylaştırıldı ve kasa kapatıldı!');
@@ -324,8 +368,132 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                   </div>
                 </div>
 
+                {/* Harici Nakit & Kendi POS Bahşişi Ekleme Butonu / Paneli */}
+                {!showManualInputs ? (
+                  <div style={{ marginBottom: '1.25rem', display: 'flex', justifyContent: 'flex-start' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowManualInputs(true)}
+                      className="btn btn-secondary btn-sm"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
+                        fontSize: '0.8rem',
+                        borderColor: 'rgba(234, 179, 8, 0.4)',
+                        color: '#fbbf24',
+                        background: 'rgba(234, 179, 8, 0.06)',
+                      }}
+                    >
+                      <Coins size={15} />
+                      + Fiziksel Tip Box (Nakit) veya Kendi POS Bahşişinizi Ekleyin
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className="glass-card"
+                    style={{
+                      padding: '1rem 1.25rem',
+                      marginBottom: '1.25rem',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(234, 179, 8, 0.3)',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '0.85rem',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24' }}>
+                        <Coins size={16} />
+                        Harici Bahşiş Ekle (Fiziksel Tip Box & İşletme POS'u)
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowManualInputs(false);
+                          if (manualCash || manualPos) {
+                            setManualCash('');
+                            setManualPos('');
+                            fetchSimulation(excludedEmployeeIds, '', '', deductPosFeeFromManualPos);
+                          }
+                        }}
+                        className="btn btn-secondary btn-sm"
+                        style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem' }}
+                      >
+                        Temizle & Gizle
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                        gap: '1rem',
+                      }}
+                    >
+                      <div>
+                        <label className="form-label" style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          💵 Fiziksel Tip Box / Nakit Bahşiş ({currency})
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Örn: 1250"
+                          value={manualCash}
+                          onChange={(e) => handleCashChange(e.target.value)}
+                          className="form-input"
+                          style={{ fontSize: '0.85rem' }}
+                        />
+                        <span style={{ fontSize: '0.7rem', color: '#4ade80', marginTop: '0.3rem', display: 'block' }}>
+                          ✓ Nakit paradan POS komisyonu kesilmez (%100 net elden dağıtılır).
+                        </span>
+                      </div>
+
+                      <div>
+                        <label className="form-label" style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          💳 Kendi POS'unuzdan Çekilen Bahşiş ({currency})
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Örn: 400"
+                          value={manualPos}
+                          onChange={(e) => handlePosChange(e.target.value)}
+                          className="form-input"
+                          style={{ fontSize: '0.85rem' }}
+                        />
+                        <label
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            marginTop: '0.4rem',
+                            cursor: 'pointer',
+                            fontSize: '0.73rem',
+                            color: 'var(--text-secondary)',
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={deductPosFeeFromManualPos}
+                            onChange={(e) => handleDeductFeeChange(e.target.checked)}
+                          />
+                          <span>POS komisyonu (%{simulation.settings.posFeeRate}) bu tutardan da düşülsün</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {simulation.summary.grossAmount <= 0 ? (
-                  <div style={{ textAlign: 'center', padding: '3.5rem 1rem' }}>
+                  <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
                     <div
                       style={{
                         width: '56px',
@@ -342,19 +510,31 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       <CheckCircle2 size={30} />
                     </div>
                     <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                      Kasanızda Dağıtılmamış Yeni Bahşiş Bulunmuyor
+                      Kasanızda Dağıtılmamış Bahşiş Bulunmuyor
                     </h4>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: '440px', margin: '0 auto 1.5rem', lineHeight: 1.5 }}>
-                      Önceki tüm bahşişler başarıyla dağıtıldı ve kasalar kapatıldı. Yeni dijital bahşişler alındıkça otomatik olarak burada birikecektir.
+                      Önceki tüm bahşişler başarıyla dağıtıldı. Kutudaki nakit parayı veya kendi POS'unuzdan çekilen bahşişi dağıtmak için yukarıdaki butondan harici tutar ekleyebilirsiniz.
                     </p>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('history')}
-                      className="btn btn-secondary btn-sm"
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-                    >
-                      <History size={14} /> Geçmiş Kapanış Raporlarını İncele
-                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
+                      {!showManualInputs && (
+                        <button
+                          type="button"
+                          onClick={() => setShowManualInputs(true)}
+                          className="btn btn-primary btn-sm"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                        >
+                          <Coins size={14} /> Nakit / Kendi POS Bahşişini Ekle
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('history')}
+                        className="btn btn-secondary btn-sm"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                      >
+                        <History size={14} /> Geçmiş Kapanışlar
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -375,7 +555,15 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       {formatCurrency(simulation.summary.grossAmount, currency)}
                     </div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                      {simulation.summary.tipCount} işlem
+                      {simulation.summary.manualCashAmount || simulation.summary.manualPosAmount ? (
+                        <span>
+                          Naponi: {formatCurrency(simulation.summary.digitalGrossAmount || 0, currency)}
+                          {simulation.summary.manualCashAmount ? ` • Nakit: ${formatCurrency(simulation.summary.manualCashAmount, currency)}` : ''}
+                          {simulation.summary.manualPosAmount ? ` • POS: ${formatCurrency(simulation.summary.manualPosAmount, currency)}` : ''}
+                        </span>
+                      ) : (
+                        `${simulation.summary.tipCount} işlem`
+                      )}
                     </div>
                   </div>
 
@@ -420,7 +608,14 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       {formatCurrency(simulation.summary.netDistributedAmount, currency)}
                     </div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                      {simulation.employees.length} aktif personel
+                      {simulation.summary.netCashPool && simulation.summary.netCashPool > 0 ? (
+                        <span>
+                          💵 {formatCurrency(simulation.summary.netCashPool, currency)} Nakit
+                          {simulation.summary.netDigitalPool && simulation.summary.netDigitalPool > 0 ? ` • 💳 ${formatCurrency(simulation.summary.netDigitalPool, currency)} Banka` : ''}
+                        </span>
+                      ) : (
+                        `${simulation.employees.length} aktif personel`
+                      )}
                     </div>
                   </div>
                 </div>
@@ -485,8 +680,18 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                                 <td className="text-right" style={{ fontSize: '0.85rem', color: '#f87171' }}>
                                   -{formatCurrency(totalDeduction, currency)}
                                 </td>
-                                <td className="text-right" style={{ fontSize: '0.95rem', fontWeight: 800, color: '#4ade80' }}>
-                                  {formatCurrency(emp.netShare, currency)}
+                                <td className="text-right">
+                                  <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#4ade80' }}>
+                                    {formatCurrency(emp.netShare, currency)}
+                                  </div>
+                                  {simulation.summary.netCashPool && simulation.summary.netCashPool > 0 ? (
+                                    <div style={{ fontSize: '0.7rem', marginTop: '0.15rem', display: 'flex', flexDirection: 'column', gap: '0.1rem', alignItems: 'flex-end' }}>
+                                      <span style={{ color: '#4ade80', fontWeight: 600 }}>💵 {formatCurrency(emp.cashShare, currency)} Nakit</span>
+                                      {emp.digitalShare > 0 && (
+                                        <span style={{ color: '#60a5fa' }}>💳 {formatCurrency(emp.digitalShare, currency)} Banka</span>
+                                      )}
+                                    </div>
+                                  ) : null}
                                 </td>
                               </tr>
                             );
@@ -548,7 +753,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', background: 'var(--bg-input)', padding: '0.75rem', borderRadius: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', background: 'var(--bg-input)', padding: '0.75rem', borderRadius: '8px' }}>
                       <div>
                         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Brüt: </span>
                         <strong>{formatCurrency(Number(selectedHistoryItem.gross_amount), currency)}</strong>
@@ -561,6 +766,18 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Stopaj: </span>
                         <strong style={{ color: '#fbbf24' }}>-{formatCurrency(Number(selectedHistoryItem.tax_fee_amount), currency)}</strong>
                       </div>
+                      {Number(selectedHistoryItem.cash_amount || 0) > 0 && (
+                        <div>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Nakit Bahşiş: </span>
+                          <strong style={{ color: '#4ade80' }}>💵 {formatCurrency(Number(selectedHistoryItem.cash_amount), currency)}</strong>
+                        </div>
+                      )}
+                      {Number(selectedHistoryItem.external_pos_amount || 0) > 0 && (
+                        <div>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Harici POS: </span>
+                          <strong style={{ color: '#60a5fa' }}>💳 {formatCurrency(Number(selectedHistoryItem.external_pos_amount), currency)}</strong>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -592,8 +809,18 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                             <td className="text-right" style={{ color: 'var(--text-muted)' }}>
                               {formatCurrency(Number(share.gross_share), currency)}
                             </td>
-                            <td className="text-right" style={{ fontWeight: 800, color: '#4ade80' }}>
-                              {formatCurrency(Number(share.net_share), currency)}
+                            <td className="text-right">
+                              <div style={{ fontWeight: 800, color: '#4ade80' }}>
+                                {formatCurrency(Number(share.net_share), currency)}
+                              </div>
+                              {Number(share.cash_share || 0) > 0 && (
+                                <div style={{ fontSize: '0.7rem', marginTop: '0.15rem', display: 'flex', flexDirection: 'column', gap: '0.1rem', alignItems: 'flex-end' }}>
+                                  <span style={{ color: '#4ade80', fontWeight: 600 }}>💵 {formatCurrency(Number(share.cash_share), currency)} Nakit</span>
+                                  {Number(share.digital_share || 0) > 0 && (
+                                    <span style={{ color: '#60a5fa' }}>💳 {formatCurrency(Number(share.digital_share), currency)} Banka</span>
+                                  )}
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))}
