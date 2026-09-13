@@ -48,6 +48,8 @@ import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted } from '../../analytics';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 import { SupportTicketModal } from '../../components/SupportTicketModal';
+import { LegalModal, LegalTab } from '../../components/LegalModal';
+import { CookieBanner } from '../../components/CookieBanner';
 import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
@@ -61,6 +63,14 @@ export const HomePage: React.FC = () => {
 
   // Support Ticket Modal State
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+
+  // Legal Modal State (KVKK, Privacy, Terms, Cookies)
+  const [legalModalOpen, setLegalModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState<LegalTab>('kvkk');
+  const openLegal = (tab: LegalTab) => {
+    setLegalModalTab(tab);
+    setLegalModalOpen(true);
+  };
 
   // Business Suite Mockup active tab ('analytics' | 'pooling' | 'qr')
   const [suiteTab, setSuiteTab] = useState<'analytics' | 'pooling' | 'qr'>('analytics');
@@ -1511,16 +1521,52 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="home-footer-bottom">
-            <div>
+          <div className="home-footer-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
+            <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
               © {new Date().getFullYear()} NAPONI. {t('home.footerRights')}
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-              <Link to="/blog" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.blogGuides')}</Link>
-              <Link to="/solutions/restaurants" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.sectors')}</Link>
-              <Link to="/tools/tip-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.calculator')}</Link>
-              <a href="#faq" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.faq')}</a>
-              <a href="#how-it-works" style={{ color: '#64748b', textDecoration: 'none' }}>{t('nav.features')}</a>
+            
+            {/* Legal & Compliance Links */}
+            <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center', fontSize: '0.82rem' }}>
+              <button
+                type="button"
+                onClick={() => openLegal('kvkk')}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0, textDecoration: 'none', fontSize: 'inherit', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#34d399')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+              >
+                {language === 'tr' ? '📄 KVKK Aydınlatma Metni' : '📄 GDPR & Data Notice'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => openLegal('privacy')}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0, textDecoration: 'none', fontSize: 'inherit', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#38bdf8')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+              >
+                {language === 'tr' ? '🔒 Gizlilik Politikası' : '🔒 Privacy Policy'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => openLegal('terms')}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0, textDecoration: 'none', fontSize: 'inherit', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#f59e0b')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+              >
+                {language === 'tr' ? '📜 Kullanım Koşulları' : '📜 Terms of Service'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => openLegal('cookies')}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0, textDecoration: 'none', fontSize: 'inherit', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#a78bfa')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+              >
+                {language === 'tr' ? '🍪 Çerez Politikası' : '🍪 Cookie Policy'}
+              </button>
             </div>
           </div>
         </div>
@@ -1537,6 +1583,16 @@ export const HomePage: React.FC = () => {
         isOpen={supportModalOpen}
         onClose={() => setSupportModalOpen(false)}
       />
+
+      {/* Legal & Compliance Modal (KVKK, Privacy, Terms, Cookies) */}
+      <LegalModal
+        isOpen={legalModalOpen}
+        onClose={() => setLegalModalOpen(false)}
+        initialTab={legalModalTab}
+      />
+
+      {/* Non-intrusive Cookie Consent Banner */}
+      <CookieBanner onOpenLegalModal={openLegal} />
     </div>
   );
 };
