@@ -691,7 +691,7 @@ export const NaponiCatalogPage: React.FC = () => {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem', color: '#94a3b8' }}>
                 <div>🌐 <strong>Web:</strong> <span style={{ color: '#ffffff' }}>www.naponi.com</span></div>
-                <div>✉️ <strong>Kurumsal E-Posta:</strong> <span style={{ color: '#ffffff' }}>destek@naponi.com</span></div>
+                <div>✉️ <strong>Kurumsal E-Posta:</strong> <span style={{ color: '#ffffff' }}>info@naponi.com</span></div>
                 <div>💬 <strong>WhatsApp İşletme Hattı:</strong> <span style={{ color: '#ffffff' }}>+90 (555) 000 00 00</span></div>
               </div>
             </div>
