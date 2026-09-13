@@ -107,7 +107,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
     }
 
     const confirmed = window.confirm(
-      `Günün bahşiş havuzunu (${formatCurrency(simulation.summary.netDistributedAmount, currency)}) kesinleştirip ${simulation.employees.length} personele paylaştırmak istediğinize emin misiniz?`
+      `Kasada biriken net bahşişi (${formatCurrency(simulation.summary.netDistributedAmount, currency)}) seçili ${simulation.employees.length} personele paylaştırıp kasayı kapatmak istediğinize emin misiniz?`
     );
     if (!confirmed) return;
 
@@ -119,7 +119,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         active_employee_ids: activeIds,
       });
 
-      showToast('Bahşiş havuz dağıtımı başarıyla kesinleştirildi ve kaydedildi!');
+      showToast('Bahşişler personele başarıyla paylaştırıldı ve kasa kapatıldı!');
       fetchHistory();
       setActiveTab('history');
       if (onSettled) onSettled();
@@ -196,10 +196,10 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
             </div>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
-                Günün Bahşiş Dağıtımı & Kasa Kapat
+                Bahşiş Dağıtımı & Kasa Kapat
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                Toplanan brüt bahşiş, POS & stopaj kesintileri ve personel hak ediş dökümü
+                Kasadaki dağıtılmamış bahşişler, kesintiler ve personel hak ediş dökümü
               </p>
             </div>
           </div>
@@ -213,7 +213,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 className={`btn btn-sm ${activeTab === 'simulate' ? 'btn-primary' : 'btn-secondary'}`}
                 style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem' }}
               >
-                Simülasyon & Kapanış
+                Kasadaki Dağıtım
               </button>
               <button
                 type="button"
@@ -221,7 +221,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 className={`btn btn-sm ${activeTab === 'history' ? 'btn-primary' : 'btn-secondary'}`}
                 style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
               >
-                <History size={13} /> Geçmiş Raporlar
+                <History size={13} /> Geçmiş Kapanışlar
               </button>
             </div>
 
@@ -261,7 +261,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                     borderRadius: '10px',
                     background: 'rgba(99, 102, 241, 0.08)',
                     border: '1px solid rgba(99, 102, 241, 0.15)',
-                    marginBottom: '1.25rem',
+                    marginBottom: '1rem',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -295,6 +295,69 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                   </div>
                 </div>
 
+                {/* Kasadaki Birikim Bilgisi Banner */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '10px',
+                    background: 'rgba(59, 130, 246, 0.08)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    marginBottom: '1.25rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <Clock size={16} style={{ color: '#60a5fa' }} />
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {simulation.period.accumulationNote || 'Kasadaki Dağıtılmamış Bahşişler'}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    {simulation.period.lastSettlementAt
+                      ? `Son Kasa Kapanışı: ${formatDate(simulation.period.lastSettlementAt)} ${formatTime(simulation.period.lastSettlementAt)}`
+                      : 'İlk Kasa Kapanışı'}
+                  </div>
+                </div>
+
+                {simulation.summary.grossAmount <= 0 ? (
+                  <div style={{ textAlign: 'center', padding: '3.5rem 1rem' }}>
+                    <div
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        color: '#10b981',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 1.25rem',
+                      }}
+                    >
+                      <CheckCircle2 size={30} />
+                    </div>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+                      Kasanızda Dağıtılmamış Yeni Bahşiş Bulunmuyor
+                    </h4>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: '440px', margin: '0 auto 1.5rem', lineHeight: 1.5 }}>
+                      Önceki tüm bahşişler başarıyla dağıtıldı ve kasalar kapatıldı. Yeni dijital bahşişler alındıkça otomatik olarak burada birikecektir.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('history')}
+                      className="btn btn-secondary btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                      <History size={14} /> Geçmiş Kapanış Raporlarını İncele
+                    </button>
+                  </div>
+                ) : (
+                  <>
                 {/* Financial Breakdown Grid (Gross -> POS -> Tax -> Net) */}
                 <div
                   style={{
@@ -439,16 +502,18 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                   <label className="form-label" style={{ fontSize: '0.8rem' }}>Kapanış Notu / Vardiya Açıklaması (Opsiyonel)</label>
                   <input
                     type="text"
-                    placeholder="Örn: 13 Eylül Akşam Vardiyası Kapanışı - Şef Ali"
+                    placeholder="Örn: Akşam Kapanışı - Kasa 1"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     className="form-input"
                     style={{ fontSize: '0.85rem' }}
                   />
                 </div>
-              </div>
-            )
-          ) : (
+              </>
+            )}
+          </div>
+        )
+      ) : (
             /* History Tab */
             <div>
               {selectedHistoryItem ? (
@@ -627,7 +692,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 }}
               >
                 <CheckCircle2 size={15} />
-                {settling ? 'Kaydediliyor...' : 'Günü Kapat & Dağıtımı Kesinleştir'}
+                {settling ? 'Kaydediliyor...' : 'Kasayı Kapat & Bahşişleri Dağıt'}
               </button>
             </div>
           )}

@@ -371,19 +371,26 @@ model Tip {
   customer_name           String?
   customer_message        String?
 
+  // Pool distribution settlement tracking
+  is_settled                 Boolean       @default(false)
+  tip_pool_distribution_id   String?
+
   created_at DateTime @default(now())
 
   // Relations
-  business Business  @relation(fields: [business_id], references: [id], onDelete: Cascade)
-  employee Employee? @relation(fields: [employee_id], references: [id], onDelete: SetNull)
-  table    Table?    @relation(fields: [table_id], references: [id], onDelete: SetNull)
-  feedback Feedback?
+  business                Business              @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  employee                Employee?             @relation(fields: [employee_id], references: [id], onDelete: SetNull)
+  table                   Table?                @relation(fields: [table_id], references: [id], onDelete: SetNull)
+  feedback                Feedback?
+  tip_pool_distribution   TipPoolDistribution?  @relation(fields: [tip_pool_distribution_id], references: [id], onDelete: SetNull)
 
   @@index([business_id])
   @@index([employee_id])
   @@index([table_id])
   @@index([created_at])
   @@index([payment_status])
+  @@index([is_settled])
+  @@index([tip_pool_distribution_id])
   @@map("tips")
 }
 
@@ -569,6 +576,7 @@ model TipPoolDistribution {
 
   business               Business       @relation(fields: [business_id], references: [id], onDelete: Cascade)
   shares                 TipPoolShare[]
+  tips                   Tip[]
 
   @@index([business_id])
   @@map("tip_pool_distributions")

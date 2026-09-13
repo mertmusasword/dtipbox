@@ -79,31 +79,73 @@ export async function getTipPoolSimulation(
     throw new AppError('İşletme bulunamadı', 404);
   }
 
-  // Define period (default to today if not provided)
+  // Check for the most recent settlement for this business
+  const lastDistribution = await prisma.tipPoolDistribution.findFirst({
+    where: { business_id: businessId },
+    orderBy: { created_at: 'desc' },
+    select: { id: true, created_at: true },
+  });
+
+  const isCustomRange = Boolean(options?.startDate || options?.endDate);
   const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-  const periodStart = options?.startDate || startOfDay;
-  const periodEnd = options?.endDate || endOfDay;
+  let periodStart: Date = options?.startDate || new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  let periodEnd: Date = options?.endDate || new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  let tipsWhere: any;
 
-  // Query COMPLETED tips within the period
-  const tips = await prisma.tip.findMany({
-    where: {
+  if (isCustomRange) {
+    tipsWhere = {
       business_id: businessId,
       payment_status: 'SUCCESS',
       created_at: {
         gte: periodStart,
         lte: periodEnd,
       },
-    },
+    };
+  } else {
+    // Default mode: all un-settled tips in the cashbox!
+    tipsWhere = {
+      business_id: businessId,
+      payment_status: 'SUCCESS',
+      is_settled: false,
+    };
+  }
+
+  // Query COMPLETED tips
+  const tips = await prisma.tip.findMany({
+    where: tipsWhere,
     select: {
       id: true,
       amount: true,
       employee_id: true,
       created_at: true,
     },
+    orderBy: { created_at: 'asc' },
   });
+
+  if (!isCustomRange) {
+    if (tips.length > 0) {
+      periodStart = tips[0].created_at;
+      periodEnd = tips[tips.length - 1].created_at;
+    } else {
+      periodStart = lastDistribution ? lastDistribution.created_at : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      periodEnd = now;
+    }
+  }
+
+  let accumulationNote = 'Son Kasa Kapanışından Beri';
+  if (!lastDistribution) {
+    accumulationNote = 'İlk Kasa Kapanışı (Kasadaki tüm biriken bahşişler)';
+  } else {
+    const diffMs = now.getTime() - lastDistribution.created_at.getTime();
+    const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+    if (diffHours < 24) {
+      accumulationNote = 'Son kasa kapanışından bu yana';
+    } else {
+      const diffDays = Math.max(1, Math.round(diffHours / 24));
+      accumulationNote = `${diffDays} gündür biriken bahşişler (${diffHours} saat)`;
+    }
+  }
 
   const grossAmount = tips.reduce((sum, tip) => sum + Number(tip.amount), 0);
   const tipCount = tips.length;
@@ -264,6 +306,9 @@ export async function getTipPoolSimulation(
     period: {
       start: periodStart.toISOString(),
       end: periodEnd.toISOString(),
+      accumulationNote,
+      lastSettlementAt: lastDistribution ? lastDistribution.created_at.toISOString() : null,
+      isAccumulated: !isCustomRange,
     },
     currency: business.currency,
     settings: {
@@ -282,6 +327,7 @@ export async function getTipPoolSimulation(
       participatingCount: participatingEmployees.length,
     },
     employees: employeeShares,
+    tipIds: tips.map((t) => t.id),
   };
 }
 
@@ -304,7 +350,7 @@ export async function settleTipPool(
   });
 
   if (simulation.summary.grossAmount <= 0) {
-    throw new AppError('Seçilen dönemde dağıtılacak bahşiş bulunmamaktadır', 400);
+    throw new AppError('Kasadaki dağıtılacak bahşiş tutarı 0. Dağıtılacak işlem bulunmamaktadır.', 400);
   }
 
   // Create distribution record and shares in transaction
@@ -334,6 +380,19 @@ export async function settleTipPool(
     if (sharesData.length > 0) {
       await tx.tipPoolShare.createMany({
         data: sharesData,
+      });
+    }
+
+    // Mark settled tips
+    if (simulation.tipIds && simulation.tipIds.length > 0) {
+      await tx.tip.updateMany({
+        where: {
+          id: { in: simulation.tipIds },
+        },
+        data: {
+          is_settled: true,
+          tip_pool_distribution_id: distribution.id,
+        },
       });
     }
 

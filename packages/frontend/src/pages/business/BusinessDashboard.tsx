@@ -147,7 +147,7 @@ export const BusinessDashboard: React.FC = () => {
               background: 'rgba(99, 102, 241, 0.08)',
             }}
           >
-            <Split size={16} /> Günün Dağıtımı & Kasa Kapat
+            <Split size={16} /> Bahşiş Dağıt & Kasa Kapat
           </button>
           <Link to="/business/qr" className="btn btn-secondary">
             <QrCode size={16} /> {t('nav.qrCodes')}

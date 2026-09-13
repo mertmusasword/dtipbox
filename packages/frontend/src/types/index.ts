@@ -257,6 +257,9 @@ export interface TipPoolSimulation {
   period: {
     start: string;
     end: string;
+    accumulationNote?: string;
+    lastSettlementAt?: string | null;
+    isAccumulated?: boolean;
   };
   currency: string;
   settings: {
