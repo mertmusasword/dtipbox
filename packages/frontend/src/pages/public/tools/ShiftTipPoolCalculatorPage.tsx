@@ -2,28 +2,23 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Calculator,
-  Users,
-  Clock,
-  Coins,
   Download,
   Printer,
   Copy,
   Check,
   Plus,
   Trash2,
-  Share2,
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
   ChevronDown,
   ChevronUp,
-  FileSpreadsheet,
-  AlertCircle
+  Sparkles
 } from 'lucide-react';
 import { SeoHead } from '../../../components/SeoHead';
 import { SEO_TOOLS, SEO_TOOLS_EN } from '../../../content/tools/tools';
 import { useLanguage, LanguageSelector } from '../../../i18n';
 import '../../../styles/home.css';
+import '../../../styles/blog.css';
+import '../../../styles/seo-features.css';
 
 interface StaffMember {
   id: string;
@@ -43,7 +38,7 @@ const PRESET_ROLES = [
 ];
 
 export const ShiftTipPoolCalculatorPage: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isEn = language !== 'tr';
   const meta = isEn ? SEO_TOOLS_EN['restaurant-tip-pool-calculator'] : SEO_TOOLS['restaurant-tip-pool-calculator'];
 
@@ -193,7 +188,7 @@ export const ShiftTipPoolCalculatorPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0A0D14] text-slate-100 selection:bg-emerald-500 selection:text-white font-sans">
+    <div className="home-wrapper">
       <SeoHead
         title={meta.metaTitle}
         description={meta.metaDescription}
@@ -202,389 +197,345 @@ export const ShiftTipPoolCalculatorPage: React.FC = () => {
       />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0A0D14]/80 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-              N
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors">
-              Naponi
-            </span>
+      <header className="home-nav-wrapper">
+        <nav className="home-nav" aria-label="Tool Navigation">
+          <Link to="/" className="home-nav-brand">
+            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-            <Link to="/guides" className="hover:text-white transition-colors">
-              {isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}
-            </Link>
-            <Link to="/tools/restaurant-tip-pool-calculator" className="text-emerald-400 font-semibold transition-colors">
-              {isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}
-            </Link>
-            <Link to="/tools/free-hospitality-qr-generator" className="hover:text-white transition-colors">
-              {isEn ? 'QR Generator' : 'QR Üretici'}
-            </Link>
-            <Link to="/compare/card-machine-vs-qr-tipping" className="hover:text-white transition-colors">
-              {isEn ? 'Compare' : 'Karşılaştırma'}
-            </Link>
-          </nav>
+          <ul className="home-nav-links-seo">
+            <li><Link to="/guides">{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link></li>
+            <li><Link to="/tools/restaurant-tip-pool-calculator" className="active">{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link></li>
+            <li><Link to="/tools/free-hospitality-qr-generator">{isEn ? 'QR Generator' : 'QR Üretici'}</Link></li>
+            <li><Link to="/compare/card-machine-vs-qr-tipping">{isEn ? 'Comparisons' : 'Karşılaştırma'}</Link></li>
+          </ul>
 
-          <div className="flex items-center gap-4">
-            <LanguageSelector />
-            <Link
-              to="/register"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02]"
-            >
-              <span>{isEn ? 'Get Started' : 'Hemen Başla'}</span>
-              <ArrowRight className="w-4 h-4" />
+          <div className="home-nav-actions">
+            <LanguageSelector variant="navbar" />
+            <Link to="/login" className="home-btn-ghost">
+              {isEn ? 'Login' : 'Giriş'}
+            </Link>
+            <Link to="/register" className="home-btn-primary">
+              {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
             </Link>
           </div>
-        </div>
+        </nav>
       </header>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-8">
-          <Link to="/" className="hover:text-slate-300 transition-colors">{isEn ? 'Home' : 'Ana Sayfa'}</Link>
-          <span>/</span>
-          <span className="hover:text-slate-300">{isEn ? 'Tools' : 'Araçlar'}</span>
-          <span>/</span>
-          <span className="text-emerald-400 font-medium">{isEn ? 'Shift Tip Pool Calculator' : 'Vardiya Bahşiş Havuzu'}</span>
-        </nav>
+      <main className="seo-page-wrapper">
+        <div className="home-container">
+          {/* Breadcrumb */}
+          <nav className="blog-breadcrumbs" aria-label="Breadcrumb">
+            <Link to="/">{isEn ? 'Home' : 'Ana Sayfa'}</Link>
+            <span>/</span>
+            <span style={{ color: '#94a3b8' }}>{isEn ? 'Tools' : 'Araçlar'}</span>
+            <span>/</span>
+            <span style={{ color: '#10b981', fontWeight: 600 }}>{isEn ? 'Shift Tip Pool' : 'Vardiya Havuzu'}</span>
+          </nav>
 
-        {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-4">
-            <Calculator className="w-3.5 h-3.5" />
-            <span>{meta.badge}</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
-            {meta.title}
-          </h1>
-          <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
-            {meta.description}
-          </p>
-        </div>
-
-        {/* Tool Workspace Card */}
-        <div className="bg-slate-900/60 rounded-3xl p-6 sm:p-10 border border-white/10 shadow-2xl mb-16">
-          {/* Top Bar: Currency & Shift Totals */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 pb-8 border-b border-white/5">
-            {/* Currency */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                {isEn ? 'Currency' : 'Para Birimi'}
-              </label>
-              <div className="flex gap-2">
-                {['₺', '$', '€', '£', '¥'].map((curr) => (
-                  <button
-                    key={curr}
-                    type="button"
-                    onClick={() => setCurrency(curr)}
-                    className={`flex-1 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                      currency === curr
-                        ? 'bg-emerald-500 text-slate-950 font-extrabold'
-                        : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5'
-                    }`}
-                  >
-                    {curr}
-                  </button>
-                ))}
+          {/* Hero */}
+          <div className="seo-hero-card" style={{ textAlign: 'center' }}>
+            <div className="seo-hero-glow" />
+            <div style={{ position: 'relative', zIndex: 1, maxWidth: 860, margin: '0 auto' }}>
+              <div className="seo-badge-row" style={{ justifyContent: 'center' }}>
+                <span className="seo-pill seo-pill-emerald">
+                  <Calculator size={14} />
+                  <span>{meta.badge}</span>
+                </span>
               </div>
-            </div>
-
-            {/* Cash Box Tips */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                {isEn ? 'Physical Cash Tip Box' : 'Fiziksel Tip Box (Nakit)'}
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{currency}</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={cashTips}
-                  onChange={(e) => setCashTips(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-white font-bold focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Bank POS Tips */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                {isEn ? 'Bank POS Slip Tips' : 'Banka POS Slip Bahşişleri'}
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{currency}</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={posTips}
-                  onChange={(e) => setPosTips(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-white font-bold focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Digital QR Tips */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                {isEn ? 'Digital QR / App Tips' : 'Dijital QR / Naponi Bahşişi'}
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{currency}</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={digitalTips}
-                  onChange={(e) => setDigitalTips(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-white font-bold focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
+              <h1 className="seo-page-title">{meta.title}</h1>
+              <p className="seo-page-desc" style={{ margin: '0 auto' }}>{meta.description}</p>
             </div>
           </div>
 
-          {/* Quick Metrics Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5">
-              <span className="text-xs text-emerald-400 font-semibold block mb-1">
-                {isEn ? 'Total Shift Pool' : 'Toplam Vardiya Havuzu'}
-              </span>
-              <span className="text-2xl sm:text-3xl font-extrabold text-white">
-                {currency}{totalPool.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
+          {/* Workspace Card */}
+          <div className="seo-workspace-card">
+            {/* Top Inputs: Currency & Pool Sources */}
+            <div className="seo-workspace-topbar">
+              <div>
+                <label className="seo-calc-input-label">{isEn ? 'Currency' : 'Para Birimi'}</label>
+                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                  {['₺', '$', '€', '£', '¥'].map((curr) => (
+                    <button
+                      key={curr}
+                      type="button"
+                      onClick={() => setCurrency(curr)}
+                      className={`seo-pct-btn ${currency === curr ? 'active' : ''}`}
+                      style={{ padding: '0.5rem 0.75rem' }}
+                    >
+                      {curr}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="seo-calc-input-label">{isEn ? 'Cash Tip Box' : 'Nakit Tip Kutusu'}</label>
+                <div className="seo-calc-input-wrapper" style={{ margin: 0 }}>
+                  <span className="seo-calc-input-symbol">{currency}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={cashTips}
+                    onChange={(e) => setCashTips(parseFloat(e.target.value) || 0)}
+                    className="seo-calc-input"
+                    style={{ fontSize: '1.1rem', padding: '0.65rem 0.75rem 0.65rem 2.25rem' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="seo-calc-input-label">{isEn ? 'Bank POS Slips' : 'Banka POS Slip'}</label>
+                <div className="seo-calc-input-wrapper" style={{ margin: 0 }}>
+                  <span className="seo-calc-input-symbol">{currency}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={posTips}
+                    onChange={(e) => setPosTips(parseFloat(e.target.value) || 0)}
+                    className="seo-calc-input"
+                    style={{ fontSize: '1.1rem', padding: '0.65rem 0.75rem 0.65rem 2.25rem' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="seo-calc-input-label">{isEn ? 'Digital QR Tips' : 'Dijital QR Bahşiş'}</label>
+                <div className="seo-calc-input-wrapper" style={{ margin: 0 }}>
+                  <span className="seo-calc-input-symbol">{currency}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={digitalTips}
+                    onChange={(e) => setDigitalTips(parseFloat(e.target.value) || 0)}
+                    className="seo-calc-input"
+                    style={{ fontSize: '1.1rem', padding: '0.65rem 0.75rem 0.65rem 2.25rem' }}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
-              <span className="text-xs text-slate-400 font-semibold block mb-1">
-                {isEn ? 'Total Shift Hours' : 'Toplam Vardiya Saati'}
-              </span>
-              <span className="text-2xl sm:text-3xl font-bold text-white">
-                {calculations.totalHours} hrs
-              </span>
+            {/* Metrics Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+              <div className="seo-metric-card highlight">
+                <span className="seo-stat-label" style={{ color: '#34d399' }}>{isEn ? 'Total Shift Pool' : 'Toplam Vardiya Havuzu'}</span>
+                <div className="seo-metric-val">{currency}{totalPool.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              </div>
+              <div className="seo-metric-card">
+                <span className="seo-stat-label">{isEn ? 'Total Shift Hours' : 'Toplam Vardiya Saati'}</span>
+                <div className="seo-metric-val">{calculations.totalHours} hrs</div>
+              </div>
+              <div className="seo-metric-card">
+                <span className="seo-stat-label">{isEn ? 'Total Weight Points' : 'Toplam Havuz Puanı'}</span>
+                <div className="seo-metric-val">{calculations.totalPoints.toFixed(1)} pts</div>
+              </div>
+              <div className="seo-metric-card">
+                <span className="seo-stat-label">{isEn ? '1 Point-Hour Value' : '1 Puan-Saat Değeri'}</span>
+                <div className="seo-metric-val" style={{ color: '#38bdf8' }}>{currency}{calculations.pointValue.toFixed(2)}</div>
+              </div>
             </div>
 
-            <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
-              <span className="text-xs text-slate-400 font-semibold block mb-1">
-                {isEn ? 'Total Weight Points' : 'Toplam Havuz Puanı'}
-              </span>
-              <span className="text-2xl sm:text-3xl font-bold text-white">
-                {calculations.totalPoints.toFixed(1)} pts
-              </span>
-            </div>
-
-            <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
-              <span className="text-xs text-slate-400 font-semibold block mb-1">
-                {isEn ? '1 Point-Hour Value' : '1 Puan-Saat Değeri'}
-              </span>
-              <span className="text-2xl sm:text-3xl font-bold text-emerald-400">
-                {currency}{calculations.pointValue.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
-          {/* Staff Roster Table */}
-          <div className="mb-8 overflow-x-auto">
-            <table className="w-full text-left text-sm border-collapse min-w-[640px]">
-              <thead>
-                <tr className="border-b border-white/10 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  <th className="py-3 px-3">{isEn ? 'Staff Member' : 'Personel Adı'}</th>
-                  <th className="py-3 px-3">{isEn ? 'Role' : 'Görevi'}</th>
-                  <th className="py-3 px-3">{isEn ? 'Role Weight' : 'Katsayı'}</th>
-                  <th className="py-3 px-3">{isEn ? 'Shift Hours' : 'Saat'}</th>
-                  <th className="py-3 px-3 text-right">{isEn ? 'Payout Share' : 'Hakediş'}</th>
-                  <th className="py-3 px-3 text-right">{isEn ? 'Effective / Hr' : 'Saatlik'}</th>
-                  <th className="py-3 px-2 text-center">{isEn ? 'Action' : 'İşlem'}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {calculations.distributions.map((member) => (
-                  <tr key={member.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="py-3 px-3">
-                      <input
-                        type="text"
-                        value={member.name}
-                        onChange={(e) => handleUpdateStaff(member.id, { name: e.target.value })}
-                        className="bg-transparent border border-transparent hover:border-white/20 focus:border-emerald-500 rounded-lg px-2 py-1 text-white font-medium focus:outline-none w-full"
-                      />
-                    </td>
-                    <td className="py-3 px-3">
-                      <select
-                        value={member.role}
-                        onChange={(e) => {
-                          const found = PRESET_ROLES.find((r) => r.id === e.target.value);
-                          handleUpdateStaff(member.id, {
-                            role: e.target.value,
-                            weight: found ? found.defaultWeight : 1.0,
-                          });
-                        }}
-                        className="bg-slate-800 border border-white/10 rounded-lg px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                      >
-                        {PRESET_ROLES.map((r) => (
-                          <option key={r.id} value={r.id}>
-                            {isEn ? r.name.en : r.name.tr} ({r.defaultWeight}x)
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="py-3 px-3">
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        value={member.weight}
-                        onChange={(e) => handleUpdateStaff(member.id, { weight: parseFloat(e.target.value) || 1.0 })}
-                        className="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-xs font-semibold focus:outline-none focus:border-emerald-500"
-                      />
-                    </td>
-                    <td className="py-3 px-3">
-                      <input
-                        type="number"
-                        step="0.5"
-                        min="0.5"
-                        value={member.hours}
-                        onChange={(e) => handleUpdateStaff(member.id, { hours: parseFloat(e.target.value) || 0 })}
-                        className="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-xs font-semibold focus:outline-none focus:border-emerald-500"
-                      />
-                    </td>
-                    <td className="py-3 px-3 text-right font-extrabold text-emerald-400 text-base">
-                      {currency}{member.amount.toFixed(2)}
-                    </td>
-                    <td className="py-3 px-3 text-right text-xs text-slate-400">
-                      {currency}{member.hourlyRate.toFixed(2)}/h
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveStaff(member.id)}
-                        disabled={staff.length <= 1}
-                        className="text-slate-500 hover:text-rose-400 disabled:opacity-30 disabled:hover:text-slate-500 p-1 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            {/* Roster Table */}
+            <div style={{ overflowX: 'auto', marginBottom: '1.5rem' }}>
+              <table className="seo-roster-table">
+                <thead>
+                  <tr>
+                    <th>{isEn ? 'Staff Member' : 'Personel Adı'}</th>
+                    <th>{isEn ? 'Role' : 'Görevi'}</th>
+                    <th>{isEn ? 'Weight' : 'Katsayı'}</th>
+                    <th>{isEn ? 'Hours' : 'Saat'}</th>
+                    <th style={{ textAlign: 'right' }}>{isEn ? 'Payout Share' : 'Hakediş'}</th>
+                    <th style={{ textAlign: 'right' }}>{isEn ? 'Hourly' : 'Saatlik'}</th>
+                    <th style={{ textAlign: 'center' }}>{isEn ? 'Action' : 'Sil'}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {calculations.distributions.map((member) => (
+                    <tr key={member.id}>
+                      <td>
+                        <input
+                          type="text"
+                          value={member.name}
+                          onChange={(e) => handleUpdateStaff(member.id, { name: e.target.value })}
+                          className="seo-roster-input"
+                          style={{ width: '100%' }}
+                        />
+                      </td>
+                      <td>
+                        <select
+                          value={member.role}
+                          onChange={(e) => {
+                            const found = PRESET_ROLES.find((r) => r.id === e.target.value);
+                            handleUpdateStaff(member.id, {
+                              role: e.target.value,
+                              weight: found ? found.defaultWeight : 1.0,
+                            });
+                          }}
+                          className="seo-roster-input"
+                          style={{ background: '#1e293b' }}
+                        >
+                          {PRESET_ROLES.map((r) => (
+                            <option key={r.id} value={r.id}>
+                              {isEn ? r.name.en : r.name.tr} ({r.defaultWeight}x)
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0.1"
+                          value={member.weight}
+                          onChange={(e) => handleUpdateStaff(member.id, { weight: parseFloat(e.target.value) || 1.0 })}
+                          className="seo-roster-input"
+                          style={{ width: 65 }}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0.5"
+                          value={member.hours}
+                          onChange={(e) => handleUpdateStaff(member.id, { hours: parseFloat(e.target.value) || 0 })}
+                          className="seo-roster-input"
+                          style={{ width: 65 }}
+                        />
+                      </td>
+                      <td style={{ textAlign: 'right', fontWeight: 800, color: '#34d399', fontSize: '1.1rem' }}>
+                        {currency}{member.amount.toFixed(2)}
+                      </td>
+                      <td style={{ textAlign: 'right', color: '#94a3b8', fontSize: '0.85rem' }}>
+                        {currency}{member.hourlyRate.toFixed(2)}/h
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveStaff(member.id)}
+                          disabled={staff.length <= 1}
+                          style={{ background: 'none', border: 'none', color: '#f43f5e', cursor: 'pointer', padding: '0.25rem' }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Action Buttons Row */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
-            <button
-              type="button"
-              onClick={handleAddStaff}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-semibold text-xs border border-white/10 transition-colors"
-            >
-              <Plus className="w-4 h-4 text-emerald-400" />
-              <span>{isEn ? 'Add Staff Member' : 'Personel Ekle'}</span>
-            </button>
-
-            <div className="flex items-center gap-3">
+            {/* Actions Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
               <button
                 type="button"
-                onClick={handleCopySummary}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold text-xs border border-white/10 transition-colors"
+                onClick={handleAddStaff}
+                className="home-btn-secondary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1.25rem' }}
               >
-                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                <span>{copied ? (isEn ? 'Copied!' : 'Kopyalandı!') : (isEn ? 'Copy Summary' : 'Özeti Kopyala')}</span>
+                <Plus size={16} color="#10b981" />
+                <span>{isEn ? 'Add Staff Member' : 'Personel Ekle'}</span>
               </button>
 
-              <button
-                type="button"
-                onClick={handleExportCsv}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold text-xs border border-white/10 transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                <span>{isEn ? 'Download CSV' : 'CSV İndir'}</span>
-              </button>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleCopySummary}
+                  className="home-btn-secondary"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1rem' }}
+                >
+                  {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
+                  <span>{copied ? (isEn ? 'Copied!' : 'Kopyalandı!') : (isEn ? 'Copy' : 'Kopyala')}</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-colors shadow-lg shadow-emerald-500/20"
-              >
-                <Printer className="w-4 h-4" />
-                <span>{isEn ? 'Print Shift Sheet' : 'Vardiya Raporu Yazdır'}</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={handleExportCsv}
+                  className="home-btn-secondary"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1rem' }}
+                >
+                  <Download size={16} />
+                  <span>{isEn ? 'Download CSV' : 'CSV İndir'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="home-btn-primary"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1.25rem' }}
+                >
+                  <Printer size={16} />
+                  <span>{isEn ? 'Print Sheet' : 'Rapor Yazdır'}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Feature / Upgrade Pitch */}
-        <section className="bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 rounded-3xl p-8 sm:p-12 border border-emerald-500/20 mb-20">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Tired of manual Excel spreadsheets?' : 'Manuel Excel hesaplarından sıkıldınız mı?'}</span>
+          {/* Upgrade Pitch */}
+          <div className="seo-verdict-card" style={{ flexDirection: 'column', marginBottom: '3.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <Sparkles size={24} color="#10b981" />
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#fff' }}>
+                {isEn ? 'Automate Your Restaurant Tip Pool with Naponi' : 'Restoranınızın Bahşiş Dağıtımını Naponi ile Otomatikleştirin'}
+              </h3>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-4">
-              {isEn ? 'Automate Your Restaurant Tip Pool with Naponi' : 'Restoranınızın Bahşiş Dağıtımını Naponi ile Otomatikleştirin'}
-            </h2>
-            <p className="text-slate-300 text-base leading-relaxed mb-6">
+            <p style={{ marginBottom: '1.5rem' }}>
               {isEn
                 ? 'Naponi connects physical cash tip boxes, external card terminals, and table QR tips into a single live dashboard. Staff see their exact shift earnings instantly on their phones, with automated payouts directly to their bank accounts.'
                 : 'Naponi hem masadaki nakit tip kutularını hem banka POS fişlerini hem de QR kodlu bahşişleri tek bir dijital havuzda birleştirir. Personel kazancını kendi mobil panelinden anında görür, tartışmalar ve hesaplama hataları son bulur.'}
             </p>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02]"
-            >
-              <span>{isEn ? 'Create Free Business Account' : 'Ücretsiz İşletme Hesabı Aç'}</span>
-              <ArrowRight className="w-4 h-4" />
+            <Link to="/register" className="home-btn-primary">
+              {isEn ? 'Create Free Business Account' : 'Ücretsiz İşletme Hesabı Aç'} <ArrowRight size={16} />
             </Link>
           </div>
-        </section>
 
-        {/* FAQs */}
-        <section className="max-w-3xl mx-auto mb-20">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              {isEn ? 'Frequently Asked Questions About Tip Pooling' : 'Bahşiş Havuzu ve Dağıtımı Hakkında Sık Sorulan Sorular'}
-            </h2>
-            <p className="text-slate-400 text-sm">
-              {isEn ? 'Legal compliance, role weighting, and best practices.' : 'Hukuki kurallar, puan sistemleri ve en iyi sektör uygulamaları.'}
-            </p>
-          </div>
+          {/* FAQs */}
+          <div className="seo-faq-wrap">
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#fff', marginBottom: '0.5rem' }}>
+                {isEn ? 'Frequently Asked Questions About Tip Pooling' : 'Bahşiş Havuzu ve Dağıtımı Hakkında Sık Sorulan Sorular'}
+              </h2>
+            </div>
 
-          <div className="space-y-4">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="bg-slate-900/50 rounded-2xl border border-white/5 overflow-hidden">
+              <div key={idx} className="seo-faq-card">
                 <button
                   type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between p-6 text-left"
+                  className="seo-faq-btn"
                 >
-                  <span className="font-semibold text-base text-white">
+                  <span className="seo-faq-question">
                     {isEn ? faq.q.en : faq.q.tr}
                   </span>
                   {openFaq === idx ? (
-                    <ChevronUp className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <ChevronUp size={18} color="#10b981" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />
+                    <ChevronDown size={18} color="#94a3b8" />
                   )}
                 </button>
                 {openFaq === idx && (
-                  <div className="px-6 pb-6 text-slate-300 text-sm leading-relaxed border-t border-white/5 pt-4">
+                  <div className="seo-faq-body">
                     {isEn ? faq.a.en : faq.a.tr}
                   </div>
                 )}
               </div>
             ))}
           </div>
-        </section>
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 bg-slate-950 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
-          <p className="mb-2">© 2026 Naponi. All rights reserved.</p>
-          <div className="flex justify-center gap-6 text-slate-400">
-            <Link to="/guides" className="hover:text-white transition-colors">{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link>
-            <Link to="/tools/restaurant-tip-pool-calculator" className="hover:text-white transition-colors">{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link>
-            <Link to="/tools/free-hospitality-qr-generator" className="hover:text-white transition-colors">{isEn ? 'QR Generator' : 'QR Üretici'}</Link>
-            <Link to="/compare/card-machine-vs-qr-tipping" className="hover:text-white transition-colors">{isEn ? 'POS vs QR' : 'POS vs QR'}</Link>
+      <footer className="home-footer">
+        <div className="home-container">
+          <div className="home-footer-bottom" style={{ borderTop: 'none', paddingTop: 0 }}>
+            <div>© {new Date().getFullYear()} NAPONI. {t('home.footerRights')}</div>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <Link to="/guides" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link>
+              <Link to="/tools/restaurant-tip-pool-calculator" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link>
+              <Link to="/tools/free-hospitality-qr-generator" style={{ color: '#64748b', textDecoration: 'none' }}>{isEn ? 'QR Generator' : 'QR Üretici'}</Link>
+              <Link to="/compare/card-machine-vs-qr-tipping" style={{ color: '#64748b', textDecoration: 'none' }}>POS vs QR</Link>
+            </div>
           </div>
         </div>
       </footer>
