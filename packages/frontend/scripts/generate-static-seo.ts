@@ -20,6 +20,8 @@ import { BLOG_POSTS } from '../src/content/blog/posts';
 import { SECTOR_SOLUTIONS } from '../src/content/solutions/sectors';
 import { SECTOR_SOLUTIONS_EN } from '../src/content/solutions/sectors-en';
 import { SEO_TOOLS, SEO_TOOLS_EN } from '../src/content/tools/tools';
+import { TIPPING_GUIDES } from '../src/content/guides/tipping-guides';
+import { COMPARISONS } from '../src/content/comparisons/comparisons';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -604,6 +606,200 @@ Object.values(SEO_TOOLS_EN).forEach((toolEn) => {
 });
 
 // =============================================================================
+// 4B. TIPPING GUIDES HUB & PROGRAMMATIC COUNTRY GUIDES PRE-RENDERING
+// =============================================================================
+console.log('[SEO-GEN] Pre-rendering Global Tipping Guides...');
+
+// Hub
+writeStaticRoute('guides', {
+  title: 'Global Tipping Guides 2026: Worldwide Etiquette, Rates & Customs — Naponi',
+  description: 'Explore comprehensive tipping etiquette, standard restaurant rates, taxi gratuity, and cashless customs across 10+ major tourist destinations.',
+  canonicalUrl: 'https://www.naponi.com/guides',
+  contentHtml: `
+    <main class="blog-container" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <header style="text-align: center; margin-bottom: 3rem;">
+        <span class="home-section-tag">Global Tipping Customs</span>
+        <h1 class="home-section-title">International Tipping Guides (2026)</h1>
+        <p class="home-section-desc">Worldwide tipping etiquette, rates, and digital customs for travelers and hospitality operators.</p>
+      </header>
+      <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+        ${TIPPING_GUIDES.map(g => `
+          <article style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.5rem; border-radius: 1rem;">
+            <h2><a href="/guides/tipping-in-${g.slug}" style="color: #10b981; text-decoration: none;">${g.flag} Tipping in ${g.country.en}</a></h2>
+            <p style="font-size: 0.875rem; color: #94a3b8; margin: 0.5rem 0 1rem;">Standard Restaurant Rate: <strong>${g.standardRate}</strong></p>
+            <p style="font-size: 0.875rem; color: #cbd5e1;">${g.shortOverview.en}</p>
+          </article>
+        `).join('\n')}
+      </section>
+    </main>
+  `,
+});
+
+// Individual country guides
+TIPPING_GUIDES.forEach((guide) => {
+  const canonicalUrl = `https://www.naponi.com/guides/tipping-in-${guide.slug}`;
+  const jsonLd: any[] = [
+    {
+      '@type': 'Article',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': canonicalUrl,
+      },
+      headline: guide.meta.title.en,
+      description: guide.meta.description.en,
+      author: {
+        '@type': 'Organization',
+        name: 'Naponi International Hospitality Research',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Naponi',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.naponi.com/logo.png',
+        },
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: guide.faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question.en,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer.en,
+        },
+      })),
+    },
+  ];
+
+  const contentHtml = `
+    <main class="blog-container" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <nav aria-label="Breadcrumb">
+        <a href="/">Home</a> &gt; <a href="/guides">Tipping Guides</a> &gt; <span>${guide.country.en}</span>
+      </nav>
+      <header style="margin: 2rem 0;">
+        <span class="home-section-tag">${guide.flag} ${guide.continent} • ${guide.currency} (${guide.currencySymbol})</span>
+        <h1 class="home-section-title">Tipping in ${guide.country.en}: 2026 Etiquette, Rates & Customs</h1>
+        <p class="home-section-desc">${guide.shortOverview.en}</p>
+      </header>
+
+      <section style="margin: 2rem 0;">
+        <h2>Cultural Context & Etiquette</h2>
+        <p>${guide.culturalContext.en}</p>
+      </section>
+
+      <section style="margin: 2rem 0;">
+        <h2>Sector Breakdown</h2>
+        <ul>
+          ${guide.sectors.map(s => `<li><strong>${s.name.en}:</strong> ${s.rate.en} — ${s.advice.en}</li>`).join('\n')}
+        </ul>
+      </section>
+
+      <section style="margin: 2rem 0;">
+        <h2>Cash vs Digital Tipping</h2>
+        <p>${guide.cashVsDigitalTips.en}</p>
+      </section>
+
+      <section style="margin: 2rem 0;">
+        <h2>Hospitality Business Operators in ${guide.country.en}</h2>
+        <p>${guide.businessInsight.en}</p>
+        <a href="/register" class="home-btn-primary">Set Up Naponi QR Tipping Free &rarr;</a>
+      </section>
+    </main>
+  `;
+
+  writeStaticRoute(`guides/tipping-in-${guide.slug}`, {
+    title: guide.meta.title.en,
+    description: guide.meta.description.en,
+    canonicalUrl,
+    keywords: guide.meta.keywords,
+    jsonLd,
+    contentHtml,
+  });
+});
+
+// =============================================================================
+// 4C. HIGH-INTENT B2B COMPARISONS PRE-RENDERING
+// =============================================================================
+console.log('[SEO-GEN] Pre-rendering B2B Comparisons...');
+
+COMPARISONS.forEach((comp) => {
+  const canonicalUrl = `https://www.naponi.com/compare/${comp.slug}`;
+  const jsonLd: any[] = [
+    {
+      '@type': 'Article',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': canonicalUrl,
+      },
+      headline: comp.meta.title.en,
+      description: comp.meta.description.en,
+      author: {
+        '@type': 'Organization',
+        name: 'Naponi Hospitality Research Lab',
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: comp.faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question.en,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer.en,
+        },
+      })),
+    },
+  ];
+
+  const contentHtml = `
+    <main class="blog-container" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <nav aria-label="Breadcrumb">
+        <a href="/">Home</a> &gt; <span>Comparisons</span> &gt; <span>${comp.slug}</span>
+      </nav>
+      <header style="margin: 2rem 0;">
+        <span class="home-section-tag">${comp.badge.en}</span>
+        <h1 class="home-section-title">${comp.title.en}</h1>
+        <p class="home-section-desc">${comp.subtitle.en}</p>
+      </header>
+
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1.5rem; border-radius: 1rem; margin: 2rem 0;">
+        <h3>Executive Verdict</h3>
+        <p>${comp.quickVerdict.en}</p>
+      </div>
+
+      <section style="margin: 2rem 0;">
+        <h2>Evaluation Criteria</h2>
+        <ul>
+          ${comp.comparisonTable.rows.map(r => `<li><strong>${r.feature.en}:</strong> ${r.optionA.en} vs <em>${r.optionB.en}</em> (${r.verdict.en})</li>`).join('\n')}
+        </ul>
+      </section>
+
+      ${comp.deepDiveSections.map(s => `
+        <section style="margin: 2rem 0;">
+          <h3>${s.title.en}</h3>
+          <p>${s.content.en}</p>
+        </section>
+      `).join('\n')}
+
+      <div style="margin: 3rem 0; text-align: center;">
+        <a href="/register" class="home-btn-primary">Try Naponi Cashless Tipping Free &rarr;</a>
+      </div>
+    </main>
+  `;
+
+  writeStaticRoute(`compare/${comp.slug}`, {
+    title: comp.meta.title.en,
+    description: comp.meta.description.en,
+    canonicalUrl,
+    keywords: comp.meta.keywords,
+    jsonLd,
+    contentHtml,
+  });
+});
+
+// =============================================================================
 // 5. DYNAMIC SITEMAP GENERATION WITH COMPLETE GLOBAL HREFLANG
 // =============================================================================
 function generateDynamicSitemap() {
@@ -657,6 +853,34 @@ function generateDynamicSitemap() {
   </url>`
   ).join('\n');
 
+  const guideUrls = `  <!-- 5B. Tipping Guides Hub -->
+  <url>
+    <loc>https://www.naponi.com/guides</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/guides" />
+  </url>
+${TIPPING_GUIDES.map(
+  (guide) => `  <url>
+    <loc>https://www.naponi.com/guides/tipping-in-${guide.slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/guides/tipping-in-${guide.slug}" />
+  </url>`
+).join('\n')}`;
+
+  const comparisonUrls = COMPARISONS.map(
+    (comp) => `  <url>
+    <loc>https://www.naponi.com/compare/${comp.slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/compare/${comp.slug}" />
+  </url>`
+  ).join('\n');
+
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -700,7 +924,13 @@ ${sectorUrls}
   <!-- 5. Free Interactive SEO Tools (${Object.keys(SEO_TOOLS_EN).length} tools) -->
 ${toolUrls}
 
-  <!-- 6. Business Registration & Authentication -->
+  <!-- 6. Global Tipping Guides (${TIPPING_GUIDES.length} destinations) -->
+${guideUrls}
+
+  <!-- 7. High-Intent B2B Comparisons (${COMPARISONS.length} reports) -->
+${comparisonUrls}
+
+  <!-- 8. Business Registration & Authentication -->
   <url>
     <loc>https://www.naponi.com/register</loc>
     <lastmod>${today}</lastmod>

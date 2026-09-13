@@ -19,6 +19,11 @@ const BlogDetailPage = React.lazy(() => import('./pages/public/blog/BlogDetailPa
 const SolutionPage = React.lazy(() => import('./pages/public/solutions/SolutionPage').then((m) => ({ default: m.SolutionPage })));
 const TipCalculatorPage = React.lazy(() => import('./pages/public/tools/TipCalculatorPage').then((m) => ({ default: m.TipCalculatorPage })));
 const TipSplitCalculatorPage = React.lazy(() => import('./pages/public/tools/TipSplitCalculatorPage').then((m) => ({ default: m.TipSplitCalculatorPage })));
+const ShiftTipPoolCalculatorPage = React.lazy(() => import('./pages/public/tools/ShiftTipPoolCalculatorPage').then((m) => ({ default: m.ShiftTipPoolCalculatorPage })));
+const FreeHospitalityQrGeneratorPage = React.lazy(() => import('./pages/public/tools/FreeHospitalityQrGeneratorPage').then((m) => ({ default: m.FreeHospitalityQrGeneratorPage })));
+const TippingGuidesHubPage = React.lazy(() => import('./pages/public/guides/TippingGuidesHubPage').then((m) => ({ default: m.TippingGuidesHubPage })));
+const TippingGuideDetailPage = React.lazy(() => import('./pages/public/guides/TippingGuideDetailPage').then((m) => ({ default: m.TippingGuideDetailPage })));
+const ComparisonDetailPage = React.lazy(() => import('./pages/public/comparisons/ComparisonDetailPage').then((m) => ({ default: m.ComparisonDetailPage })));
 
 // Auth Pages
 const LoginPage = React.lazy(() => import('./pages/auth/LoginPage').then((m) => ({ default: m.LoginPage })));
@@ -125,6 +130,16 @@ export const App: React.FC = () => {
                 {/* Public SEO Tools */}
                 <Route path="/tools/tip-calculator" element={<TipCalculatorPage />} />
                 <Route path="/tools/tip-split-calculator" element={<TipSplitCalculatorPage />} />
+                <Route path="/tools/restaurant-tip-pool-calculator" element={<ShiftTipPoolCalculatorPage />} />
+                <Route path="/tools/free-hospitality-qr-generator" element={<FreeHospitalityQrGeneratorPage />} />
+
+                {/* Public Country Tipping Guides (pSEO) */}
+                <Route path="/guides" element={<TippingGuidesHubPage />} />
+                <Route path="/guides/tipping-in-:country" element={<TippingGuideDetailPage />} />
+                <Route path="/guides/:country" element={<TippingGuideDetailPage />} />
+
+                {/* Public B2B Comparisons */}
+                <Route path="/compare/:slug" element={<ComparisonDetailPage />} />
 
                 {/* Public Customer Tip Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />

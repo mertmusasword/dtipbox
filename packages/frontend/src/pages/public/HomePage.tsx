@@ -197,7 +197,9 @@ export const HomePage: React.FC = () => {
           <ul className="home-nav-links">
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
-            <li><a href="#benefits" className="home-nav-link">{t('nav.businesses')}</a></li>
+            <li><Link to="/guides" className="home-nav-link">{language === 'tr' ? 'Rehberler' : 'Guides'}</Link></li>
+            <li><Link to="/tools/restaurant-tip-pool-calculator" className="home-nav-link">{language === 'tr' ? 'Araçlar' : 'Tools'}</Link></li>
+            <li><Link to="/compare/card-machine-vs-qr-tipping" className="home-nav-link">{language === 'tr' ? 'POS vs QR' : 'POS vs QR'}</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
@@ -240,7 +242,10 @@ export const HomePage: React.FC = () => {
           <div className="home-mobile-menu">
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
-            <a href="#benefits" onClick={() => setMobileMenuOpen(false)}>{t('nav.businesses')}</a>
+            <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Bahşiş Rehberleri' : 'Tipping Guides'}</Link>
+            <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Tip Pool Calculator'}</Link>
+            <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'QR Generator'}</Link>
+            <Link to="/compare/card-machine-vs-qr-tipping" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'POS vs QR Karşılaştırma' : 'POS vs QR Comparison'}</Link>
             <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
             <button
               type="button"
@@ -1468,15 +1473,20 @@ export const HomePage: React.FC = () => {
                 <li><a href="#experience">{t('nav.solutions')}</a></li>
                 <li><Link to="/solutions/restaurants">{t('nav.restaurants')}</Link></li>
                 <li><Link to="/solutions/hotels">{t('nav.hotels')}</Link></li>
-                <li><Link to="/solutions/cafes">{t('nav.cafes')}</Link></li>
+                <li><Link to="/tools/restaurant-tip-pool-calculator">{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Shift Tip Pool'}</Link></li>
+                <li><Link to="/tools/free-hospitality-qr-generator">{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'Hospitality QR Maker'}</Link></li>
                 <li><Link to="/tools/tip-calculator">{t('nav.tipCalculator')}</Link></li>
-                <li><Link to="/tools/tip-split-calculator">{t('nav.tipSplitter')}</Link></li>
+                <li><Link to="/compare/card-machine-vs-qr-tipping">{language === 'tr' ? 'POS vs QR Bahşiş' : 'POS vs QR Tipping'}</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">{t('home.footerPlatform')}</h4>
+              <h4 className="home-footer-col-title">{language === 'tr' ? 'Rehberler & Platform' : 'Guides & Platform'}</h4>
               <ul className="home-footer-links">
+                <li><Link to="/guides">{language === 'tr' ? 'Dünya Bahşiş Rehberleri' : 'Global Tipping Guides'}</Link></li>
+                <li><Link to="/guides/tipping-in-japan">{language === 'tr' ? 'Japonya Bahşiş Rehberi' : 'Tipping in Japan'}</Link></li>
+                <li><Link to="/guides/tipping-in-united-states">{language === 'tr' ? 'ABD Bahşiş Rehberi' : 'Tipping in USA'}</Link></li>
+                <li><Link to="/compare/best-cashless-tipping-systems">{language === 'tr' ? '2026 Bahşiş Sistemleri' : 'Cashless Systems Review'}</Link></li>
                 <li><Link to="/blog">{t('nav.blogGuides')}</Link></li>
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
                 <li><Link to="/login">{t('nav.login')}</Link></li>
@@ -1490,7 +1500,6 @@ export const HomePage: React.FC = () => {
                     <span>{t('support.widgetBtn')}</span>
                   </button>
                 </li>
-                <li><a href="#faq">{t('nav.faq')}</a></li>
               </ul>
             </div>
 
