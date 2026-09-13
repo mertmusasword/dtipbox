@@ -283,6 +283,26 @@ const en = {
     blogSubtitle: 'Actionable strategies for restaurants, cafes, and hotels on contactless tipping, tip pool fairness, and frontline team retention.',
     blogReadMore: 'Read Article →',
     blogExploreAll: 'Explore All Guides & Articles',
+
+    // Section 4B: Business & Manager Suite
+    suiteBadge: 'BUSINESS & MANAGER SUITE',
+    suiteTitle: 'Complete Visibility. Zero Midnight Math.',
+    suiteSubtitle: 'Whether running a beachfront cafe in New Zealand or a fine-dining bistro in Paris, manage daily tip pooling, staff payouts, and QR deployments from one unified portal.',
+    suiteTab1: 'Live Shift Insights',
+    suiteTab2: 'Hybrid Tip Pooling',
+    suiteTab3: 'Table & Staff QR Studio',
+
+    // Section 4C: Physical Touchpoints
+    touchBadge: 'PHYSICAL TOUCHPOINTS',
+    touchTitle: 'Blends Naturally Into Any Venue Interior',
+    touchSubtitle: 'Zero POS hardware to purchase or maintain. Download high-resolution vector designs or order customized acrylic stands and badges in minutes.',
+    touchCard1Title: 'Acrylic Table Tents & Wood Blocks',
+    touchCard1Desc: 'Place on dining tables, bar tops, or cafe counters. Guests scan privately and comfortably while finishing their coffee or bill.',
+    touchCard2Title: 'Smart Server & Valet Badges',
+    touchCard2Desc: 'Waiters, bartenders, bellboys, and valets wear discreet, high-contrast QR badges. Ideal for mobile or personalized service teams.',
+    touchCard3Title: 'Bill Folders & Guest Receipts',
+    touchCard3Desc: 'Place inside the leather bill presentation folio or print directly on thermal guest checks. No awkward waiter hovering over payment.',
+
     footerStatus: 'All Systems Operational',
     footerProduct: 'Product',
     footerPlatform: 'Platform & Resources',

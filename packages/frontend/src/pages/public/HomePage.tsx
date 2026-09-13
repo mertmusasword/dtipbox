@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   QrCode,
@@ -33,6 +33,15 @@ import {
   Send,
   Briefcase,
   Headphones,
+  BarChart3,
+  Sliders,
+  Download,
+  Award,
+  CheckCheck,
+  LayoutDashboard,
+  Coins,
+  Printer,
+  BadgeCheck,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -53,11 +62,101 @@ export const HomePage: React.FC = () => {
   // Support Ticket Modal State
   const [supportModalOpen, setSupportModalOpen] = useState(false);
 
+  // Business Suite Mockup active tab ('analytics' | 'pooling' | 'qr')
+  const [suiteTab, setSuiteTab] = useState<'analytics' | 'pooling' | 'qr'>('analytics');
+
+  // Adaptive phone simulator configs based on active language
+  const simConfig = useMemo(() => {
+    switch (language) {
+      case 'tr':
+        return {
+          currency: '₺',
+          defaultAmount: 50,
+          amounts: [20, 50, 100, 200],
+          venueName: 'The Grand Bistro & Lounge',
+          tableText: 'Masa 14 • Hızlı Bahşiş',
+          assignedLabel: 'Hizmet Veren Personel',
+          staffOptions: [
+            { id: 'Emre K. (Garson)', label: 'Emre K. (Garson)' },
+            { id: 'Selin B. (Barmen)', label: 'Selin B. (Barmen)' },
+            { id: 'Ortak Havuz (Tüm Ekip)', label: 'Ortak Havuz (Tüm Ekip)' },
+          ],
+          defaultStaff: 'Emre K. (Garson)',
+        };
+      case 'de':
+        return {
+          currency: '€',
+          defaultAmount: 5,
+          amounts: [3, 5, 10, 20],
+          venueName: 'The Grand Bistro & Lounge',
+          tableText: 'Tisch 14 • Trinkgeld',
+          assignedLabel: 'Servicekraft',
+          staffOptions: [
+            { id: 'Lukas M. (Service)', label: 'Lukas M. (Service)' },
+            { id: 'Sophie B. (Bar)', label: 'Sophie B. (Bar)' },
+            { id: 'Team Pool (Alle)', label: 'Team Pool (Alle)' },
+          ],
+          defaultStaff: 'Lukas M. (Service)',
+        };
+      case 'fr':
+        return {
+          currency: '€',
+          defaultAmount: 5,
+          amounts: [3, 5, 10, 20],
+          venueName: 'The Grand Bistro & Lounge',
+          tableText: 'Table 14 • Pourboire rapide',
+          assignedLabel: 'Membre de l\'équipe',
+          staffOptions: [
+            { id: 'Julien D. (Serveur)', label: 'Julien D. (Serveur)' },
+            { id: 'Camille V. (Bar)', label: 'Camille V. (Bar)' },
+            { id: 'Cagnotte d\'équipe', label: 'Cagnotte d\'équipe' },
+          ],
+          defaultStaff: 'Julien D. (Serveur)',
+        };
+      case 'es':
+        return {
+          currency: '€',
+          defaultAmount: 5,
+          amounts: [3, 5, 10, 20],
+          venueName: 'The Grand Bistro & Lounge',
+          tableText: 'Mesa 14 • Propina rápida',
+          assignedLabel: 'Personal de sala',
+          staffOptions: [
+            { id: 'Mateo R. (Camarero)', label: 'Mateo R. (Camarero)' },
+            { id: 'Lucía S. (Bar)', label: 'Lucía S. (Bar)' },
+            { id: 'Bote del equipo', label: 'Bote del equipo' },
+          ],
+          defaultStaff: 'Mateo R. (Camarero)',
+        };
+      default: // 'en' and others
+        return {
+          currency: '$',
+          defaultAmount: 5,
+          amounts: [3, 5, 10, 20],
+          venueName: 'The Grand Bistro & Lounge',
+          tableText: 'Table 14 • Quick Tip',
+          assignedLabel: 'Assigned Staff Member',
+          staffOptions: [
+            { id: 'Alex R. (Server)', label: 'Alex R. (Server)' },
+            { id: 'Elena M. (Bartender)', label: 'Elena M. (Bartender)' },
+            { id: 'Team Pool (All Staff)', label: 'Team Pool (All Staff)' },
+          ],
+          defaultStaff: 'Alex R. (Server)',
+        };
+    }
+  }, [language]);
+
   // Hero Simulator Interactive State
-  const [simAmount, setSimAmount] = useState<number>(10);
-  const [simStaff, setSimStaff] = useState<string>('Alex R. (Server)');
+  const [simAmount, setSimAmount] = useState<number>(simConfig.defaultAmount);
+  const [simStaff, setSimStaff] = useState<string>(simConfig.defaultStaff);
   const [simPayment, setSimPayment] = useState<'apple' | 'card' | 'wire'>('apple');
   const [simSuccess, setSimSuccess] = useState<boolean>(false);
+
+  // Sync simulator defaults whenever language changes
+  useEffect(() => {
+    setSimAmount(simConfig.defaultAmount);
+    setSimStaff(simConfig.defaultStaff);
+  }, [simConfig]);
 
   // FAQ Accordion State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -233,9 +332,9 @@ export const HomePage: React.FC = () => {
                   {/* Merchant Branding in Simulator */}
                   <div className="home-phone-header">
                     <div className="home-phone-venue-badge">
-                      <Building2 size={12} /> The Grand Bistro & Lounge
+                      <Building2 size={12} /> {simConfig.venueName}
                     </div>
-                    <div className="home-phone-venue-title">Table 14 • Quick Tip</div>
+                    <div className="home-phone-venue-title">{simConfig.tableText}</div>
                   </div>
 
                   {!simSuccess ? (
@@ -248,7 +347,7 @@ export const HomePage: React.FC = () => {
                           </div>
                           <div>
                             <div className="home-phone-staff-name">{simStaff}</div>
-                            <div className="home-phone-staff-role">Assigned Staff Member</div>
+                            <div className="home-phone-staff-role">{simConfig.assignedLabel}</div>
                           </div>
                         </div>
                         <select
@@ -263,23 +362,23 @@ export const HomePage: React.FC = () => {
                             outline: 'none'
                           }}
                         >
-                          <option value="Alex R. (Server)">Alex R.</option>
-                          <option value="Elena M. (Bartender)">Elena M.</option>
-                          <option value="Team Pool (All Staff)">Team Pool</option>
+                          {simConfig.staffOptions.map((opt) => (
+                            <option key={opt.id} value={opt.id}>{opt.label}</option>
+                          ))}
                         </select>
                       </div>
 
                       {/* Amount Selection */}
                       <div className="home-phone-amounts-label">{t('tip.selectAmountTitle')}</div>
                       <div className="home-phone-amounts-grid">
-                        {[3, 5, 10, 20].map((amt) => (
+                        {simConfig.amounts.map((amt) => (
                           <button
                             key={amt}
                             type="button"
                             className={`home-amount-chip ${simAmount === amt ? 'active' : ''}`}
                             onClick={() => setSimAmount(amt)}
                           >
-                            ${amt}
+                            {simConfig.currency}{amt}
                           </button>
                         ))}
                       </div>
@@ -307,7 +406,7 @@ export const HomePage: React.FC = () => {
 
                       {/* Submit Tip Button */}
                       <button type="submit" className="home-phone-tip-submit">
-                        <Zap size={16} /> {t('tip.payBtn')} ${simAmount}.00
+                        <Zap size={16} /> {t('tip.payBtn')} {simConfig.currency}{simAmount}.00
                       </button>
                     </form>
                   ) : (
@@ -381,6 +480,311 @@ export const HomePage: React.FC = () => {
               <p className="home-step-text">
                 {t('home.step3Desc')}
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          3B. BUSINESS & MANAGER SUITE SHOWCASE (OPERATIONAL DASHBOARD)
+          ==================================================================== */}
+      <section className="home-section" id="suite" style={{ paddingTop: 30, paddingBottom: 70 }}>
+        <div className="home-container">
+          <div className="home-section-header">
+            <span className="home-section-tag">{t('home.suiteBadge')}</span>
+            <h2 className="home-section-title">{t('home.suiteTitle')}</h2>
+            <p className="home-section-desc">
+              {t('home.suiteSubtitle')}
+            </p>
+          </div>
+
+          {/* Interactive Feature Tabs */}
+          <div className="home-suite-tabs">
+            <button
+              type="button"
+              className={`home-suite-tab-btn ${suiteTab === 'analytics' ? 'active' : ''}`}
+              onClick={() => setSuiteTab('analytics')}
+            >
+              <BarChart3 size={16} />
+              <span>{t('home.suiteTab1')}</span>
+            </button>
+            <button
+              type="button"
+              className={`home-suite-tab-btn ${suiteTab === 'pooling' ? 'active' : ''}`}
+              onClick={() => setSuiteTab('pooling')}
+            >
+              <Coins size={16} />
+              <span>{t('home.suiteTab2')}</span>
+            </button>
+            <button
+              type="button"
+              className={`home-suite-tab-btn ${suiteTab === 'qr' ? 'active' : ''}`}
+              onClick={() => setSuiteTab('qr')}
+            >
+              <QrCode size={16} />
+              <span>{t('home.suiteTab3')}</span>
+            </button>
+          </div>
+
+          {/* macOS Style Glassmorphic Dashboard Window */}
+          <div className="home-dashboard-frame">
+            {/* Title Bar */}
+            <div className="home-dash-titlebar">
+              <div className="home-dash-dots">
+                <span className="home-dash-dot red" />
+                <span className="home-dash-dot yellow" />
+                <span className="home-dash-dot green" />
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <LayoutDashboard size={14} style={{ color: '#818cf8' }} />
+                <span>naponi.app/portal/dashboard • {simConfig.venueName}</span>
+              </div>
+              <div className="home-dash-pill">
+                <span className="pulse-dot" style={{ width: 6, height: 6 }} />
+                <span>Live Operations</span>
+              </div>
+            </div>
+
+            {/* Dashboard Content per Tab */}
+            <div className="home-dash-body">
+              {suiteTab === 'analytics' && (
+                <div>
+                  {/* KPI Row */}
+                  <div className="home-dash-kpis">
+                    <div className="home-dash-kpi-card">
+                      <div className="home-dash-kpi-label">
+                        <span>{language === 'tr' ? 'Bugünkü Toplam Bahşiş' : 'Today\'s Total Tips'}</span>
+                        <TrendingUp size={14} style={{ color: '#10b981' }} />
+                      </div>
+                      <div className="home-dash-kpi-val">
+                        {simConfig.currency}{language === 'tr' ? '14.850' : '1,485'}.00
+                      </div>
+                      <div className="home-dash-kpi-sub">
+                        <span>↑ 24.8%</span>
+                        <span style={{ color: '#94a3b8' }}>{language === 'tr' ? 'geçen haftaya göre' : 'vs last week'}</span>
+                      </div>
+                    </div>
+
+                    <div className="home-dash-kpi-card">
+                      <div className="home-dash-kpi-label">
+                        <span>{language === 'tr' ? 'Ortalama Bahşiş Oranı' : 'Average Tip Rate'}</span>
+                        <Percent size={14} style={{ color: '#6366f1' }} />
+                      </div>
+                      <div className="home-dash-kpi-val">16.4%</div>
+                      <div className="home-dash-kpi-sub" style={{ color: '#6366f1' }}>
+                        <span>★ 48 {language === 'tr' ? 'işlem' : 'transactions'}</span>
+                      </div>
+                    </div>
+
+                    <div className="home-dash-kpi-card">
+                      <div className="home-dash-kpi-label">
+                        <span>{language === 'tr' ? 'Vardiyadaki Personel' : 'Active Staff on Shift'}</span>
+                        <Users size={14} style={{ color: '#38bdf8' }} />
+                      </div>
+                      <div className="home-dash-kpi-val">8 {language === 'tr' ? 'Kişi' : 'Staff'}</div>
+                      <div className="home-dash-kpi-sub" style={{ color: '#38bdf8' }}>
+                        <span>✓ {language === 'tr' ? 'Tümü aktif' : 'All active'}</span>
+                      </div>
+                    </div>
+
+                    <div className="home-dash-kpi-card">
+                      <div className="home-dash-kpi-label">
+                        <span>{language === 'tr' ? 'Misafir Memnuniyeti' : 'Guest Rating'}</span>
+                        <Award size={14} style={{ color: '#fbbf24' }} />
+                      </div>
+                      <div className="home-dash-kpi-val">4.9 / 5.0</div>
+                      <div className="home-dash-kpi-sub" style={{ color: '#fbbf24' }}>
+                        <span>98% {language === 'tr' ? 'olumlu geri bildirim' : 'positive review'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Live Transaction Feed Preview */}
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '12px', padding: '1.25rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Clock size={15} style={{ color: '#818cf8' }} />
+                        <span>{language === 'tr' ? 'Canlı Bahşiş Akışı' : 'Real-Time Tipping Feed'}</span>
+                      </div>
+                      <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>
+                        {language === 'tr' ? 'Son 10 Dakika' : 'Last 10 mins'}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      {[
+                        { table: language === 'tr' ? 'Masa 14' : 'Table 14', staff: simConfig.staffOptions[0].label, amount: `${simConfig.currency}${language === 'tr' ? '150.00' : '15.00'}`, time: language === 'tr' ? '2 dk önce' : '2m ago', method: ' Apple Pay' },
+                        { table: language === 'tr' ? 'Masa 08' : 'Table 08', staff: simConfig.staffOptions[1]?.label || 'Elena M.', amount: `${simConfig.currency}${language === 'tr' ? '100.00' : '10.00'}`, time: language === 'tr' ? '5 dk önce' : '5m ago', method: 'Credit Card' },
+                        { table: language === 'tr' ? 'Bar Stand 02' : 'Bar Counter 02', staff: language === 'tr' ? 'Ortak Havuz' : 'Team Pool', amount: `${simConfig.currency}${language === 'tr' ? '250.00' : '25.00'}`, time: language === 'tr' ? '9 dk önce' : '9m ago', method: 'Google Pay' },
+                      ].map((item, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0.75rem 1rem',
+                            borderRadius: '8px',
+                            background: 'rgba(255, 255, 255, 0.02)',
+                            border: '1px solid rgba(255, 255, 255, 0.04)',
+                            fontSize: '0.82rem',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+                            <div>
+                              <strong style={{ color: '#ffffff' }}>{item.table}</strong>
+                              <span style={{ color: '#94a3b8', marginLeft: '0.5rem' }}>• {item.staff}</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{item.method}</span>
+                            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{item.time}</span>
+                            <strong style={{ color: '#4ade80', fontSize: '0.95rem' }}>+{item.amount}</strong>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {suiteTab === 'pooling' && (
+                <div>
+                  {/* Hybrid Pool Breakdown Banner */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#a5b4fc', marginBottom: '0.2rem' }}>
+                        💳 {language === 'tr' ? 'Dijital QR Bahşişleri' : 'Digital QR Tips'}
+                      </div>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
+                        {simConfig.currency}{language === 'tr' ? '9.200' : '920'}.00
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Naponi {language === 'tr' ? 'otomatik tahsilat' : 'instant settlement'}</div>
+                    </div>
+
+                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#86efac', marginBottom: '0.2rem' }}>
+                        💵 {language === 'tr' ? 'Fiziksel Tip Box (Nakit)' : 'Cash Tip Box'}
+                      </div>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#4ade80' }}>
+                        {simConfig.currency}{language === 'tr' ? '3.800' : '380'}.00
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: '#86efac' }}>%0 {language === 'tr' ? 'komisyonsuz elden dağıtım' : 'fee cash payout'}</div>
+                    </div>
+
+                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#fde047', marginBottom: '0.2rem' }}>
+                        🏧 {language === 'tr' ? 'İşletme Kendi POS\'u' : 'Venue POS Tips'}
+                      </div>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#facc15' }}>
+                        {simConfig.currency}{language === 'tr' ? '1.800' : '180'}.00
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Z-Raporu {language === 'tr' ? 'entegrasyonu' : 'reconciliation'}</div>
+                    </div>
+
+                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)', border: '1px solid rgba(34, 197, 94, 0.4)' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#4ade80', fontWeight: 700, marginBottom: '0.2rem' }}>
+                        ✨ {language === 'tr' ? 'Dağıtılacak Net Havuz' : 'Net Shift Pool'}
+                      </div>
+                      <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#4ade80' }}>
+                        {simConfig.currency}{language === 'tr' ? '14.524' : '1,452'}.40
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: '#a7f3d0' }}>4 {language === 'tr' ? 'personel paylaştırıldı' : 'staff allocated'}</div>
+                    </div>
+                  </div>
+
+                  {/* Staff Distribution Table Mockup */}
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '12px', overflow: 'hidden' }}>
+                    <div style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>{language === 'tr' ? 'Vardiya Hak Ediş Simülasyonu' : 'Shift Payout Breakdown'}</span>
+                      <span style={{ fontSize: '0.72rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <CheckCheck size={14} /> {language === 'tr' ? 'Eşit ve Puan Bazlı Dağıtım' : 'Automated Point-Weighted Split'}
+                      </span>
+                    </div>
+                    <div style={{ padding: '0.5rem 1rem' }}>
+                      {[
+                        { name: simConfig.staffOptions[0].label, role: language === 'tr' ? 'Salon Garsonu' : 'Senior Server', weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
+                        { name: simConfig.staffOptions[1]?.label || 'Elena M.', role: language === 'tr' ? 'Barmen / Mixologist' : 'Head Bartender', weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
+                        { name: language === 'tr' ? 'Cemil A.' : 'David K.', role: language === 'tr' ? 'Mutfak Destek' : 'Barback / Support', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
+                        { name: language === 'tr' ? 'Merve S.' : 'Sarah T.', role: language === 'tr' ? 'Hostes / Karşılama' : 'Host / Greeter', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
+                      ].map((s, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0', borderBottom: idx !== 3 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none', fontSize: '0.82rem' }}>
+                          <div>
+                            <div style={{ fontWeight: 600, color: '#ffffff' }}>{s.name}</div>
+                            <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{s.role} • <span style={{ color: '#818cf8' }}>{s.weight}</span></div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontWeight: 800, color: '#4ade80' }}>{s.net}</div>
+                            <div style={{ fontSize: '0.68rem', display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', marginTop: '0.1rem' }}>
+                              <span style={{ color: '#86efac' }}>💵 {s.cash}</span>
+                              <span style={{ color: '#93c5fd' }}>💳 {s.bank}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {suiteTab === 'qr' && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                    {/* Table QR Generator Card */}
+                    <div style={{ padding: '1.25rem', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8' }}>
+                          <QrCode size={18} />
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{language === 'tr' ? 'Masa Standı QR Kodları' : 'Table Tent QR Studio'}</div>
+                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{language === 'tr' ? '1-48 arası tüm masalar hazır' : 'Tables 1–48 generated'}</div>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.5, marginBottom: '1rem' }}>
+                        {language === 'tr'
+                          ? 'Masa numaranıza ve mekan logonuzla özelleştirilmiş, yüksek çözünürlüklü vektörel PDF ve SVG çıktıları anında alın.'
+                          : 'Download high-res vector PDF and SVG print templates with your logo, table numbers, and custom tip prompts.'}
+                      </p>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <span className="badge badge-accent" style={{ fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <Printer size={12} /> {language === 'tr' ? 'Baskıya Hazır PDF' : 'Print-Ready PDF'}
+                        </span>
+                        <span className="badge badge-primary" style={{ fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <Download size={12} /> SVG
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Staff Badge Generator Card */}
+                    <div style={{ padding: '1.25rem', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399' }}>
+                          <BadgeCheck size={18} />
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{language === 'tr' ? 'Personel Yaka Kartı & NFC' : 'Server Badges & NFC Pins'}</div>
+                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{language === 'tr' ? 'Garson & Barmen özel kodlar' : 'Individual staff badges'}</div>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.5, marginBottom: '1rem' }}>
+                        {language === 'tr'
+                          ? 'Garson ve barmenlerinize özel QR yaka kartları oluşturun. Müşteriler doğrudan sevdikleri garsona özel teşekkür edip bahşiş iletsin.'
+                          : 'Equip servers and valets with stylish wearable badges. Guests scan to directly reward exceptional personal hospitality.'}
+                      </p>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <span className="badge badge-success" style={{ fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <CheckCheck size={12} /> {language === 'tr' ? 'Yaka Kartı Şablonu' : 'Badge Template'}
+                        </span>
+                        <span className="badge badge-secondary" style={{ fontSize: '0.72rem' }}>
+                          NFC Tag Support
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -462,6 +866,81 @@ export const HomePage: React.FC = () => {
                   <span>{t('home.naponiExpItem4')}</span>
                 </li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          4B. PHYSICAL TOUCHPOINTS & HARDWARE-FREE SETUP
+          ==================================================================== */}
+      <section className="home-section" id="touchpoints" style={{ paddingTop: 40, paddingBottom: 80 }}>
+        <div className="home-container">
+          <div className="home-section-header">
+            <span className="home-section-tag">{t('home.touchBadge')}</span>
+            <h2 className="home-section-title">{t('home.touchTitle')}</h2>
+            <p className="home-section-desc">
+              {t('home.touchSubtitle')}
+            </p>
+          </div>
+
+          <div className="home-touch-grid">
+            {/* 1. Acrylic Table Tents */}
+            <div className="home-touch-card">
+              <div className="home-touch-preview-wrap">
+                <div style={{ textAlign: 'center', padding: '1rem' }}>
+                  <div style={{ width: 72, height: 96, margin: '0 auto', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.2)', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#6366f1' }} />
+                    <QrCode size={34} style={{ color: '#ffffff' }} />
+                    <div style={{ fontSize: '0.55rem', fontWeight: 700, color: '#a5b4fc' }}>TABLE 14</div>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
+                    Acrylic & Wood Table Tent
+                  </span>
+                </div>
+              </div>
+              <h3 className="home-touch-title">{t('home.touchCard1Title')}</h3>
+              <p className="home-touch-desc">{t('home.touchCard1Desc')}</p>
+            </div>
+
+            {/* 2. Wearable Server Badges */}
+            <div className="home-touch-card">
+              <div className="home-touch-preview-wrap">
+                <div style={{ textAlign: 'center', padding: '1rem' }}>
+                  <div style={{ width: 120, height: 72, margin: '0 auto', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(99, 102, 241, 0.35)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.85rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                    <div style={{ textAlign: 'left' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#ffffff' }}>Alex R.</div>
+                      <div style={{ fontSize: '0.55rem', color: '#94a3b8' }}>Server</div>
+                      <div style={{ fontSize: '0.5rem', color: '#10b981', marginTop: '0.2rem' }}>★ 4.9 Rating</div>
+                    </div>
+                    <QrCode size={36} style={{ color: '#818cf8' }} />
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
+                    Magnetic Wearable Badge / Lanyard
+                  </span>
+                </div>
+              </div>
+              <h3 className="home-touch-title">{t('home.touchCard2Title')}</h3>
+              <p className="home-touch-desc">{t('home.touchCard2Desc')}</p>
+            </div>
+
+            {/* 3. Bill Folders & Receipts */}
+            <div className="home-touch-card">
+              <div className="home-touch-preview-wrap">
+                <div style={{ textAlign: 'center', padding: '1rem' }}>
+                  <div style={{ width: 92, height: 96, margin: '0 auto', background: '#1e293b', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                    <div style={{ fontSize: '0.52rem', color: '#94a3b8', letterSpacing: '0.05em' }}>GUEST CHECK</div>
+                    <div style={{ width: '80%', height: 1, background: 'rgba(255,255,255,0.1)' }} />
+                    <QrCode size={32} style={{ color: '#ffffff' }} />
+                    <div style={{ fontSize: '0.52rem', color: '#10b981', fontWeight: 600 }}>SCAN TO TIP</div>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
+                    Leather Check Presenter & Thermal Print
+                  </span>
+                </div>
+              </div>
+              <h3 className="home-touch-title">{t('home.touchCard3Title')}</h3>
+              <p className="home-touch-desc">{t('home.touchCard3Desc')}</p>
             </div>
           </div>
         </div>

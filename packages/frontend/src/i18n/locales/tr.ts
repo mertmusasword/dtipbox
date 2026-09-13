@@ -304,6 +304,25 @@ const tr = {
     blogReadMore: 'Devamını Oku →',
     blogExploreAll: 'Tüm Rehberleri ve Makaleleri İnceleyin',
 
+    // Section 4B: İşletme & Yönetici Paneli
+    suiteBadge: 'İŞLETME YÖNETİM PLATFORMU',
+    suiteTitle: 'Tam Şeffaflık. Gece Yarısı Hesaplarına Son.',
+    suiteSubtitle: 'Yeni Zelanda\'daki bir sahil kafesinden Paris\'teki lüks bir bistroya kadar; günlük bahşiş havuzunuzu, personel hak edişlerini ve QR operasyonunuzu tek panelden yönetin.',
+    suiteTab1: 'Canlı Vardiya & Gelir',
+    suiteTab2: 'Hibrit Havuz Dağıtımı',
+    suiteTab3: 'Masa & Personel QR Çıktıları',
+
+    // Section 4C: Fiziksel Mekan Uygulamaları
+    touchBadge: 'FİZİKSEL MEKAN DENEYİMİ',
+    touchTitle: 'Her Mekanın Ambiyansına Doğal Uyum Sağlar',
+    touchSubtitle: 'Satın almanız veya bakımını yapmanız gereken hiçbir POS donanımı yok. Baskıya hazır şablonları hemen indirin veya mekanınıza özel standlar hazırlayın.',
+    touchCard1Title: 'Pleksi & Ahşap Masa Standları',
+    touchCard1Desc: 'Masalara, bar tezgahına veya kafelere yerleştirin. Müşteriler kahvelerini yudumlarken veya hesabı beklerken rahatça tarasın.',
+    touchCard2Title: 'Personel Yaka Kartları & Kordonlar',
+    touchCard2Desc: 'Garsonlar, barmenler, valeler ve kat görevlileri şık bir yaka kartı takar. Bireysel bahşiş toplayan veya hareketli ekipler için idealdir.',
+    touchCard3Title: 'Hesap Sümeni & Adisyon Altı QR',
+    touchCard3Desc: 'Deri hesap sümeninin içine ekleyin veya adisyon fişinin altına basın. Garsonun müşterinin başında bekleme mahcubiyetine son verir.',
+
     // Footer & Durum
     footerStatus: 'Tüm Sistemler Çalışıyor',
     footerProduct: 'Ürün',
