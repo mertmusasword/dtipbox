@@ -142,10 +142,10 @@ export const QrCodesPage: React.FC = () => {
                           <button
                             className="btn btn-secondary btn-sm"
                             onClick={() => setSelectedQr(qr)}
-                            title={language === 'tr' ? 'QR Kodunu İncele & Yazdır' : 'View & Print QR'}
+                            title={language === 'tr' ? 'QR Tasarla & Yazdır' : 'Design & Print QR'}
                             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                           >
-                            <Eye size={14} /> <span>{t('common.details')}</span>
+                            <Eye size={14} /> <span>{language === 'tr' ? 'Tasarla & Yazdır' : 'Design & Print'}</span>
                           </button>
                           <button className="btn btn-danger btn-sm" onClick={() => handleDelete(qr)} title={t('common.delete')}>
                             <Trash2 size={14} />
@@ -196,7 +196,7 @@ export const QrCodesPage: React.FC = () => {
                       onClick={() => setSelectedQr(qr)}
                     >
                       <Eye size={16} />
-                      <span>{language === 'tr' ? 'QR Kodunu Aç & Yazdır' : 'View & Print QR'}</span>
+                      <span>{language === 'tr' ? 'QR Tasarla & Baskı Al' : 'Design & Print QR'}</span>
                     </button>
                     <button
                       type="button"
@@ -236,7 +236,7 @@ export const QrCodesPage: React.FC = () => {
         </form>
       </Modal>
 
-      {/* View / Download QR Modal */}
+      {/* View / Download / Customize QR Modal */}
       {selectedQr && business && (
         <QrModal
           isOpen={!!selectedQr}
@@ -244,6 +244,7 @@ export const QrCodesPage: React.FC = () => {
           publicToken={selectedQr.public_token}
           businessName={business.name}
           tableName={selectedQr.table?.name}
+          businessLogo={business.logo || null}
         />
       )}
     </div>
