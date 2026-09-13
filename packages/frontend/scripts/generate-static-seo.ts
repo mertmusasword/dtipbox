@@ -800,6 +800,23 @@ COMPARISONS.forEach((comp) => {
 });
 
 // =============================================================================
+// 4D. PRE-RENDER B2B CORPORATE CATALOG & PRESENTATION DECK
+// =============================================================================
+writeStaticRoute('catalog', {
+  title: 'Naponi B2B Kurumsal Ürün Kataloğu & Sunumu (2026)',
+  description: 'Yeme-içme ve konaklama sektörü için yeni nesil temassız dijital bahşiş altyapısı kurumsal ürün kataloğu ve tanıtım sunumu.',
+  canonicalUrl: 'https://www.naponi.com/catalog',
+  keywords: ['naponi katalog', 'dijital bahşiş kataloğu', 'restoran bahşiş sistemi sunumu', 'b2b bahşiş çözümleri', 'hospitality tipping catalog'],
+  contentHtml: `
+    <main style="padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; text-align: center;">
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: #ffffff;">Naponi B2B Kurumsal Ürün Kataloğu & Sunumu</h1>
+      <p style="font-size: 1.1rem; color: #94a3b8; margin: 1.5rem 0;">Yeme-İçme ve Konaklama Sektörü İçin Yeni Nesil Temassız Bahşiş Altyapısı (2026 Sürümü).</p>
+      <a href="/catalog" style="display: inline-block; padding: 0.85rem 2rem; background: #10b981; color: #090d16; border-radius: 12px; font-weight: 700; text-decoration: none;">İnteraktif Kataloğu Görüntüle & PDF İndir &rarr;</a>
+    </main>
+  `,
+});
+
+// =============================================================================
 // 5. DYNAMIC SITEMAP GENERATION WITH COMPLETE GLOBAL HREFLANG
 // =============================================================================
 function generateDynamicSitemap() {
@@ -929,6 +946,16 @@ ${guideUrls}
 
   <!-- 7. High-Intent B2B Comparisons (${COMPARISONS.length} reports) -->
 ${comparisonUrls}
+
+  <!-- 7B. B2B Corporate Catalog & Presentation -->
+  <url>
+    <loc>https://www.naponi.com/catalog</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/catalog" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/catalog" />
+  </url>
 
   <!-- 8. Business Registration & Authentication -->
   <url>

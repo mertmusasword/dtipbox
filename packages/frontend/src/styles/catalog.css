@@ -1,0 +1,529 @@
+/* ==========================================================================
+   Naponi B2B Corporate Catalog & Presentation Styles
+   Print-Ready A4 Landscape (297mm x 210mm) & Screen Deck
+   ========================================================================== */
+
+:root {
+  --cat-bg: #090d16;
+  --cat-card-bg: rgba(17, 24, 39, 0.7);
+  --cat-border: rgba(255, 255, 255, 0.08);
+  --cat-accent: #10b981;
+  --cat-accent-glow: rgba(16, 185, 129, 0.15);
+  --cat-gold: #f59e0b;
+  --cat-blue: #38bdf8;
+  --cat-indigo: #6366f1;
+  --cat-text-main: #ffffff;
+  --cat-text-muted: #94a3b8;
+}
+
+.catalog-wrapper {
+  background: #030712;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* Floating Action Toolbar */
+.catalog-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: rgba(9, 13, 22, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.catalog-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.catalog-toolbar-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.catalog-toolbar-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.catalog-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Catalog Container & Slides */
+.catalog-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.catalog-slide {
+  background: var(--cat-bg);
+  border: 1px solid var(--cat-border);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  aspect-ratio: 16 / 10;
+  min-height: 680px;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Background Glow Effects */
+.cat-glow-top-right {
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0) 70%);
+  pointer-events: none;
+}
+
+.cat-glow-bottom-left {
+  position: absolute;
+  bottom: -120px;
+  left: -120px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 70%);
+  pointer-events: none;
+}
+
+/* Slide Header & Footer */
+.cat-slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  z-index: 2;
+}
+
+.cat-slide-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--cat-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+}
+
+.cat-slide-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.cat-slide-subtitle {
+  font-size: 0.95rem;
+  color: var(--cat-text-muted);
+  margin-top: 0.35rem;
+  max-width: 650px;
+}
+
+.cat-slide-number {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.05em;
+}
+
+.cat-slide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.cat-slide-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  margin: 0.5rem 0;
+}
+
+/* Cover Slide (Slide 1) Specifics */
+.cat-cover-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3.5rem;
+  background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 10% 90%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+              #090d16;
+}
+
+.cat-cover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #34d399;
+}
+
+.cat-cover-title {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  line-height: 1.15;
+  margin: 1.25rem 0 1rem;
+}
+
+.cat-gradient-text {
+  background: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cat-cover-desc {
+  font-size: 1.15rem;
+  color: #cbd5e1;
+  max-width: 650px;
+  line-height: 1.6;
+}
+
+.cat-cover-pills {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.cat-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+/* Grid Layouts for Content */
+.cat-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.cat-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.cat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+/* Cards & Feature Blocks */
+.cat-feature-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: all 0.2s ease;
+}
+
+.cat-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+}
+
+.cat-card-icon.blue {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+}
+
+.cat-card-icon.amber {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.cat-card-icon.red {
+  background: rgba(244, 63, 94, 0.12);
+  color: #f43f5e;
+}
+
+.cat-card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+}
+
+.cat-card-desc {
+  font-size: 0.84rem;
+  color: #94a3b8;
+  line-height: 1.55;
+}
+
+/* Comparison Boxes (Problem vs Solution) */
+.cat-compare-box {
+  border-radius: 18px;
+  padding: 1.5rem;
+  border: 1px solid;
+}
+
+.cat-compare-box.bad {
+  background: rgba(244, 63, 94, 0.04);
+  border-color: rgba(244, 63, 94, 0.2);
+}
+
+.cat-compare-box.good {
+  background: rgba(16, 185, 129, 0.04);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.cat-compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.cat-compare-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cat-compare-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+/* Steps / Flow Horizontal */
+.cat-step-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  position: relative;
+}
+
+.cat-step-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.cat-step-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.08);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* Dashboard Mockup in Slide */
+.cat-mockup-window {
+  background: #0d131f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.cat-mockup-topbar {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.cat-dot.r { background: #ef4444; }
+.cat-dot.y { background: #f59e0b; }
+.cat-dot.g { background: #10b981; }
+
+.cat-mockup-body {
+  padding: 1.25rem;
+}
+
+/* Key Metrics Row */
+.cat-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cat-kpi-cell {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.cat-kpi-val {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.cat-kpi-label {
+  font-size: 0.7rem;
+  color: var(--cat-text-muted);
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+/* Backcover (Slide 10) */
+.cat-backcover {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2.5rem;
+  align-items: center;
+  height: 100%;
+}
+
+.cat-qr-badge-card {
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 24px;
+  padding: 1.75rem;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cat-qr-badge-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.cat-qr-badge-sub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   PRINT MEDIA RULES FOR 300 DPI A4 LANDSCAPE PDF EXPORT
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  body, html {
+    background: #090d16 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .catalog-wrapper {
+    background: #090d16 !important;
+    padding: 0 !important;
+  }
+
+  .catalog-toolbar {
+    display: none !important;
+  }
+
+  .catalog-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  .catalog-slide {
+    width: 297mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    padding: 18mm 20mm !important;
+    box-sizing: border-box !important;
+    background: #090d16 !important;
+  }
+}

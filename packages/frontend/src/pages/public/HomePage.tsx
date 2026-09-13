@@ -1482,6 +1482,7 @@ export const HomePage: React.FC = () => {
             <div>
               <h4 className="home-footer-col-title">{language === 'tr' ? 'Rehberler & Platform' : 'Guides & Platform'}</h4>
               <ul className="home-footer-links">
+                <li><Link to="/catalog" style={{ color: '#34d399', fontWeight: 700 }}>{language === 'tr' ? '📄 B2B Kurumsal Katalog' : '📄 B2B Corporate Deck'}</Link></li>
                 <li><Link to="/guides">{language === 'tr' ? 'Dünya Bahşiş Rehberleri' : 'Global Tipping Guides'}</Link></li>
                 <li><Link to="/guides/tipping-in-japan">{language === 'tr' ? 'Japonya Bahşiş Rehberi' : 'Tipping in Japan'}</Link></li>
                 <li><Link to="/guides/tipping-in-united-states">{language === 'tr' ? 'ABD Bahşiş Rehberi' : 'Tipping in USA'}</Link></li>

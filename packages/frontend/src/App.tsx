@@ -24,6 +24,7 @@ const FreeHospitalityQrGeneratorPage = React.lazy(() => import('./pages/public/t
 const TippingGuidesHubPage = React.lazy(() => import('./pages/public/guides/TippingGuidesHubPage').then((m) => ({ default: m.TippingGuidesHubPage })));
 const TippingGuideDetailPage = React.lazy(() => import('./pages/public/guides/TippingGuideDetailPage').then((m) => ({ default: m.TippingGuideDetailPage })));
 const ComparisonDetailPage = React.lazy(() => import('./pages/public/comparisons/ComparisonDetailPage').then((m) => ({ default: m.ComparisonDetailPage })));
+const NaponiCatalogPage = React.lazy(() => import('./pages/public/NaponiCatalogPage').then((m) => ({ default: m.NaponiCatalogPage })));
 
 // Auth Pages
 const LoginPage = React.lazy(() => import('./pages/auth/LoginPage').then((m) => ({ default: m.LoginPage })));
@@ -140,6 +141,11 @@ export const App: React.FC = () => {
 
                 {/* Public B2B Comparisons */}
                 <Route path="/compare/:slug" element={<ComparisonDetailPage />} />
+
+                {/* Public B2B Corporate Catalog & Presentation */}
+                <Route path="/catalog" element={<NaponiCatalogPage />} />
+                <Route path="/katalog" element={<NaponiCatalogPage />} />
+                <Route path="/kurumsal-katalog" element={<NaponiCatalogPage />} />
 
                 {/* Public Customer Tip Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />
