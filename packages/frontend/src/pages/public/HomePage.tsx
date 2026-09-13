@@ -198,8 +198,6 @@ export const HomePage: React.FC = () => {
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
             <li><Link to="/guides" className="home-nav-link">{language === 'tr' ? 'Rehberler' : 'Guides'}</Link></li>
-            <li><Link to="/tools/restaurant-tip-pool-calculator" className="home-nav-link">{language === 'tr' ? 'Araçlar' : 'Tools'}</Link></li>
-            <li><Link to="/compare/card-machine-vs-qr-tipping" className="home-nav-link">{language === 'tr' ? 'POS vs QR' : 'POS vs QR'}</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
@@ -209,10 +207,11 @@ export const HomePage: React.FC = () => {
               type="button"
               className="home-btn-ghost"
               onClick={() => setSupportModalOpen(true)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer', padding: '0.55rem 0.95rem' }}
+              aria-label={t('support.widgetBtn')}
+              title={t('support.widgetBtn')}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 38, height: 38, padding: 0, borderRadius: '50%' }}
             >
-              <Headphones size={15} />
-              <span>{t('support.widgetBtn')}</span>
+              <Headphones size={16} />
             </button>
             <Link to="/login" className="home-btn-ghost">
               {t('nav.login')}
