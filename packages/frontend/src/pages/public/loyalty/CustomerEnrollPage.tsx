@@ -38,6 +38,9 @@ export const CustomerEnrollPage: React.FC = () => {
     api
       .get(`/loyalty/program/${businessId}`)
       .then((res) => setData(res.data.data))
+      .catch(() =>
+        api.get(`/loyalty/enroll/${businessId}`).then((res) => setData(res.data.data))
+      )
       .catch((err) => {
         console.error('Program not found:', err);
         setData(null);
@@ -59,6 +62,7 @@ export const CustomerEnrollPage: React.FC = () => {
     setSubmitting(true);
     try {
       const res = await api.post('/loyalty/enroll', {
+        businessId: businessId,
         business_id: businessId,
         email: email.trim(),
         name: name.trim() || undefined,
@@ -82,7 +86,7 @@ export const CustomerEnrollPage: React.FC = () => {
     );
   }
 
-  if (!data || !data.program || !data.program.is_active) {
+  if (!data || !data.program || data.program.is_active === false) {
     return (
       <div className="loyalty-public-layout">
         <div className="loyalty-enroll-card" style={{ textAlign: 'center' }}>
@@ -110,14 +114,15 @@ export const CustomerEnrollPage: React.FC = () => {
   }
 
   const { business, program } = data;
+  const businessLogo = business.logo_url || (business as any).logo;
 
   return (
     <div className="loyalty-public-layout">
       {/* Brand Header */}
       <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-        {business.logo_url ? (
+        {businessLogo ? (
           <img
-            src={business.logo_url}
+            src={businessLogo}
             alt={business.name}
             style={{
               width: '64px',

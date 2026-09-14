@@ -230,9 +230,9 @@ export const CustomerCardPage: React.FC = () => {
       {/* Business Header */}
       <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-          {business.logo_url ? (
+          {business.logo_url || (business as any).logo ? (
             <img
-              src={business.logo_url}
+              src={business.logo_url || (business as any).logo}
               alt={business.name}
               style={{ width: '28px', height: '28px', borderRadius: '8px', objectFit: 'cover' }}
             />

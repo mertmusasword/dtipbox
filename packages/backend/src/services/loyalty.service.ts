@@ -259,12 +259,14 @@ export class LoyaltyService {
         id: business.id,
         name: business.name,
         logo: business.logo,
+        logo_url: business.logo,
       },
       program: {
         id: program.id,
         name: program.name,
         target_stamps: program.target_stamps,
         reward_description: program.reward_description,
+        is_active: program.is_active ?? true,
       },
     };
   }
@@ -421,6 +423,35 @@ export class LoyaltyService {
     const pendingRedemption = card.redemptions.length > 0 ? card.redemptions[0] : null;
 
     return {
+      card: {
+        id: card.id,
+        public_id: card.public_id,
+        card_code: card.card_code,
+        customer_email: card.customer_email,
+        customer_name: card.customer_name,
+        current_stamps: card.current_stamps,
+        target_stamps: card.target_stamps,
+        total_rewards_earned: card.total_rewards_earned,
+        total_stamps_earned: card.current_stamps,
+        total_rewards_redeemed: card.total_rewards_earned,
+        reward_pending: hasReward || !!pendingRedemption,
+        has_reward: hasReward,
+        pending_redemption: pendingRedemption,
+      },
+      program: {
+        id: card.program.id,
+        name: card.program.name,
+        target_stamps: card.program.target_stamps,
+        reward_description: card.program.reward_description,
+        is_active: card.program.is_active,
+      },
+      business: {
+        id: card.business.id,
+        name: card.business.name,
+        logo: card.business.logo,
+        logo_url: card.business.logo,
+        currency: card.business.currency,
+      },
       public_id: card.public_id,
       card_code: card.card_code,
       current_stamps: card.current_stamps,
@@ -430,8 +461,6 @@ export class LoyaltyService {
       customer_masked_email: maskEmail(card.customer_email),
       has_reward: hasReward,
       pending_redemption: pendingRedemption,
-      business: card.business,
-      program: card.program,
     };
   }
 
@@ -604,7 +633,21 @@ export class LoyaltyService {
         rewardEarned,
         rewardDescription: card.program.reward_description,
         customerName: card.customer_name || 'Misafir',
+        customerEmail: card.customer_email,
         cardCode: card.card_code,
+        card: {
+          card_code: card.card_code,
+          current_stamps: newStamps,
+          previous_stamps: prevStamps,
+          target_stamps: card.target_stamps,
+          customer_name: card.customer_name,
+          customer_email: card.customer_email,
+        },
+        program: {
+          name: card.program.name,
+          target_stamps: card.target_stamps,
+          reward_description: card.program.reward_description,
+        },
       };
     });
   }
@@ -676,7 +719,21 @@ export class LoyaltyService {
         rewardEarned,
         rewardDescription: card.program.reward_description,
         customerName: card.customer_name || 'Misafir',
+        customerEmail: card.customer_email,
         cardCode: card.card_code,
+        card: {
+          card_code: card.card_code,
+          current_stamps: newStamps,
+          previous_stamps: prevStamps,
+          target_stamps: card.target_stamps,
+          customer_name: card.customer_name,
+          customer_email: card.customer_email,
+        },
+        program: {
+          name: card.program.name,
+          target_stamps: card.target_stamps,
+          reward_description: card.program.reward_description,
+        },
       };
     });
   }
@@ -755,8 +812,19 @@ export class LoyaltyService {
         success: true,
         rewardTitle: redemption.reward_title,
         customerName: redemption.card.customer_name || 'Misafir',
+        customerEmail: redemption.card.customer_email,
         cardCode: redemption.card.card_code,
         remainingStamps: newStamps,
+        card: {
+          card_code: redemption.card.card_code,
+          customer_name: redemption.card.customer_name,
+          customer_email: redemption.card.customer_email,
+          current_stamps: newStamps,
+        },
+        program: {
+          name: redemption.program.name,
+          reward_description: redemption.program.reward_description,
+        },
       };
     });
   }
