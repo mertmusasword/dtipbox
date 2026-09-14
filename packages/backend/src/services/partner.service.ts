@@ -1,6 +1,8 @@
 import prisma from '../utils/prisma';
 import { PartnerApplicationStatus, Prisma } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
+import { emailService } from './email.service';
+import { logger } from '../utils/logger';
 
 export interface CreatePartnerApplicationInput {
   companyName?: string;
@@ -75,6 +77,43 @@ export async function createPartnerApplication(data: CreatePartnerApplicationInp
       ip_address: ip,
     },
   });
+
+  // 1. Asynchronously notify Admin at info@naponi.com
+  emailService
+    .sendPartnerApplicationAdminNotificationEmail({
+      applicationId: application.id,
+      companyName: application.company_name,
+      contactName: application.contact_name,
+      email: application.email,
+      phone: application.phone,
+      website: application.website,
+      companyType: application.company_type,
+      customerCount: application.customer_count,
+      countries: application.countries,
+      integrationIdea: application.integration_idea,
+      message: application.message,
+    })
+    .catch((err) => {
+      logger.error('Failed to send partner application admin notification email', 'PARTNER', {
+        error: String(err),
+        applicationId: application.id,
+      });
+    });
+
+  // 2. Asynchronously send confirmation to the applicant
+  emailService
+    .sendPartnerApplicationConfirmationEmail({
+      to: application.email,
+      companyName: application.company_name,
+      contactName: application.contact_name,
+      applicationId: application.id,
+    })
+    .catch((err) => {
+      logger.error('Failed to send partner application confirmation email', 'PARTNER', {
+        error: String(err),
+        applicationId: application.id,
+      });
+    });
 
   return {
     ...application,
