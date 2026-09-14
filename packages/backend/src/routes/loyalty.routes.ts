@@ -158,9 +158,12 @@ router.get(
  */
 const programSchema = z.object({
   name: z.string().min(2, 'Program adı en az 2 karakter olmalıdır'),
-  targetStamps: z.number().int().min(2).max(50),
-  rewardDescription: z.string().min(2, 'Ödül açıklaması en az 2 karakter olmalıdır'),
+  targetStamps: z.coerce.number().int().min(2).max(50).optional(),
+  target_stamps: z.coerce.number().int().min(2).max(50).optional(),
+  rewardDescription: z.string().optional(),
+  reward_description: z.string().optional(),
   isActive: z.boolean().optional(),
+  is_active: z.boolean().optional(),
 });
 
 router.put(
@@ -171,8 +174,18 @@ router.put(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const parsed = programSchema.parse(req.body);
+      const target = parsed.targetStamps ?? parsed.target_stamps ?? 10;
+      const reward = (parsed.rewardDescription ?? parsed.reward_description ?? '').trim();
+      if (!reward || reward.length < 2) {
+        throw new AppError('Ödül açıklaması en az 2 karakter olmalıdır', 400);
+      }
       const businessId = req.user!.businessId!;
-      const updated = await loyaltyService.upsertBusinessProgram(businessId, parsed);
+      const updated = await loyaltyService.upsertBusinessProgram(businessId, {
+        name: parsed.name,
+        targetStamps: target,
+        rewardDescription: reward,
+        isActive: parsed.isActive ?? parsed.is_active ?? true,
+      });
       res.json({ success: true, data: updated });
     } catch (error) {
       next(error);

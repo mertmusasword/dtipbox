@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { ZodError } from 'zod';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
 
@@ -12,6 +13,16 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ): void {
+  if (err instanceof ZodError) {
+    const firstIssue = err.issues[0];
+    const validationMessage = firstIssue ? firstIssue.message : 'Geçersiz istek parametreleri';
+    res.status(400).json({
+      success: false,
+      error: validationMessage,
+    });
+    return;
+  }
+
   const statusCode = err.statusCode || 500;
   const message = statusCode === 500 && env.isProd
     ? 'Internal server error'

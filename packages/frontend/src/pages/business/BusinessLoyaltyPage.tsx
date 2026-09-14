@@ -140,9 +140,11 @@ export const BusinessLoyaltyPage: React.FC = () => {
     try {
       const res = await api.put('/loyalty/business/program', {
         name,
+        targetStamps: Number(targetStamps),
         target_stamps: Number(targetStamps),
+        rewardDescription: rewardDesc,
         reward_description: rewardDesc,
-        stamp_cooldown_min: Number(cooldownMin),
+        isActive: isActive,
         is_active: isActive,
       });
 
