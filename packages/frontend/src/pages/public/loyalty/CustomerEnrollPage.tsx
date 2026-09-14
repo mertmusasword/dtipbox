@@ -68,7 +68,7 @@ export const CustomerEnrollPage: React.FC = () => {
         name: name.trim() || undefined,
       });
 
-      const { publicCardId } = res.data.data;
+      const publicCardId = res.data.data.publicCardId || res.data.data.card?.public_id || res.data.data.public_card_id;
       showToast('Sadakat kartınız başarıyla oluşturuldu!', 'success');
       navigate(`/loyalty/card/${publicCardId}`);
     } catch (err: any) {

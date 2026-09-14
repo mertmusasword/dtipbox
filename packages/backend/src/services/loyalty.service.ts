@@ -375,6 +375,8 @@ export class LoyaltyService {
       });
 
     return {
+      publicCardId: card.public_id,
+      public_card_id: card.public_id,
       card: {
         public_id: card.public_id,
         card_code: card.card_code,
