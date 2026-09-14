@@ -42,6 +42,8 @@ import {
   Coins,
   Printer,
   BadgeCheck,
+  Handshake,
+  FileText,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -207,6 +209,7 @@ export const HomePage: React.FC = () => {
           <ul className="home-nav-links">
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
+            <li><Link to="/technology-partners" className="home-nav-link" style={{ color: '#38bdf8' }}>{language === 'tr' ? 'Teknoloji Partnerleri' : 'Tech Partners'}</Link></li>
             <li><Link to="/guides" className="home-nav-link">{language === 'tr' ? 'Rehberler' : 'Guides'}</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
@@ -251,6 +254,9 @@ export const HomePage: React.FC = () => {
           <div className="home-mobile-menu">
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
+            <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
+              {language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}
+            </Link>
             <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Bahşiş Rehberleri' : 'Tipping Guides'}</Link>
             <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Tip Pool Calculator'}</Link>
             <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'QR Generator'}</Link>
@@ -1253,6 +1259,116 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
+          8B. B2B TECHNOLOGY PARTNERS SECTION
+          ==================================================================== */}
+      <section className="home-section" id="partners" style={{ paddingTop: 30, paddingBottom: 60 }}>
+        <div className="home-container">
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(16, 185, 129, 0.08) 100%)',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              borderRadius: '24px',
+              padding: '3rem 2rem',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.35rem 1rem',
+                  borderRadius: '999px',
+                  background: 'rgba(56, 189, 248, 0.12)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  color: '#38bdf8',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '1rem',
+                }}
+              >
+                <Handshake size={14} />
+                <span>{language === 'tr' ? 'B2B Teknoloji Ortaklığı' : 'B2B Technology Partnership'}</span>
+              </div>
+
+              <h2
+                style={{
+                  fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
+                  fontWeight: 800,
+                  color: '#ffffff',
+                  marginBottom: '1rem',
+                  lineHeight: 1.25,
+                }}
+              >
+                {language === 'tr' ? 'Platformunuza Naponi\'yi ekleyin.' : 'Integrate Naponi into your platform.'}
+              </h2>
+
+              <p
+                style={{
+                  fontSize: '1.05rem',
+                  color: '#cbd5e1',
+                  marginBottom: '2rem',
+                  lineHeight: 1.6,
+                  maxWidth: '650px',
+                  margin: '0 auto 2rem',
+                }}
+              >
+                {language === 'tr'
+                  ? 'POS, QR Menü, ödeme veya restoran teknolojileri geliştiriyorsanız Naponi çözümlerini müşterilerinize sunabilirsiniz.'
+                  : 'If you develop POS, QR menu, payment, or restaurant technology platforms, offer Naponi\'s digital tipping, employee tip management, and loyalty solutions directly to your merchants.'}
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                <Link
+                  to="/technology-partners"
+                  className="home-btn-primary"
+                  style={{
+                    padding: '0.9rem 2rem',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+                    color: '#090d16',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    textDecoration: 'none',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <span>{language === 'tr' ? 'Teknoloji Partneri Olun' : 'Become a Technology Partner'}</span>
+                  <ArrowRight size={16} />
+                </Link>
+
+                <Link
+                  to="/catalog"
+                  className="home-btn-ghost"
+                  style={{
+                    padding: '0.9rem 1.75rem',
+                    fontSize: '0.95rem',
+                    borderRadius: '12px',
+                    color: '#e2e8f0',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <FileText size={15} className="text-emerald-400" />
+                  <span>{language === 'tr' ? 'B2B Kataloğu İncele' : 'View B2B Catalog'}</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
           9. GLOBAL BY ARCHITECTURE
           ==================================================================== */}
       <section className="home-section" id="global">
@@ -1493,6 +1609,7 @@ export const HomePage: React.FC = () => {
               <h4 className="home-footer-col-title">{language === 'tr' ? 'Rehberler & Platform' : 'Guides & Platform'}</h4>
               <ul className="home-footer-links">
                 <li><Link to="/catalog" style={{ color: '#34d399', fontWeight: 700 }}>{language === 'tr' ? '📄 B2B Kurumsal Katalog' : '📄 B2B Corporate Deck'}</Link></li>
+                <li><Link to="/technology-partners" style={{ color: '#38bdf8', fontWeight: 700 }}>{language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}</Link></li>
                 <li><Link to="/guides">{language === 'tr' ? 'Dünya Bahşiş Rehberleri' : 'Global Tipping Guides'}</Link></li>
                 <li><Link to="/guides/tipping-in-japan">{language === 'tr' ? 'Japonya Bahşiş Rehberi' : 'Tipping in Japan'}</Link></li>
                 <li><Link to="/guides/tipping-in-united-states">{language === 'tr' ? 'ABD Bahşiş Rehberi' : 'Tipping in USA'}</Link></li>

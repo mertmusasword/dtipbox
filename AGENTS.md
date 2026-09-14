@@ -98,6 +98,18 @@ d-tipbox (Monorepo)
 * **Cookie Banner (`CookieBanner.tsx`):** Fixed bottom glassmorphism banner, non-blocking, persists consent in `localStorage` (`naponi_cookie_consent: 'accepted_all' | 'essential_only'`).
 * **Footer Accessibility:** Linked in `HomePage.tsx` footer bottom row with direct tab triggers.
 
+### 3.8. B2B Technology Partners Channel (Teknoloji Partnerleri)
+* **Two-Channel Growth Strategy:**
+  1. **Direct Sales (Doğrudan Satış):** Cafes, restaurants, hotels, and venues register directly on Naponi.
+  2. **Partner Sales (Partner Satışı):** POS software, QR menus, payment gateways, PMS/hotel tech, kiosks, and CRM/loyalty platforms partner with Naponi to offer tipping, staff tip management, and digital loyalty to their own merchant client base.
+* **Landing Page:** `/technology-partners` (alias: `/teknoloji-partnerleri`).
+* **Public Page Structure:** 8 sections adhering to Naponi's fintech dark theme (Single H1, Two-Channel Comparison Cards, 8 Industry Verticals, 6 Partner Advantages, 4-Step Visual Roadmap, 4 Partnership Models, Core Callout, and Interactive Application Form with server-side validation and honeypot spam protection).
+* **Backend Database & API:**
+  * Model: `PartnerApplication` (`partner_applications` table) with enum `PartnerApplicationStatus` (`NEW`, `REVIEWING`, `CONTACTED`, `INTEGRATION_DISCUSSION`, `COMPLETED`, `REJECTED`).
+  * Endpoints: `POST /api/partner-applications` (public, rate-limited) and `GET/PATCH/DELETE /api/admin/partner-applications` (admin protected).
+* **Admin Management:** `/admin/partner-applications` for filtering, viewing full vendor specs, and recording internal admin review notes.
+* **SEO & Sitemap:** Fully pre-rendered static HTML via `generate-static-seo.ts` with hreflang, OpenGraph, Schema.org, and `sitemap.xml` inclusion.
+
 ---
 
 ## 4. SEO, Blog & Organic Content Engine

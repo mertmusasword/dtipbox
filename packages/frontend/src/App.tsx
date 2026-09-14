@@ -58,7 +58,9 @@ const AdminAuditPage = React.lazy(() => import('./pages/admin/AdminAuditPage').t
 const AdminSettingsPage = React.lazy(() => import('./pages/admin/AdminSettingsPage').then((m) => ({ default: m.AdminSettingsPage })));
 const AdminAgreementsPage = React.lazy(() => import('./pages/admin/AdminAgreementsPage').then((m) => ({ default: m.AdminAgreementsPage })));
 const AdminCorporateApplicationsPage = React.lazy(() => import('./pages/admin/AdminCorporateApplicationsPage').then((m) => ({ default: m.AdminCorporateApplicationsPage })));
+const AdminPartnerApplicationsPage = React.lazy(() => import('./pages/admin/AdminPartnerApplicationsPage').then((m) => ({ default: m.AdminPartnerApplicationsPage })));
 const AdminSupportTicketsPage = React.lazy(() => import('./pages/admin/AdminSupportTicketsPage').then((m) => ({ default: m.AdminSupportTicketsPage })));
+const TechnologyPartnersPage = React.lazy(() => import('./pages/public/TechnologyPartnersPage').then((m) => ({ default: m.TechnologyPartnersPage })));
 
 // Page Loading Fallback Spinner
 const PageLoader: React.FC = () => (
@@ -147,6 +149,10 @@ export const App: React.FC = () => {
                 <Route path="/katalog" element={<NaponiCatalogPage />} />
                 <Route path="/kurumsal-katalog" element={<NaponiCatalogPage />} />
 
+                {/* Public B2B Technology Partners Channel */}
+                <Route path="/technology-partners" element={<TechnologyPartnersPage />} />
+                <Route path="/teknoloji-partnerleri" element={<Navigate to="/technology-partners" replace />} />
+
                 {/* Public Customer Tip Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />
 
@@ -189,6 +195,7 @@ export const App: React.FC = () => {
                   <Route path="/admin/payments" element={<AdminPaymentsPage />} />
                   <Route path="/admin/payment-providers" element={<AdminPaymentProvidersPage />} />
                   <Route path="/admin/corporate-applications" element={<AdminCorporateApplicationsPage />} />
+                  <Route path="/admin/partner-applications" element={<AdminPartnerApplicationsPage />} />
                   <Route path="/admin/support-tickets" element={<AdminSupportTicketsPage />} />
                   <Route path="/admin/agreements" element={<AdminAgreementsPage />} />
                   <Route path="/admin/statistics" element={<AdminDashboard />} />

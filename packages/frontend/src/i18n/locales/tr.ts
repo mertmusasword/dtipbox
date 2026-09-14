@@ -74,6 +74,8 @@ const tr = {
     myTipsStats: 'Bahşişlerim & İstatistik',
     toggleMenu: 'Menüyü Aç/Kapat',
     corporateApplications: 'Kurumsal Başvurular',
+    partnerApplications: 'Partner Başvuruları',
+    techPartners: 'Teknoloji Partnerleri',
     supportTickets: 'Destek Talepleri',
     restaurants: 'Restoranlar',
     hotels: 'Oteller',

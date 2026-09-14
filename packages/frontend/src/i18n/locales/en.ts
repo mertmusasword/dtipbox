@@ -74,6 +74,8 @@ const en = {
     myTipsStats: 'My Tips & Stats',
     toggleMenu: 'Toggle navigation',
     corporateApplications: 'Corporate Applications',
+    partnerApplications: 'Partner Applications',
+    techPartners: 'Technology Partners',
     supportTickets: 'Support Tickets',
     restaurants: 'Restaurants',
     hotels: 'Hotels',

@@ -93,6 +93,15 @@ enum CorporateApplicationStatus {
   REJECTED
 }
 
+enum PartnerApplicationStatus {
+  NEW
+  REVIEWING
+  CONTACTED
+  INTEGRATION_DISCUSSION
+  COMPLETED
+  REJECTED
+}
+
 enum SupportTicketStatus {
   NEW
   IN_PROGRESS
@@ -496,6 +505,32 @@ model CorporateApplication {
   @@index([status])
   @@index([created_at])
   @@map("corporate_applications")
+}
+
+model PartnerApplication {
+  id               String                   @id @default(uuid())
+  company_name     String
+  website          String?
+  contact_name     String
+  email            String
+  phone            String?
+  company_type     String
+  customer_count   String?
+  countries        String?
+  integration_idea String?                  @db.Text
+  message          String?                  @db.Text
+  status           PartnerApplicationStatus @default(NEW)
+  admin_notes      String?                  @db.Text
+  ip_address       String?
+
+  created_at       DateTime                 @default(now())
+  updated_at       DateTime                 @updatedAt
+
+  @@index([status])
+  @@index([company_type])
+  @@index([created_at])
+  @@index([email])
+  @@map("partner_applications")
 }
 
 model SupportTicket {

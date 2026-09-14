@@ -817,6 +817,63 @@ writeStaticRoute('catalog', {
 });
 
 // =============================================================================
+// 4E. PRE-RENDER B2B TECHNOLOGY PARTNERS CHANNEL
+// =============================================================================
+writeStaticRoute('technology-partners', {
+  title: 'Teknoloji Partnerleri | Naponi',
+  description: 'POS, QR Menü, ödeme ve restoran teknolojileri için Naponi entegrasyon ve partnerlik çözümlerini keşfedin.',
+  canonicalUrl: 'https://www.naponi.com/technology-partners',
+  keywords: [
+    'teknoloji partnerleri',
+    'pos entegrasyonu',
+    'qr menü bahşiş entegrasyonu',
+    'restoran teknolojileri iş ortaklığı',
+    'dijital bahşiş b2b',
+    'hospitality tech partnership',
+    'naponi partnerlik'
+  ],
+  alternateLanguages: [
+    { lang: 'tr', url: 'https://www.naponi.com/technology-partners' },
+    { lang: 'en', url: 'https://www.naponi.com/technology-partners' },
+    { lang: 'x-default', url: 'https://www.naponi.com/technology-partners' }
+  ],
+  contentHtml: `
+    <main style="padding: 4rem 2rem; max-width: 1100px; margin: 0 auto;">
+      <header style="text-align: center; margin-bottom: 3rem;">
+        <span style="display: inline-block; padding: 0.35rem 1rem; border-radius: 999px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-weight: 700; font-size: 0.85rem; margin-bottom: 1rem;">B2B TEKNOLOJİ PARTNERLİĞİ</span>
+        <h1 style="font-size: 3rem; font-weight: 800; color: #ffffff; line-height: 1.2;">Naponi'yi platformunuza ekleyin.</h1>
+        <p style="font-size: 1.2rem; color: #cbd5e1; max-width: 750px; margin: 1.5rem auto;">POS, QR Menü, ödeme ve restoran teknolojileri geliştiriyorsanız, Naponi'nin dijital bahşiş, çalışan yönetimi ve sadakat çözümlerini kendi müşterilerinize sunabilirsiniz.</p>
+        <div style="margin-top: 2rem;">
+          <a href="/technology-partners#partner-form" style="display: inline-block; padding: 0.9rem 2.2rem; background: #38bdf8; color: #090d16; border-radius: 12px; font-weight: 700; text-decoration: none;">Partnerlik Başvurusu &rarr;</a>
+        </div>
+      </header>
+
+      <section style="margin: 4rem 0;">
+        <h2 style="font-size: 2rem; color: #ffffff; margin-bottom: 1rem; text-align: center;">Naponi'yi iki şekilde kullanabilirsiniz.</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+          <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem;">
+            <h3 style="color: #34d399; font-size: 1.4rem;">Doğrudan Naponi</h3>
+            <p style="color: #ffffff; font-weight: 600; margin: 0.5rem 0;">İşletmeler Naponi'yi doğrudan kullanmaya başlayabilir.</p>
+            <p style="color: #94a3b8; font-size: 0.95rem;">Kafe, restoran, otel ve hizmet işletmeleri Naponi'ye doğrudan kayıt olarak dijital bahşiş ve diğer Naponi çözümlerinden yararlanabilir.</p>
+          </div>
+          <div style="background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px; padding: 2rem;">
+            <h3 style="color: #38bdf8; font-size: 1.4rem;">Teknoloji Partneri</h3>
+            <p style="color: #ffffff; font-weight: 600; margin: 0.5rem 0;">Teknoloji şirketleri Naponi'yi kendi müşterilerine sunabilir.</p>
+            <p style="color: #94a3b8; font-size: 0.95rem;">POS, QR Menü, restoran yönetimi, ödeme veya benzeri teknoloji platformları Naponi çözümlerini kendi ürünlerinin bir parçası olarak müşterilerine sunabilir.</p>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin: 4rem 0; text-align: center; background: rgba(15, 23, 42, 0.6); padding: 3rem 2rem; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.2);">
+        <h2 style="font-size: 1.8rem; color: #ffffff; margin-bottom: 1rem;">Yeni bir çözüm geliştirmek zorunda değilsiniz.</h2>
+        <p style="color: #cbd5e1; font-size: 1.05rem; max-width: 650px; margin: 0 auto 1.5rem;">Bahşiş, çalışan bahşiş yönetimi ve sadakat gibi çözümleri sıfırdan geliştirmek yerine Naponi altyapısından yararlanabilirsiniz.</p>
+        <p style="color: #38bdf8; font-weight: 700;">Mevcut platformunuzun değerini artırın. Müşterilerinize daha fazla çözüm sunun.</p>
+      </section>
+    </main>
+  `,
+});
+
+// =============================================================================
 // 5. DYNAMIC SITEMAP GENERATION WITH COMPLETE GLOBAL HREFLANG
 // =============================================================================
 function generateDynamicSitemap() {
@@ -955,6 +1012,17 @@ ${comparisonUrls}
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/catalog" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/catalog" />
+  </url>
+
+  <!-- 7C. B2B Technology Partners Channel -->
+  <url>
+    <loc>https://www.naponi.com/technology-partners</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/technology-partners" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/technology-partners" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/technology-partners" />
   </url>
 
   <!-- 8. Business Registration & Authentication -->

@@ -20,6 +20,7 @@ import {
   Briefcase,
   Headphones,
   MessageSquareHeart,
+  Handshake,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
@@ -126,6 +127,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/admin" icon={<LayoutDashboard size={18} />} label={t('nav.adminOverview')} end onClick={closeMobile} />
               <NavItem to="/admin/businesses" icon={<Building2 size={18} />} label={t('nav.businesses')} onClick={closeMobile} />
               <NavItem to="/admin/corporate-applications" icon={<Briefcase size={18} />} label={t('nav.corporateApplications')} onClick={closeMobile} />
+              <NavItem to="/admin/partner-applications" icon={<Handshake size={18} />} label={t('nav.partnerApplications')} onClick={closeMobile} />
               <NavItem to="/admin/support-tickets" icon={<Headphones size={18} />} label={t('nav.supportTickets')} onClick={closeMobile} />
               <NavItem to="/admin/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
               <NavItem to="/admin/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />

@@ -7,6 +7,7 @@ import adminRoutes from './admin.routes';
 import webhookRoutes from './webhook.routes';
 import agreementRoutes from './agreement.routes';
 import corporateRoutes from './corporate.routes';
+import partnerRoutes from './partner.routes';
 import supportRoutes from './support.routes';
 
 import prisma from '../utils/prisma';
@@ -42,6 +43,7 @@ apiRouter.use('/payment/webhook', webhookRoutes);
 apiRouter.use('/payments/webhook', webhookRoutes);
 apiRouter.use('/agreements', agreementRoutes);
 apiRouter.use('/corporate-applications', corporateRoutes);
+apiRouter.use('/partner-applications', partnerRoutes);
 apiRouter.use('/support-tickets', supportRoutes);
 
 export default apiRouter;
