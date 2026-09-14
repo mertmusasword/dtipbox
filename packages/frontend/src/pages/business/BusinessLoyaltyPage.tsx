@@ -392,7 +392,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                   onChange={(e) => setTargetStamps(Number(e.target.value))}
                   required
                 />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Örn: 10 damga</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>Örn: 10 damga</span>
               </div>
               <div>
                 <label className="loyalty-input-label">Damga Arası Bekleme (Dk)</label>
@@ -405,7 +405,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                   onChange={(e) => setCooldownMin(Number(e.target.value))}
                   required
                 />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Çift basmayı önler (dk)</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>Çift basmayı önler (dk)</span>
               </div>
             </div>
 
