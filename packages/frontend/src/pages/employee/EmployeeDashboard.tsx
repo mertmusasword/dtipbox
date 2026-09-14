@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { EmployeeAnalytics } from '../../types';
 import { MetricCard } from '../../components/MetricCard';
-import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star, Split, CheckCircle2 } from 'lucide-react';
+import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star, Split, CheckCircle2, Award } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 
 export const EmployeeDashboard: React.FC = () => {
@@ -78,6 +79,51 @@ export const EmployeeDashboard: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Loyalty Stamp Action Banner */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.15) 100%)',
+        border: '1px solid rgba(99,102,241,0.3)',
+        borderRadius: '16px',
+        padding: '1.25rem 1.5rem',
+        marginBottom: '2rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            background: 'var(--accent-gradient)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+          }}>
+            <Award size={24} />
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>
+              Sadakat Damgası Bas & Ödül Teslim Et
+            </div>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              Müşterinin dinamik QR kodunu tarayın veya 6 haneli kart kodunu girin.
+            </div>
+          </div>
+        </div>
+        <Link
+          to="/employee/loyalty"
+          className="btn btn-primary"
+          style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1.25rem', fontWeight: 600 }}
+        >
+          <Award size={16} />
+          <span>Damga Ekranını Aç</span>
+        </Link>
       </div>
 
       {/* Personal Tips Performance */}

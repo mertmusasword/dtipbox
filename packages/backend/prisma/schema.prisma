@@ -146,6 +146,7 @@ model User {
   audit_logs            AuditLog[]
   agreement_acceptances AgreementAcceptance[]
   password_reset_tokens PasswordResetToken[]
+  loyalty_transactions  LoyaltyStampTransaction[]
 
   @@index([email])
   @@index([role])
@@ -191,6 +192,10 @@ model Business {
   audit_logs              AuditLog[]
   agreement_acceptances   AgreementAcceptance[]
   tip_pool_distributions  TipPoolDistribution[]
+  loyalty_programs        LoyaltyProgram[]
+  loyalty_cards           LoyaltyCard[]
+  loyalty_transactions    LoyaltyStampTransaction[]
+  loyalty_redemptions     LoyaltyRedemption[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -235,11 +240,13 @@ model Employee {
   deleted_at DateTime?
 
   // Relations
-  business        Business        @relation(fields: [business_id], references: [id], onDelete: Cascade)
-  user            User?           @relation(fields: [user_id], references: [id])
-  tips            Tip[]
-  feedbacks       Feedback[]
-  tip_pool_shares TipPoolShare[]
+  business              Business                  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  user                  User?                     @relation(fields: [user_id], references: [id])
+  tips                  Tip[]
+  feedbacks             Feedback[]
+  tip_pool_shares       TipPoolShare[]
+  loyalty_transactions  LoyaltyStampTransaction[]
+  loyalty_redemptions   LoyaltyRedemption[]
 
   @@index([business_id])
   @@index([user_id])
@@ -638,5 +645,135 @@ model TipPoolShare {
   @@index([employee_id])
   @@map("tip_pool_shares")
 }
+
+// ==================== LOYALTY (SADAKAT) SYSTEM ====================
+
+model LoyaltyProgram {
+  id                 String   @id @default(uuid())
+  business_id        String
+  name               String   // e.g. "Coffee Loyalty", "Kahve Sadakat Programı"
+  target_stamps      Int      @default(10)
+  reward_description String   // e.g. "1 Ücretsiz Kahve"
+  is_active          Boolean  @default(true)
+
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  // Relations
+  business           Business                  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  cards              LoyaltyCard[]
+  transactions       LoyaltyStampTransaction[]
+  redemptions        LoyaltyRedemption[]
+
+  @@index([business_id])
+  @@index([is_active])
+  @@map("loyalty_programs")
+}
+
+model LoyaltyCard {
+  id                   String   @id @default(uuid())
+  public_id            String   @unique // e.g. c_a9b8c7d6e5f41234
+  business_id          String
+  program_id           String
+  customer_email       String
+  customer_name        String?
+  card_code            String   @unique // 6-8 chars uppercase e.g. "8F42K7"
+  current_stamps       Int      @default(0)
+  target_stamps        Int      @default(10)
+  total_rewards_earned Int      @default(0)
+  is_active            Boolean  @default(true)
+
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  // Relations
+  business             Business                  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  program              LoyaltyProgram            @relation(fields: [program_id], references: [id], onDelete: Cascade)
+  transactions         LoyaltyStampTransaction[]
+  redemptions          LoyaltyRedemption[]
+  scan_tokens          LoyaltyScanToken[]
+
+  @@unique([business_id, program_id, customer_email])
+  @@index([business_id])
+  @@index([program_id])
+  @@index([customer_email])
+  @@index([card_code])
+  @@index([public_id])
+  @@map("loyalty_cards")
+}
+
+model LoyaltyScanToken {
+  id         String    @id @default(uuid())
+  card_id    String
+  token      String    @unique
+  expires_at DateTime
+  used_at    DateTime?
+  created_at DateTime  @default(now())
+
+  // Relations
+  card       LoyaltyCard @relation(fields: [card_id], references: [id], onDelete: Cascade)
+
+  @@index([card_id])
+  @@index([token])
+  @@index([expires_at])
+  @@map("loyalty_scan_tokens")
+}
+
+model LoyaltyStampTransaction {
+  id              String   @id @default(uuid())
+  card_id         String
+  business_id     String
+  program_id      String
+  employee_id     String?
+  user_id         String?  // Actor user id (staff or business owner)
+  action_type     String   // STAMP_ADDED, REWARD_EARNED, REWARD_REDEEMED, STAMPS_RESET
+  method          String   // QR, CODE, MANUAL
+  previous_stamps Int
+  new_stamps      Int
+  notes           String?
+  scan_token_id   String?
+
+  created_at      DateTime @default(now())
+
+  // Relations
+  card            LoyaltyCard    @relation(fields: [card_id], references: [id], onDelete: Cascade)
+  business        Business       @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  program         LoyaltyProgram @relation(fields: [program_id], references: [id], onDelete: Cascade)
+  employee        Employee?      @relation(fields: [employee_id], references: [id], onDelete: SetNull)
+  actor           User?          @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([card_id])
+  @@index([business_id])
+  @@index([program_id])
+  @@index([employee_id])
+  @@index([created_at])
+  @@map("loyalty_stamp_transactions")
+}
+
+model LoyaltyRedemption {
+  id           String    @id @default(uuid())
+  card_id      String
+  business_id  String
+  program_id   String
+  employee_id  String?
+  reward_title String
+  code         String    @unique // Verification redemption code e.g. RDW-74921
+  status       String    @default("PENDING") // PENDING, REDEEMED, EXPIRED
+  redeemed_at  DateTime?
+  created_at   DateTime  @default(now())
+
+  // Relations
+  card         LoyaltyCard    @relation(fields: [card_id], references: [id], onDelete: Cascade)
+  business     Business       @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  program      LoyaltyProgram @relation(fields: [program_id], references: [id], onDelete: Cascade)
+  employee     Employee?      @relation(fields: [employee_id], references: [id], onDelete: SetNull)
+
+  @@index([card_id])
+  @@index([business_id])
+  @@index([code])
+  @@index([status])
+  @@map("loyalty_redemptions")
+}
+
 
 

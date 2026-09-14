@@ -26,6 +26,11 @@ const TippingGuideDetailPage = React.lazy(() => import('./pages/public/guides/Ti
 const ComparisonDetailPage = React.lazy(() => import('./pages/public/comparisons/ComparisonDetailPage').then((m) => ({ default: m.ComparisonDetailPage })));
 const NaponiCatalogPage = React.lazy(() => import('./pages/public/NaponiCatalogPage').then((m) => ({ default: m.NaponiCatalogPage })));
 
+// Loyalty Public Pages
+const CustomerEnrollPage = React.lazy(() => import('./pages/public/loyalty/CustomerEnrollPage').then((m) => ({ default: m.CustomerEnrollPage })));
+const CustomerCardPage = React.lazy(() => import('./pages/public/loyalty/CustomerCardPage').then((m) => ({ default: m.CustomerCardPage })));
+const CustomerRecoverPage = React.lazy(() => import('./pages/public/loyalty/CustomerRecoverPage').then((m) => ({ default: m.CustomerRecoverPage })));
+
 // Auth Pages
 const LoginPage = React.lazy(() => import('./pages/auth/LoginPage').then((m) => ({ default: m.LoginPage })));
 const RegisterPage = React.lazy(() => import('./pages/auth/RegisterPage').then((m) => ({ default: m.RegisterPage })));
@@ -43,9 +48,11 @@ const PaymentAccountPage = React.lazy(() => import('./pages/business/PaymentAcco
 const AnalyticsPage = React.lazy(() => import('./pages/business/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage })));
 const FeedbacksPage = React.lazy(() => import('./pages/business/FeedbacksPage').then((m) => ({ default: m.FeedbacksPage })));
 const ProfileSettingsPage = React.lazy(() => import('./pages/business/ProfileSettingsPage').then((m) => ({ default: m.ProfileSettingsPage })));
+const BusinessLoyaltyPage = React.lazy(() => import('./pages/business/BusinessLoyaltyPage').then((m) => ({ default: m.BusinessLoyaltyPage })));
 
 // Employee Pages
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/EmployeeDashboard').then((m) => ({ default: m.EmployeeDashboard })));
+const StaffLoyaltyScanPage = React.lazy(() => import('./pages/employee/StaffLoyaltyScanPage').then((m) => ({ default: m.StaffLoyaltyScanPage })));
 
 // Admin Pages
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard })));
@@ -156,6 +163,11 @@ export const App: React.FC = () => {
                 {/* Public Customer Tip Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />
 
+                {/* Public Loyalty Routes */}
+                <Route path="/loyalty/enroll/:businessId" element={<CustomerEnrollPage />} />
+                <Route path="/loyalty/card/:publicCardId" element={<CustomerCardPage />} />
+                <Route path="/loyalty/recover" element={<CustomerRecoverPage />} />
+
                 {/* Public Auth Routes */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -173,6 +185,8 @@ export const App: React.FC = () => {
                   <Route path="/business/payment-account" element={<PaymentAccountPage />} />
                   <Route path="/business/analytics" element={<AnalyticsPage />} />
                   <Route path="/business/feedbacks" element={<FeedbacksPage />} />
+                  <Route path="/business/loyalty" element={<BusinessLoyaltyPage />} />
+                  <Route path="/business/loyalty-scan" element={<StaffLoyaltyScanPage />} />
                   <Route path="/business/settings" element={<ProfileSettingsPage />} />
                 </Route>
 
@@ -183,6 +197,7 @@ export const App: React.FC = () => {
                 {/* Employee Routes */}
                 <Route element={<ProtectedLayout allowedRoles={['EMPLOYEE']} />}>
                   <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+                  <Route path="/employee/loyalty" element={<StaffLoyaltyScanPage />} />
                 </Route>
 
                 {/* Admin Routes */}

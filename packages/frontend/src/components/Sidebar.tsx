@@ -21,6 +21,7 @@ import {
   Headphones,
   MessageSquareHeart,
   Handshake,
+  Award,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
@@ -88,6 +89,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label={t('nav.bankAccount')} onClick={closeMobile} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
+              <NavItem to="/business/loyalty" icon={<Award size={18} />} label={t('nav.loyalty')} onClick={closeMobile} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
               <button
                 type="button"
@@ -107,6 +109,7 @@ export const Sidebar: React.FC = () => {
           {isEmployee && (
             <>
               <NavItem to="/employee/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.myTipsStats')} onClick={closeMobile} />
+              <NavItem to="/employee/loyalty" icon={<Award size={18} />} label={t('nav.loyaltyScan')} onClick={closeMobile} />
               <button
                 type="button"
                 className="sidebar-nav-item"

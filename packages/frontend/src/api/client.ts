@@ -43,7 +43,8 @@ api.interceptors.response.use(
         if (
           window.location.pathname !== '/login' &&
           window.location.pathname !== '/register' &&
-          !window.location.pathname.startsWith('/tip/')
+          !window.location.pathname.startsWith('/tip/') &&
+          !window.location.pathname.startsWith('/loyalty/')
         ) {
           window.location.href = '/login';
         }

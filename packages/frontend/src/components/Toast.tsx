@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { X, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 
-type ToastType = 'success' | 'error' | 'info';
+type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 interface Toast {
   id: number;
@@ -35,6 +35,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const icons: Record<ToastType, React.ReactNode> = {
     success: <CheckCircle2 size={18} />,
     error: <AlertTriangle size={18} />,
+    warning: <AlertTriangle size={18} />,
     info: <Info size={18} />,
   };
 
