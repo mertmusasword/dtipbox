@@ -51,11 +51,17 @@ export const StaffLoyaltyScanPage: React.FC = () => {
 
   // Result Feedback Modal
   const [stampResult, setStampResult] = useState<StampResult | null>(null);
+  const stampResultRef = useRef<StampResult | null>(null);
   const [redeemSuccess, setRedeemSuccess] = useState<{ reward: string; customer: string } | null>(null);
 
   // Scanning debounce / lock ref
   const isScanningLockedRef = useRef(false);
   const lastScannedTokenRef = useRef<string>('');
+
+  const updateStampResult = (result: StampResult | null) => {
+    stampResultRef.current = result;
+    setStampResult(result);
+  };
 
   const playSuccessBeep = () => {
     try {
@@ -79,11 +85,13 @@ export const StaffLoyaltyScanPage: React.FC = () => {
   };
 
   const handleCloseStampModal = () => {
-    setStampResult(null);
+    updateStampResult(null);
+    setManualQrToken('');
+    // Clear lock quickly so next scan is recognized immediately
     setTimeout(() => {
       isScanningLockedRef.current = false;
       lastScannedTokenRef.current = '';
-    }, 800);
+    }, 400);
   };
 
   // Stop camera stream
@@ -137,7 +145,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
 
   // BarcodeDetector loop if supported
   useEffect(() => {
-    if (!cameraActive || activeTab !== 'scan' || stampResult) return;
+    if (!cameraActive || activeTab !== 'scan') return;
 
     let animFrame: number;
     let barcodeDetector: any = null;
@@ -153,7 +161,13 @@ export const StaffLoyaltyScanPage: React.FC = () => {
     }
 
     const checkFrame = async () => {
-      if (videoRef.current && barcodeDetector && !isScanningLockedRef.current && !stampResult) {
+      if (
+        videoRef.current &&
+        videoRef.current.readyState >= 2 &&
+        barcodeDetector &&
+        !isScanningLockedRef.current &&
+        !stampResultRef.current
+      ) {
         try {
           const barcodes = await barcodeDetector.detect(videoRef.current);
           if (barcodes && barcodes.length > 0) {
@@ -161,21 +175,21 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             if (
               qrRawValue &&
               qrRawValue !== lastScannedTokenRef.current &&
-              !isScanningLockedRef.current
+              !isScanningLockedRef.current &&
+              !stampResultRef.current
             ) {
               isScanningLockedRef.current = true;
               lastScannedTokenRef.current = qrRawValue;
               handleProcessQrToken(qrRawValue);
-              return;
             }
           }
         } catch (err) {
           // Frame detection drop, ignore
         }
       }
-      if (!isScanningLockedRef.current && !stampResult) {
-        animFrame = requestAnimationFrame(checkFrame);
-      }
+
+      // Loop continues seamlessly for the entire duration of the camera session
+      animFrame = requestAnimationFrame(checkFrame);
     };
 
     if (barcodeDetector) {
@@ -185,7 +199,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
     return () => {
       if (animFrame) cancelAnimationFrame(animFrame);
     };
-  }, [cameraActive, activeTab, stampResult]);
+  }, [cameraActive, activeTab]);
 
   // QR Token Processing
   const handleProcessQrToken = async (tokenString: string) => {
@@ -201,8 +215,8 @@ export const StaffLoyaltyScanPage: React.FC = () => {
       const res = await api.post('/loyalty/staff/stamp-qr', { token: trimmed });
       const data = res.data.data;
       playSuccessBeep();
-      setStampResult({
-        previousStamps: data.card?.previous_stamps ?? data.previousStamps ?? data.card?.current_stamps - 1,
+      updateStampResult({
+        previousStamps: data.card?.previous_stamps ?? data.previousStamps ?? (data.card?.current_stamps ? data.card.current_stamps - 1 : 0),
         newStamps: data.card?.current_stamps ?? data.currentStamps,
         targetStamps: data.program?.target_stamps ?? data.targetStamps,
         rewardEarned: data.rewardEarned,
@@ -217,7 +231,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
       setTimeout(() => {
         isScanningLockedRef.current = false;
         lastScannedTokenRef.current = '';
-      }, 2500);
+      }, 2000);
     } finally {
       setProcessingScan(false);
     }
@@ -236,14 +250,15 @@ export const StaffLoyaltyScanPage: React.FC = () => {
     try {
       const res = await api.post('/loyalty/staff/stamp-code', { card_code: code });
       const data = res.data.data;
-      setStampResult({
-        previousStamps: data.card.previous_stamps ?? data.card.current_stamps - 1,
-        newStamps: data.card.current_stamps,
-        targetStamps: data.program.target_stamps,
+      playSuccessBeep();
+      updateStampResult({
+        previousStamps: data.card?.previous_stamps ?? data.previousStamps ?? (data.card?.current_stamps ? data.card.current_stamps - 1 : 0),
+        newStamps: data.card?.current_stamps ?? data.currentStamps,
+        targetStamps: data.program?.target_stamps ?? data.targetStamps,
         rewardEarned: data.rewardEarned,
-        rewardDescription: data.program.reward_description,
-        customerName: data.card.customer_name,
-        customerEmail: data.card.customer_email,
+        rewardDescription: data.program?.reward_description ?? data.rewardDescription,
+        customerName: data.card?.customer_name ?? data.customerName,
+        customerEmail: data.card?.customer_email ?? data.customerEmail,
       });
       setCardCode('');
       showToast('Damga başarıyla eklendi!', 'success');
