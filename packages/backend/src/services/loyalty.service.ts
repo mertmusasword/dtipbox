@@ -230,13 +230,28 @@ export class LoyaltyService {
       throw new AppError('İşletme bulunamadı veya aktif değil', 404);
     }
 
-    const program = await prisma.loyaltyProgram.findFirst({
+    let program = await prisma.loyaltyProgram.findFirst({
       where: { business_id: businessId, is_active: true },
       orderBy: { created_at: 'desc' },
     });
 
     if (!program) {
-      throw new AppError('Bu işletmeye ait aktif bir sadakat programı bulunamadı', 404);
+      program = await prisma.loyaltyProgram.findFirst({
+        where: { business_id: businessId },
+        orderBy: { created_at: 'desc' },
+      });
+    }
+
+    if (!program) {
+      program = await prisma.loyaltyProgram.create({
+        data: {
+          business_id: business.id,
+          name: `${business.name} Sadakat Kartı`,
+          target_stamps: 10,
+          reward_description: '1 Adet İkram Ürün',
+          is_active: true,
+        },
+      });
     }
 
     return {
@@ -286,8 +301,23 @@ export class LoyaltyService {
           orderBy: { created_at: 'desc' },
         });
 
-    if (!program || !program.is_active) {
-      throw new AppError('Aktif sadakat programı bulunamadı', 404);
+    if (!program) {
+      program = await prisma.loyaltyProgram.findFirst({
+        where: { business_id: params.businessId },
+        orderBy: { created_at: 'desc' },
+      });
+    }
+
+    if (!program) {
+      program = await prisma.loyaltyProgram.create({
+        data: {
+          business_id: business.id,
+          name: `${business.name} Sadakat Kartı`,
+          target_stamps: 10,
+          reward_description: '1 Adet İkram Ürün',
+          is_active: true,
+        },
+      });
     }
 
     // Check if customer already has a card for this business & program

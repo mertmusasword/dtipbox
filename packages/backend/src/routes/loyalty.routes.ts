@@ -37,10 +37,10 @@ const tokenLimiter = rateLimit({
 // ==========================================
 
 /**
- * GET /api/loyalty/enroll/:businessId
+ * GET /api/loyalty/enroll/:businessId or /api/loyalty/program/:businessId
  * Returns business name, logo, active loyalty program for customer registration
  */
-router.get('/enroll/:businessId', publicLimiter, async (req: Request, res: Response, next: NextFunction) => {
+router.get(['/enroll/:businessId', '/program/:businessId'], publicLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await loyaltyService.getPublicEnrollmentInfo(req.params.businessId as string);
     res.json({ success: true, data });
@@ -54,8 +54,10 @@ router.get('/enroll/:businessId', publicLimiter, async (req: Request, res: Respo
  * Registers customer with email, creates/retrieves loyalty card
  */
 const enrollSchema = z.object({
-  businessId: z.string().uuid(),
+  businessId: z.string().uuid().optional(),
+  business_id: z.string().uuid().optional(),
   programId: z.string().uuid().optional(),
+  program_id: z.string().uuid().optional(),
   email: z.string().email('Geçerli bir e-posta adresi giriniz'),
   name: z.string().max(100).optional(),
 });
@@ -63,7 +65,16 @@ const enrollSchema = z.object({
 router.post('/enroll', publicLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const parsed = enrollSchema.parse(req.body);
-    const result = await loyaltyService.enrollCustomer(parsed);
+    const bId = parsed.businessId || parsed.business_id;
+    if (!bId) {
+      throw new AppError('İşletme kimliği zorunludur', 400);
+    }
+    const result = await loyaltyService.enrollCustomer({
+      businessId: bId,
+      programId: parsed.programId || parsed.program_id,
+      email: parsed.email,
+      name: parsed.name,
+    });
     res.status(result.isNew ? 201 : 200).json({ success: true, data: result });
   } catch (error) {
     next(error);
@@ -84,10 +95,10 @@ router.get('/card/:publicId', publicLimiter, async (req: Request, res: Response,
 });
 
 /**
- * POST /api/loyalty/card/:publicId/token
+ * GET or POST /api/loyalty/card/:publicId/token
  * Generates fresh short-lived dynamic QR token for customer screen
  */
-router.post('/card/:publicId/token', tokenLimiter, async (req: Request, res: Response, next: NextFunction) => {
+router.all('/card/:publicId/token', tokenLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const tokenData = await loyaltyService.generateCardScanToken(req.params.publicId as string);
     res.json({ success: true, data: tokenData });
@@ -116,12 +127,16 @@ router.post('/card/:publicId/redeem-request', publicLimiter, async (req: Request
 const recoverSchema = z.object({
   email: z.string().email('Geçerli bir e-posta adresi giriniz'),
   businessId: z.string().uuid().optional(),
+  business_id: z.string().uuid().optional(),
 });
 
 router.post('/recover', publicLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const parsed = recoverSchema.parse(req.body);
-    const result = await loyaltyService.recoverCardsByEmail(parsed.email, parsed.businessId);
+    const result = await loyaltyService.recoverCardsByEmail(
+      parsed.email,
+      parsed.businessId || parsed.business_id
+    );
     res.json(result);
   } catch (error) {
     next(error);
