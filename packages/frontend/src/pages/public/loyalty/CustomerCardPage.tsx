@@ -241,8 +241,17 @@ export const CustomerCardPage: React.FC = () => {
           )}
           <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>{business.name}</span>
         </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-          {card.customer_name ? `Merhaba, ${card.customer_name} • ` : ''}
+        <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+          {card.customer_name ? <span style={{ color: '#fff', fontWeight: 600 }}>Merhaba, {card.customer_name}</span> : null}
+          {card.customer_name && card.customer_email ? ' • ' : ''}
+          {card.customer_email ? (
+            <span style={{ color: '#a5b4fc', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Mail size={13} style={{ display: 'inline', verticalAlign: '-1px' }} />
+              {card.customer_email}
+            </span>
+          ) : null}
+        </div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
           {program.name}
         </div>
       </div>
@@ -406,6 +415,27 @@ export const CustomerCardPage: React.FC = () => {
               {copiedCode ? <Check size={16} color="#34d399" /> : <Copy size={16} />}
             </button>
           </div>
+
+          {/* Registered Email Row */}
+          {card.customer_email && (
+            <div style={{
+              marginTop: '0.85rem',
+              padding: '0.5rem 0.85rem',
+              borderRadius: '10px',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '0.78rem',
+            }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)' }}>
+                <Mail size={13} color="#818cf8" />
+                Kayıtlı E-posta:
+              </span>
+              <strong style={{ color: '#fff', letterSpacing: '0.01em' }}>{card.customer_email}</strong>
+            </div>
+          )}
         </div>
       </div>
 
