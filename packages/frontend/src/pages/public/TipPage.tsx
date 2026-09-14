@@ -764,28 +764,6 @@ export const TipPage: React.FC = () => {
             )}
           </div>
 
-          {/* Optional Message */}
-          <div className="glass-card" style={{ padding: '1.25rem' }}>
-            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-              <input
-                type="text"
-                placeholder={t('tip.customerNamePlaceholder')}
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                className="form-input"
-              />
-            </div>
-            <div>
-              <textarea
-                placeholder={t('tip.customerMessagePlaceholder')}
-                value={customerMessage}
-                onChange={(e) => setCustomerMessage(e.target.value)}
-                className="form-textarea"
-                rows={2}
-              />
-            </div>
-          </div>
-
           {/* Step 4: Submit Button */}
           <button
             type="submit"
