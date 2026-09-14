@@ -320,14 +320,24 @@ router.post(
 
 /**
  * POST /api/loyalty/staff/confirm-reward
+ * POST /api/loyalty/staff/redeem
  * Employee or business owner verifies and confirms customer's reward redemption
  */
 const confirmRewardSchema = z.object({
-  code: z.string().min(3),
-});
+  code: z.string().optional(),
+  cardCode: z.string().optional(),
+  card_code: z.string().optional(),
+  rewardCode: z.string().optional(),
+  reward_code: z.string().optional(),
+  rewardVerificationCode: z.string().optional(),
+  reward_verification_code: z.string().optional(),
+}).refine(
+  (data) => !!(data.code || data.cardCode || data.card_code || data.rewardCode || data.reward_code || data.rewardVerificationCode || data.reward_verification_code),
+  { message: 'Lütfen müşteri kart kodunu veya ödül doğrulama kodunu giriniz' }
+);
 
 router.post(
-  '/staff/confirm-reward',
+  ['/staff/confirm-reward', '/staff/redeem'],
   authenticate,
   authorize(Role.EMPLOYEE, Role.BUSINESS, Role.ADMIN),
   async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -337,8 +347,13 @@ router.post(
         throw new AppError('İşlem yapabilmek için bir işletmeye bağlı olmalısınız', 403);
       }
       const parsed = confirmRewardSchema.parse(req.body);
+      const cardCode = parsed.cardCode || parsed.card_code;
+      const rewardCode = parsed.rewardCode || parsed.reward_code || parsed.rewardVerificationCode || parsed.reward_verification_code;
+
       const result = await loyaltyService.confirmRewardRedemption({
         code: parsed.code,
+        cardCode,
+        rewardCode,
         businessId,
         employeeId: req.user!.employeeId,
         userId: req.user!.id,

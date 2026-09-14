@@ -744,88 +744,187 @@ export class LoyaltyService {
    * 12. Staff verifies & confirms Reward Redemption (Atomic Transaction)
    */
   async confirmRewardRedemption(params: {
-    code: string;
+    code?: string;
+    cardCode?: string;
+    rewardCode?: string;
     businessId: string;
     employeeId?: string | null;
     userId?: string | null;
   }) {
-    const cleanCode = params.code.toUpperCase().trim();
-    if (!cleanCode) {
-      throw new AppError('Lütfen ödül kullanım kodunu giriniz', 400);
-    }
+    const cleanRewardCode = (params.rewardCode || params.code || '').toUpperCase().trim();
+    const cleanCardCode = (params.cardCode || params.code || '').toUpperCase().trim();
 
     return prisma.$transaction(async (tx) => {
-      const redemption = await tx.loyaltyRedemption.findUnique({
-        where: { code: cleanCode },
-        include: { card: true, program: true },
-      });
-
-      if (!redemption) {
-        throw new AppError('Ödül kullanım kodu bulunamadı', 404);
+      let redemption = null;
+      if (cleanRewardCode) {
+        redemption = await tx.loyaltyRedemption.findUnique({
+          where: { code: cleanRewardCode },
+          include: { card: true, program: true },
+        });
       }
 
-      if (redemption.status === 'REDEEMED') {
-        throw new AppError('Bu ödül daha önce kullanılmıştır!', 400);
+      if (redemption) {
+        if (redemption.status === 'REDEEMED') {
+          throw new AppError('Bu ödül daha önce kullanılmıştır!', 400);
+        }
+        if (redemption.business_id !== params.businessId) {
+          throw new AppError('Bu ödül başka bir işletmeye aittir!', 403);
+        }
+
+        // Mark redemption as redeemed
+        await tx.loyaltyRedemption.update({
+          where: { id: redemption.id },
+          data: {
+            status: 'REDEEMED',
+            redeemed_at: new Date(),
+            employee_id: params.employeeId || null,
+          },
+        });
+
+        // Deduct target stamps and increment total rewards earned
+        const prevStamps = redemption.card.current_stamps;
+        const newStamps = Math.max(0, prevStamps - redemption.card.target_stamps);
+
+        await tx.loyaltyCard.update({
+          where: { id: redemption.card_id },
+          data: {
+            current_stamps: newStamps,
+            total_rewards_earned: { increment: 1 },
+          },
+        });
+
+        await tx.loyaltyStampTransaction.create({
+          data: {
+            card_id: redemption.card_id,
+            business_id: params.businessId,
+            program_id: redemption.program_id,
+            employee_id: params.employeeId || null,
+            user_id: params.userId || null,
+            action_type: 'REWARD_REDEEMED',
+            method: 'CODE',
+            previous_stamps: prevStamps,
+            new_stamps: newStamps,
+            notes: `Ödül kullanıldı: ${redemption.reward_title}`,
+          },
+        });
+
+        return {
+          success: true,
+          rewardTitle: redemption.reward_title,
+          customerName: redemption.card.customer_name || 'Misafir',
+          customerEmail: redemption.card.customer_email,
+          cardCode: redemption.card.card_code,
+          remainingStamps: newStamps,
+          card: {
+            card_code: redemption.card.card_code,
+            customer_name: redemption.card.customer_name,
+            customer_email: redemption.card.customer_email,
+            current_stamps: newStamps,
+          },
+          program: {
+            name: redemption.program.name,
+            reward_description: redemption.program.reward_description,
+          },
+        };
       }
 
-      if (redemption.business_id !== params.businessId) {
-        throw new AppError('Bu ödül başka bir işletmeye aittir!', 403);
+      // If no redemption found by code, look up card directly by cardCode
+      const targetCardCode = cleanCardCode || cleanRewardCode;
+      if (!targetCardCode) {
+        throw new AppError('Lütfen geçerli bir müşteri kart kodu veya ödül doğrulama kodu giriniz', 400);
       }
 
-      // Mark redemption as redeemed
-      await tx.loyaltyRedemption.update({
-        where: { id: redemption.id },
-        data: {
-          status: 'REDEEMED',
-          redeemed_at: new Date(),
-          employee_id: params.employeeId || null,
+      const card = await tx.loyaltyCard.findUnique({
+        where: { card_code: targetCardCode },
+        include: {
+          program: true,
+          redemptions: { where: { status: 'PENDING' }, take: 1 },
         },
       });
 
-      // Deduct target stamps and increment total rewards earned
-      const prevStamps = redemption.card.current_stamps;
-      const newStamps = Math.max(0, prevStamps - redemption.card.target_stamps);
+      if (!card || !card.is_active) {
+        throw new AppError('Bu koda sahip müşteri kartı veya ödül bulunamadı', 404);
+      }
+
+      if (card.business_id !== params.businessId) {
+        throw new AppError('Bu kart başka bir işletmeye aittir!', 403);
+      }
+
+      const isEligible = card.current_stamps >= card.target_stamps || card.redemptions.length > 0;
+      if (!isEligible) {
+        throw new AppError(
+          `Bu kart henüz ödül hedefine ulaşmamış (${card.current_stamps} / ${card.target_stamps} Damga).`,
+          400
+        );
+      }
+
+      let activeRedemption = card.redemptions[0];
+      if (activeRedemption) {
+        await tx.loyaltyRedemption.update({
+          where: { id: activeRedemption.id },
+          data: {
+            status: 'REDEEMED',
+            redeemed_at: new Date(),
+            employee_id: params.employeeId || null,
+          },
+        });
+      } else {
+        activeRedemption = await tx.loyaltyRedemption.create({
+          data: {
+            card_id: card.id,
+            business_id: params.businessId,
+            program_id: card.program_id,
+            reward_title: card.program.reward_description,
+            code: generateRedemptionCode(),
+            status: 'REDEEMED',
+            redeemed_at: new Date(),
+            employee_id: params.employeeId || null,
+          },
+        });
+      }
+
+      const prevStamps = card.current_stamps;
+      const newStamps = Math.max(0, prevStamps - card.target_stamps);
 
       await tx.loyaltyCard.update({
-        where: { id: redemption.card_id },
+        where: { id: card.id },
         data: {
           current_stamps: newStamps,
           total_rewards_earned: { increment: 1 },
         },
       });
 
-      // Audit transaction
       await tx.loyaltyStampTransaction.create({
         data: {
-          card_id: redemption.card_id,
+          card_id: card.id,
           business_id: params.businessId,
-          program_id: redemption.program_id,
+          program_id: card.program_id,
           employee_id: params.employeeId || null,
           user_id: params.userId || null,
           action_type: 'REWARD_REDEEMED',
           method: 'CODE',
           previous_stamps: prevStamps,
           new_stamps: newStamps,
-          notes: `Ödül kullanıldı: ${redemption.reward_title}`,
+          notes: `Ödül kullanıldı: ${card.program.reward_description}`,
         },
       });
 
       return {
         success: true,
-        rewardTitle: redemption.reward_title,
-        customerName: redemption.card.customer_name || 'Misafir',
-        customerEmail: redemption.card.customer_email,
-        cardCode: redemption.card.card_code,
+        rewardTitle: card.program.reward_description,
+        customerName: card.customer_name || 'Misafir',
+        customerEmail: card.customer_email,
+        cardCode: card.card_code,
         remainingStamps: newStamps,
         card: {
-          card_code: redemption.card.card_code,
-          customer_name: redemption.card.customer_name,
-          customer_email: redemption.card.customer_email,
+          card_code: card.card_code,
+          customer_name: card.customer_name,
+          customer_email: card.customer_email,
           current_stamps: newStamps,
         },
         program: {
-          name: redemption.program.name,
-          reward_description: redemption.program.reward_description,
+          name: card.program.name,
+          reward_description: card.program.reward_description,
         },
       };
     });

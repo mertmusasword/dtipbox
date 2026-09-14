@@ -273,21 +273,25 @@ export const StaffLoyaltyScanPage: React.FC = () => {
   const handleRedeemReward = async (e: React.FormEvent) => {
     e.preventDefault();
     const code = redeemCardCode.trim().toUpperCase();
-    if (!code) {
-      showToast('Lütfen kart kodunu girin', 'warning');
+    const verifCode = redeemVerifCode.trim().toUpperCase();
+    if (!code && !verifCode) {
+      showToast('Lütfen kart kodunu veya ödül doğrulama kodunu girin', 'warning');
       return;
     }
 
     setProcessingRedeem(true);
     try {
       const res = await api.post('/loyalty/staff/redeem', {
-        card_code: code,
-        reward_verification_code: redeemVerifCode.trim() || undefined,
+        card_code: code || undefined,
+        cardCode: code || undefined,
+        reward_verification_code: verifCode || undefined,
+        rewardVerificationCode: verifCode || undefined,
+        code: verifCode || code,
       });
       const data = res.data.data;
       setRedeemSuccess({
-        reward: data.program.reward_description,
-        customer: data.card.customer_email,
+        reward: data.rewardTitle || data.program?.reward_description || 'Ödül',
+        customer: data.customerName || data.customerEmail || data.card?.customer_name || data.card?.customer_email || 'Müşteri',
       });
       setRedeemCardCode('');
       setRedeemVerifCode('');
@@ -515,7 +519,6 @@ export const StaffLoyaltyScanPage: React.FC = () => {
                 maxLength={8}
                 value={redeemCardCode}
                 onChange={(e) => setRedeemCardCode(e.target.value.toUpperCase())}
-                required
                 autoFocus
               />
             </div>
@@ -525,15 +528,15 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               <input
                 type="text"
                 className="loyalty-text-input"
-                placeholder="İsteğe bağlı doğrulama kodu"
+                placeholder="Örn: 82YR34 veya isteğe bağlı"
                 value={redeemVerifCode}
-                onChange={(e) => setRedeemVerifCode(e.target.value)}
+                onChange={(e) => setRedeemVerifCode(e.target.value.toUpperCase())}
               />
             </div>
 
             <button
               type="submit"
-              disabled={processingRedeem || !redeemCardCode.trim()}
+              disabled={processingRedeem || (!redeemCardCode.trim() && !redeemVerifCode.trim())}
               className="loyalty-primary-btn"
               style={{
                 width: '100%',
