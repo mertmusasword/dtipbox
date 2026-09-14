@@ -134,32 +134,84 @@ export class LoyaltyService {
    * 3. Get loyalty program statistics for business dashboard
    */
   async getBusinessLoyaltyStats(businessId: string) {
-    const [totalCards, activeCustomers, totalStampsGiven, redeemedRewards, pendingRewards] =
-      await Promise.all([
-        prisma.loyaltyCard.count({ where: { business_id: businessId } }),
-        prisma.loyaltyCard.count({
-          where: { business_id: businessId, current_stamps: { gt: 0 } },
-        }),
-        prisma.loyaltyStampTransaction.count({
-          where: { business_id: businessId, action_type: 'STAMP_ADDED' },
-        }),
-        prisma.loyaltyRedemption.count({
-          where: { business_id: businessId, status: 'REDEEMED' },
-        }),
-        prisma.loyaltyCard.count({
-          where: {
-            business_id: businessId,
-            current_stamps: { gte: prisma.loyaltyCard.fields.target_stamps },
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const [
+      totalCards,
+      activeTxCards,
+      cardsWithStamps,
+      totalStampsGiven,
+      redeemedRewards,
+      pendingRewards,
+      recentTxs,
+    ] = await Promise.all([
+      prisma.loyaltyCard.count({ where: { business_id: businessId } }),
+      // Distinct cards with activity in last 30 days
+      prisma.loyaltyStampTransaction.findMany({
+        where: {
+          business_id: businessId,
+          created_at: { gte: thirtyDaysAgo },
+        },
+        select: { card_id: true },
+        distinct: ['card_id'],
+      }),
+      prisma.loyaltyCard.count({
+        where: { business_id: businessId, current_stamps: { gt: 0 } },
+      }),
+      prisma.loyaltyStampTransaction.count({
+        where: { business_id: businessId, action_type: 'STAMP_ADDED' },
+      }),
+      prisma.loyaltyRedemption.count({
+        where: { business_id: businessId, status: 'REDEEMED' },
+      }),
+      prisma.loyaltyCard.count({
+        where: {
+          business_id: businessId,
+          current_stamps: { gte: prisma.loyaltyCard.fields.target_stamps },
+        },
+      }),
+      prisma.loyaltyStampTransaction.findMany({
+        where: { business_id: businessId },
+        orderBy: { created_at: 'desc' },
+        take: 15,
+        include: {
+          employee: {
+            select: { first_name: true, last_name: true },
           },
-        }),
-      ]);
+          card: {
+            select: {
+              card_code: true,
+              customer_email: true,
+              customer_name: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    const activeCustomers = Math.max(activeTxCards.length, cardsWithStamps);
+
+    const recentTransactions = recentTxs.map((tx) => ({
+      id: tx.id,
+      type: tx.action_type === 'STAMP_ADDED' ? 'STAMP' : 'REDEEM',
+      cardCode: tx.card?.card_code || '------',
+      customerEmail: tx.card?.customer_name || (tx.card?.customer_email ? maskEmail(tx.card.customer_email) : 'Misafir'),
+      employeeName: tx.employee
+        ? `${tx.employee.first_name} ${tx.employee.last_name}`
+        : 'Yönetici / Kasa',
+      stampsDelta: Math.max(1, Math.abs(tx.new_stamps - tx.previous_stamps)),
+      createdAt: tx.created_at.toISOString(),
+    }));
 
     return {
       totalCards,
       activeCustomers,
+      activeCards30d: activeCustomers,
       totalStampsGiven,
       redeemedRewards,
+      totalRewardsRedeemed: redeemedRewards,
       pendingRewards,
+      recentTransactions,
     };
   }
 

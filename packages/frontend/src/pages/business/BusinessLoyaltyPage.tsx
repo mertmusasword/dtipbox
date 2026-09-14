@@ -30,17 +30,25 @@ interface LoyaltyProgramData {
 
 interface LoyaltyStats {
   totalCards: number;
-  activeCards30d: number;
+  activeCards30d?: number;
+  activeCustomers?: number;
   totalStampsGiven: number;
-  totalRewardsRedeemed: number;
-  recentTransactions: Array<{
+  totalRewardsRedeemed?: number;
+  redeemedRewards?: number;
+  recentTransactions?: Array<{
     id: string;
-    type: string;
-    cardCode: string;
-    customerEmail: string;
-    employeeName: string;
-    stampsDelta: number;
-    createdAt: string;
+    type?: string;
+    action_type?: string;
+    cardCode?: string;
+    card_code?: string;
+    customerEmail?: string;
+    customer_name?: string;
+    customer_masked_email?: string;
+    employeeName?: string;
+    staff_name?: string;
+    stampsDelta?: number;
+    createdAt?: string;
+    created_at?: string;
   }>;
 }
 
@@ -71,10 +79,11 @@ export const BusinessLoyaltyPage: React.FC = () => {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [bizRes, progRes, statsRes] = await Promise.all([
+      const [bizRes, progRes, statsRes, txRes] = await Promise.all([
         api.get('/business'),
         api.get('/loyalty/business/program').catch(() => ({ data: { data: null } })),
         api.get('/loyalty/business/stats').catch(() => ({ data: { data: null } })),
+        api.get('/loyalty/business/transactions?limit=15').catch(() => ({ data: { data: null } })),
       ]);
 
       const biz = bizRes.data.data;
@@ -95,7 +104,23 @@ export const BusinessLoyaltyPage: React.FC = () => {
       }
 
       if (statsRes.data?.data) {
-        setStats(statsRes.data.data);
+        const statsData = statsRes.data.data;
+        let recent = statsData.recentTransactions;
+        if ((!recent || recent.length === 0) && txRes.data?.data?.items) {
+          recent = txRes.data.data.items.map((item: any) => ({
+            id: item.id,
+            type: item.action_type === 'STAMP_ADDED' ? 'STAMP' : 'REDEEM',
+            cardCode: item.card_code,
+            customerEmail: item.customer_name || item.customer_masked_email || 'Misafir',
+            employeeName: item.staff_name,
+            stampsDelta: Math.max(1, Math.abs((item.new_stamps || 0) - (item.previous_stamps || 0))),
+            createdAt: item.created_at,
+          }));
+        }
+        setStats({
+          ...statsData,
+          recentTransactions: recent,
+        });
       }
     } catch (err) {
       console.error('Failed to load loyalty data:', err);
@@ -357,7 +382,9 @@ export const BusinessLoyaltyPage: React.FC = () => {
         </div>
         <div className="loyalty-metric-card">
           <div className="loyalty-metric-label">Aktif Müşteri (30 Gün)</div>
-          <div className="loyalty-metric-val" style={{ color: '#818cf8' }}>{stats?.activeCards30d || 0}</div>
+          <div className="loyalty-metric-val" style={{ color: '#818cf8' }}>
+            {stats?.activeCards30d ?? stats?.activeCustomers ?? 0}
+          </div>
           <div className="loyalty-metric-sub">Son 30 günde damga alan</div>
         </div>
         <div className="loyalty-metric-card">
@@ -367,7 +394,9 @@ export const BusinessLoyaltyPage: React.FC = () => {
         </div>
         <div className="loyalty-metric-card">
           <div className="loyalty-metric-label">Kullanılan Ödül</div>
-          <div className="loyalty-metric-val" style={{ color: '#fbbf24' }}>{stats?.totalRewardsRedeemed || 0}</div>
+          <div className="loyalty-metric-val" style={{ color: '#fbbf24' }}>
+            {stats?.totalRewardsRedeemed ?? stats?.redeemedRewards ?? 0}
+          </div>
           <div className="loyalty-metric-sub">Teslim edilen ikramlar</div>
         </div>
       </div>
@@ -612,7 +641,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                 {stats.recentTransactions.map((tx) => (
                   <tr key={tx.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                      {new Date(tx.createdAt).toLocaleString('tr-TR', {
+                      {new Date(tx.createdAt || tx.created_at || '').toLocaleString('tr-TR', {
                         day: '2-digit',
                         month: 'short',
                         hour: '2-digit',
@@ -620,7 +649,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                       })}
                     </td>
                     <td style={{ padding: '0.85rem 1rem' }}>
-                      {tx.type === 'STAMP' ? (
+                      {tx.type === 'STAMP' || tx.action_type === 'STAMP_ADDED' ? (
                         <span style={{
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -629,7 +658,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                           fontWeight: 600
                         }}>
                           <CheckCircle2 size={14} />
-                          +{tx.stampsDelta} Damga
+                          +{tx.stampsDelta || 1} Damga
                         </span>
                       ) : (
                         <span style={{
@@ -645,7 +674,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                       )}
                     </td>
                     <td style={{ padding: '0.85rem 1rem', color: 'var(--text-primary)' }}>
-                      {tx.customerEmail}
+                      {tx.customerEmail || tx.customer_name || tx.customer_masked_email || 'Misafir'}
                     </td>
                     <td style={{ padding: '0.85rem 1rem' }}>
                       <code style={{
@@ -656,11 +685,11 @@ export const BusinessLoyaltyPage: React.FC = () => {
                         fontFamily: 'monospace',
                         fontWeight: 700
                       }}>
-                        {tx.cardCode}
+                        {tx.cardCode || tx.card_code || '------'}
                       </code>
                     </td>
                     <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                      {tx.employeeName || 'İşletme Yöneticisi'}
+                      {tx.employeeName || tx.staff_name || 'Yönetici / Kasa'}
                     </td>
                   </tr>
                 ))}
