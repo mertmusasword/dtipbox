@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import QRCode from 'qrcode';
 import { api } from '../../api/client';
 import { useToast } from '../../components/Toast';
@@ -305,8 +306,8 @@ export const BusinessLoyaltyPage: React.FC = () => {
           </p>
         </div>
 
-        {program && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          {program && (
             <span style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -322,8 +323,24 @@ export const BusinessLoyaltyPage: React.FC = () => {
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: program.is_active ? '#34d399' : '#f87171' }} />
               {program.is_active ? 'Program Aktif' : 'Program Pasif'}
             </span>
-          </div>
-        )}
+          )}
+          <Link
+            to="/business/loyalty-scan"
+            className="loyalty-primary-btn"
+            style={{
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.55rem 1.1rem',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+            }}
+          >
+            <QrIcon size={16} />
+            Damga Okut / Kamera Aç
+          </Link>
+        </div>
       </div>
 
       {/* Metrics Row */}

@@ -90,6 +90,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
               <NavItem to="/business/loyalty" icon={<Award size={18} />} label={t('nav.loyalty')} onClick={closeMobile} />
+              <NavItem to="/business/loyalty-scan" icon={<QrCode size={18} />} label={t('nav.loyaltyScan') || 'Sadakat Okut'} onClick={closeMobile} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
               <button
                 type="button"
