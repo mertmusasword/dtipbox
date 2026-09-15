@@ -48,6 +48,7 @@ import {
   Tag,
   Star,
   Mail,
+  Radio,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -767,11 +768,11 @@ export const HomePage: React.FC = () => {
                           ? 'Masa numaranıza ve mekan logonuzla özelleştirilmiş, yüksek çözünürlüklü vektörel PDF ve SVG çıktıları anında alın.'
                           : 'Download high-res vector PDF and SVG print templates with your logo, table numbers, and custom tip prompts.'}
                       </p>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <span className="badge badge-accent" style={{ fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+                        <span className="badge badge-accent" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                           <Printer size={12} /> {language === 'tr' ? 'Baskıya Hazır PDF' : 'Print-Ready PDF'}
                         </span>
-                        <span className="badge badge-primary" style={{ fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <span className="badge badge-neutral" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                           <Download size={12} /> SVG
                         </span>
                       </div>
@@ -793,12 +794,12 @@ export const HomePage: React.FC = () => {
                           ? 'Garson ve barmenlerinize özel QR yaka kartları oluşturun. Müşteriler doğrudan sevdikleri garsona özel teşekkür edip bahşiş iletsin.'
                           : 'Equip servers and valets with stylish wearable badges. Guests scan to directly reward exceptional personal hospitality.'}
                       </p>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <span className="badge badge-success" style={{ fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+                        <span className="badge badge-success" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                           <CheckCheck size={12} /> {language === 'tr' ? 'Yaka Kartı Şablonu' : 'Badge Template'}
                         </span>
-                        <span className="badge badge-secondary" style={{ fontSize: '0.72rem' }}>
-                          NFC Tag Support
+                        <span className="badge badge-info" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <Radio size={12} /> {language === 'tr' ? 'NFC Desteği' : 'NFC Tag Support'}
                         </span>
                       </div>
                     </div>
