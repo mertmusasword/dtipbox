@@ -97,11 +97,6 @@ export const PosIntegrationsPage: React.FC = () => {
       setConnections(conns);
       setCatalog(cats);
       setBusinessEmployees(emps);
-
-      // Default to catalog tab if no active connections yet
-      if (conns.length === 0) {
-        setActiveTab('catalog');
-      }
     } catch (err: any) {
       setError(err.response?.data?.error || 'POS entegrasyonları yüklenemedi.');
     } finally {
@@ -113,7 +108,7 @@ export const PosIntegrationsPage: React.FC = () => {
     loadData();
   }, [loadData]);
 
-  // 2. Connect POS
+  // 2. Connect POS Modal Openers
   const handleOpenConnect = (item: PosCatalogItem) => {
     setSelectedProvider(item);
     // Initialize default credentials
@@ -125,9 +120,19 @@ export const PosIntegrationsPage: React.FC = () => {
       item.required_credentials.forEach((f) => {
         defaults[f.key] = '';
       });
+      defaults.locationName = 'Main Location';
     }
     setConnectForm(defaults);
     setShowConnectModal(true);
+  };
+
+  const handleOpenNewPosModal = () => {
+    const defaultProvider = catalog.find((c) => c.id === 'mock_pos') || catalog[0];
+    if (defaultProvider) {
+      handleOpenConnect(defaultProvider);
+    } else {
+      setShowRequestModal(true);
+    }
   };
 
   const handleConnectSubmit = async (e: React.FormEvent) => {
@@ -386,7 +391,7 @@ export const PosIntegrationsPage: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('catalog')}
+              onClick={handleOpenNewPosModal}
               style={{
                 background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
                 border: 'none',
@@ -573,7 +578,7 @@ export const PosIntegrationsPage: React.FC = () => {
                 Kullandığınız restoran POS veya adisyon sistemini seçerek bahşiş ve personel senkronizasyonunu hemen başlatın.
               </p>
               <button
-                onClick={() => setActiveTab('catalog')}
+                onClick={handleOpenNewPosModal}
                 style={{
                   background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
                   border: 'none',
@@ -586,7 +591,7 @@ export const PosIntegrationsPage: React.FC = () => {
                   boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)',
                 }}
               >
-                Katalogdan POS Seç
+                Katalogdan POS Seç / Bağla
               </button>
             </div>
           ) : (
@@ -1178,49 +1183,20 @@ export const PosIntegrationsPage: React.FC = () => {
             )}
 
             <form onSubmit={handleConnectSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {selectedProvider.required_credentials.map((field) => (
-                <div key={field.key}>
-                  <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.4rem' }}>
-                    {field.label} {field.required && <span style={{ color: '#f87171' }}>*</span>}
-                  </label>
-                  <input
-                    type={field.type === 'password' ? 'password' : 'text'}
-                    required={field.required}
-                    value={connectForm[field.key] || ''}
-                    onChange={(e) =>
-                      setConnectForm((prev) => ({ ...prev, [field.key]: e.target.value }))
-                    }
-                    placeholder={`${field.label} giriniz`}
-                    style={{
-                      width: '100%',
-                      background: 'rgba(15, 23, 42, 0.7)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '8px',
-                      padding: '0.65rem 0.85rem',
-                      color: '#f8fafc',
-                      fontSize: '0.875rem',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
-              ))}
-
               <div>
                 <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.4rem' }}>
-                  Restoran / Şube Adı
+                  POS Sistemi Seçin
                 </label>
-                <input
-                  type="text"
-                  value={connectForm.locationName || ''}
-                  onChange={(e) =>
-                    setConnectForm((prev) => ({ ...prev, locationName: e.target.value }))
-                  }
-                  placeholder="Örn: Kadıköy Şubesi / Main Dining"
+                <select
+                  value={selectedProvider.id}
+                  onChange={(e) => {
+                    const chosen = catalog.find((c) => c.id === e.target.value);
+                    if (chosen) handleOpenConnect(chosen);
+                  }}
                   style={{
                     width: '100%',
-                    background: 'rgba(15, 23, 42, 0.7)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    background: 'rgba(15, 23, 42, 0.9)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
                     borderRadius: '8px',
                     padding: '0.65rem 0.85rem',
                     color: '#f8fafc',
@@ -1228,47 +1204,173 @@ export const PosIntegrationsPage: React.FC = () => {
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
-                />
+                >
+                  {catalog.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.display_name} ({item.region_label}) {item.has_adapter ? '✓ Canlı Demo & Test' : '• Çok Yakında'}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowConnectModal(false)}
+              {!selectedProvider.has_adapter ? (
+                <div
                   style={{
-                    flex: 1,
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    color: '#cbd5e1',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    padding: '0.75rem',
-                    borderRadius: '8px',
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.25)',
+                    borderRadius: '10px',
+                    padding: '1.25rem',
+                    color: '#fbbf24',
+                    fontSize: '0.85rem',
                   }}
                 >
-                  İptal
-                </button>
+                  <div style={{ fontWeight: 700, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Clock size={16} />
+                    {selectedProvider.display_name} Entegrasyonu Çok Yakında!
+                  </div>
+                  <div style={{ color: '#cbd5e1', fontSize: '0.825rem', lineHeight: 1.5 }}>
+                    Bu POS sağlayıcısı şu anda doğrudan resmi API onay aşamasındadır. Mimariyi hemen test etmek için <strong>Naponi POS Sandbox</strong> modunu kullanabilir ya da erken erişim talebi iletebilirsiniz.
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sandbox = catalog.find((c) => c.id === 'mock_pos');
+                        if (sandbox) handleOpenConnect(sandbox);
+                      }}
+                      style={{
+                        background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '0.6rem 1.1rem',
+                        borderRadius: '8px',
+                        fontSize: '0.825rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Sandbox ile Test Et
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowConnectModal(false);
+                        setRequestForm((prev) => ({
+                          ...prev,
+                          providerName: selectedProvider.display_name,
+                          country: selectedProvider.countries[0] === '*' ? 'GLOBAL' : selectedProvider.countries[0],
+                        }));
+                        setShowRequestModal(true);
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        color: '#e2e8f0',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        padding: '0.6rem 1.1rem',
+                        borderRadius: '8px',
+                        fontSize: '0.825rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Erken Erişim Talep Et
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {selectedProvider.required_credentials.map((field) => (
+                    <div key={field.key}>
+                      <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.4rem' }}>
+                        {field.label} {field.required && <span style={{ color: '#f87171' }}>*</span>}
+                      </label>
+                      <input
+                        type={field.type === 'password' ? 'password' : 'text'}
+                        required={field.required}
+                        value={connectForm[field.key] || ''}
+                        onChange={(e) =>
+                          setConnectForm((prev) => ({ ...prev, [field.key]: e.target.value }))
+                        }
+                        placeholder={`${field.label} giriniz`}
+                        style={{
+                          width: '100%',
+                          background: 'rgba(15, 23, 42, 0.7)',
+                          border: '1px solid rgba(255, 255, 255, 0.12)',
+                          borderRadius: '8px',
+                          padding: '0.65rem 0.85rem',
+                          color: '#f8fafc',
+                          fontSize: '0.875rem',
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+                  ))}
 
-                <button
-                  type="submit"
-                  disabled={connecting}
-                  style={{
-                    flex: 1,
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                    color: '#ffffff',
-                    border: 'none',
-                    padding: '0.75rem',
-                    borderRadius: '8px',
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    cursor: connecting ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                  }}
-                >
-                  {connecting ? 'Doğrulanıyor...' : 'Bağlantıyı Tamamla'}
-                </button>
-              </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.4rem' }}>
+                      Restoran / Şube Adı
+                    </label>
+                    <input
+                      type="text"
+                      value={connectForm.locationName || ''}
+                      onChange={(e) =>
+                        setConnectForm((prev) => ({ ...prev, locationName: e.target.value }))
+                      }
+                      placeholder="Örn: Kadıköy Şubesi / Main Dining"
+                      style={{
+                        width: '100%',
+                        background: 'rgba(15, 23, 42, 0.7)',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        borderRadius: '8px',
+                        padding: '0.65rem 0.85rem',
+                        color: '#f8fafc',
+                        fontSize: '0.875rem',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowConnectModal(false)}
+                      style={{
+                        flex: 1,
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: '#cbd5e1',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        padding: '0.75rem',
+                        borderRadius: '8px',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      İptal
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={connecting}
+                      style={{
+                        flex: 1,
+                        background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                        color: '#ffffff',
+                        border: 'none',
+                        padding: '0.75rem',
+                        borderRadius: '8px',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: connecting ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
+                      }}
+                    >
+                      {connecting ? 'Doğrulanıyor...' : 'Bağlantıyı Tamamla & Test Et'}
+                    </button>
+                  </div>
+                </>
+              )}
             </form>
           </div>
         </div>
