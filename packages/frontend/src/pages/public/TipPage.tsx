@@ -961,7 +961,7 @@ export const TipPage: React.FC = () => {
                 2. {t('tip.selectAmountTitle')}
               </span>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '0.5rem', marginBottom: '1rem' }}>
                 {details.presetAmounts.map((amt) => {
                   const isSelected = selectedAmount === amt && !customAmount;
                   return (
@@ -974,18 +974,28 @@ export const TipPage: React.FC = () => {
                         trackTipAmountSelected(amt, details.business.currency);
                       }}
                       style={{
-                        padding: '0.85rem 0.5rem',
+                        padding: '0.75rem 0.25rem',
                         borderRadius: 'var(--radius-md)',
                         border: `1.5px solid ${isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)'}`,
                         background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255, 255, 255, 0.02)',
                         color: isSelected ? '#fff' : 'var(--text-secondary)',
                         fontWeight: 700,
-                        fontSize: '1rem',
+                        fontSize: 'clamp(0.85rem, 3.2vw, 1.05rem)',
                         cursor: 'pointer',
                         transition: 'all 0.15s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        minWidth: 0,
                       }}
                     >
-                      {formatCurrency(amt, details.business.currency)}
+                      {formatCurrency(amt, details.business.currency, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: amt % 1 === 0 ? 0 : 2,
+                      })}
                     </button>
                   );
                 })}
