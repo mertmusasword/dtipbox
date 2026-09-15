@@ -994,7 +994,7 @@ export const TipPage: React.FC = () => {
               <div>
                 <input
                   type="number"
-                  placeholder={t('tip.customAmountPlaceholder')}
+                  placeholder={t('tip.customAmountLabel') || t('tip.customAmountPlaceholder') || '0.00'}
                   value={customAmount}
                   onChange={(e) => {
                     setCustomAmount(e.target.value);
@@ -1012,19 +1012,19 @@ export const TipPage: React.FC = () => {
             {/* Optional Note & Customer Info */}
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.75rem' }}>
-                {t('tip.optionalMessageTitle')}
+                {t('tip.customerMessageLabel') || t('tip.optionalMessageTitle')}
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <input
                   type="text"
-                  placeholder={t('tip.namePlaceholder')}
+                  placeholder={t('tip.customerNamePlaceholder') || t('tip.namePlaceholder')}
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   className="input"
                   maxLength={100}
                 />
                 <textarea
-                  placeholder={t('tip.messagePlaceholder')}
+                  placeholder={t('tip.customerMessagePlaceholder') || t('tip.messagePlaceholder')}
                   value={customerMessage}
                   onChange={(e) => setCustomerMessage(e.target.value)}
                   className="input"
