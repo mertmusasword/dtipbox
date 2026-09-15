@@ -1813,6 +1813,205 @@
 }
 
 /* ==========================================================================
+   Live Real-Time Feed & Dashboard Mobile Responsive Enhancements
+   ========================================================================== */
+.home-dash-feed-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.home-dash-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.home-dash-feed-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #f8fafc;
+}
+
+.home-dash-feed-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.home-dash-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.home-dash-feed-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.home-dash-feed-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.home-dash-feed-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.home-dash-feed-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+  flex-shrink: 0;
+}
+
+.home-dash-feed-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.home-dash-feed-main {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  min-width: 0;
+}
+
+.home-dash-feed-table {
+  color: #ffffff;
+  font-weight: 700;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.home-dash-feed-staff {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-dash-feed-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.home-dash-feed-bullet {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.home-dash-feed-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.home-dash-feed-amount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  text-align: right;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .home-dash-body {
+    padding: 0.85rem !important;
+  }
+
+  .home-dash-kpis {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .home-dash-kpi-card {
+    padding: 0.75rem !important;
+  }
+
+  .home-dash-kpi-label {
+    font-size: 0.7rem !important;
+  }
+
+  .home-dash-kpi-val {
+    font-size: 1.15rem !important;
+  }
+
+  .home-dash-kpi-sub {
+    font-size: 0.65rem !important;
+  }
+
+  .home-dash-feed-box {
+    padding: 0.85rem !important;
+  }
+
+  .home-dash-feed-item {
+    padding: 0.65rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .home-dash-feed-main {
+    font-size: 0.8rem !important;
+  }
+
+  .home-dash-feed-staff {
+    max-width: 110px;
+  }
+
+  .home-dash-feed-meta {
+    font-size: 0.68rem !important;
+  }
+
+  .home-dash-feed-amount {
+    font-size: 0.85rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
    Physical Touchpoints Grid
    ========================================================================== */
 .home-touch-grid {

@@ -624,47 +624,40 @@ export const HomePage: React.FC = () => {
                   </div>
 
                   {/* Live Transaction Feed Preview */}
-                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '12px', padding: '1.25rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <Clock size={15} style={{ color: '#818cf8' }} />
+                  <div className="home-dash-feed-box">
+                    <div className="home-dash-feed-header">
+                      <div className="home-dash-feed-title">
+                        <Clock size={16} style={{ color: '#818cf8', flexShrink: 0 }} />
                         <span>{language === 'tr' ? 'Canlı Bahşiş Akışı' : 'Real-Time Tipping Feed'}</span>
                       </div>
-                      <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>
+                      <span className="badge badge-primary home-dash-feed-badge">
                         {language === 'tr' ? 'Son 10 Dakika' : 'Last 10 mins'}
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                    <div className="home-dash-feed-list">
                       {[
                         { table: language === 'tr' ? 'Masa 14' : 'Table 14', staff: simConfig.staffOptions[0].label, amount: `${simConfig.currency}${language === 'tr' ? '150.00' : '15.00'}`, time: language === 'tr' ? '2 dk önce' : '2m ago', method: ' Apple Pay' },
                         { table: language === 'tr' ? 'Masa 08' : 'Table 08', staff: simConfig.staffOptions[1]?.label || 'Elena M.', amount: `${simConfig.currency}${language === 'tr' ? '100.00' : '10.00'}`, time: language === 'tr' ? '5 dk önce' : '5m ago', method: 'Credit Card' },
                         { table: language === 'tr' ? 'Bar Stand 02' : 'Bar Counter 02', staff: language === 'tr' ? 'Ortak Havuz' : 'Team Pool', amount: `${simConfig.currency}${language === 'tr' ? '250.00' : '25.00'}`, time: language === 'tr' ? '9 dk önce' : '9m ago', method: 'Google Pay' },
                       ].map((item, idx) => (
-                        <div
-                          key={idx}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            padding: '0.75rem 1rem',
-                            borderRadius: '8px',
-                            background: 'rgba(255, 255, 255, 0.02)',
-                            border: '1px solid rgba(255, 255, 255, 0.04)',
-                            fontSize: '0.82rem',
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
-                            <div>
-                              <strong style={{ color: '#ffffff' }}>{item.table}</strong>
-                              <span style={{ color: '#94a3b8', marginLeft: '0.5rem' }}>• {item.staff}</span>
+                        <div key={idx} className="home-dash-feed-item">
+                          <div className="home-dash-feed-left">
+                            <div className="home-dash-feed-dot" />
+                            <div className="home-dash-feed-details">
+                              <div className="home-dash-feed-main">
+                                <strong className="home-dash-feed-table">{item.table}</strong>
+                                <span className="home-dash-feed-staff">• {item.staff}</span>
+                              </div>
+                              <div className="home-dash-feed-meta">
+                                <span>{item.method}</span>
+                                <span className="home-dash-feed-bullet">•</span>
+                                <span>{item.time}</span>
+                              </div>
                             </div>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{item.method}</span>
-                            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{item.time}</span>
-                            <strong style={{ color: '#4ade80', fontSize: '0.95rem' }}>+{item.amount}</strong>
+                          <div className="home-dash-feed-right">
+                            <span className="home-dash-feed-amount">+{item.amount}</span>
                           </div>
                         </div>
                       ))}
@@ -733,16 +726,16 @@ export const HomePage: React.FC = () => {
                         { name: language === 'tr' ? 'Cemil A.' : 'David K.', role: language === 'tr' ? 'Mutfak Destek' : 'Barback / Support', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
                         { name: language === 'tr' ? 'Merve S.' : 'Sarah T.', role: language === 'tr' ? 'Hostes / Karşılama' : 'Host / Greeter', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
                       ].map((s, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0', borderBottom: idx !== 3 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none', fontSize: '0.82rem' }}>
-                          <div>
-                            <div style={{ fontWeight: 600, color: '#ffffff' }}>{s.name}</div>
-                            <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{s.role} • <span style={{ color: '#818cf8' }}>{s.weight}</span></div>
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0', borderBottom: idx !== 3 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none', fontSize: '0.82rem', gap: '0.5rem' }}>
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
+                            <div style={{ fontSize: '0.72rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{s.role} • <span style={{ color: '#818cf8' }}>{s.weight}</span></div>
                           </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontWeight: 800, color: '#4ade80' }}>{s.net}</div>
-                            <div style={{ fontSize: '0.68rem', display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', marginTop: '0.1rem' }}>
-                              <span style={{ color: '#86efac' }}>💵 {s.cash}</span>
-                              <span style={{ color: '#93c5fd' }}>💳 {s.bank}</span>
+                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                            <div style={{ fontWeight: 800, color: '#34d399', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>{s.net}</div>
+                            <div style={{ fontSize: '0.68rem', display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', marginTop: '0.1rem', whiteSpace: 'nowrap' }}>
+                              <span style={{ color: '#86efac', whiteSpace: 'nowrap' }}>💵 {s.cash}</span>
+                              <span style={{ color: '#93c5fd', whiteSpace: 'nowrap' }}>💳 {s.bank}</span>
                             </div>
                           </div>
                         </div>
