@@ -23,6 +23,8 @@ import {
   ExternalLink,
   ChevronRight,
   ShieldAlert,
+  Coins,
+  QrCode,
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 
@@ -32,7 +34,9 @@ export type TicketCategory =
   | 'TECHNICAL_SUPPORT'
   | 'ACCOUNT_BILLING'
   | 'GENERAL_INQUIRY'
-  | 'FEEDBACK_SUGGESTION';
+  | 'FEEDBACK_SUGGESTION'
+  | 'TIP_PAYOUT'
+  | 'QR_PROFILE';
 
 interface SupportTicket {
   id: string;
@@ -96,6 +100,18 @@ const CATEGORY_CONFIG: Record<TicketCategory, { label: string; icon: React.React
     icon: <Sparkles size={13} />,
     color: '#10b981',
     bg: 'rgba(16, 185, 129, 0.12)',
+  },
+  TIP_PAYOUT: {
+    label: 'Bahşiş & Hakediş (Personel)',
+    icon: <Coins size={13} />,
+    color: '#10b981',
+    bg: 'rgba(16, 185, 129, 0.12)',
+  },
+  QR_PROFILE: {
+    label: 'QR & Profil (Personel)',
+    icon: <QrCode size={13} />,
+    color: '#a855f7',
+    bg: 'rgba(168, 85, 247, 0.12)',
   },
 };
 
@@ -342,6 +358,8 @@ export const AdminSupportTicketsPage: React.FC = () => {
             <option value="POS_INTEGRATION" style={{ background: '#0f172a', color: '#f8fafc' }}>💳 POS & Entegrasyon</option>
             <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#f8fafc' }}>🛠️ Teknik Destek</option>
             <option value="ACCOUNT_BILLING" style={{ background: '#0f172a', color: '#f8fafc' }}>📄 Hesap & Faturalama</option>
+            <option value="TIP_PAYOUT" style={{ background: '#0f172a', color: '#f8fafc' }}>💰 Bahşiş & Hakediş (Personel)</option>
+            <option value="QR_PROFILE" style={{ background: '#0f172a', color: '#f8fafc' }}>🪪 QR & Profil (Personel)</option>
             <option value="GENERAL_INQUIRY" style={{ background: '#0f172a', color: '#f8fafc' }}>💬 Genel Bilgi</option>
             <option value="FEEDBACK_SUGGESTION" style={{ background: '#0f172a', color: '#f8fafc' }}>✨ Öneri & İstek</option>
           </select>

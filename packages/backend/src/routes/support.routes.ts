@@ -31,6 +31,8 @@ const createSupportTicketSchema = {
       'TECHNICAL_SUPPORT',
       'GENERAL_INQUIRY',
       'FEEDBACK_SUGGESTION',
+      'TIP_PAYOUT',
+      'QR_PROFILE',
     ]).optional(),
     subject: z.string().trim().min(2, 'Konu başlığı en az 2 karakter olmalıdır').max(200),
     message: z.string().trim().min(5, 'Mesajınız en az 5 karakter olmalıdır').max(3000),

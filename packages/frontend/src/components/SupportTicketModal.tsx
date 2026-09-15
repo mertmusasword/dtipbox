@@ -10,7 +10,9 @@ export type SupportCategory =
   | 'TECHNICAL_SUPPORT'
   | 'ACCOUNT_BILLING'
   | 'GENERAL_INQUIRY'
-  | 'FEEDBACK_SUGGESTION';
+  | 'FEEDBACK_SUGGESTION'
+  | 'TIP_PAYOUT'
+  | 'QR_PROFILE';
 
 interface SupportTicketModalProps {
   isOpen: boolean;
@@ -25,14 +27,17 @@ interface SupportTicketModalProps {
 export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
   isOpen,
   onClose,
-  initialCategory = 'POS_INTEGRATION',
+  initialCategory,
   initialSubject = '',
   defaultBusinessName = '',
   defaultEmail = '',
   defaultName = '',
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
+  const isEmployee = user?.role === 'EMPLOYEE';
+
+  const defaultCategory: SupportCategory = initialCategory || (isEmployee ? 'TIP_PAYOUT' : 'POS_INTEGRATION');
 
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -43,7 +48,7 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
     email: defaultEmail || user?.email || '',
     phone: '',
     business_name: defaultBusinessName || user?.business?.name || '',
-    category: initialCategory,
+    category: defaultCategory,
     subject: initialSubject,
     message: '',
     _hp: '', // Honeypot spam trap
@@ -54,14 +59,14 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
     if (isOpen) {
       setForm((prev) => ({
         ...prev,
-        category: initialCategory || prev.category,
+        category: initialCategory || (isEmployee ? 'TIP_PAYOUT' : prev.category || 'POS_INTEGRATION'),
         subject: initialSubject || prev.subject,
         business_name: defaultBusinessName || user?.business?.name || prev.business_name,
         email: defaultEmail || user?.email || prev.email,
         name: defaultName || (user ? user.email.split('@')[0] : prev.name),
       }));
     }
-  }, [isOpen, initialCategory, initialSubject, defaultBusinessName, defaultEmail, defaultName, user]);
+  }, [isOpen, initialCategory, initialSubject, defaultBusinessName, defaultEmail, defaultName, user, isEmployee]);
 
   if (!isOpen) return null;
 
@@ -106,7 +111,7 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
         email: user?.email || '',
         phone: '',
         business_name: user?.business?.name || '',
-        category: initialCategory,
+        category: defaultCategory,
         subject: '',
         message: '',
         _hp: '',
@@ -155,10 +160,14 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
                 <span>{t('support.widgetBtn')}</span>
               </div>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.4rem' }}>
-                {t('support.modalTitle')}
+                {isEmployee ? (language === 'tr' ? 'Personel Destek Masası' : 'Staff Support Desk') : t('support.modalTitle')}
               </h3>
               <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.5 }}>
-                {t('support.modalSubtitle')}
+                {isEmployee
+                  ? (language === 'tr'
+                    ? 'Bahşiş hakedişleriniz, QR profiliniz veya teknik konularla ilgili destek talebi oluşturun. Ekibimiz en kısa sürede size ulaşacaktır.'
+                    : 'Submit a ticket regarding your tips, payouts, QR profile or technical issues.')
+                  : t('support.modalSubtitle')}
               </p>
             </div>
 
@@ -230,18 +239,33 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
                   />
                 </div>
 
-                <div>
-                  <label className="corporate-form-label">
-                    {t('support.businessName')}
-                  </label>
-                  <input
-                    type="text"
-                    className="corporate-form-input"
-                    placeholder={t('support.businessNamePlaceholder')}
-                    value={form.business_name}
-                    onChange={(e) => setForm({ ...form, business_name: e.target.value })}
-                  />
-                </div>
+                {isEmployee ? (
+                  <div>
+                    <label className="corporate-form-label">
+                      {language === 'tr' ? 'Bağlı İşletme' : 'Assigned Venue'}
+                    </label>
+                    <input
+                      type="text"
+                      disabled
+                      className="corporate-form-input"
+                      value={form.business_name || user?.business?.name || (language === 'tr' ? 'Mevcut İşletmeniz' : 'Your Venue')}
+                      style={{ opacity: 0.75, cursor: 'not-allowed', background: 'rgba(15, 23, 42, 0.5)' }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="corporate-form-label">
+                      {t('support.businessName')}
+                    </label>
+                    <input
+                      type="text"
+                      className="corporate-form-input"
+                      placeholder={t('support.businessNamePlaceholder')}
+                      value={form.business_name}
+                      onChange={(e) => setForm({ ...form, business_name: e.target.value })}
+                    />
+                  </div>
+                )}
 
                 <div className="corporate-form-field-full">
                   <label className="corporate-form-label">
@@ -253,21 +277,43 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
                     onChange={(e) => setForm({ ...form, category: e.target.value as SupportCategory })}
                     style={{ cursor: 'pointer' }}
                   >
-                    <option value="POS_INTEGRATION" style={{ background: '#0f172a', color: '#fff' }}>
-                      💳 {t('support.categoryPos')}
-                    </option>
-                    <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#fff' }}>
-                      🛠️ {t('support.categoryTech')}
-                    </option>
-                    <option value="ACCOUNT_BILLING" style={{ background: '#0f172a', color: '#fff' }}>
-                      📄 {t('support.categoryAccount')}
-                    </option>
-                    <option value="GENERAL_INQUIRY" style={{ background: '#0f172a', color: '#fff' }}>
-                      💬 {t('support.categoryGeneral')}
-                    </option>
-                    <option value="FEEDBACK_SUGGESTION" style={{ background: '#0f172a', color: '#fff' }}>
-                      ✨ {t('support.categoryFeedback')}
-                    </option>
+                    {isEmployee ? (
+                      <>
+                        <option value="TIP_PAYOUT" style={{ background: '#0f172a', color: '#fff' }}>
+                          💰 {language === 'tr' ? 'Bahşiş & Hakediş Ödemesi' : 'Tip & Payout Inquiry'}
+                        </option>
+                        <option value="QR_PROFILE" style={{ background: '#0f172a', color: '#fff' }}>
+                          🪪 {language === 'tr' ? 'QR Kod & Profil Bilgisi' : 'QR Badge & Profile Info'}
+                        </option>
+                        <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#fff' }}>
+                          🛠️ {t('support.categoryTech')}
+                        </option>
+                        <option value="GENERAL_INQUIRY" style={{ background: '#0f172a', color: '#fff' }}>
+                          💬 {t('support.categoryGeneral')}
+                        </option>
+                        <option value="FEEDBACK_SUGGESTION" style={{ background: '#0f172a', color: '#fff' }}>
+                          ✨ {t('support.categoryFeedback')}
+                        </option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="POS_INTEGRATION" style={{ background: '#0f172a', color: '#fff' }}>
+                          💳 {t('support.categoryPos')}
+                        </option>
+                        <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#fff' }}>
+                          🛠️ {t('support.categoryTech')}
+                        </option>
+                        <option value="ACCOUNT_BILLING" style={{ background: '#0f172a', color: '#fff' }}>
+                          📄 {t('support.categoryAccount')}
+                        </option>
+                        <option value="GENERAL_INQUIRY" style={{ background: '#0f172a', color: '#fff' }}>
+                          💬 {t('support.categoryGeneral')}
+                        </option>
+                        <option value="FEEDBACK_SUGGESTION" style={{ background: '#0f172a', color: '#fff' }}>
+                          ✨ {t('support.categoryFeedback')}
+                        </option>
+                      </>
+                    )}
                   </select>
                 </div>
 

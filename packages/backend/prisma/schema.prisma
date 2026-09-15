@@ -115,6 +115,8 @@ enum SupportTicketCategory {
   TECHNICAL_SUPPORT
   GENERAL_INQUIRY
   FEEDBACK_SUGGESTION
+  TIP_PAYOUT
+  QR_PROFILE
 }
 
 enum TipDistributionMode {
