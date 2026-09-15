@@ -197,6 +197,9 @@ export interface TipPageDetails {
   smartQr?: {
     isSmartEnabled: boolean;
     enableTips: boolean;
+    enableMenu?: boolean;
+    menuUrl?: string | null;
+    menuTitle?: string | null;
     enableWifi: boolean;
     wifiSsid?: string | null;
     wifiPassword?: string | null;
@@ -223,6 +226,9 @@ export interface SmartQrConfig {
   business_id: string;
   is_smart_enabled: boolean;
   enable_tips: boolean;
+  enable_menu?: boolean;
+  menu_url?: string | null;
+  menu_title?: string | null;
   enable_wifi: boolean;
   enable_campaigns: boolean;
   enable_feedback: boolean;
@@ -263,6 +269,7 @@ export interface SmartQrAnalytics {
     scans: number;
     tipClicks: number;
     tipsCompleted: number;
+    menuClicks?: number;
     wifiClicks: number;
     campaignClicks: number;
     feedbackSubmissions: number;

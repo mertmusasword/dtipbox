@@ -878,10 +878,15 @@ model SmartQrConfig {
   
   // Feature Toggles
   enable_tips       Boolean  @default(true)
+  enable_menu       Boolean  @default(false)
   enable_wifi       Boolean  @default(false)
   enable_campaigns  Boolean  @default(false)
   enable_feedback   Boolean  @default(false)
   enable_signup     Boolean  @default(false)
+
+  // Digital Menu Settings
+  menu_url          String?
+  menu_title        String?  // e.g. "Dijital Menü", "Menüyü Gör"
 
   // Wi-Fi Settings
   wifi_ssid         String?

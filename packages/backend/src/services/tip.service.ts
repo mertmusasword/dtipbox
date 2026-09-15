@@ -116,6 +116,9 @@ export async function getTipPageDetails(publicToken: string) {
       ? {
           isSmartEnabled: smartConfig.is_smart_enabled,
           enableTips: smartConfig.enable_tips,
+          enableMenu: smartConfig.enable_menu,
+          menuUrl: smartConfig.menu_url,
+          menuTitle: smartConfig.menu_title,
           enableWifi: smartConfig.enable_wifi,
           wifiSsid: smartConfig.wifi_ssid,
           wifiPassword: smartConfig.wifi_password,
@@ -138,6 +141,9 @@ export async function getTipPageDetails(publicToken: string) {
       : {
           isSmartEnabled: true,
           enableTips: true,
+          enableMenu: false,
+          menuUrl: null,
+          menuTitle: null,
           enableWifi: false,
           enableCampaigns: false,
           enableFeedback: false,

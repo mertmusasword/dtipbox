@@ -4,10 +4,13 @@ import { AppError } from '../middleware/errorHandler';
 export interface UpdateSmartQrConfigInput {
   is_smart_enabled?: boolean;
   enable_tips?: boolean;
+  enable_menu?: boolean;
   enable_wifi?: boolean;
   enable_campaigns?: boolean;
   enable_feedback?: boolean;
   enable_signup?: boolean;
+  menu_url?: string | null;
+  menu_title?: string | null;
   wifi_ssid?: string | null;
   wifi_password?: string | null;
   wifi_encryption?: string;
@@ -39,6 +42,7 @@ export async function getOrCreateSmartQrConfig(businessId: string) {
         business_id: businessId,
         is_smart_enabled: true,
         enable_tips: true,
+        enable_menu: false,
         enable_wifi: false,
         enable_campaigns: false,
         enable_feedback: false,
@@ -66,10 +70,13 @@ export async function updateSmartQrConfig(
     data: {
       ...(input.is_smart_enabled !== undefined && { is_smart_enabled: input.is_smart_enabled }),
       ...(input.enable_tips !== undefined && { enable_tips: input.enable_tips }),
+      ...(input.enable_menu !== undefined && { enable_menu: input.enable_menu }),
       ...(input.enable_wifi !== undefined && { enable_wifi: input.enable_wifi }),
       ...(input.enable_campaigns !== undefined && { enable_campaigns: input.enable_campaigns }),
       ...(input.enable_feedback !== undefined && { enable_feedback: input.enable_feedback }),
       ...(input.enable_signup !== undefined && { enable_signup: input.enable_signup }),
+      ...(input.menu_url !== undefined && { menu_url: input.menu_url?.trim() || null }),
+      ...(input.menu_title !== undefined && { menu_title: input.menu_title?.trim() || null }),
       ...(input.wifi_ssid !== undefined && { wifi_ssid: input.wifi_ssid?.trim() || null }),
       ...(input.wifi_password !== undefined && { wifi_password: input.wifi_password?.trim() || null }),
       ...(input.wifi_encryption !== undefined && { wifi_encryption: input.wifi_encryption }),
@@ -292,6 +299,7 @@ export async function getSmartQrAnalytics(businessId: string) {
     SCAN: 0,
     TIP_CLICK: 0,
     TIP_SUCCESS: 0,
+    MENU_CLICK: 0,
     WIFI_CLICK: 0,
     CAMPAIGN_CLICK: 0,
     FEEDBACK_SUBMIT: 0,
@@ -317,6 +325,7 @@ export async function getSmartQrAnalytics(businessId: string) {
       scans: eventCounts.SCAN || 0,
       tipClicks: eventCounts.TIP_CLICK || 0,
       tipsCompleted: eventCounts.TIP_SUCCESS || 0,
+      menuClicks: eventCounts.MENU_CLICK || 0,
       wifiClicks: eventCounts.WIFI_CLICK || 0,
       campaignClicks: eventCounts.CAMPAIGN_CLICK || 0,
       feedbackSubmissions: feedbackAggregate._count.id || 0,

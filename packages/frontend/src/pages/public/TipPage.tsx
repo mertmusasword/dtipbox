@@ -25,6 +25,8 @@ import {
   Send,
   Lock,
   X,
+  UtensilsCrossed,
+  ExternalLink,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import {
@@ -222,6 +224,18 @@ export const TipPage: React.FC = () => {
     } else if (tab === 'campaigns') {
       api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'CAMPAIGN_CLICK' }).catch(() => {});
     }
+  };
+
+  const handleMenuClick = () => {
+    if (!details?.smartQr?.menuUrl) return;
+    let url = details.smartQr.menuUrl.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      url = `https://${url}`;
+    }
+    if (publicToken) {
+      api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'MENU_CLICK' }).catch(() => {});
+    }
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const handleTabChange = (tab: SmartTab) => {
@@ -1223,12 +1237,13 @@ export const TipPage: React.FC = () => {
         {(() => {
           const sq = details.smartQr;
           const isSmart = Boolean(sq?.isSmartEnabled);
+          const hasMenu = Boolean(isSmart && sq?.enableMenu && sq?.menuUrl);
           const hasWifi = Boolean(isSmart && sq?.enableWifi && sq?.wifiSsid);
           const hasCampaigns = Boolean(isSmart && sq?.enableCampaigns && (sq?.campaigns?.length || 0) > 0);
           const hasFeedback = Boolean(isSmart && sq?.enableFeedback);
           const hasSignup = Boolean(isSmart && sq?.enableSignup);
           const hasTips = sq?.enableTips !== false;
-          const hasAnyExtra = hasWifi || hasCampaigns || hasFeedback || hasSignup;
+          const hasAnyExtra = hasMenu || hasWifi || hasCampaigns || hasFeedback || hasSignup;
 
           if (!hasAnyExtra) return null;
 
@@ -1243,6 +1258,31 @@ export const TipPage: React.FC = () => {
                 gap: '0.5rem',
                 marginBottom: '1.75rem',
               }}>
+                {hasMenu && (
+                  <button
+                    type="button"
+                    onClick={handleMenuClick}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.5rem 0.95rem',
+                      borderRadius: '999px',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: '1px solid rgba(16, 185, 129, 0.45)',
+                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.22))',
+                      color: '#34d399',
+                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    <UtensilsCrossed size={14} />
+                    <span>{sq?.menuTitle || (language === 'tr' ? 'Menü' : 'Menu')}</span>
+                    <ExternalLink size={12} style={{ opacity: 0.75 }} />
+                  </button>
+                )}
                 {hasWifi && (
                   <button
                     type="button"
@@ -1369,6 +1409,33 @@ export const TipPage: React.FC = () => {
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}>
+              {hasMenu && (
+                <button
+                  type="button"
+                  onClick={handleMenuClick}
+                  style={{
+                    flex: '1 0 auto',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    padding: '0.65rem 1rem',
+                    borderRadius: '12px',
+                    fontSize: '0.88rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                    transition: 'all 0.2s',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: '#ffffff',
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                  }}
+                >
+                  <UtensilsCrossed size={16} />
+                  <span>{sq?.menuTitle || (language === 'tr' ? 'Menüyü Gör' : 'View Menu')}</span>
+                  <ExternalLink size={13} />
+                </button>
+              )}
               {hasWifi && (
                 <button
                   type="button"

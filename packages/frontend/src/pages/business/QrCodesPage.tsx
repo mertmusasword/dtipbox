@@ -39,6 +39,9 @@ interface SmartQrConfig {
   business_id: string;
   is_smart_enabled: boolean;
   enable_tips: boolean;
+  enable_menu?: boolean;
+  menu_url?: string | null;
+  menu_title?: string | null;
   enable_wifi: boolean;
   wifi_ssid?: string | null;
   wifi_password?: string | null;
@@ -76,6 +79,7 @@ interface SmartAnalytics {
   scans: number;
   tipClicks: number;
   tipsCompleted: number;
+  menuClicks?: number;
   wifiClicks: number;
   campaignClicks: number;
   feedbackSubmissions: number;
@@ -746,7 +750,59 @@ export const QrCodesPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Module 2: Wi-Fi */}
+            {/* Module 2: Digital Menu */}
+            <div className="glass-card" style={{ padding: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UtensilsCrossed size={18} style={{ color: '#10b981' }} />
+                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
+                    {isTr ? 'Dijital Menü Entegrasyonu' : 'Digital Menu Integration'}
+                  </h4>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={Boolean(smartConfig.enable_menu)}
+                  onChange={(e) => setSmartConfig({ ...smartConfig, enable_menu: e.target.checked })}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent-primary)' }}
+                />
+              </div>
+              <p style={{ fontSize: '0.83rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                {isTr
+                  ? 'Mevcut dijital menünüzün (FineDine, Menulux, web sitesi veya PDF) linkini ekleyin. Masada tek bir QR ile hem menü açılsın hem bahşiş verilsin.'
+                  : 'Link your existing digital menu (FineDine, Menulux, website, or PDF). Eliminate duplicate table stands with a unified QR.'}
+              </p>
+
+              {smartConfig.enable_menu && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                      {isTr ? 'Menü Linki (URL) *' : 'Digital Menu URL *'}
+                    </label>
+                    <input
+                      type="url"
+                      className="input"
+                      placeholder="https://menu.mekaniniz.com veya https://finedine.co/..."
+                      value={smartConfig.menu_url || ''}
+                      onChange={(e) => setSmartConfig({ ...smartConfig, menu_url: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                      {isTr ? 'Menü Buton Başlığı (İsteğe Bağlı)' : 'Button Label (Optional)'}
+                    </label>
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder={isTr ? 'Örn: Dijital Menü / Menüyü Gör' : 'e.g. View Menu'}
+                      value={smartConfig.menu_title || ''}
+                      onChange={(e) => setSmartConfig({ ...smartConfig, menu_title: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Module 3: Wi-Fi */}
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1113,6 +1169,15 @@ export const QrCodesPage: React.FC = () => {
                 </span>
                 <div style={{ fontSize: '2rem', fontWeight: 800, color: '#34d399', marginTop: '0.25rem' }}>
                   {analytics.tipsCompleted}
+                </div>
+              </div>
+
+              <div className="glass-card" style={{ padding: '1.25rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                  {isTr ? 'Menü İncelemeleri' : 'Menu Views'}
+                </span>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', marginTop: '0.25rem' }}>
+                  {analytics.menuClicks || 0}
                 </div>
               </div>
 
