@@ -24,6 +24,7 @@ import {
   Tag,
   Send,
   Lock,
+  X,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import {
@@ -47,6 +48,7 @@ export const TipPage: React.FC = () => {
 
   // Smart QR Navigation State
   const [activeSmartTab, setActiveSmartTab] = useState<SmartTab>('tip');
+  const [activeModal, setActiveModal] = useState<SmartTab | null>(null);
   const [wifiQrUrl, setWifiQrUrl] = useState<string>('');
   const [copiedWifi, setCopiedWifi] = useState(false);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
@@ -195,6 +197,30 @@ export const TipPage: React.FC = () => {
       alert(err.response?.data?.error || t('common.error'));
     } finally {
       setFeedbackSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveModal(null);
+    };
+    if (activeModal) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeModal]);
+
+  const openSmartModal = (tab: SmartTab) => {
+    setActiveModal(tab);
+    if (!publicToken) return;
+    if (tab === 'wifi') {
+      api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'WIFI_CLICK' }).catch(() => {});
+    } else if (tab === 'campaigns') {
+      api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'CAMPAIGN_CLICK' }).catch(() => {});
     }
   };
 
@@ -399,8 +425,8 @@ export const TipPage: React.FC = () => {
                 {formatCurrency(paymentResult.tip.amount, details.business.currency)}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>{t('common.status')}:</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+              <span style={{ color: 'var(--text-muted)', flexShrink: 0 }}>{t('common.status')}:</span>
               <span className={`badge ${
                 isSuccess
                   ? 'badge-success'
@@ -409,16 +435,16 @@ export const TipPage: React.FC = () => {
                   : isCancelled
                   ? 'badge-neutral'
                   : 'badge-danger'
-              }`}>
+              }`} style={{ whiteSpace: 'normal', textAlign: 'right', maxWidth: '75%', lineHeight: 1.25 }}>
                 {isUnverified
-                  ? 'Doğrulama Bekliyor (Banka Transferi)'
+                  ? (language === 'tr' ? 'Havale Bekleniyor' : 'Transfer Pending')
                   : isSuccess
                   ? t('common.success')
                   : isPending
-                  ? 'İşlem Bekleniyor'
+                  ? (language === 'tr' ? 'İşlem Bekleniyor' : 'Pending')
                   : isCancelled
-                  ? 'İptal Edildi'
-                  : 'Başarısız'}
+                  ? (language === 'tr' ? 'İptal Edildi' : 'Cancelled')
+                  : (language === 'tr' ? 'Başarısız' : 'Failed')}
               </span>
             </div>
 
@@ -623,6 +649,503 @@ export const TipPage: React.FC = () => {
     );
   }
 
+  // --- Smart QR Feature Content Renderers (Shared between Bottom Sheet Modal and Standalone View) ---
+  const renderWifiContent = () => {
+    if (!details?.smartQr) return null;
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: '52px',
+          height: '52px',
+          borderRadius: '16px',
+          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(2, 132, 199, 0.1))',
+          border: '1px solid rgba(14, 165, 233, 0.3)',
+          color: '#38bdf8',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1rem',
+        }}>
+          <Wifi size={26} />
+        </div>
+
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+          {language === 'tr' ? 'Misafir Wi-Fi Ağı' : 'Guest Wi-Fi Network'}
+        </h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+          {language === 'tr'
+            ? 'İşletmemize özel yüksek hızlı kablosuz internete bağlanın.'
+            : 'Connect to our high-speed guest Wi-Fi network.'}
+        </p>
+
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.6)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '12px',
+          padding: '0.9rem',
+          marginBottom: '0.85rem',
+          textAlign: 'left',
+        }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
+            {language === 'tr' ? 'AĞ ADI (SSID)' : 'NETWORK NAME (SSID)'}
+          </div>
+          <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>{details.smartQr.wifiSsid}</span>
+            <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>2.4G / 5G</span>
+          </div>
+        </div>
+
+        {details.smartQr.wifiPassword && (
+          <div style={{
+            background: 'rgba(15, 23, 42, 0.6)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            padding: '0.9rem',
+            marginBottom: '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
+                {language === 'tr' ? 'Wİ-Fİ ŞİFRESİ' : 'WI-FI PASSWORD'}
+              </div>
+              <div style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.05em', color: '#38bdf8' }}>
+                {details.smartQr.wifiPassword}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => copyWifiPassword(details.smartQr?.wifiPassword || '')}
+              className="btn btn-primary"
+              style={{
+                padding: '0.5rem 0.9rem',
+                fontSize: '0.82rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                background: copiedWifi ? '#10b981' : undefined,
+                borderColor: copiedWifi ? '#10b981' : undefined,
+              }}
+            >
+              {copiedWifi ? <Check size={15} /> : <Copy size={15} />}
+              {copiedWifi ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Şifreyi Kopyala' : 'Copy Password')}
+            </button>
+          </div>
+        )}
+
+        {wifiQrUrl && (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '16px',
+            padding: '1.1rem',
+            marginBottom: '1.25rem',
+            display: 'inline-block',
+          }}>
+            <img
+              src={wifiQrUrl}
+              alt="Wi-Fi QR"
+              style={{
+                width: '150px',
+                height: '150px',
+                borderRadius: '10px',
+                display: 'block',
+                margin: '0 auto',
+                background: '#fff',
+                padding: '8px',
+              }}
+            />
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              {language === 'tr'
+                ? 'Kameranızı tutarak doğrudan bağlanın'
+                : 'Point camera to join automatically'}
+            </div>
+          </div>
+        )}
+
+        <div style={{
+          background: 'rgba(14, 165, 233, 0.08)',
+          border: '1px solid rgba(14, 165, 233, 0.2)',
+          borderRadius: '12px',
+          padding: '0.85rem',
+          textAlign: 'left',
+          fontSize: '0.8rem',
+          color: '#bae6fd',
+          lineHeight: 1.5,
+        }}>
+          <div style={{ fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <ShieldCheck size={14} />
+            {language === 'tr' ? 'Hızlı Bağlantı Adımları' : 'Quick Connect Instructions'}
+          </div>
+          <div>1. {language === 'tr' ? '"Şifreyi Kopyala" butonuna dokunun.' : 'Tap "Copy Password" above.'}</div>
+          <div>2. {language === 'tr' ? `Ayarlar > Wi-Fi bölümünden "${details.smartQr.wifiSsid}" ağını seçip yapıştırın.` : `Go to Settings > Wi-Fi, select "${details.smartQr.wifiSsid}" and paste.`}</div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderCampaignsContent = () => {
+    if (!details?.smartQr) return null;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        {details.smartQr.campaigns.map((camp) => (
+          <div
+            key={camp.id}
+            className="glass-card"
+            style={{
+              padding: '1.25rem',
+              position: 'relative',
+              border: '1px solid rgba(236, 72, 153, 0.25)',
+              background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.05), rgba(15, 23, 42, 0.8))',
+            }}
+          >
+            {camp.badge && (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                background: 'linear-gradient(135deg, #ec4899, #db2777)',
+                color: '#fff',
+                padding: '0.2rem 0.55rem',
+                borderRadius: '999px',
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                marginBottom: '0.6rem',
+              }}>
+                <Tag size={11} />
+                {camp.badge}
+              </div>
+            )}
+
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
+              {camp.title}
+            </h4>
+            {camp.description && (
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem', lineHeight: 1.45 }}>
+                {camp.description}
+              </p>
+            )}
+
+            {camp.discountCode && (
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.35)',
+                border: '1px dashed rgba(236, 72, 153, 0.4)',
+                borderRadius: '10px',
+                padding: '0.65rem 0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                    {language === 'tr' ? 'KAMPANYA KODU' : 'PROMO CODE'}
+                  </div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '0.08em', color: '#f472b6' }}>
+                    {camp.discountCode}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyCouponCode(camp.discountCode || '')}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '0.4rem 0.75rem',
+                    fontSize: '0.78rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  {copiedCoupon === camp.discountCode ? <Check size={14} style={{ color: '#10b981' }} /> : <Copy size={14} />}
+                  {copiedCoupon === camp.discountCode ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Kodu Al' : 'Copy')}
+                </button>
+              </div>
+            )}
+
+            {camp.expiresAt && (
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.6rem' }}>
+                ⏳ {language === 'tr' ? 'Son geçerlilik:' : 'Valid until:'} {new Date(camp.expiresAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderFeedbackContent = () => {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        {standaloneSubmitted ? (
+          <div style={{ padding: '1.5rem 0' }}>
+            <div style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '50%',
+              background: 'rgba(16, 185, 129, 0.15)',
+              color: '#10b981',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem',
+            }}>
+              <CheckCircle2 size={30} />
+            </div>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
+              {language === 'tr' ? 'Geri Bildiriminiz Alındı!' : 'Feedback Received!'}
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
+              {language === 'tr'
+                ? 'Değerli görüşleriniz doğrudan işletme yönetimine iletilmiştir. Teşekkür ederiz.'
+                : 'Your valuable feedback has been submitted to management. Thank you!'}
+            </p>
+            {activeModal && (
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="btn btn-secondary"
+                style={{ marginTop: '1.25rem', width: '100%' }}
+              >
+                {language === 'tr' ? 'Kapat' : 'Close'}
+              </button>
+            )}
+          </div>
+        ) : (
+          <form onSubmit={handleStandaloneFeedbackSubmit}>
+            <div style={{
+              width: '50px',
+              height: '50px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1))',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              color: '#fbbf24',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem',
+            }}>
+              <MessageSquareText size={24} />
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+              {language === 'tr' ? 'Deneyiminizi Nasıl Buldunuz?' : 'How was your experience?'}
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+              {language === 'tr'
+                ? 'Görüşleriniz hizmet kalitemizi artırmamız için çok değerlidir.'
+                : 'Your review helps us maintain and improve our quality of service.'}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+              {[1, 2, 3, 4, 5].map((star) => {
+                const isActive = (standaloneHover || standaloneRating) >= star;
+                return (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setStandaloneRating(star)}
+                    onMouseEnter={() => setStandaloneHover(star)}
+                    onMouseLeave={() => setStandaloneHover(0)}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '0.25rem',
+                      color: isActive ? '#f59e0b' : 'rgba(255, 255, 255, 0.15)',
+                      transition: 'transform 0.15s, color 0.15s',
+                      transform: isActive ? 'scale(1.15)' : 'scale(1)',
+                    }}
+                  >
+                    <Star size={32} fill={isActive ? '#f59e0b' : 'none'} />
+                  </button>
+                );
+              })}
+            </div>
+
+            <textarea
+              rows={3}
+              value={standaloneComment}
+              onChange={(e) => setStandaloneComment(e.target.value)}
+              placeholder={language === 'tr' ? 'Görüş veya önerinizi yazabilirsiniz (isteğe bağlı)...' : 'Write your comment or suggestion (optional)...'}
+              maxLength={500}
+              className="input"
+              style={{ marginBottom: '1.25rem', resize: 'vertical' }}
+            />
+
+            <button
+              type="submit"
+              disabled={standaloneRating < 1 || standaloneSubmitting}
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                padding: '0.85rem',
+                fontWeight: 700,
+                opacity: standaloneRating < 1 || standaloneSubmitting ? 0.5 : 1,
+              }}
+            >
+              {standaloneSubmitting
+                ? (language === 'tr' ? 'Gönderiliyor...' : 'Submitting...')
+                : (language === 'tr' ? 'Geri Bildirimi Gönder' : 'Submit Feedback')}
+            </button>
+          </form>
+        )}
+      </div>
+    );
+  };
+
+  const renderSignupContent = () => {
+    if (!details?.smartQr) return null;
+    return (
+      <div>
+        {leadSubmitted ? (
+          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+            <div style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '50%',
+              background: 'rgba(16, 185, 129, 0.15)',
+              color: '#10b981',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem',
+            }}>
+              <CheckCircle2 size={30} />
+            </div>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
+              {language === 'tr' ? 'Aramıza Hoş Geldiniz!' : 'Welcome to the Club!'}
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
+              {language === 'tr'
+                ? 'Kaydınız başarıyla tamamlandı. Özel ikram ve fırsatlar ilk size ulaşacak!'
+                : 'You are now enrolled. Look out for VIP perks and invitations!'}
+            </p>
+            {activeModal && (
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="btn btn-secondary"
+                style={{ marginTop: '1.25rem', width: '100%' }}
+              >
+                {language === 'tr' ? 'Kapat' : 'Close'}
+              </button>
+            )}
+          </div>
+        ) : (
+          <form onSubmit={handleLeadSubmit} style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+              <div style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '16px',
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1))',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#34d399',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 0.85rem',
+              }}>
+                <Mail size={24} />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
+                {details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club')}
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
+                {details.smartQr.signupReward || (language === 'tr'
+                  ? 'Özel ikramlar, doğum günü hediyeleri ve indirimlerden haberdar olun.'
+                  : 'Enjoy complimentary rewards and exclusive invitations.')}
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.25rem' }}>
+              <div>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>
+                  {language === 'tr' ? 'Adınız Soyadınız' : 'Full Name'}
+                </label>
+                <input
+                  type="text"
+                  value={leadName}
+                  onChange={(e) => setLeadName(e.target.value)}
+                  placeholder={language === 'tr' ? 'Örn: Ahmet Yılmaz' : 'e.g. John Doe'}
+                  className="input"
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>
+                  {language === 'tr' ? 'E-posta Adresiniz' : 'Email Address'}
+                </label>
+                <input
+                  type="email"
+                  value={leadEmail}
+                  onChange={(e) => setLeadEmail(e.target.value)}
+                  placeholder="adiniz@ornek.com"
+                  className="input"
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>
+                  {language === 'tr' ? 'Telefon Numaranız (İsteğe Bağlı)' : 'Phone Number (Optional)'}
+                </label>
+                <input
+                  type="tel"
+                  value={leadPhone}
+                  onChange={(e) => setLeadPhone(e.target.value)}
+                  placeholder="+90 5XX XXX XX XX"
+                  className="input"
+                />
+              </div>
+
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.65rem',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                color: 'var(--text-secondary)',
+                marginTop: '0.35rem',
+                lineHeight: 1.4,
+              }}>
+                <input
+                  type="checkbox"
+                  checked={leadConsent}
+                  onChange={(e) => setLeadConsent(e.target.checked)}
+                  style={{ marginTop: '0.15rem', accentColor: '#10b981', width: '16px', height: '16px' }}
+                />
+                <span>
+                  {language === 'tr'
+                    ? 'İşletmenin özel teklif, duyuru ve promosyon bildirimlerini almayı (KVKK kapsamında) onaylıyorum.'
+                    : 'I agree to receive special offers and updates in accordance with privacy laws.'}
+                </span>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={(!leadEmail && !leadPhone) || leadSubmitting}
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                padding: '0.85rem',
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                borderColor: '#10b981',
+                opacity: (!leadEmail && !leadPhone) || leadSubmitting ? 0.5 : 1,
+              }}
+            >
+              {leadSubmitting
+                ? (language === 'tr' ? 'Kaydediliyor...' : 'Enrolling...')
+                : (language === 'tr' ? 'Ayrıcalıklara Katıl' : 'Join VIP Club')}
+            </button>
+          </form>
+        )}
+      </div>
+    );
+  };
+
   // --- Main 4-Step Tip Form ---
   return (
     <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
@@ -696,7 +1219,7 @@ export const TipPage: React.FC = () => {
           )}
         </div>
 
-        {/* Smart QR Hub Navigation Tabs (Only rendered when multi-features are active) */}
+        {/* Smart QR Secondary Features Bar */}
         {(() => {
           const sq = details.smartQr;
           const isSmart = Boolean(sq?.isSmartEnabled);
@@ -709,6 +1232,133 @@ export const TipPage: React.FC = () => {
 
           if (!hasAnyExtra) return null;
 
+          // When tips are enabled, secondary utilities are presented as sleek, non-intrusive Quick Action Chips
+          if (hasTips) {
+            return (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                gap: '0.5rem',
+                marginBottom: '1.75rem',
+              }}>
+                {hasWifi && (
+                  <button
+                    type="button"
+                    onClick={() => openSmartModal('wifi')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.5rem 0.95rem',
+                      borderRadius: '999px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: '1px solid rgba(14, 165, 233, 0.35)',
+                      background: 'rgba(14, 165, 233, 0.12)',
+                      color: '#38bdf8',
+                      boxShadow: '0 2px 8px rgba(14, 165, 233, 0.15)',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    <Wifi size={14} />
+                    <span>Wi-Fi</span>
+                  </button>
+                )}
+
+                {hasCampaigns && (
+                  <button
+                    type="button"
+                    onClick={() => openSmartModal('campaigns')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.5rem 0.95rem',
+                      borderRadius: '999px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: '1px solid rgba(236, 72, 153, 0.35)',
+                      background: 'rgba(236, 72, 153, 0.12)',
+                      color: '#f472b6',
+                      boxShadow: '0 2px 8px rgba(236, 72, 153, 0.15)',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    <Gift size={14} />
+                    <span>{language === 'tr' ? 'Fırsatlar' : 'Offers'}</span>
+                    {Boolean(sq?.campaigns?.length) && (
+                      <span style={{
+                        fontSize: '0.7rem',
+                        background: 'linear-gradient(135deg, #ec4899, #db2777)',
+                        color: '#fff',
+                        padding: '0.1rem 0.4rem',
+                        borderRadius: '999px',
+                        fontWeight: 800,
+                      }}>
+                        {sq?.campaigns?.length}
+                      </span>
+                    )}
+                  </button>
+                )}
+
+                {hasFeedback && (
+                  <button
+                    type="button"
+                    onClick={() => openSmartModal('feedback')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.5rem 0.95rem',
+                      borderRadius: '999px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: '1px solid rgba(245, 158, 11, 0.35)',
+                      background: 'rgba(245, 158, 11, 0.12)',
+                      color: '#fbbf24',
+                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.15)',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    <MessageSquareText size={14} />
+                    <span>{language === 'tr' ? 'Görüş Bildir' : 'Feedback'}</span>
+                  </button>
+                )}
+
+                {hasSignup && (
+                  <button
+                    type="button"
+                    onClick={() => openSmartModal('signup')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.5rem 0.95rem',
+                      borderRadius: '999px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: '1px solid rgba(16, 185, 129, 0.35)',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      color: '#34d399',
+                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.15)',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    <Mail size={14} />
+                    <span>VIP</span>
+                  </button>
+                )}
+              </div>
+            );
+          }
+
+          // Fallback if tips are explicitly disabled: segmented tabs for remaining features
           return (
             <div style={{
               display: 'flex',
@@ -719,36 +1369,6 @@ export const TipPage: React.FC = () => {
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}>
-              {hasTips && (
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('tip')}
-                  style={{
-                    flex: '1 0 auto',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.4rem',
-                    padding: '0.65rem 1rem',
-                    borderRadius: '12px',
-                    fontSize: '0.88rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    border: '1px solid',
-                    transition: 'all 0.2s',
-                    background: activeSmartTab === 'tip'
-                      ? 'linear-gradient(135deg, #6366f1, #4f46e5)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    borderColor: activeSmartTab === 'tip' ? '#6366f1' : 'rgba(255, 255, 255, 0.1)',
-                    color: activeSmartTab === 'tip' ? '#ffffff' : 'var(--text-secondary)',
-                    boxShadow: activeSmartTab === 'tip' ? '0 4px 12px rgba(99, 102, 241, 0.35)' : 'none',
-                  }}
-                >
-                  <Star size={16} fill={activeSmartTab === 'tip' ? '#ffffff' : 'none'} />
-                  {language === 'tr' ? 'Bahşiş' : 'Tip'}
-                </button>
-              )}
-
               {hasWifi && (
                 <button
                   type="button"
@@ -778,7 +1398,6 @@ export const TipPage: React.FC = () => {
                   Wi-Fi
                 </button>
               )}
-
               {hasCampaigns && (
                 <button
                   type="button"
@@ -806,18 +1425,8 @@ export const TipPage: React.FC = () => {
                 >
                   <Gift size={16} />
                   {language === 'tr' ? 'Fırsatlar' : 'Offers'}
-                  <span style={{
-                    fontSize: '0.72rem',
-                    background: activeSmartTab === 'campaigns' ? 'rgba(255,255,255,0.3)' : '#ec4899',
-                    color: '#fff',
-                    padding: '0.1rem 0.4rem',
-                    borderRadius: '999px',
-                  }}>
-                    {sq?.campaigns?.length}
-                  </span>
                 </button>
               )}
-
               {hasFeedback && (
                 <button
                   type="button"
@@ -847,7 +1456,6 @@ export const TipPage: React.FC = () => {
                   {language === 'tr' ? 'Değerlendir' : 'Feedback'}
                 </button>
               )}
-
               {hasSignup && (
                 <button
                   type="button"
@@ -882,7 +1490,7 @@ export const TipPage: React.FC = () => {
         })()}
 
         {/* TAB 1: TIPPING (PRESERVED COMPLETE ENGINE) */}
-        {activeSmartTab === 'tip' && (
+        {(details.smartQr?.enableTips !== false || activeSmartTab === 'tip') && (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
             {/* Step 1: Select Employee */}
             {details.employees.length > 0 && (
@@ -1154,472 +1762,81 @@ export const TipPage: React.FC = () => {
           </form>
         )}
 
-        {/* TAB 2: SMART WI-FI CONNECT */}
-        {activeSmartTab === 'wifi' && details.smartQr && (
-          <div className="glass-card" style={{ padding: '1.75rem', textAlign: 'center' }}>
-            <div style={{
-              width: '54px',
-              height: '54px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(2, 132, 199, 0.1))',
-              border: '1px solid rgba(14, 165, 233, 0.3)',
-              color: '#38bdf8',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 1.25rem',
-            }}>
-              <Wifi size={28} />
-            </div>
-
-            <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '0.35rem' }}>
-              {language === 'tr' ? 'Misafir Wi-Fi Ağı' : 'Guest Wi-Fi Network'}
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '1.5rem' }}>
-              {language === 'tr'
-                ? 'İşletmemize özel yüksek hızlı kablosuz internete bağlanın.'
-                : 'Connect to our high-speed guest Wi-Fi network.'}
-            </p>
-
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '1rem',
-              marginBottom: '1rem',
-              textAlign: 'left',
-            }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
-                {language === 'tr' ? 'AĞ ADI (SSID)' : 'NETWORK NAME (SSID)'}
+        {/* If tips are disabled, render the active smart tab content in the main card */}
+        {details.smartQr?.enableTips === false && (
+          <>
+            {activeSmartTab === 'wifi' && (
+              <div className="glass-card" style={{ padding: '1.75rem', textAlign: 'center' }}>
+                {renderWifiContent()}
               </div>
-              <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>{details.smartQr.wifiSsid}</span>
-                <span className="badge badge-primary" style={{ fontSize: '0.72rem' }}>2.4G / 5G</span>
+            )}
+            {activeSmartTab === 'campaigns' && renderCampaignsContent()}
+            {activeSmartTab === 'feedback' && (
+              <div className="glass-card" style={{ padding: '1.75rem', textAlign: 'center' }}>
+                {renderFeedbackContent()}
               </div>
-            </div>
+            )}
+            {activeSmartTab === 'signup' && (
+              <div className="glass-card" style={{ padding: '1.75rem', textAlign: 'center' }}>
+                {renderSignupContent()}
+              </div>
+            )}
+          </>
+        )}
 
-            {details.smartQr.wifiPassword && (
+        {/* Bottom Sheet / Modal for Secondary Smart QR Features */}
+        {activeModal && details.smartQr && (
+          <div className="smart-sheet-overlay" onClick={() => setActiveModal(null)}>
+            <div className="smart-sheet-content" onClick={(e) => e.stopPropagation()}>
+              <div className="smart-sheet-handle" />
+
               <div style={{
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                padding: '1rem',
-                marginBottom: '1.5rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
               }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
-                    {language === 'tr' ? 'Wİ-Fİ ŞİFRESİ' : 'WI-FI PASSWORD'}
-                  </div>
-                  <div style={{ fontWeight: 700, fontSize: '1.15rem', letterSpacing: '0.05em', color: '#38bdf8' }}>
-                    {details.smartQr.wifiPassword}
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  {activeModal === 'wifi' && <Wifi size={20} style={{ color: '#38bdf8' }} />}
+                  {activeModal === 'campaigns' && <Gift size={20} style={{ color: '#f472b6' }} />}
+                  {activeModal === 'feedback' && <MessageSquareText size={20} style={{ color: '#fbbf24' }} />}
+                  {activeModal === 'signup' && <Sparkles size={20} style={{ color: '#34d399' }} />}
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
+                    {activeModal === 'wifi' && (language === 'tr' ? 'Wi-Fi Bağlantısı' : 'Wi-Fi Connection')}
+                    {activeModal === 'campaigns' && (language === 'tr' ? 'Özel Fırsatlar & Kampanyalar' : 'Special Offers')}
+                    {activeModal === 'feedback' && (language === 'tr' ? 'Görüş & Değerlendirme' : 'Customer Feedback')}
+                    {activeModal === 'signup' && (details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club'))}
+                  </h3>
                 </div>
                 <button
                   type="button"
-                  onClick={() => copyWifiPassword(details.smartQr?.wifiPassword || '')}
-                  className="btn btn-primary"
+                  onClick={() => setActiveModal(null)}
                   style={{
-                    padding: '0.55rem 1rem',
-                    fontSize: '0.85rem',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    background: copiedWifi ? '#10b981' : undefined,
-                    borderColor: copiedWifi ? '#10b981' : undefined,
-                  }}
-                >
-                  {copiedWifi ? <Check size={16} /> : <Copy size={16} />}
-                  {copiedWifi ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Şifreyi Kopyala' : 'Copy Password')}
-                </button>
-              </div>
-            )}
-
-            {wifiQrUrl && (
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '16px',
-                padding: '1.25rem',
-                marginBottom: '1.5rem',
-                display: 'inline-block',
-              }}>
-                <img
-                  src={wifiQrUrl}
-                  alt="Wi-Fi QR"
-                  style={{
-                    width: '160px',
-                    height: '160px',
-                    borderRadius: '10px',
-                    display: 'block',
-                    margin: '0 auto',
-                    background: '#fff',
-                    padding: '8px',
-                  }}
-                />
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.65rem' }}>
-                  {language === 'tr'
-                    ? 'Kameranızı tutarak doğrudan bağlanın'
-                    : 'Point camera to join automatically'}
-                </div>
-              </div>
-            )}
-
-            <div style={{
-              background: 'rgba(14, 165, 233, 0.08)',
-              border: '1px solid rgba(14, 165, 233, 0.2)',
-              borderRadius: '12px',
-              padding: '0.9rem',
-              textAlign: 'left',
-              fontSize: '0.82rem',
-              color: '#bae6fd',
-              lineHeight: 1.5,
-            }}>
-              <div style={{ fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <ShieldCheck size={15} />
-                {language === 'tr' ? 'Hızlı Bağlantı Adımları' : 'Quick Connect Instructions'}
-              </div>
-              <div>1. {language === 'tr' ? '"Şifreyi Kopyala" butonuna dokunun.' : 'Tap "Copy Password" above.'}</div>
-              <div>2. {language === 'tr' ? `Ayarlar > Wi-Fi bölümünden "${details.smartQr.wifiSsid}" ağını seçip yapıştırın.` : `Go to Settings > Wi-Fi, select "${details.smartQr.wifiSsid}" and paste.`}</div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: SMART CAMPAIGNS & OFFERS */}
-        {activeSmartTab === 'campaigns' && details.smartQr && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {details.smartQr.campaigns.map((camp) => (
-              <div
-                key={camp.id}
-                className="glass-card"
-                style={{
-                  padding: '1.5rem',
-                  position: 'relative',
-                  border: '1px solid rgba(236, 72, 153, 0.25)',
-                  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.05), rgba(15, 23, 42, 0.8))',
-                }}
-              >
-                {camp.badge && (
-                  <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    background: 'linear-gradient(135deg, #ec4899, #db2777)',
-                    color: '#fff',
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '999px',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    marginBottom: '0.75rem',
-                  }}>
-                    <Tag size={12} />
-                    {camp.badge}
-                  </div>
-                )}
-
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.4rem', color: '#f8fafc' }}>
-                  {camp.title}
-                </h3>
-                {camp.description && (
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.25rem', lineHeight: 1.5 }}>
-                    {camp.description}
-                  </p>
-                )}
-
-                {camp.discountCode && (
-                  <div style={{
-                    background: 'rgba(0, 0, 0, 0.35)',
-                    border: '1px dashed rgba(236, 72, 153, 0.4)',
-                    borderRadius: '10px',
-                    padding: '0.75rem 1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                    <div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        {language === 'tr' ? 'KAMPANYA KODU' : 'PROMO CODE'}
-                      </div>
-                      <div style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '0.08em', color: '#f472b6' }}>
-                        {camp.discountCode}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => copyCouponCode(camp.discountCode || '')}
-                      className="btn btn-secondary"
-                      style={{
-                        padding: '0.45rem 0.85rem',
-                        fontSize: '0.8rem',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                      }}
-                    >
-                      {copiedCoupon === camp.discountCode ? <Check size={14} style={{ color: '#10b981' }} /> : <Copy size={14} />}
-                      {copiedCoupon === camp.discountCode ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Kodu Al' : 'Copy')}
-                    </button>
-                  </div>
-                )}
-
-                {camp.expiresAt && (
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.75rem' }}>
-                    ⏳ {language === 'tr' ? 'Son geçerlilik:' : 'Valid until:'} {new Date(camp.expiresAt).toLocaleDateString()}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* TAB 4: STANDALONE INSTANT FEEDBACK */}
-        {activeSmartTab === 'feedback' && (
-          <div className="glass-card" style={{ padding: '1.75rem', textAlign: 'center' }}>
-            {standaloneSubmitted ? (
-              <div style={{ padding: '1rem 0' }}>
-                <div style={{
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '50%',
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  color: '#10b981',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem',
-                }}>
-                  <CheckCircle2 size={32} />
-                </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
-                  {language === 'tr' ? 'Geri Bildiriminiz Alındı!' : 'Feedback Received!'}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Değerli görüşleriniz doğrudan işletme yönetimine iletilmiştir. Teşekkür ederiz.'
-                    : 'Your valuable feedback has been submitted to management. Thank you!'}
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleStandaloneFeedbackSubmit}>
-                <div style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '16px',
-                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1))',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                  color: '#fbbf24',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1.25rem',
-                }}>
-                  <MessageSquareText size={26} />
-                </div>
-
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '0.35rem' }}>
-                  {language === 'tr' ? 'Deneyiminizi Nasıl Buldunuz?' : 'How was your experience?'}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '1.5rem' }}>
-                  {language === 'tr'
-                    ? 'Görüşleriniz hizmet kalitemizi artırmamız için çok değerlidir.'
-                    : 'Your review helps us maintain and improve our quality of service.'}
-                </p>
-
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginBottom: '1.5rem' }}>
-                  {[1, 2, 3, 4, 5].map((star) => {
-                    const isActive = (standaloneHover || standaloneRating) >= star;
-                    return (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setStandaloneRating(star)}
-                        onMouseEnter={() => setStandaloneHover(star)}
-                        onMouseLeave={() => setStandaloneHover(0)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '0.35rem',
-                          color: isActive ? '#f59e0b' : 'rgba(255, 255, 255, 0.15)',
-                          transition: 'transform 0.15s, color 0.15s',
-                          transform: isActive ? 'scale(1.2)' : 'scale(1)',
-                        }}
-                      >
-                        <Star size={34} fill={isActive ? '#f59e0b' : 'none'} />
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <textarea
-                  rows={3}
-                  value={standaloneComment}
-                  onChange={(e) => setStandaloneComment(e.target.value)}
-                  placeholder={language === 'tr' ? 'Görüş veya önerinizi yazabilirsiniz (isteğe bağlı)...' : 'Write your comment or suggestion (optional)...'}
-                  maxLength={500}
-                  className="input"
-                  style={{ marginBottom: '1.25rem', resize: 'vertical' }}
-                />
-
-                <button
-                  type="submit"
-                  disabled={standaloneRating < 1 || standaloneSubmitting}
-                  className="btn btn-primary"
-                  style={{
-                    width: '100%',
-                    padding: '0.9rem',
-                    fontWeight: 700,
-                    opacity: standaloneRating < 1 || standaloneSubmitting ? 0.5 : 1,
-                  }}
-                >
-                  {standaloneSubmitting
-                    ? (language === 'tr' ? 'Gönderiliyor...' : 'Submitting...')
-                    : (language === 'tr' ? 'Geri Bildirimi Gönder' : 'Submit Feedback')}
-                </button>
-              </form>
-            )}
-          </div>
-        )}
-
-        {/* TAB 5: VIP SIGNUP / LEAD COLLECTION */}
-        {activeSmartTab === 'signup' && details.smartQr && (
-          <div className="glass-card" style={{ padding: '1.75rem', textAlign: 'center' }}>
-            {leadSubmitted ? (
-              <div style={{ padding: '1rem 0' }}>
-                <div style={{
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '50%',
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  color: '#10b981',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem',
-                }}>
-                  <CheckCircle2 size={32} />
-                </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
-                  {language === 'tr' ? 'Aramıza Hoş Geldiniz!' : 'Welcome to the Club!'}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Kaydınız başarıyla tamamlandı. Özel ikram ve fırsatlar ilk size ulaşacak!'
-                    : 'You are now enrolled. Look out for VIP perks and invitations!'}
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleLeadSubmit} style={{ textAlign: 'left' }}>
-                <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                  <div style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '16px',
-                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1))',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    color: '#34d399',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '32px',
+                    height: '32px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0 auto 1rem',
-                  }}>
-                    <Mail size={26} />
-                  </div>
-                  <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
-                    {details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club')}
-                  </h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: 0 }}>
-                    {details.smartQr.signupReward || (language === 'tr'
-                      ? 'Özel ikramlar, doğum günü hediyeleri ve indirimlerden haberdar olun.'
-                      : 'Enjoy complimentary rewards and exclusive invitations.')}
-                  </p>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                  <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
-                      {language === 'tr' ? 'Adınız Soyadınız' : 'Full Name'}
-                    </label>
-                    <input
-                      type="text"
-                      value={leadName}
-                      onChange={(e) => setLeadName(e.target.value)}
-                      placeholder={language === 'tr' ? 'Örn: Ahmet Yılmaz' : 'e.g. John Doe'}
-                      className="input"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
-                      {language === 'tr' ? 'E-posta Adresiniz' : 'Email Address'}
-                    </label>
-                    <input
-                      type="email"
-                      value={leadEmail}
-                      onChange={(e) => setLeadEmail(e.target.value)}
-                      placeholder="adiniz@ornek.com"
-                      className="input"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
-                      {language === 'tr' ? 'Telefon Numaranız (İsteğe Bağlı)' : 'Phone Number (Optional)'}
-                    </label>
-                    <input
-                      type="tel"
-                      value={leadPhone}
-                      onChange={(e) => setLeadPhone(e.target.value)}
-                      placeholder="+90 5XX XXX XX XX"
-                      className="input"
-                    />
-                  </div>
-
-                  <label style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.65rem',
-                    cursor: 'pointer',
-                    fontSize: '0.78rem',
                     color: 'var(--text-secondary)',
-                    marginTop: '0.5rem',
-                    lineHeight: 1.4,
-                  }}>
-                    <input
-                      type="checkbox"
-                      checked={leadConsent}
-                      onChange={(e) => setLeadConsent(e.target.checked)}
-                      style={{ marginTop: '0.15rem', accentColor: '#10b981', width: '16px', height: '16px' }}
-                    />
-                    <span>
-                      {language === 'tr'
-                        ? 'İşletmenin özel teklif, duyuru ve promosyon bildirimlerini almayı (KVKK kapsamında) onaylıyorum.'
-                        : 'I agree to receive special offers and updates in accordance with privacy laws.'}
-                    </span>
-                  </label>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={(!leadEmail && !leadPhone) || leadSubmitting}
-                  className="btn btn-primary"
-                  style={{
-                    width: '100%',
-                    padding: '0.9rem',
-                    fontWeight: 700,
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    borderColor: '#10b981',
-                    opacity: (!leadEmail && !leadPhone) || leadSubmitting ? 0.5 : 1,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
                   }}
+                  aria-label="Close"
                 >
-                  {leadSubmitting
-                    ? (language === 'tr' ? 'Kaydediliyor...' : 'Enrolling...')
-                    : (language === 'tr' ? 'Ayrıcalıklara Katıl' : 'Join VIP Club')}
+                  <X size={18} />
                 </button>
-              </form>
-            )}
+              </div>
+
+              {activeModal === 'wifi' && renderWifiContent()}
+              {activeModal === 'campaigns' && renderCampaignsContent()}
+              {activeModal === 'feedback' && renderFeedbackContent()}
+              {activeModal === 'signup' && renderSignupContent()}
+            </div>
           </div>
         )}
 
