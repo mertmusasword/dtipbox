@@ -45,6 +45,9 @@ import {
   Handshake,
   FileText,
   Cpu,
+  Tag,
+  Star,
+  Mail,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -943,6 +946,282 @@ export const HomePage: React.FC = () => {
               }}
             >
               {language === 'tr' ? 'POS Entegrasyonunu İncele' : 'Explore POS Architecture'}
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          NAPONI SMART QR: ONE QR. ENDLESS POSSIBILITIES.
+          ==================================================================== */}
+      <section className="home-section" id="smart-qr" style={{ background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.7) 100%)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <div className="home-container">
+          <div className="home-section-header">
+            <span className="home-section-tag" style={{ background: 'rgba(236, 72, 153, 0.15)', color: '#f472b6', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
+              <Sparkles size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
+              {language === 'tr' ? 'Masada Yeni Nesil Etkileşim' : 'Next-Gen Table Experience'}
+            </span>
+            <h2 className="home-section-title">
+              {language === 'tr' ? 'Naponi Smart QR — Tek QR. Sınırsız Olanak.' : 'Naponi Smart QR — One QR. Endless Hospitality.'}
+            </h2>
+            <p className="home-section-desc">
+              {language === 'tr'
+                ? 'Masaya yapıştırdığınız tek bir QR kod artık sadece bahşiş almakla kalmaz. Misafirlerinize tek dokunuşla Wi-Fi sunar, günün fırsatlarını gösterir, 5 yıldızlı yorumlar toplar ve sadık müşteri veritabanınızı büyütür.'
+                : 'Your table QR code is no longer just a tip jar. In a single scan, guests can access guest Wi-Fi, view daily specials, submit Google reviews, and join your VIP club.'}
+            </p>
+          </div>
+
+          {/* 5-Pillars Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
+            {/* Pillar 1: Tipping */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(99, 102, 241, 0.15)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#818cf8',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <CreditCard size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? 'Temassız Dijital Bahşiş' : 'Touchless Digital Tip'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Uygulama indirmeden, üyelik olmadan Apple Pay, Google Pay veya kartla 10 saniyede doğrudan personele veya havuza aktarım.'
+                    : 'Instant gratuity direct to staff or team pool in 10 seconds via Apple Pay, Google Pay, or card.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#818cf8', fontWeight: 600 }}>0 Saniye Kayıp • 0 Sürtünme</span>
+              </div>
+            </div>
+
+            {/* Pillar 2: Wi-Fi */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(56, 189, 248, 0.15)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#38bdf8',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Zap size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? '1-Tıkla Misafir Wi-Fi' : 'One-Tap Guest Wi-Fi'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Garsona şifre sorma devri bitti. Misafir tek tıkla şifreyi panoya kopyalar veya yerleşik Wi-Fi profiliyle bağlanır.'
+                    : 'No more asking waitstaff for passwords. Guests copy the network password with one tap and connect instantly.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>Personel Zamanından Tasarruf</span>
+              </div>
+            </div>
+
+            {/* Pillar 3: Campaigns */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#f59e0b',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Tag size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? 'Dinamik Kampanya & Fırsat' : 'Specials & Coupons'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Günün tatlısı, mutlu saatler (happy hour) indirimleri veya özel promosyon kuponlarını anlık olarak masadaki ekrana yansıtın.'
+                    : 'Highlight daily desserts, happy hour discounts, or exclusive promo codes right on table mobile screens.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>Adisyon Ortalamasını Artırın</span>
+              </div>
+            </div>
+
+            {/* Pillar 4: Feedback */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(251, 191, 36, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(251, 191, 36, 0.15)',
+                    border: '1px solid rgba(251, 191, 36, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fbbf24',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Star size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? 'Müşteri Değerlendirmesi' : 'Direct Reviews'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Müşteriler işletmeden ayrılmadan anlık 1-5 yıldız puanı verir. Google / TripAdvisor itibarınızı yükseltin.'
+                    : 'Collect in-venue 1-5 star ratings and reviews before guests leave, boosting your local review rankings.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 600 }}>Google & TripAdvisor Uyumlu</span>
+              </div>
+            </div>
+
+            {/* Pillar 5: VIP Lead Capture */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(236, 72, 153, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(236, 72, 153, 0.15)',
+                    border: '1px solid rgba(236, 72, 153, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ec4899',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Mail size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? 'VIP Sadakat & Lead Verisi' : 'VIP Loyalty & Leads'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Özel ikram veya duyurular karşılığında KVKK/GDPR uyumlu misafir e-posta ve telefon rehberi oluşturun.'
+                    : 'Build a compliant first-party marketing database of guest emails and phone numbers for SMS & newsletters.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#ec4899', fontWeight: 600 }}>%100 KVKK & GDPR Uyumlu</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Compatibility Promise Banner */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(236, 72, 153, 0.08) 100%)',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              borderRadius: '16px',
+              padding: '1.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.25rem',
+            }}
+          >
+            <div style={{ maxWidth: '720px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#a5b4fc', fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.35rem' }}>
+                <ShieldCheck size={18} />
+                {language === 'tr' ? 'Mevcut Basılı QR Kodlarınızı Yeniden Bastırmanıza Gerek Yok' : 'Zero Re-printing Needed. 100% Backward Compatible.'}
+              </div>
+              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5 }}>
+                {language === 'tr'
+                  ? 'Daha önce masalara bastırdığınız tüm Naponi QR kodları geriye dönük tam uyumludur. İşletme panelinizden Wi-Fi veya Kampanyaları aktif ettiğiniz an, mevcut QR kodlarınız otomatik olarak Smart QR Hub haline gelir.'
+                  : 'All previously printed Naponi QR stickers immediately upgrade over-the-air. Turn on Wi-Fi or campaigns in your dashboard and your existing table codes gain smart powers instantly.'}
+              </p>
+            </div>
+
+            <Link
+              to="/register"
+              className="btn btn-primary"
+              style={{ padding: '0.75rem 1.5rem', whiteSpace: 'nowrap' }}
+            >
+              {language === 'tr' ? 'Hemen Ücretsiz Başlayın' : 'Start Free Today'}
               <ArrowRight size={16} />
             </Link>
           </div>
