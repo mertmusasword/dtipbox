@@ -559,13 +559,16 @@ export const HomePage: React.FC = () => {
                 <span className="home-dash-dot yellow" />
                 <span className="home-dash-dot green" />
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
-                <LayoutDashboard size={14} style={{ color: '#818cf8' }} />
-                <span>naponi.app/portal/dashboard • {simConfig.venueName}</span>
+              <div className="home-dash-url-bar">
+                <LayoutDashboard size={13} className="home-dash-url-icon" />
+                <span className="home-dash-url-path">naponi.app/portal/dashboard</span>
+                <span className="home-dash-url-separator">•</span>
+                <span className="home-dash-url-venue">{simConfig.venueName}</span>
               </div>
               <div className="home-dash-pill">
                 <span className="pulse-dot" style={{ width: 6, height: 6 }} />
-                <span>Live Operations</span>
+                <span className="home-dash-pill-full">{language === 'tr' ? 'Canlı Panel' : 'Live Operations'}</span>
+                <span className="home-dash-pill-short">{language === 'tr' ? 'Canlı' : 'Live'}</span>
               </div>
             </div>
 
