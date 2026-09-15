@@ -208,6 +208,10 @@ model Business {
   pos_connections         PosConnection[]
   pos_sync_logs           PosSyncLog[]
   pos_employee_mappings   PosEmployeeMapping[]
+  smart_qr_config         SmartQrConfig?
+  smart_qr_campaigns      SmartQrCampaign[]
+  customer_leads          CustomerLead[]
+  smart_qr_events         SmartQrEvent[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -865,6 +869,97 @@ model PosSyncLog {
   @@map("pos_sync_logs")
 }
 
+// ==================== SMART QR SYSTEM ====================
 
+model SmartQrConfig {
+  id                String   @id @default(uuid())
+  business_id       String   @unique
+  is_smart_enabled  Boolean  @default(true)
+  
+  // Feature Toggles
+  enable_tips       Boolean  @default(true)
+  enable_wifi       Boolean  @default(false)
+  enable_campaigns  Boolean  @default(false)
+  enable_feedback   Boolean  @default(false)
+  enable_signup     Boolean  @default(false)
 
+  // Wi-Fi Settings
+  wifi_ssid         String?
+  wifi_password     String?
+  wifi_encryption   String   @default("WPA") // WPA, WEP, NONE
 
+  // Content Customizations
+  welcome_message   String?
+  signup_title      String?  // e.g. "VIP Ayrıcalık Kulübü"
+  signup_reward     String?  // e.g. "İlk ziyaretinizde tatlı ikramı"
+
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  // Relations
+  business          Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@index([business_id])
+  @@map("smart_qr_configs")
+}
+
+model SmartQrCampaign {
+  id            String    @id @default(uuid())
+  business_id   String
+  title         String    // e.g. "Tatlılarda %15 İndirim"
+  description   String?   @db.Text
+  badge         String?   // e.g. "%15 İNDİRİM", "GÜNÜN FIRSATI"
+  discount_code String?   // e.g. "NAPONI15"
+  expires_at    DateTime?
+  is_active     Boolean   @default(true)
+
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  // Relations
+  business      Business  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@index([business_id])
+  @@index([is_active])
+  @@map("smart_qr_campaigns")
+}
+
+model CustomerLead {
+  id                String    @id @default(uuid())
+  business_id       String
+  name              String?
+  email             String?
+  phone             String?
+  consent_marketing Boolean   @default(false)
+  consent_at        DateTime?
+  ip_address        String?
+
+  created_at        DateTime  @default(now())
+
+  // Relations
+  business          Business  @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@index([business_id])
+  @@index([email])
+  @@index([phone])
+  @@map("customer_leads")
+}
+
+model SmartQrEvent {
+  id          String   @id @default(uuid())
+  business_id String
+  qr_id       String?
+  table_id    String?
+  event_type  String   // SCAN, TIP_CLICK, TIP_SUCCESS, WIFI_CLICK, CAMPAIGN_CLICK, FEEDBACK_SUBMIT, LEAD_SUBMIT
+  metadata    Json?
+
+  created_at  DateTime @default(now())
+
+  // Relations
+  business    Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@index([business_id])
+  @@index([event_type])
+  @@index([created_at])
+  @@map("smart_qr_events")
+}

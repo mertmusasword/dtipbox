@@ -11,6 +11,7 @@ import partnerRoutes from './partner.routes';
 import supportRoutes from './support.routes';
 import loyaltyRoutes from './loyalty.routes';
 import posRoutes from './pos.routes';
+import smartQrRoutes from './smartQr.routes';
 
 import prisma from '../utils/prisma';
 
@@ -49,5 +50,6 @@ apiRouter.use('/partner-applications', partnerRoutes);
 apiRouter.use('/support-tickets', supportRoutes);
 apiRouter.use('/loyalty', loyaltyRoutes);
 apiRouter.use('/pos', posRoutes);
+apiRouter.use('/smart-qr', smartQrRoutes);
 
 export default apiRouter;

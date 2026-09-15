@@ -194,6 +194,81 @@ export interface TipPageDetails {
   }>;
   presetAmounts: number[];
   hasAvailablePaymentMethod: boolean;
+  smartQr?: {
+    isSmartEnabled: boolean;
+    enableTips: boolean;
+    enableWifi: boolean;
+    wifiSsid?: string | null;
+    wifiPassword?: string | null;
+    wifiEncryption?: string;
+    enableCampaigns: boolean;
+    enableFeedback: boolean;
+    enableSignup: boolean;
+    signupTitle?: string | null;
+    signupReward?: string | null;
+    welcomeMessage?: string | null;
+    campaigns: Array<{
+      id: string;
+      title: string;
+      description?: string | null;
+      badge?: string | null;
+      discountCode?: string | null;
+      expiresAt?: string | null;
+    }>;
+  };
+}
+
+export interface SmartQrConfig {
+  id: string;
+  business_id: string;
+  is_smart_enabled: boolean;
+  enable_tips: boolean;
+  enable_wifi: boolean;
+  enable_campaigns: boolean;
+  enable_feedback: boolean;
+  enable_signup: boolean;
+  wifi_ssid?: string | null;
+  wifi_password?: string | null;
+  wifi_encryption: string;
+  welcome_message?: string | null;
+  signup_title?: string | null;
+  signup_reward?: string | null;
+}
+
+export interface SmartQrCampaign {
+  id: string;
+  business_id: string;
+  title: string;
+  description?: string | null;
+  badge?: string | null;
+  discount_code?: string | null;
+  expires_at?: string | null;
+  is_active: boolean;
+  created_at?: string;
+}
+
+export interface CustomerLead {
+  id: string;
+  business_id: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  consent_marketing: boolean;
+  consent_at?: string | null;
+  created_at: string;
+}
+
+export interface SmartQrAnalytics {
+  metrics: {
+    scans: number;
+    tipClicks: number;
+    tipsCompleted: number;
+    wifiClicks: number;
+    campaignClicks: number;
+    feedbackSubmissions: number;
+    averageRating: number;
+    totalLeads: number;
+  };
 }
 
 export interface BusinessAnalytics {

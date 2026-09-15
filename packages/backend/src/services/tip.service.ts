@@ -28,6 +28,11 @@ export async function getTipPageDetails(publicToken: string) {
               country: true,
             },
           },
+          smart_qr_config: true,
+          smart_qr_campaigns: {
+            where: { is_active: true },
+            orderBy: { created_at: 'desc' },
+          },
         },
       },
       table: true,
@@ -72,6 +77,18 @@ export async function getTipPageDetails(publicToken: string) {
   };
   const presets = currencyPresets[qr.business.currency.toUpperCase()] || [5, 10, 20, 50];
 
+  // Record SCAN event asynchronously
+  prisma.smartQrEvent.create({
+    data: {
+      business_id: qr.business_id,
+      qr_id: qr.id,
+      table_id: qr.table_id,
+      event_type: 'SCAN',
+    },
+  }).catch(() => {});
+
+  const smartConfig = qr.business.smart_qr_config;
+
   return {
     qrCode: {
       id: qr.id,
@@ -95,6 +112,38 @@ export async function getTipPageDetails(publicToken: string) {
     paymentMethodsCatalog,
     presetAmounts: presets,
     hasAvailablePaymentMethod: activeMethods.length > 0,
+    smartQr: smartConfig
+      ? {
+          isSmartEnabled: smartConfig.is_smart_enabled,
+          enableTips: smartConfig.enable_tips,
+          enableWifi: smartConfig.enable_wifi,
+          wifiSsid: smartConfig.wifi_ssid,
+          wifiPassword: smartConfig.wifi_password,
+          wifiEncryption: smartConfig.wifi_encryption,
+          enableCampaigns: smartConfig.enable_campaigns,
+          enableFeedback: smartConfig.enable_feedback,
+          enableSignup: smartConfig.enable_signup,
+          signupTitle: smartConfig.signup_title,
+          signupReward: smartConfig.signup_reward,
+          welcomeMessage: smartConfig.welcome_message,
+          campaigns: (qr.business.smart_qr_campaigns || []).map((c) => ({
+            id: c.id,
+            title: c.title,
+            description: c.description,
+            badge: c.badge,
+            discountCode: c.discount_code,
+            expiresAt: c.expires_at,
+          })),
+        }
+      : {
+          isSmartEnabled: true,
+          enableTips: true,
+          enableWifi: false,
+          enableCampaigns: false,
+          enableFeedback: false,
+          enableSignup: false,
+          campaigns: [],
+        },
   };
 }
 
@@ -225,6 +274,17 @@ export async function createTip(data: CreateTipRequest) {
       tableId: effectiveTableId || '',
     },
   });
+
+  // Record TIP_SUCCESS event
+  prisma.smartQrEvent.create({
+    data: {
+      business_id: qr.business_id,
+      qr_id: qr.id,
+      table_id: effectiveTableId || null,
+      event_type: 'TIP_SUCCESS',
+      metadata: { amount: data.amount, paymentMethod: data.paymentMethod },
+    },
+  }).catch(() => {});
 
   return {
     tip: {
