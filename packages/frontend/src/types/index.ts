@@ -320,3 +320,76 @@ export interface TipPoolDistribution {
     };
   }>;
 }
+
+export type PosConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'ERROR' | 'SYNCING';
+
+export interface PosCatalogItem {
+  id: string;
+  name: string;
+  display_name: string;
+  description: string;
+  region_label: string;
+  countries: string[];
+  supported_currencies: string[];
+  capabilities: string[];
+  required_credentials: {
+    key: string;
+    label: string;
+    type: 'text' | 'password' | 'select';
+    required: boolean;
+    options?: { value: string; label: string }[];
+  }[];
+  status: 'ACTIVE' | 'BETA' | 'COMING_SOON';
+  has_adapter: boolean;
+  is_global: boolean;
+  logo_badge: string;
+}
+
+export interface PosConnectionItem {
+  id: string;
+  provider: string;
+  providerName: string;
+  status: PosConnectionStatus;
+  branchId?: string | null;
+  externalAccountId?: string | null;
+  externalLocationId?: string | null;
+  locationName?: string | null;
+  credentialsMasked: Record<string, string>;
+  configuration?: any;
+  lastSyncAt?: string | null;
+  lastSyncStatus?: string | null;
+  lastErrorMessage?: string | null;
+  createdAt: string;
+  employeeMappingsCount: number;
+  mappedEmployeesCount: number;
+  employeeMappings: PosEmployeeMappingItem[];
+  syncLogs: PosSyncLogItem[];
+}
+
+export interface PosEmployeeMappingItem {
+  id: string;
+  pos_connection_id: string;
+  business_id: string;
+  external_employee_id: string;
+  external_employee_name: string;
+  external_role?: string | null;
+  employee_id?: string | null;
+  employee?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    role_title?: string | null;
+    avatar?: string | null;
+  } | null;
+}
+
+export interface PosSyncLogItem {
+  id: string;
+  pos_connection_id: string;
+  records_synced: number;
+  tips_imported: number;
+  status: string;
+  error_details?: string | null;
+  created_at: string;
+}
+

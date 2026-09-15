@@ -129,6 +129,13 @@ enum PosFeePayer {
   CUSTOMER
 }
 
+enum PosConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  SYNCING
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -196,6 +203,9 @@ model Business {
   loyalty_cards           LoyaltyCard[]
   loyalty_transactions    LoyaltyStampTransaction[]
   loyalty_redemptions     LoyaltyRedemption[]
+  pos_connections         PosConnection[]
+  pos_sync_logs           PosSyncLog[]
+  pos_employee_mappings   PosEmployeeMapping[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -247,6 +257,7 @@ model Employee {
   tip_pool_shares       TipPoolShare[]
   loyalty_transactions  LoyaltyStampTransaction[]
   loyalty_redemptions   LoyaltyRedemption[]
+  pos_mappings          PosEmployeeMapping[]
 
   @@index([business_id])
   @@index([user_id])
@@ -774,6 +785,84 @@ model LoyaltyRedemption {
   @@index([status])
   @@map("loyalty_redemptions")
 }
+
+// ==================== POS INTEGRATION MODELS ====================
+
+model PosConnection {
+  id                    String              @id @default(uuid())
+  business_id           String
+  branch_id             String?             // Branch or location identifier
+  provider              String              // e.g. 'toast', 'square_pos', 'clover', 'lightspeed', 'simpra', 'foodics', 'mock_pos'
+  status                PosConnectionStatus @default(DISCONNECTED)
+  external_account_id   String?
+  external_location_id  String?
+  location_name         String?
+  credentials_encrypted String?             @db.Text
+  configuration         Json?
+  last_sync_at          DateTime?
+  last_sync_status      String?
+  last_error_message    String?
+
+  created_at            DateTime            @default(now())
+  updated_at            DateTime            @updatedAt
+
+  // Relations
+  business              Business            @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  employee_mappings     PosEmployeeMapping[]
+  sync_logs             PosSyncLog[]
+
+  @@unique([business_id, provider, external_location_id])
+  @@index([business_id])
+  @@index([provider])
+  @@index([status])
+  @@map("pos_connections")
+}
+
+model PosEmployeeMapping {
+  id                     String        @id @default(uuid())
+  pos_connection_id      String
+  business_id            String
+  employee_id            String?
+  external_employee_id   String
+  external_employee_name String
+  external_role          String?
+
+  created_at             DateTime      @default(now())
+  updated_at             DateTime      @updatedAt
+
+  // Relations
+  pos_connection         PosConnection @relation(fields: [pos_connection_id], references: [id], onDelete: Cascade)
+  business               Business      @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  employee               Employee?     @relation(fields: [employee_id], references: [id], onDelete: SetNull)
+
+  @@unique([pos_connection_id, external_employee_id])
+  @@index([pos_connection_id])
+  @@index([business_id])
+  @@index([employee_id])
+  @@map("pos_employee_mappings")
+}
+
+model PosSyncLog {
+  id                String        @id @default(uuid())
+  pos_connection_id String
+  business_id       String
+  records_synced    Int           @default(0)
+  tips_imported     Int           @default(0)
+  status            String        @default("SUCCESS") // SUCCESS, PARTIAL, FAILED
+  error_details     String?       @db.Text
+
+  created_at        DateTime      @default(now())
+
+  // Relations
+  pos_connection    PosConnection @relation(fields: [pos_connection_id], references: [id], onDelete: Cascade)
+  business          Business      @relation(fields: [business_id], references: [id], onDelete: Cascade)
+
+  @@index([pos_connection_id])
+  @@index([business_id])
+  @@index([created_at])
+  @@map("pos_sync_logs")
+}
+
 
 
 

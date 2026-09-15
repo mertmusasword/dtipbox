@@ -44,6 +44,7 @@ import {
   BadgeCheck,
   Handshake,
   FileText,
+  Cpu,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -806,6 +807,144 @@ export const HomePage: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          GLOBAL POS INTEGRATION LAYER: KEEP YOUR POS. ADD NAPONI.
+          ==================================================================== */}
+      <section className="home-section" id="pos-integrations" style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <div className="home-container">
+          <div className="home-section-header">
+            <span className="home-section-tag" style={{ background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
+              <Cpu size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
+              {language === 'tr' ? 'Açık POS & Kasa Entegrasyonu' : 'Open POS & Terminal Integration'}
+            </span>
+            <h2 className="home-section-title">
+              {language === 'tr' ? 'Mevcut POS Sisteminizi Değiştirmeyin. Naponi Ekleyin.' : 'Keep Your POS. Add Naponi.'}
+            </h2>
+            <p className="home-section-desc">
+              {language === 'tr'
+                ? 'Donanım çöpe atmak veya alışılmış kasa yazılımlarını terk etmek yok. Naponi, dünyanın önde gelen restoran ve otel POS sistemleriyle çift kanallı senkronize çalışır.'
+                : 'Zero hardware replacement. Zero operational disruption. Naponi seamlessly layers on top of your existing point-of-sale to automate tips, shift pooling, and staff payouts.'}
+            </p>
+          </div>
+
+          {/* POS Compatibility Showcase */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
+            {[
+              {
+                region: language === 'tr' ? 'Türkiye & MENA' : 'Turkey & MENA',
+                systems: ['Simpra', 'SambaPOS', 'Menulux', 'Foodics'],
+                badge: 'TR & Körfez',
+                desc: language === 'tr' ? 'Türkiye ve Körfez bölgesinin popüler restoran ve kafe adisyon sistemleri.' : 'Leading hospitality POS platforms across Turkey and the Gulf region.',
+              },
+              {
+                region: language === 'tr' ? 'Kuzey Amerika' : 'North America',
+                systems: ['Toast POS', 'Square POS', 'Clover', 'TouchBistro'],
+                badge: 'US & CA',
+                desc: language === 'tr' ? 'ABD ve Kanada genelinde yaygın bulut tabanlı restoran otomasyonları.' : 'Dominant cloud restaurant management platforms across the United States & Canada.',
+              },
+              {
+                region: language === 'tr' ? 'Avrupa & Birleşik Krallık' : 'Europe & UK',
+                systems: ['Lightspeed', 'SumUp POS', 'Vectron (Almanya)', 'Tiller'],
+                badge: 'UK & EU',
+                desc: language === 'tr' ? 'İngiltere, Almanya, Fransa ve Avrupa genelinde onaylı kasa çözümleri.' : 'Standard point-of-sale and terminal networks deployed across the UK and Continental Europe.',
+              },
+              {
+                region: language === 'tr' ? 'Global Zincirler & Asya' : 'Global Enterprise & Asia',
+                systems: ['Oracle MICROS Simphony', 'NCR Aloha', 'Meituan POS (Çin)', 'Smaregi (Japonya)'],
+                badge: 'Global 🌐',
+                desc: language === 'tr' ? 'Global 5 yıldızlı oteller, lüks tatil köyleri ve yüksek hacimli zincirler.' : 'Enterprise-tier hospitality solutions for global resort chains and high-volume brands.',
+              },
+            ].map((col, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: 'rgba(30, 41, 59, 0.5)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc' }}>{col.region}</span>
+                    <span style={{ background: 'rgba(255, 255, 255, 0.08)', color: '#cbd5e1', fontSize: '0.72rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 600 }}>{col.badge}</span>
+                  </div>
+                  <p style={{ fontSize: '0.825rem', color: '#94a3b8', lineHeight: 1.5, margin: '0 0 1rem' }}>{col.desc}</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {col.systems.map((sys, sIdx) => (
+                      <span
+                        key={sIdx}
+                        style={{
+                          background: 'rgba(15, 23, 42, 0.65)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '8px',
+                          padding: '4px 10px',
+                          fontSize: '0.78rem',
+                          color: '#f1f5f9',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {sys}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Value comparison bar */}
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.75)',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              borderRadius: '16px',
+              padding: '1.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.5rem',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#818cf8', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.35rem' }}>
+                <CheckCircle2 size={18} />
+                {language === 'tr' ? 'Aynı Anda İki Kanal: QR Bahşiş + Kasa Bahşişi' : 'Dual-Channel Harmony: QR Tips + POS Tips'}
+              </div>
+              <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.875rem', maxWidth: '680px' }}>
+                {language === 'tr'
+                  ? 'Müşteri ister masadaki QR kodu okutup 10 saniyede doğrudan bahşiş bıraksın, ister garsona kredi kartı slipiyle bahşiş versin; Naponi her iki kaydı da tek havuzda birleştirir ve vardiya sonunda adaleti garanti eder.'
+                  : 'Guests can either scan the table QR code in 10 seconds via Apple Pay/Google Pay or add a tip to the terminal bill. Naponi combines both streams into a single compliant ledger.'}
+              </p>
+            </div>
+
+            <Link
+              to="/technology-partners"
+              style={{
+                background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                color: '#fff',
+                padding: '0.75rem 1.4rem',
+                borderRadius: '10px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+              }}
+            >
+              {language === 'tr' ? 'POS Entegrasyonunu İncele' : 'Explore POS Architecture'}
+              <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>

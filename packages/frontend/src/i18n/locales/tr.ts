@@ -59,6 +59,7 @@ const tr = {
     tables: 'Masa & Alanlar',
     qrCodes: 'QR Kodlar',
     paymentMethods: 'Ödeme Yöntemleri',
+    posIntegrations: 'POS Entegrasyonları',
     bankAccount: 'Banka Hesabı',
     analytics: 'Analitik',
     feedbacks: 'Geri Bildirimler',

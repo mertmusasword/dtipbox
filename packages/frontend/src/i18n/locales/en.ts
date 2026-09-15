@@ -59,6 +59,7 @@ const en = {
     tables: 'Tables & Zones',
     qrCodes: 'QR Codes',
     paymentMethods: 'Payment Methods',
+    posIntegrations: 'POS Integrations',
     bankAccount: 'Bank Account',
     analytics: 'Analytics',
     feedbacks: 'Feedbacks',

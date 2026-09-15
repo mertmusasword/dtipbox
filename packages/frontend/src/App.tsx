@@ -44,6 +44,7 @@ const EmployeesPage = React.lazy(() => import('./pages/business/EmployeesPage').
 const TablesPage = React.lazy(() => import('./pages/business/TablesPage').then((m) => ({ default: m.TablesPage })));
 const QrCodesPage = React.lazy(() => import('./pages/business/QrCodesPage').then((m) => ({ default: m.QrCodesPage })));
 const PaymentMethodsPage = React.lazy(() => import('./pages/business/PaymentMethodsPage').then((m) => ({ default: m.PaymentMethodsPage })));
+const PosIntegrationsPage = React.lazy(() => import('./pages/business/PosIntegrationsPage').then((m) => ({ default: m.PosIntegrationsPage })));
 const PaymentAccountPage = React.lazy(() => import('./pages/business/PaymentAccountPage').then((m) => ({ default: m.PaymentAccountPage })));
 const AnalyticsPage = React.lazy(() => import('./pages/business/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage })));
 const FeedbacksPage = React.lazy(() => import('./pages/business/FeedbacksPage').then((m) => ({ default: m.FeedbacksPage })));
@@ -182,6 +183,7 @@ export const App: React.FC = () => {
                   <Route path="/business/tables" element={<TablesPage />} />
                   <Route path="/business/qr" element={<QrCodesPage />} />
                   <Route path="/business/payment-methods" element={<PaymentMethodsPage />} />
+                  <Route path="/business/pos-integrations" element={<PosIntegrationsPage />} />
                   <Route path="/business/payment-account" element={<PaymentAccountPage />} />
                   <Route path="/business/analytics" element={<AnalyticsPage />} />
                   <Route path="/business/feedbacks" element={<FeedbacksPage />} />

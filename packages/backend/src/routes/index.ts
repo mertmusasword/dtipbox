@@ -10,6 +10,7 @@ import corporateRoutes from './corporate.routes';
 import partnerRoutes from './partner.routes';
 import supportRoutes from './support.routes';
 import loyaltyRoutes from './loyalty.routes';
+import posRoutes from './pos.routes';
 
 import prisma from '../utils/prisma';
 
@@ -47,5 +48,6 @@ apiRouter.use('/corporate-applications', corporateRoutes);
 apiRouter.use('/partner-applications', partnerRoutes);
 apiRouter.use('/support-tickets', supportRoutes);
 apiRouter.use('/loyalty', loyaltyRoutes);
+apiRouter.use('/pos', posRoutes);
 
 export default apiRouter;
