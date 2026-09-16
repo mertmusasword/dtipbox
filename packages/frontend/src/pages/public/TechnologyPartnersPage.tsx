@@ -206,7 +206,7 @@ export const TechnologyPartnersPage: React.FC = () => {
           ==================================================================== */}
       <header className="partners-navbar">
         <div className="partners-nav-container">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div className="partners-nav-left">
             <Link to="/" className="partners-nav-brand" title="Naponi">
               <img src="/naponi-brand.svg" alt="Naponi" className="partners-brand-logo" />
             </Link>
@@ -218,18 +218,21 @@ export const TechnologyPartnersPage: React.FC = () => {
           </div>
 
           <div className="partners-nav-actions">
-            <Link to="/" className="partners-back-link">
-              <span>{isTr ? '← İşletmeler İçin Naponi' : '← Naponi for Venues'}</span>
+            <Link to="/" className="partners-back-link" title={isTr ? 'İşletmeler İçin Naponi' : 'Naponi for Venues'}>
+              <span className="partners-back-link-desktop">{isTr ? '← İşletmeler İçin Naponi' : '← Naponi for Venues'}</span>
+              <span className="partners-back-link-mobile">{isTr ? '← İşletmeler' : '← Venues'}</span>
             </Link>
-            <LanguageSelector variant="navbar" />
+            <div className="partners-nav-lang">
+              <LanguageSelector variant="navbar" />
+            </div>
             <button
               type="button"
               onClick={() => scrollToSection('partner-form')}
-              className="partners-btn-primary"
-              style={{ padding: '0.65rem 1.4rem', fontSize: '0.88rem', borderRadius: '10px' }}
+              className="partners-btn-primary partners-nav-cta"
             >
-              <Send size={14} />
-              <span>{isTr ? 'Partnerlik Başvurusu' : 'Apply Now'}</span>
+              <Send size={13} />
+              <span className="partners-nav-cta-desktop">{isTr ? 'Partnerlik Başvurusu' : 'Apply Now'}</span>
+              <span className="partners-nav-cta-mobile">{isTr ? 'Başvur' : 'Apply'}</span>
             </button>
           </div>
         </div>
