@@ -1,5 +1,6 @@
 export interface ComparisonItem {
   slug: string;
+  shortTitle?: { tr: string; en: string };
   badge: { tr: string; en: string };
   title: { tr: string; en: string };
   subtitle: { tr: string; en: string };
@@ -34,6 +35,7 @@ export interface ComparisonItem {
 export const COMPARISONS: ComparisonItem[] = [
   {
     slug: 'card-machine-vs-qr-tipping',
+    shortTitle: { tr: 'POS vs QR Bahşiş', en: 'POS vs QR Tipping' },
     badge: { tr: 'Sektör Karşılaştırma Raporu', en: 'Industry Comparison Report' },
     title: {
       tr: 'POS Cihazından Bahşiş vs QR Kod ile Dijital Bahşiş: Hangisi Daha Avantajlı?',
@@ -152,6 +154,7 @@ export const COMPARISONS: ComparisonItem[] = [
   },
   {
     slug: 'best-cashless-tipping-systems',
+    shortTitle: { tr: 'En İyi Bahşiş Sistemleri', en: 'Best Tipping Platforms' },
     badge: { tr: '2026 Sektör İncelemesi', en: '2026 Industry Review' },
     title: {
       tr: 'En İyi Dijital ve Temassız Bahşiş Sistemleri: 2026 Restoran ve Otel Karşılaştırması',

@@ -8,7 +8,9 @@ import {
   ChevronUp,
   Scale,
   Award,
-  Sparkles
+  Sparkles,
+  Menu,
+  X
 } from 'lucide-react';
 import { SeoHead } from '../../../components/SeoHead';
 import { COMPARISONS } from '../../../content/comparisons/comparisons';
@@ -24,6 +26,7 @@ export const ComparisonDetailPage: React.FC = () => {
 
   const item = COMPARISONS.find((c) => c.slug === slug);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (!item) {
     return <Navigate to="/compare/card-machine-vs-qr-tipping" replace />;
@@ -34,6 +37,9 @@ export const ComparisonDetailPage: React.FC = () => {
   const subtitle = isEn ? item.subtitle.en : item.subtitle.tr;
   const audience = isEn ? item.targetAudience.en : item.targetAudience.tr;
   const quickVerdict = isEn ? item.quickVerdict.en : item.quickVerdict.tr;
+  const breadcrumbTitle = item.shortTitle
+    ? (isEn ? item.shortTitle.en : item.shortTitle.tr)
+    : (isEn ? 'Comparison' : 'Karşılaştırma');
 
   const otherComparisons = COMPARISONS.filter((c) => c.slug !== item.slug);
 
@@ -73,7 +79,40 @@ export const ComparisonDetailPage: React.FC = () => {
               {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
             </Link>
           </div>
+
+          <div className="home-mobile-controls">
+            <LanguageSelector variant="flagOnly" />
+            <Link to="/register" className="home-btn-primary home-btn-mobile-cta">
+              {isEn ? 'Get Started' : 'Hemen Başla'}
+            </Link>
+            <button
+              className="home-mobile-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={isEn ? 'Toggle menu' : 'Menüyü Aç/Kapat'}
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </nav>
+
+        {mobileMenuOpen && (
+          <div className="home-mobile-menu">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Home' : 'Ana Sayfa'}</Link>
+            <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link>
+            <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link>
+            <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'QR Generator' : 'QR Üretici'}</Link>
+            <Link to="/compare/card-machine-vs-qr-tipping" onClick={() => setMobileMenuOpen(false)} style={{ color: '#10b981', fontWeight: 600 }}>{isEn ? 'Comparisons' : 'Karşılaştırmalar'}</Link>
+            <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tech Partners' : 'Teknoloji Partnerleri'}</Link>
+            <div className="home-mobile-menu-actions">
+              <Link to="/login" className="home-btn-ghost" onClick={() => setMobileMenuOpen(false)}>
+                {isEn ? 'Login' : 'Giriş Yap'}
+              </Link>
+              <Link to="/register" className="home-btn-primary" onClick={() => setMobileMenuOpen(false)}>
+                {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Container */}
@@ -85,7 +124,7 @@ export const ComparisonDetailPage: React.FC = () => {
             <span>/</span>
             <span style={{ color: '#94a3b8' }}>{isEn ? 'Comparisons' : 'Karşılaştırmalar'}</span>
             <span>/</span>
-            <span style={{ color: '#10b981', fontWeight: 600 }}>{item.slug}</span>
+            <span style={{ color: '#10b981', fontWeight: 600 }}>{breadcrumbTitle}</span>
           </nav>
 
           {/* Hero Section */}
@@ -102,9 +141,9 @@ export const ComparisonDetailPage: React.FC = () => {
               <h1 className="seo-page-title">{title}</h1>
               <p className="seo-page-desc" style={{ margin: '0 auto 1.5rem' }}>{subtitle}</p>
 
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1.25rem', borderRadius: 9999, fontSize: '0.85rem', color: '#94a3b8' }}>
-                <span style={{ fontWeight: 700, color: '#f8fafc' }}>{isEn ? 'Target Audience:' : 'Hedef Kitle:'}</span>
-                <span>{audience}</span>
+              <div className="seo-audience-box">
+                <span className="seo-audience-label">{isEn ? 'Target Audience:' : 'Hedef Kitle:'}</span>
+                <span className="seo-audience-text">{audience}</span>
               </div>
             </div>
           </div>

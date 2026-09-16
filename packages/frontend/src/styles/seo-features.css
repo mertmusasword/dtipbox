@@ -102,21 +102,77 @@
   letter-spacing: -0.02em;
 }
 
-@media (max-width: 768px) {
-  .seo-page-title {
-    font-size: 2rem;
-  }
-  .seo-hero-card {
-    padding: 2rem 1.5rem;
-  }
-}
-
 .seo-page-desc {
   font-size: 1.15rem;
   line-height: 1.7;
   color: #94a3b8;
   max-width: 860px;
   margin-bottom: 2rem;
+}
+
+/* Target Audience Box */
+.seo-audience-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.55rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  max-width: 100%;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.seo-audience-label {
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+}
+
+.seo-audience-text {
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .seo-page-title {
+    font-size: 1.65rem;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+  .seo-page-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+  .seo-hero-card {
+    padding: 1.75rem 1.15rem 2rem;
+    margin-bottom: 2rem;
+    border-radius: 18px;
+  }
+  .seo-audience-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    gap: 0.35rem;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .seo-audience-label {
+    color: #34d399;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .seo-audience-text {
+    font-size: 0.82rem;
+  }
 }
 
 /* Quick Stats Bar */
