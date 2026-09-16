@@ -181,81 +181,42 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(8px)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-      }}
-    >
-      <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '860px',
-          maxHeight: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 0,
-          overflow: 'hidden',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        }}
-      >
+    <div className="tip-pool-modal-overlay">
+      <div className="glass-card tip-pool-modal-card">
         {/* Modal Header */}
-        <div
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.02)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '10px',
-                background: 'rgba(99, 102, 241, 0.15)',
-                color: 'var(--primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+        <div className="tip-pool-modal-header">
+          <div className="tip-pool-modal-header-main">
+            <div className="tip-pool-modal-header-left">
+              <div className="tip-pool-modal-icon">
+                <Split size={18} />
+              </div>
+              <div className="tip-pool-modal-titles">
+                <h3 className="tip-pool-modal-title">
+                  Bahşiş Dağıtımı & Kasa Kapat
+                </h3>
+                <p className="tip-pool-modal-desc">
+                  Kasadaki dağıtılmamış bahşişler ve personel hak ediş dökümü
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="btn btn-secondary btn-sm tip-pool-modal-close-mobile"
+              aria-label="Kapat"
             >
-              <Split size={20} />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
-                Bahşiş Dağıtımı & Kasa Kapat
-              </h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                Kasadaki dağıtılmamış bahşişler, kesintiler ve personel hak ediş dökümü
-              </p>
-            </div>
+              <X size={18} />
+            </button>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="tip-pool-modal-header-actions">
             {/* Tabs */}
-            <div style={{ display: 'flex', background: 'var(--bg-input)', borderRadius: '8px', padding: '2px' }}>
+            <div className="tip-pool-modal-tabs">
               <button
                 type="button"
                 onClick={() => { setActiveTab('simulate'); setSelectedHistoryItem(null); }}
                 className={`btn btn-sm ${activeTab === 'simulate' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem' }}
+                style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}
               >
                 Kasadaki Dağıtım
               </button>
@@ -263,7 +224,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 type="button"
                 onClick={() => setActiveTab('history')}
                 className={`btn btn-sm ${activeTab === 'history' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
               >
                 <History size={13} /> Geçmiş Kapanışlar
               </button>
@@ -271,8 +232,9 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
 
             <button
               onClick={onClose}
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary btn-sm tip-pool-modal-close-desktop"
               style={{ padding: '0.4rem', borderRadius: '8px' }}
+              aria-label="Kapat"
             >
               <X size={16} />
             </button>
@@ -280,7 +242,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
+        <div className="tip-pool-modal-body">
           {activeTab === 'simulate' ? (
             loading ? (
               <div style={{ textAlign: 'center', padding: '3rem 0' }}>
@@ -294,21 +256,8 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
             ) : (
               <div>
                 {/* Mode & Rule Badge Banner */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '0.75rem',
-                    padding: '0.85rem 1rem',
-                    borderRadius: '10px',
-                    background: 'rgba(99, 102, 241, 0.08)',
-                    border: '1px solid rgba(99, 102, 241, 0.15)',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div className="tip-pool-mode-banner">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Dağıtım Modeli:</span>
                     <span className="badge badge-accent" style={{ fontWeight: 700, fontSize: '0.75rem' }}>
                       {simulation.settings.mode === 'INDIVIDUAL' && 'Bireysel Dağıtım (Direkt)'}
@@ -317,7 +266,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
                     <span>
                       POS Kesintisi:{' '}
                       <strong style={{ color: 'var(--text-primary)' }}>
@@ -340,22 +289,9 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 </div>
 
                 {/* Kasadaki Birikim Bilgisi Banner */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '0.75rem',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '10px',
-                    background: 'rgba(59, 130, 246, 0.08)',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
-                    marginBottom: '1.25rem',
-                  }}
-                >
+                <div className="tip-pool-accumulation-banner">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <Clock size={16} style={{ color: '#60a5fa' }} />
+                    <Clock size={16} style={{ color: '#60a5fa', flexShrink: 0 }} />
                     <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                       {simulation.period.accumulationNote || 'Kasadaki Dağıtılmamış Bahşişler'}
                     </span>
@@ -374,16 +310,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowManualInputs(true)}
-                      className="btn btn-secondary btn-sm"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.45rem',
-                        fontSize: '0.8rem',
-                        borderColor: 'rgba(234, 179, 8, 0.4)',
-                        color: '#fbbf24',
-                        background: 'rgba(234, 179, 8, 0.06)',
-                      }}
+                      className="btn btn-secondary btn-sm tip-pool-add-external-btn"
                     >
                       <Coins size={15} />
                       + Fiziksel Tip Box (Nakit) veya Kendi POS Bahşişinizi Ekleyin
@@ -880,40 +807,29 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div
-          style={{
-            padding: '1rem 1.5rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.02)',
-          }}
-        >
+        <div className="tip-pool-modal-footer">
           <button
             type="button"
             onClick={handlePrint}
-            className="btn btn-secondary"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+            className="btn btn-secondary tip-pool-print-btn"
           >
             <Printer size={15} /> Yazdır / Rapor Çıktısı Al
           </button>
 
           {activeTab === 'simulate' && (
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button type="button" onClick={onClose} className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>
+            <div className="tip-pool-modal-footer-actions">
+              <button type="button" onClick={onClose} className="btn btn-secondary tip-pool-cancel-btn" style={{ fontSize: '0.85rem' }}>
                 İptal
               </button>
               <button
                 type="button"
                 onClick={handleSettle}
                 disabled={settling || !simulation || simulation.summary.grossAmount <= 0}
-                className="btn btn-primary"
+                className="btn btn-primary tip-pool-settle-btn"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  fontSize: '0.85rem',
                   background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                   borderColor: '#059669',
                 }}
