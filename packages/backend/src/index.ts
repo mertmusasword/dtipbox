@@ -46,6 +46,12 @@ app.use(
               'https://*.analytics.google.com',
               'https://*.googletagmanager.com',
             ],
+            frameSrc: [
+              "'self'",
+              'https://www.youtube.com',
+              'https://www.youtube-nocookie.com',
+              'https://youtube.com',
+            ],
             objectSrc: ["'none'"],
             upgradeInsecureRequests: [],
           },

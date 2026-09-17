@@ -2205,7 +2205,7 @@ export const HomePage: React.FC = () => {
 
             <div className="home-video-modal-iframe-wrap">
               <iframe
-                src="https://www.youtube-nocookie.com/embed/oiMt1zl2G5w?autoplay=1&rel=0&modestbranding=1"
+                src="https://www.youtube.com/embed/oiMt1zl2G5w?autoplay=1&rel=0"
                 title="Naponi — The Future of Digital Tipping"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
