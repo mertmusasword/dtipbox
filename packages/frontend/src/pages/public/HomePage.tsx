@@ -49,6 +49,9 @@ import {
   Star,
   Mail,
   Radio,
+  Play,
+  Youtube,
+  Instagram,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -70,6 +73,9 @@ export const HomePage: React.FC = () => {
 
   // Support Ticket Modal State
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+
+  // Video Showcase Modal State
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
 
   // Legal Modal State (KVKK, Privacy, Terms, Cookies)
   const [legalModalOpen, setLegalModalOpen] = useState(false);
@@ -328,6 +334,17 @@ export const HomePage: React.FC = () => {
                 <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
                   {t('home.ctaLogin')}
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => setVideoModalOpen(true)}
+                  className="home-btn-hero-video"
+                  title={language === 'tr' ? 'Tanıtım Videosunu İzle' : 'Watch 60s Demo'}
+                >
+                  <span className="home-btn-video-icon">
+                    <Play size={12} fill="currentColor" style={{ marginLeft: 2 }} />
+                  </span>
+                  <span>{language === 'tr' ? 'Videoyu İzle' : 'Watch Demo'}</span>
+                </button>
               </div>
 
               <div className="home-hero-trust-row">
@@ -2004,6 +2021,29 @@ export const HomePage: React.FC = () => {
                 <span className="pulse-dot" />
                 <span>{t('home.footerStatus')}</span>
               </div>
+              
+              <div className="home-footer-socials">
+                <a
+                  href="https://www.youtube.com/@Naponicom"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Naponi YouTube"
+                  className="home-social-btn youtube"
+                  title="Naponi YouTube Channel"
+                >
+                  <Youtube size={19} />
+                </a>
+                <a
+                  href="https://www.instagram.com/naponicom/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Naponi Instagram"
+                  className="home-social-btn instagram"
+                  title="Naponi Instagram"
+                >
+                  <Instagram size={19} />
+                </a>
+              </div>
             </div>
 
             <div>
@@ -2122,6 +2162,85 @@ export const HomePage: React.FC = () => {
         onClose={() => setLegalModalOpen(false)}
         initialTab={legalModalTab}
       />
+
+      {/* Video Showcase Modal */}
+      {videoModalOpen && (
+        <div
+          className="home-video-modal-overlay"
+          onClick={() => setVideoModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Naponi Tanıtım Videosu"
+        >
+          <div
+            className="home-video-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="home-video-modal-header">
+              <div className="home-video-modal-title">
+                <div style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 6,
+                  background: 'linear-gradient(135deg, #c084fc, #38bdf8)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#090d16',
+                  flexShrink: 0,
+                }}>
+                  <Play size={12} fill="currentColor" style={{ marginLeft: 1 }} />
+                </div>
+                <span>Naponi — The Future of Digital Tipping</span>
+              </div>
+              <button
+                type="button"
+                className="home-video-modal-close"
+                onClick={() => setVideoModalOpen(false)}
+                aria-label="Kapat"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="home-video-modal-iframe-wrap">
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/oiMt1zl2G5w?autoplay=1&rel=0&modestbranding=1"
+                title="Naponi — The Future of Digital Tipping"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+
+            <div className="home-video-modal-footer">
+              <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                {language === 'tr' ? 'Resmi YouTube Kanalımız' : 'Official YouTube Channel'}
+              </div>
+              <a
+                href="https://www.youtube.com/@Naponicom"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '8px',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  color: '#f87171',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                }}
+              >
+                <Youtube size={15} />
+                <span>@Naponicom</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Non-intrusive Cookie Consent Banner */}
       <CookieBanner onOpenLegalModal={openLegal} />

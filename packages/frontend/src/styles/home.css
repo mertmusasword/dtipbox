@@ -2171,3 +2171,175 @@
   line-height: 1.6;
 }
 
+/* ==========================================================================
+   Home Hero Video Button & Modal
+   ========================================================================== */
+.home-btn-hero-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+}
+
+.home-btn-hero-video:hover {
+  background: rgba(99, 102, 241, 0.22);
+  border-color: #818cf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+}
+
+.home-btn-video-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #090d16;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  flex-shrink: 0;
+}
+
+/* Video Modal */
+.home-video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(5, 7, 13, 0.88);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.home-video-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #090d16;
+  border: 1.5px solid rgba(129, 140, 248, 0.35);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 40px rgba(99, 102, 241, 0.25);
+}
+
+.home-video-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-video-modal-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-video-modal-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.home-video-modal-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.home-video-modal-iframe-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  max-height: 70vh;
+  background: #000000;
+}
+
+.home-video-modal-iframe-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.home-video-modal-footer {
+  padding: 0.85rem 1.25rem;
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   Footer Social Links
+   ========================================================================== */
+.home-footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.home-social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.home-social-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.home-social-btn.youtube:hover {
+  color: #ff0000;
+  border-color: rgba(255, 0, 0, 0.4);
+  background: rgba(255, 0, 0, 0.12);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.25);
+}
+
+.home-social-btn.instagram:hover {
+  color: #e1306c;
+  border-color: rgba(225, 48, 108, 0.4);
+  background: rgba(225, 48, 108, 0.12);
+  box-shadow: 0 0 15px rgba(225, 48, 108, 0.25);
+}
+
+
