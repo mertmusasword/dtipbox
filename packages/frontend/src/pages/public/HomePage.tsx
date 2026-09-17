@@ -188,6 +188,104 @@ export const HomePage: React.FC = () => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
+  const isTr = language === 'tr';
+
+  // 14-Point Comparative Matrix for "Naponi Farkı" section
+  const diffItems = useMemo(() => {
+    return [
+      {
+        topic: isTr ? 'QR Kullanımı' : 'QR Scope',
+        ordinary: isTr ? 'Sadece bahşiş için QR.' : 'QR code only for tips.',
+        naponi: isTr ? 'Tek QR: Bahşiş + Menü + Wi-Fi + Fırsatlar.' : 'One QR: Tipping + Menu + Wi-Fi + Specials.',
+      },
+      {
+        topic: isTr ? 'Google Puanı' : 'Google Rating',
+        ordinary: isTr ? 'Bahşiş sisteminden bağımsız.' : 'Isolated from reviews & rating.',
+        naponi: isTr
+          ? 'Google İtibar Kalkanı: Olumlu deneyimi Google\'a yönlendirir, olumsuz geri bildirimi işletme içinde karşılar.'
+          : 'Google Reputation Shield: 5-star guests route to Google Maps; critical feedback stays private in-house.',
+      },
+      {
+        topic: isTr ? 'Bahşiş Kaynakları' : 'Tip Sources',
+        ordinary: isTr ? 'Genellikle yalnızca QR üzerinden gelen bahşiş.' : 'Typically QR tips only.',
+        naponi: isTr
+          ? 'QR + POS + Nakit bahşişlerini tek sistemde yönet.'
+          : 'Manage QR + POS terminal + Cash tips unified in one system.',
+      },
+      {
+        topic: isTr ? 'Bahşiş Dağıtımı' : 'Tip Pooling & Distribution',
+        ordinary: isTr ? 'Gün sonunda manuel hesaplama ve dağıtım.' : 'Manual calculation and cash sorting at closing.',
+        naponi: isTr
+          ? 'Hibrit Bahşiş Havuzu: Vardiya, çalışan ve belirlenen puanlara göre adil dağıtım.'
+          : 'Hybrid Tip Pool: Fair automated distribution by shifts, staff roles, and custom point weights.',
+      },
+      {
+        topic: isTr ? 'Çalışan Yönetimi' : 'Staff Management',
+        ordinary: isTr ? 'Sınırlı çalışan yönetimi.' : 'Limited staff oversight.',
+        naponi: isTr
+          ? 'Çalışan bazlı şeffaf bahşiş takibi ve dağıtımı.'
+          : 'Transparent staff-level tip tracking, shift logs, and individual analytics.',
+      },
+      {
+        topic: isTr ? 'Turistler' : 'Foreign Guests & Tourists',
+        ordinary: isTr ? 'Sınırlı dil ve müşteri deneyimi.' : 'Limited language support and confusing checkout.',
+        naponi: isTr
+          ? '35+ dil desteği ve telefon diline göre otomatik deneyim.'
+          : '35+ languages auto-detected instantly based on guest phone language.',
+      },
+      {
+        topic: isTr ? 'Ödeme' : 'Payment Experience',
+        ordinary: isTr ? 'Basit ödeme akışı.' : 'Standard payment form.',
+        naponi: isTr
+          ? 'Hızlı dijital ödeme deneyimi + Apple Pay / Google Pay desteği.'
+          : 'Instant frictionless payment + Native 1-tap Apple Pay & Google Pay.',
+      },
+      {
+        topic: isTr ? 'Dijital Menü' : 'Digital Menu',
+        ordinary: isTr ? 'Menü için ayrı QR gerekir.' : 'Requires a separate physical menu QR sticker.',
+        naponi: isTr ? 'Aynı QR üzerinden dijital menü.' : 'Integrated digital menu directly accessible on the same QR.',
+      },
+      {
+        topic: isTr ? 'Wi-Fi' : 'Guest Wi-Fi',
+        ordinary: isTr ? 'Ayrı QR, kart veya şifre.' : 'Separate tent cards, printed slips, or verbal passwords.',
+        naponi: isTr ? 'Aynı QR üzerinden Wi-Fi erişimi.' : 'Instant 1-tap Wi-Fi connection right from the table QR.',
+      },
+      {
+        topic: isTr ? 'Fırsatlar' : 'Specials & Offers',
+        ordinary: isTr ? 'Ayrı kampanya sistemleri.' : 'Fragmented marketing or separate campaign tools.',
+        naponi: isTr
+          ? 'Aynı müşteri deneyimi içinde fırsatlar ve kampanyalar.'
+          : 'Promos, happy hour deals, and daily specials inside the same guest flow.',
+      },
+      {
+        topic: isTr ? 'Sadakat' : 'Loyalty Program',
+        ordinary: isTr ? 'Ayrı bir sadakat sistemi gerekir.' : 'Requires separate loyalty software, apps, or stamp cards.',
+        naponi: isTr
+          ? 'QR deneyimine bağlı dijital sadakat altyapısı.'
+          : 'Built-in digital loyalty tied directly to table QR scans.',
+      },
+      {
+        topic: isTr ? 'İşletme Yönetimi' : 'Operations Management',
+        ordinary: isTr ? 'Birden fazla araç ve sistem.' : 'Multiple disconnected tools, tabs, and paper logs.',
+        naponi: isTr ? 'Tek merkezi panelden yönetim.' : 'Single centralized manager portal for complete control.',
+      },
+      {
+        topic: isTr ? 'Marka Deneyimi' : 'Brand Identity',
+        ordinary: isTr ? 'Üçüncü taraf sistem hissi.' : 'Feels like a generic third-party payment utility.',
+        naponi: isTr
+          ? 'İşletmenin kendi markasıyla bütünleşen müşteri deneyimi.'
+          : 'White-glove guest experience unified with your venue’s brand and logo.',
+      },
+      {
+        topic: isTr ? 'Genel Yaklaşım' : 'Core Philosophy',
+        ordinary: isTr ? 'Bahşiş toplamak.' : 'Just collecting tips.',
+        naponi: isTr
+          ? 'Bahşiş + müşteri deneyimi + dijital hizmetleri tek ekosistemde birleştirmek.'
+          : 'Unifying tips + guest delight + digital hospitality into a single ecosystem.',
+      },
+    ];
+  }, [isTr]);
+
   const handleSimSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSimSuccess(true);
@@ -219,6 +317,7 @@ export const HomePage: React.FC = () => {
 
           <ul className="home-nav-links">
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
+            <li><a href="#naponi-farki" className="home-nav-link" style={{ color: '#a5b4fc', fontWeight: 600 }}>{language === 'tr' ? 'Naponi Farkı' : 'Why Naponi'}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
             <li><Link to="/technology-partners" className="home-nav-link" style={{ color: '#38bdf8' }}>{language === 'tr' ? 'Teknoloji Partnerleri' : 'Tech Partners'}</Link></li>
             <li><Link to="/guides" className="home-nav-link">{language === 'tr' ? 'Rehberler' : 'Guides'}</Link></li>
@@ -264,6 +363,9 @@ export const HomePage: React.FC = () => {
         {mobileMenuOpen && (
           <div className="home-mobile-menu">
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
+            <a href="#naponi-farki" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
+              {language === 'tr' ? '✨ Naponi Farkı' : '✨ Why Naponi'}
+            </a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
             <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
               {language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}
@@ -1238,6 +1340,142 @@ export const HomePage: React.FC = () => {
               {language === 'tr' ? 'Hemen Ücretsiz Başlayın' : 'Start Free Today'}
               <ArrowRight size={16} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          NAPONI FARKI (WHY NAPONI — 14-POINT COMPARISON SECTION)
+          ==================================================================== */}
+      <section className="home-section home-diff-section" id="naponi-farki">
+        <div className="home-container">
+          {/* Section Header */}
+          <div className="home-section-header">
+            <span className="home-section-tag home-diff-tag">
+              <Sparkles size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
+              {isTr ? 'Naponi Farkı' : 'The Naponi Edge'}
+            </span>
+            <h2 className="home-section-title">
+              {isTr ? (
+                <>
+                  Sadece bahşiş toplamayın. <br />
+                  <span className="home-gradient-text">Müşteri deneyiminizi tek QR’da toplayın.</span>
+                </>
+              ) : (
+                <>
+                  Don’t Just Collect Tips. <br />
+                  <span className="home-gradient-text">Unify Your Guest Experience in One QR.</span>
+                </>
+              )}
+            </h2>
+            <p className="home-section-desc">
+              {isTr
+                ? 'Naponi; dijital bahşiş, menü, Wi-Fi, fırsatlar, sadakat ve müşteri deneyimini işletmeniz için tek bir akıllı yapıda birleştirir.'
+                : 'Naponi combines digital tipping, digital menu, Wi-Fi, specials, loyalty, and guest satisfaction into a single intelligent platform.'}
+            </p>
+          </div>
+
+          {/* Comparison Container */}
+          <div className="home-diff-container">
+            {/* Column Headers */}
+            <div className="home-diff-headers">
+              <div className="home-diff-header-col ordinary">
+                <div className="home-diff-header-title-wrap">
+                  <span className="home-diff-header-icon negative">✕</span>
+                  <div>
+                    <h3 className="home-diff-header-title">
+                      {isTr ? 'Sıradan Bahşiş Sistemleri' : 'Ordinary Tipping Systems'}
+                    </h3>
+                    <p className="home-diff-header-sub">
+                      {isTr ? 'Tek yönlü geleneksel çözümler' : 'Single-purpose legacy tools'}
+                    </p>
+                  </div>
+                </div>
+                <span className="home-diff-header-badge negative">
+                  {isTr ? 'Sınırlı Kapsam' : 'Limited Scope'}
+                </span>
+              </div>
+
+              <div className="home-diff-header-col naponi">
+                <div className="home-diff-header-title-wrap">
+                  <span className="home-diff-header-icon positive">✨</span>
+                  <div>
+                    <h3 className="home-diff-header-title">
+                      {isTr ? 'Naponi' : 'Naponi'}
+                    </h3>
+                    <p className="home-diff-header-sub">
+                      {isTr ? 'Bütünleşik dijital misafir ekosistemi' : 'Unified digital hospitality ecosystem'}
+                    </p>
+                  </div>
+                </div>
+                <span className="home-diff-header-badge positive">
+                  {isTr ? 'Hepsi Bir Arada' : 'All-in-One'}
+                </span>
+              </div>
+            </div>
+
+            {/* 14 Comparison Rows */}
+            <div className="home-diff-body">
+              {diffItems.map((item, idx) => (
+                <div key={idx} className="home-diff-row">
+                  <div className="home-diff-topic-bar">
+                    <span className="home-diff-topic-num">{idx + 1}</span>
+                    <span className="home-diff-topic-name">{item.topic}</span>
+                  </div>
+
+                  <div className="home-diff-cells">
+                    {/* Ordinary side */}
+                    <div className="home-diff-cell ordinary">
+                      <div className="home-diff-mobile-label">
+                        <span className="home-diff-mobile-icon negative">✕</span>
+                        <span>{isTr ? 'Sıradan Sistemler' : 'Ordinary Systems'}</span>
+                      </div>
+                      <div className="home-diff-cell-content">
+                        <XCircle size={18} className="home-diff-check-icon negative" />
+                        <p className="home-diff-cell-desc">{item.ordinary}</p>
+                      </div>
+                    </div>
+
+                    {/* Naponi side */}
+                    <div className="home-diff-cell naponi">
+                      <div className="home-diff-mobile-label">
+                        <span className="home-diff-mobile-icon positive">✨</span>
+                        <span>Naponi</span>
+                      </div>
+                      <div className="home-diff-cell-content">
+                        <CheckCircle2 size={18} className="home-diff-check-icon positive" />
+                        <p className="home-diff-cell-desc">{item.naponi}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Section Bottom CTA */}
+          <div className="home-diff-cta-card">
+            <div className="home-diff-cta-glow" />
+            <div className="home-diff-cta-content">
+              <div className="home-diff-cta-text">
+                <h3 className="home-diff-cta-title">
+                  {isTr ? 'Tek QR. Bahşişten çok daha fazlası.' : 'One QR. So much more than tips.'}
+                </h3>
+                <p className="home-diff-cta-desc">
+                  {isTr
+                    ? 'Naponi ile işletmenizin dijital müşteri deneyimini tek noktadan yönetin.'
+                    : 'Unify and elevate your hospitality guest experience from a single intelligent platform.'}
+                </p>
+              </div>
+              <Link
+                to="/register"
+                className="home-btn-primary home-diff-cta-btn"
+                onClick={() => trackBusinessRegisterStarted('difference_section_cta')}
+              >
+                <span>{isTr ? 'Naponi’yi Keşfet' : 'Discover Naponi'}</span>
+                <ArrowRight size={18} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
