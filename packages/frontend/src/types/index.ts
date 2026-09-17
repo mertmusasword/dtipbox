@@ -206,6 +206,7 @@ export interface TipPageDetails {
     wifiEncryption?: string;
     enableCampaigns: boolean;
     enableFeedback: boolean;
+    googleReviewUrl?: string | null;
     enableSignup: boolean;
     signupTitle?: string | null;
     signupReward?: string | null;
@@ -232,6 +233,7 @@ export interface SmartQrConfig {
   enable_wifi: boolean;
   enable_campaigns: boolean;
   enable_feedback: boolean;
+  google_review_url?: string | null;
   enable_signup: boolean;
   wifi_ssid?: string | null;
   wifi_password?: string | null;

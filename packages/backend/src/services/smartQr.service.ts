@@ -14,6 +14,7 @@ export interface UpdateSmartQrConfigInput {
   wifi_ssid?: string | null;
   wifi_password?: string | null;
   wifi_encryption?: string;
+  google_review_url?: string | null;
   welcome_message?: string | null;
   signup_title?: string | null;
   signup_reward?: string | null;
@@ -80,6 +81,7 @@ export async function updateSmartQrConfig(
       ...(input.wifi_ssid !== undefined && { wifi_ssid: input.wifi_ssid?.trim() || null }),
       ...(input.wifi_password !== undefined && { wifi_password: input.wifi_password?.trim() || null }),
       ...(input.wifi_encryption !== undefined && { wifi_encryption: input.wifi_encryption }),
+      ...(input.google_review_url !== undefined && { google_review_url: input.google_review_url?.trim() || null }),
       ...(input.welcome_message !== undefined && { welcome_message: input.welcome_message?.trim() || null }),
       ...(input.signup_title !== undefined && { signup_title: input.signup_title?.trim() || null }),
       ...(input.signup_reward !== undefined && { signup_reward: input.signup_reward?.trim() || null }),

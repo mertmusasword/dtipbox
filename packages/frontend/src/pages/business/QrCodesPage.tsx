@@ -48,6 +48,7 @@ interface SmartQrConfig {
   wifi_encryption?: string;
   enable_campaigns: boolean;
   enable_feedback: boolean;
+  google_review_url?: string | null;
   enable_signup: boolean;
   signup_title?: string | null;
   signup_reward?: string | null;
@@ -898,6 +899,30 @@ export const QrCodesPage: React.FC = () => {
                   ? 'Müşteri bahşiş vermese bile masadan 1-5 yıldız puan ve özel yorum bırakabilir; geri bildirimler doğrudan panelinize düşer.'
                   : 'Guests can leave 1-5 star ratings and reviews from the table even without leaving a tip.'}
               </p>
+
+              {smartConfig.enable_feedback && (
+                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.45rem' }}>
+                    <Sparkles size={14} style={{ color: '#fbbf24' }} />
+                    <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f8fafc' }}>
+                      {isTr ? 'Google Haritalar Yorum Linki (Akıllı İtibar Kalkanı)' : 'Google Maps Review URL (Smart Reputation Shield)'}
+                    </label>
+                  </div>
+                  <input
+                    type="url"
+                    className="input"
+                    placeholder="Örn: https://g.page/r/.../review veya Google Haritalar linki"
+                    value={smartConfig.google_review_url || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, google_review_url: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '0.45rem 0 0', lineHeight: 1.45 }}>
+                    {isTr
+                      ? '⭐ 5 yıldız veren misafirler tek tıkla doğrudan Google Haritalar profilinize yönlendirilir. 1-3 yıldız veren memnuniyetsiz misafirler ise Google\'a yansıtılmadan sadece panelinize özel geri bildirim olarak düşer.'
+                      : '⭐ Guests rating 5 stars are prompted to post verified Google reviews. Ratings of 1-3 stars are kept private and sent directly to your manager inbox.'}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Module 5: Customer Lead Capture */}

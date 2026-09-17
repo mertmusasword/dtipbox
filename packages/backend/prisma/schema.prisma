@@ -893,6 +893,9 @@ model SmartQrConfig {
   wifi_password     String?
   wifi_encryption   String   @default("WPA") // WPA, WEP, NONE
 
+  // Google Review Settings
+  google_review_url String?  // e.g. "https://g.page/r/.../review"
+
   // Content Customizations
   welcome_message   String?
   signup_title      String?  // e.g. "VIP Ayrıcalık Kulübü"
