@@ -2209,6 +2209,7 @@ export const HomePage: React.FC = () => {
                 title="Naponi — The Future of Digital Tipping"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
               />
             </div>
 
