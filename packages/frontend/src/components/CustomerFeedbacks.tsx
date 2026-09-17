@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../api/client';
 import { useLanguage } from '../i18n';
+import { useToast } from './Toast';
 import {
   Star,
   MessageSquareHeart,
@@ -12,6 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
+  ExternalLink,
+  Check,
 } from 'lucide-react';
 
 interface FeedbackItem {
@@ -54,9 +57,45 @@ interface FeedbackData {
 
 export const CustomerFeedbacks: React.FC = () => {
   const { t, formatTime, language } = useLanguage();
+  const { showToast } = useToast();
+  const isTr = language === 'tr';
   const [data, setData] = useState<FeedbackData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Google Review Gating State
+  const [googleReviewUrl, setGoogleReviewUrl] = useState('');
+  const [savingGoogleUrl, setSavingGoogleUrl] = useState(false);
+  const [smartConfigRaw, setSmartConfigRaw] = useState<any>(null);
+
+  useEffect(() => {
+    api.get('/smart-qr/config')
+      .then((res) => {
+        if (res.data?.data) {
+          setSmartConfigRaw(res.data.data);
+          setGoogleReviewUrl(res.data.data.google_review_url || '');
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSaveGoogleUrl = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingGoogleUrl(true);
+    try {
+      const res = await api.put('/smart-qr/config', {
+        ...(smartConfigRaw || {}),
+        google_review_url: googleReviewUrl.trim() || null,
+        enable_feedback: true,
+      });
+      setSmartConfigRaw(res.data.data);
+      showToast(isTr ? 'Google Haritalar linki güncellendi!' : 'Google Review link updated!');
+    } catch (err: any) {
+      showToast(err.response?.data?.error || t('common.error'), 'error');
+    } finally {
+      setSavingGoogleUrl(false);
+    }
+  };
 
   // Filters
   const [selectedRating, setSelectedRating] = useState<string>('');
@@ -127,6 +166,104 @@ export const CustomerFeedbacks: React.FC = () => {
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           <span>{t('common.retry')}</span>
         </button>
+      </div>
+
+      {/* Google Review Gating Banner */}
+      <div
+        className="glass-card"
+        style={{
+          padding: '1.25rem 1.5rem',
+          marginBottom: '1.5rem',
+          border: '1px solid rgba(251, 191, 36, 0.35)',
+          background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%)',
+          borderRadius: '16px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1.25rem', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 320px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '1.2rem' }}>🛡️</span>
+              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+                {isTr ? 'Akıllı Google İtibar Kalkanı (Review Gating)' : 'Smart Google Reputation Shield'}
+              </h3>
+              <span
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  background: googleReviewUrl ? 'rgba(52, 211, 153, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                  color: googleReviewUrl ? '#34d399' : 'var(--text-muted)',
+                  fontWeight: 700,
+                  border: googleReviewUrl ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                {googleReviewUrl ? (isTr ? '✓ Aktif' : '✓ Active') : (isTr ? 'Link Bekleniyor' : 'No Link Set')}
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+              {isTr
+                ? '⭐ Masadan 5 yıldız veren misafirler doğrudan Google Haritalar profilinize yönlendirilir. 1-3 yıldız verenlerin olumsuz yorumları Google\'a gitmez, sadece bu panelde size özel kalır.'
+                : '⭐ Guests who rate 5 stars are routed to your Google Maps review page. 1-3 star feedback remains confidential in this manager inbox.'}
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSaveGoogleUrl}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              flex: '1 1 380px',
+              maxWidth: '560px',
+            }}
+          >
+            <input
+              type="url"
+              className="input"
+              value={googleReviewUrl}
+              onChange={(e) => setGoogleReviewUrl(e.target.value)}
+              placeholder="https://g.page/r/.../review veya Haritalar linki"
+              style={{
+                fontSize: '0.85rem',
+                flex: 1,
+                background: 'rgba(15, 23, 42, 0.65)',
+                borderColor: 'rgba(255, 255, 255, 0.18)',
+              }}
+            />
+            <button
+              type="submit"
+              disabled={savingGoogleUrl}
+              className="btn btn-primary"
+              style={{
+                padding: '0.55rem 1.15rem',
+                fontSize: '0.85rem',
+                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
+              {savingGoogleUrl ? (
+                <RefreshCw size={14} className="animate-spin" />
+              ) : (
+                <Check size={14} />
+              )}
+              <span>{isTr ? 'Kaydet' : 'Save'}</span>
+            </button>
+            {googleReviewUrl && (
+              <a
+                href={googleReviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary"
+                style={{ padding: '0.55rem 0.75rem', display: 'inline-flex', alignItems: 'center' }}
+                title={isTr ? 'Linki Aç' : 'Test URL'}
+              >
+                <ExternalLink size={14} />
+              </a>
+            )}
+          </form>
+        </div>
       </div>
 
       {/* Metrics & Distribution Overview */}
