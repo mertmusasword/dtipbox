@@ -12,6 +12,7 @@ import supportRoutes from './support.routes';
 import loyaltyRoutes from './loyalty.routes';
 import posRoutes from './pos.routes';
 import smartQrRoutes from './smartQr.routes';
+import menuRoutes from './menu.routes';
 
 import prisma from '../utils/prisma';
 
@@ -39,8 +40,10 @@ apiRouter.get('/health', async (_req, res) => {
 
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/business', businessRoutes);
+apiRouter.use('/business/menu', menuRoutes);
 apiRouter.use('/employee', employeeRoutes);
 apiRouter.use('/tip', tipRoutes);
+apiRouter.use('/menu', menuRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/payment/webhook', webhookRoutes);
 apiRouter.use('/payments/webhook', webhookRoutes);
@@ -53,3 +56,4 @@ apiRouter.use('/pos', posRoutes);
 apiRouter.use('/smart-qr', smartQrRoutes);
 
 export default apiRouter;
+

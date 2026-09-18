@@ -20,6 +20,7 @@ import {
   Lock,
   Wallet,
   Utensils,
+  UtensilsCrossed,
   Coffee,
   Wine,
   Hotel,
@@ -1337,6 +1338,49 @@ export const HomePage: React.FC = () => {
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
                 <span style={{ fontSize: '0.75rem', color: '#ec4899', fontWeight: 600 }}>%100 KVKK & GDPR Uyumlu</span>
+              </div>
+            </div>
+
+            {/* Pillar 6: Native QR Menu & Allergen Filter */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#34d399',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <UtensilsCrossed size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? 'Native Menü & Alerjen Filtresi' : 'Native Menu & Allergens'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Masalara ayrı menü QR\'ı basmaya son. 14 standart alerjen etiketli, kategorili ve anlık stok kontrollü native dijital menünüz tek Smart QR\'da.'
+                    : 'No separate menu QR stands needed. Mobile menu with 14 standardized allergen filters and instant stock toggles inside your unified Smart QR.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>14 Standart Alerjen • Tek QR</span>
               </div>
             </div>
           </div>

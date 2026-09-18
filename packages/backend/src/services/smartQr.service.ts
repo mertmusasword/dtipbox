@@ -5,6 +5,8 @@ export interface UpdateSmartQrConfigInput {
   is_smart_enabled?: boolean;
   enable_tips?: boolean;
   enable_menu?: boolean;
+  menu_mode?: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
+  primary_action?: 'TIP' | 'MENU';
   enable_wifi?: boolean;
   enable_campaigns?: boolean;
   enable_feedback?: boolean;
@@ -72,6 +74,11 @@ export async function updateSmartQrConfig(
       ...(input.is_smart_enabled !== undefined && { is_smart_enabled: input.is_smart_enabled }),
       ...(input.enable_tips !== undefined && { enable_tips: input.enable_tips }),
       ...(input.enable_menu !== undefined && { enable_menu: input.enable_menu }),
+      ...(input.menu_mode !== undefined && {
+        menu_mode: input.menu_mode,
+        enable_menu: input.menu_mode !== 'DISABLED',
+      }),
+      ...(input.primary_action !== undefined && { primary_action: input.primary_action }),
       ...(input.enable_wifi !== undefined && { enable_wifi: input.enable_wifi }),
       ...(input.enable_campaigns !== undefined && { enable_campaigns: input.enable_campaigns }),
       ...(input.enable_feedback !== undefined && { enable_feedback: input.enable_feedback }),

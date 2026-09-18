@@ -1,0 +1,1334 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { api } from '../../api/client';
+import { MenuCategory, MenuItem, MenuConfig, BusinessMenuResponse } from '../../types';
+import { Modal } from '../../components/Modal';
+import { LoadingState } from '../../components/LoadingState';
+import { ErrorState } from '../../components/ErrorState';
+import { EmptyState } from '../../components/EmptyState';
+import { useToast } from '../../components/Toast';
+import { useLanguage } from '../../i18n';
+import { ALLERGEN_CATALOG, getAllergenLabel, getAllergenIcon, getAllergenDetail } from '../../constants/allergens';
+import {
+  UtensilsCrossed,
+  Plus,
+  Trash2,
+  Edit2,
+  ExternalLink,
+  BookOpen,
+  EyeOff,
+  CheckCircle2,
+  ArrowUpDown,
+  Sparkles,
+  Info,
+  Layers,
+  ChevronRight,
+  ChevronLeft,
+  Search,
+  Check,
+  AlertTriangle,
+  QrCode,
+  Smartphone,
+} from 'lucide-react';
+
+export const MenuManagementPage: React.FC = () => {
+  const { showToast } = useToast();
+  const { t, formatCurrency, language } = useLanguage();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Menu Data State
+  const [menuConfig, setMenuConfig] = useState<MenuConfig>({
+    menu_mode: 'NATIVE',
+    primary_action: 'TIP',
+    menu_url: '',
+    menu_title: '',
+    enable_menu: true,
+  });
+  const [businessCurrency, setBusinessCurrency] = useState('TRY');
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [masterQrToken, setMasterQrToken] = useState<string | null>(null);
+
+  // Saving state for config
+  const [savingConfig, setSavingConfig] = useState(false);
+
+  // Category Modal State
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<MenuCategory | null>(null);
+  const [categoryName, setCategoryName] = useState('');
+  const [categoryDesc, setCategoryDesc] = useState('');
+  const [submittingCategory, setSubmittingCategory] = useState(false);
+
+  // Product Modal State
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<MenuItem | null>(null);
+  const [productName, setProductName] = useState('');
+  const [productDesc, setProductDesc] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productCurrency, setProductCurrency] = useState('TRY');
+  const [productImageUrl, setProductImageUrl] = useState('');
+  const [productCategoryId, setProductCategoryId] = useState('');
+  const [productIsActive, setProductIsActive] = useState(true);
+  const [productAllergens, setProductAllergens] = useState<string[]>([]);
+  const [productTags, setProductTags] = useState('');
+  const [submittingProduct, setSubmittingProduct] = useState(false);
+
+  // Product Search within category
+  const [productSearch, setProductSearch] = useState('');
+
+  // Load Menu and QR Token
+  const loadMenu = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [menuRes, qrRes] = await Promise.all([
+        api.get<any>('/business/menu'),
+        api.get<any>('/business/qr').catch(() => null),
+      ]);
+
+      const data: BusinessMenuResponse = menuRes.data.data;
+      setMenuConfig(data.config);
+      setBusinessCurrency(data.businessCurrency || 'TRY');
+      setCategories(data.categories || []);
+
+      if (data.categories && data.categories.length > 0) {
+        setActiveCategoryId((prev) => (prev && data.categories.some((c) => c.id === prev) ? prev : data.categories[0].id));
+      } else {
+        setActiveCategoryId(null);
+      }
+
+      // Find first usable public token for preview
+      if (qrRes?.data?.data && Array.isArray(qrRes.data.data) && qrRes.data.data.length > 0) {
+        setMasterQrToken(qrRes.data.data[0].public_token);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load menu');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadMenu();
+  }, [loadMenu]);
+
+  // Update Config Mode or Inputs
+  const handleSaveConfig = async (newConfig?: Partial<MenuConfig>) => {
+    setSavingConfig(true);
+    const payload = {
+      menu_mode: newConfig?.menu_mode ?? menuConfig.menu_mode,
+      primary_action: newConfig?.primary_action ?? menuConfig.primary_action,
+      menu_url: newConfig?.menu_url !== undefined ? newConfig.menu_url : menuConfig.menu_url,
+      menu_title: newConfig?.menu_title !== undefined ? newConfig.menu_title : menuConfig.menu_title,
+    };
+
+    try {
+      const res = await api.put('/business/menu/config', payload);
+      setMenuConfig(res.data.data);
+      showToast(t('menu.savedSuccess') || 'Menu settings updated');
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Failed to update menu configuration', 'error');
+    } finally {
+      setSavingConfig(false);
+    }
+  };
+
+  // Category Actions
+  const openCreateCategory = () => {
+    setEditingCategory(null);
+    setCategoryName('');
+    setCategoryDesc('');
+    setIsCategoryModalOpen(true);
+  };
+
+  const openEditCategory = (cat: MenuCategory) => {
+    setEditingCategory(cat);
+    setCategoryName(cat.name);
+    setCategoryDesc(cat.description || '');
+    setIsCategoryModalOpen(true);
+  };
+
+  const handleCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!categoryName.trim()) {
+      showToast('Category name is required', 'error');
+      return;
+    }
+    setSubmittingCategory(true);
+    try {
+      if (editingCategory) {
+        await api.put(`/business/menu/categories/${editingCategory.id}`, {
+          name: categoryName.trim(),
+          description: categoryDesc.trim() || null,
+        });
+        showToast(`Category "${categoryName}" updated`);
+      } else {
+        const res = await api.post('/business/menu/categories', {
+          name: categoryName.trim(),
+          description: categoryDesc.trim() || null,
+        });
+        showToast(`Category "${categoryName}" created`);
+        setActiveCategoryId(res.data.data.id);
+      }
+      setIsCategoryModalOpen(false);
+      await loadMenu();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Operation failed', 'error');
+    } finally {
+      setSubmittingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async (cat: MenuCategory) => {
+    if (!confirm(t('menu.deleteCategoryConfirm') || `Delete category "${cat.name}" and all its items?`)) return;
+    try {
+      await api.delete(`/business/menu/categories/${cat.id}`);
+      showToast(`Category "${cat.name}" deleted`);
+      await loadMenu();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Failed to delete category', 'error');
+    }
+  };
+
+  const handleMoveCategory = async (index: number, direction: 'left' | 'right') => {
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= categories.length) return;
+
+    const reordered = [...categories];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(targetIndex, 0, moved);
+
+    setCategories(reordered);
+    try {
+      await api.put('/business/menu/categories/reorder', {
+        categoryIds: reordered.map((c) => c.id),
+      });
+    } catch {
+      loadMenu();
+    }
+  };
+
+  // Product Actions
+  const openCreateProduct = () => {
+    setEditingProduct(null);
+    setProductName('');
+    setProductDesc('');
+    setProductPrice('');
+    setProductCurrency(businessCurrency);
+    setProductImageUrl('');
+    setProductCategoryId(activeCategoryId || (categories[0]?.id ?? ''));
+    setProductIsActive(true);
+    setProductAllergens([]);
+    setProductTags('');
+    setIsProductModalOpen(true);
+  };
+
+  const openEditProduct = (item: MenuItem) => {
+    setEditingProduct(item);
+    setProductName(item.name);
+    setProductDesc(item.description || '');
+    setProductPrice(String(item.price));
+    setProductCurrency(item.currency || businessCurrency);
+    setProductImageUrl(item.image_url || '');
+    setProductCategoryId(item.category_id);
+    setProductIsActive(item.is_active);
+    setProductAllergens(item.allergens || []);
+    setProductTags(Array.isArray(item.tags) ? item.tags.join(', ') : '');
+    setIsProductModalOpen(true);
+  };
+
+  const handleToggleProductStatus = async (item: MenuItem) => {
+    const newStatus = !item.is_active;
+    // Optimistic UI update
+    setCategories((prev) =>
+      prev.map((c) => ({
+        ...c,
+        items: c.items.map((i) => (i.id === item.id ? { ...i, is_active: newStatus } : i)),
+      }))
+    );
+
+    try {
+      await api.patch(`/business/menu/items/${item.id}/status`, { is_active: newStatus });
+      showToast(newStatus ? `"${item.name}" aktif edildi` : `"${item.name}" geçici olarak gizlendi`);
+    } catch (err: any) {
+      showToast('Durum güncellenemedi', 'error');
+      loadMenu();
+    }
+  };
+
+  const handleProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!productName.trim()) {
+      showToast('Product name is required', 'error');
+      return;
+    }
+    const priceNum = parseFloat(productPrice);
+    if (isNaN(priceNum) || priceNum < 0) {
+      showToast('Valid price is required', 'error');
+      return;
+    }
+
+    setSubmittingProduct(true);
+    const tagsArray = productTags
+      .split(',')
+      .map((t) => t.trim().toUpperCase())
+      .filter(Boolean);
+
+    const payload = {
+      category_id: productCategoryId,
+      name: productName.trim(),
+      description: productDesc.trim() || null,
+      price: priceNum,
+      currency: productCurrency,
+      image_url: productImageUrl.trim() || null,
+      is_active: productIsActive,
+      allergens: productAllergens,
+      tags: tagsArray,
+    };
+
+    try {
+      if (editingProduct) {
+        await api.put(`/business/menu/items/${editingProduct.id}`, payload);
+        showToast(`Product "${productName}" updated`);
+      } else {
+        await api.post('/business/menu/items', payload);
+        showToast(`Product "${productName}" created`);
+      }
+      setIsProductModalOpen(false);
+      await loadMenu();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Operation failed', 'error');
+    } finally {
+      setSubmittingProduct(false);
+    }
+  };
+
+  const handleDeleteProduct = async (item: MenuItem) => {
+    if (!confirm(t('menu.deleteProductConfirm') || `Delete product "${item.name}"?`)) return;
+    try {
+      await api.delete(`/business/menu/items/${item.id}`);
+      showToast(`Product "${item.name}" deleted`);
+      await loadMenu();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Failed to delete product', 'error');
+    }
+  };
+
+  const toggleAllergen = (id: string) => {
+    setProductAllergens((prev) => (prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]));
+  };
+
+  const activeCategory = categories.find((c) => c.id === activeCategoryId) || categories[0];
+  const filteredItems = (activeCategory?.items || []).filter((item) => {
+    if (!productSearch.trim()) return true;
+    const query = productSearch.toLowerCase();
+    return item.name.toLowerCase().includes(query) || (item.description && item.description.toLowerCase().includes(query));
+  });
+
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState message={error} onRetry={loadMenu} />;
+
+  return (
+    <div className="menu-management-page" style={{ paddingBottom: '4rem' }}>
+      {/* Page Header */}
+      <div
+        className="page-header"
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1rem',
+          marginBottom: '1.75rem',
+        }}
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '10px',
+                background: 'rgba(16, 185, 129, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#10b981',
+              }}
+            >
+              <UtensilsCrossed size={22} />
+            </div>
+            <h1 className="page-title" style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800 }}>
+              {t('menu.title')}
+            </h1>
+          </div>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: '0.35rem 0 0 0' }}>
+            {t('menu.subtitle')}
+          </p>
+        </div>
+
+        {/* Action Button: Live Preview */}
+        {masterQrToken && menuConfig.menu_mode === 'NATIVE' && (
+          <a
+            href={`/menu/${masterQrToken}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-secondary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              fontWeight: 700,
+              fontSize: '0.86rem',
+              borderColor: 'rgba(16, 185, 129, 0.4)',
+              color: '#34d399',
+            }}
+          >
+            <Smartphone size={16} />
+            <span>{t('menu.previewMenu')}</span>
+            <ExternalLink size={13} />
+          </a>
+        )}
+      </div>
+
+      {/* SECTION 1: Menu Usage Mode Selector (3 Cards) */}
+      <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', fontWeight: 700 }}>
+          {t('menu.menuUsageMode')}
+        </h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 1.25rem 0' }}>
+          İşletmenizin ihtiyacına uygun menü seçeneğini belirleyin. Tüm ayarlar anında Smart QR'ınıza yansır.
+        </p>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '1rem',
+          }}
+        >
+          {/* Option 1: Native Menu (Recommended) */}
+          <div
+            onClick={() => handleSaveConfig({ menu_mode: 'NATIVE' })}
+            style={{
+              padding: '1.25rem',
+              borderRadius: '12px',
+              border: '2px solid',
+              borderColor: menuConfig.menu_mode === 'NATIVE' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)',
+              background:
+                menuConfig.menu_mode === 'NATIVE'
+                  ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(16, 185, 129, 0.08))'
+                  : 'rgba(255, 255, 255, 0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              position: 'relative',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <BookOpen size={20} style={{ color: '#10b981' }} />
+                <strong style={{ fontSize: '0.98rem' }}>{t('menu.modeNative')}</strong>
+              </div>
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  color: '#34d399',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                }}
+              >
+                ÖNERİLEN
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              {t('menu.modeNativeDesc')}
+            </p>
+          </div>
+
+          {/* Option 2: External Menu URL */}
+          <div
+            onClick={() => handleSaveConfig({ menu_mode: 'EXTERNAL_URL' })}
+            style={{
+              padding: '1.25rem',
+              borderRadius: '12px',
+              border: '2px solid',
+              borderColor: menuConfig.menu_mode === 'EXTERNAL_URL' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)',
+              background:
+                menuConfig.menu_mode === 'EXTERNAL_URL'
+                  ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(14, 165, 233, 0.08))'
+                  : 'rgba(255, 255, 255, 0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem' }}>
+              <ExternalLink size={20} style={{ color: '#38bdf8' }} />
+              <strong style={{ fontSize: '0.98rem' }}>{t('menu.modeExternal')}</strong>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              {t('menu.modeExternalDesc')}
+            </p>
+          </div>
+
+          {/* Option 3: Disabled */}
+          <div
+            onClick={() => handleSaveConfig({ menu_mode: 'DISABLED' })}
+            style={{
+              padding: '1.25rem',
+              borderRadius: '12px',
+              border: '2px solid',
+              borderColor: menuConfig.menu_mode === 'DISABLED' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)',
+              background:
+                menuConfig.menu_mode === 'DISABLED'
+                  ? 'rgba(255, 255, 255, 0.06)'
+                  : 'rgba(255, 255, 255, 0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem' }}>
+              <EyeOff size={20} style={{ color: 'var(--text-muted)' }} />
+              <strong style={{ fontSize: '0.98rem' }}>{t('menu.modeDisabled')}</strong>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              {t('menu.modeDisabledDesc')}
+            </p>
+          </div>
+        </div>
+
+        {/* Sub-form: External URL Settings */}
+        {menuConfig.menu_mode === 'EXTERNAL_URL' && (
+          <div
+            style={{
+              marginTop: '1.5rem',
+              padding: '1.25rem',
+              background: 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '10px',
+              border: '1px solid rgba(255, 255, 255, 0.07)',
+            }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                  {t('menu.externalUrlLabel')}
+                </label>
+                <input
+                  type="url"
+                  className="input"
+                  placeholder={t('menu.externalUrlPlaceholder') || 'https://...'}
+                  value={menuConfig.menu_url || ''}
+                  onChange={(e) => setMenuConfig({ ...menuConfig, menu_url: e.target.value })}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                  {t('menu.buttonTitleLabel')}
+                </label>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder={t('menu.buttonTitlePlaceholder') || 'Örn: Menüyü Gör'}
+                  value={menuConfig.menu_title || ''}
+                  onChange={(e) => setMenuConfig({ ...menuConfig, menu_title: e.target.value })}
+                />
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => handleSaveConfig()}
+                disabled={savingConfig}
+              >
+                {savingConfig ? 'Kaydediliyor...' : t('menu.saveChanges')}
+              </button>
+              {menuConfig.menu_url && (
+                <a
+                  href={menuConfig.menu_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-secondary"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                >
+                  <ExternalLink size={14} />
+                  <span>Linki Test Et</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Sub-form: Native Menu Primary Action Switcher */}
+        {menuConfig.menu_mode === 'NATIVE' && (
+          <div
+            style={{
+              marginTop: '1.5rem',
+              padding: '1.25rem',
+              background: 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '10px',
+              border: '1px solid rgba(255, 255, 255, 0.07)',
+            }}
+          >
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              {t('menu.primaryActionLabel')}
+            </label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderColor: menuConfig.primary_action === 'TIP' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
+                  background: menuConfig.primary_action === 'TIP' ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                }}
+              >
+                <input
+                  type="radio"
+                  name="primary_action"
+                  value="TIP"
+                  checked={menuConfig.primary_action === 'TIP'}
+                  onChange={() => handleSaveConfig({ primary_action: 'TIP' })}
+                  style={{ accentColor: 'var(--accent-primary)' }}
+                />
+                <span>{t('menu.primaryActionTip')}</span>
+              </label>
+
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderColor: menuConfig.primary_action === 'MENU' ? '#10b981' : 'rgba(255, 255, 255, 0.1)',
+                  background: menuConfig.primary_action === 'MENU' ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                }}
+              >
+                <input
+                  type="radio"
+                  name="primary_action"
+                  value="MENU"
+                  checked={menuConfig.primary_action === 'MENU'}
+                  onChange={() => handleSaveConfig({ primary_action: 'MENU' })}
+                  style={{ accentColor: '#10b981' }}
+                />
+                <span>{t('menu.primaryActionMenu')}</span>
+              </label>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              💡 Not: Her iki modda da misafir tek dokunuşla menü ve bahşiş ekranları arasında sorunsuzca geçiş yapabilir.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* SECTION 2: Native Menu Builder (Categories & Products) */}
+      {menuConfig.menu_mode === 'NATIVE' && (
+        <div className="native-menu-builder">
+          {/* Categories Navigation Bar */}
+          <div
+            className="glass-card"
+            style={{
+              padding: '1.25rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+                marginBottom: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Layers size={18} style={{ color: 'var(--accent-primary)' }} />
+                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
+                  {t('menu.categories')} ({categories.length})
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={openCreateCategory}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.84rem' }}
+              >
+                <Plus size={16} />
+                <span>{t('menu.addCategory')}</span>
+              </button>
+            </div>
+
+            {/* Category Pills / Tabs */}
+            {categories.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)' }}>
+                <Layers size={36} style={{ margin: '0 auto 0.75rem', opacity: 0.4 }} />
+                <div style={{ fontWeight: 600, fontSize: '0.92rem' }}>{t('menu.noCategoriesYet')}</div>
+                <div style={{ fontSize: '0.82rem', marginTop: '0.25rem' }}>{t('menu.noCategoriesDesc')}</div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '0.5rem',
+                  overflowX: 'auto',
+                  paddingBottom: '0.5rem',
+                  scrollbarWidth: 'thin',
+                }}
+              >
+                {categories.map((cat, idx) => {
+                  const isSelected = cat.id === activeCategoryId;
+                  return (
+                    <div
+                      key={cat.id}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
+                        padding: '0.5rem 0.85rem',
+                        borderRadius: '999px',
+                        fontSize: '0.86rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        border: '1px solid',
+                        transition: 'all 0.2s',
+                        background: isSelected
+                          ? 'linear-gradient(135deg, var(--accent-primary), #4f46e5)'
+                          : 'rgba(255, 255, 255, 0.04)',
+                        borderColor: isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
+                        color: isSelected ? '#ffffff' : 'var(--text-secondary)',
+                      }}
+                      onClick={() => setActiveCategoryId(cat.id)}
+                    >
+                      <span>{cat.name}</span>
+                      <span
+                        style={{
+                          fontSize: '0.72rem',
+                          padding: '1px 6px',
+                          borderRadius: '999px',
+                          background: isSelected ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                          color: isSelected ? '#ffffff' : 'var(--text-muted)',
+                        }}
+                      >
+                        {cat.items?.length || 0}
+                      </span>
+
+                      {/* Reorder Buttons & Edit for Active Category */}
+                      {isSelected && (
+                        <div
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: '0.25rem' }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {idx > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleMoveCategory(idx, 'left')}
+                              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 2 }}
+                              title="Sola Taşı"
+                            >
+                              <ChevronLeft size={14} />
+                            </button>
+                          )}
+                          {idx < categories.length - 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleMoveCategory(idx, 'right')}
+                              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 2 }}
+                              title="Sağa Taşı"
+                            >
+                              <ChevronRight size={14} />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => openEditCategory(cat)}
+                            style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 2 }}
+                            title="Kategoriyi Düzenle"
+                          >
+                            <Edit2 size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCategory(cat)}
+                            style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 2 }}
+                            title="Kategoriyi Sil"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Products List for Active Category */}
+          {activeCategory && (
+            <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '1rem',
+                  marginBottom: '1.25rem',
+                }}
+              >
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>
+                    {activeCategory.name}
+                  </h3>
+                  {activeCategory.description && (
+                    <p style={{ margin: '0.25rem 0 0', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
+                      {activeCategory.description}
+                    </p>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {/* Search Bar */}
+                  <div style={{ position: 'relative', width: '220px' }}>
+                    <Search
+                      size={15}
+                      style={{
+                        position: 'absolute',
+                        left: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: 'var(--text-muted)',
+                      }}
+                    />
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="Ürün ara..."
+                      value={productSearch}
+                      onChange={(e) => setProductSearch(e.target.value)}
+                      style={{ paddingLeft: '2.2rem', fontSize: '0.82rem' }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={openCreateProduct}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      fontSize: '0.84rem',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      borderColor: '#10b981',
+                    }}
+                  >
+                    <Plus size={16} />
+                    <span>{t('menu.addProduct')}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Products Grid */}
+              {filteredItems.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
+                  <UtensilsCrossed size={42} style={{ margin: '0 auto 0.75rem', opacity: 0.3 }} />
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                    {productSearch ? 'Aramaya uygun ürün bulunamadı' : 'Bu kategoride henüz ürün yok'}
+                  </div>
+                  <p style={{ fontSize: '0.82rem', marginTop: '0.35rem' }}>
+                    Yukarıdaki "+ Yeni Ürün Ekle" butonunu kullanarak ilk ürününüzü ekleyin.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                    gap: '1rem',
+                  }}
+                >
+                  {filteredItems.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 255, 255, 0.07)',
+                        padding: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        opacity: item.is_active ? 1 : 0.65,
+                        transition: 'opacity 0.2s',
+                      }}
+                    >
+                      <div>
+                        {/* Image + Title Row */}
+                        <div style={{ display: 'flex', gap: '0.85rem', marginBottom: '0.75rem' }}>
+                          {item.image_url ? (
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              style={{
+                                width: '64px',
+                                height: '64px',
+                                borderRadius: '8px',
+                                objectFit: 'cover',
+                                flexShrink: 0,
+                              }}
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: '64px',
+                                height: '64px',
+                                borderRadius: '8px',
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'var(--text-muted)',
+                                flexShrink: 0,
+                              }}
+                            >
+                              <UtensilsCrossed size={22} />
+                            </div>
+                          )}
+
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                              <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700 }}>
+                                {item.name}
+                              </h4>
+                              <div
+                                style={{
+                                  fontSize: '0.95rem',
+                                  fontWeight: 800,
+                                  color: '#34d399',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {formatCurrency(Number(item.price), item.currency)}
+                              </div>
+                            </div>
+                            {item.description && (
+                              <p
+                                style={{
+                                  margin: '0.35rem 0 0',
+                                  fontSize: '0.78rem',
+                                  color: 'var(--text-secondary)',
+                                  lineHeight: 1.4,
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: 'vertical',
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                {item.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Allergen Badges */}
+                        {item.allergens && item.allergens.length > 0 && (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '0.75rem' }}>
+                            {item.allergens.map((algId) => (
+                              <span
+                                key={algId}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem',
+                                  padding: '2px 7px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 600,
+                                  background: 'rgba(245, 158, 11, 0.12)',
+                                  color: '#fbbf24',
+                                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                                }}
+                                title={getAllergenDetail(algId, language)}
+                              >
+                                <span>{getAllergenIcon(algId)}</span>
+                                <span>{getAllergenLabel(algId, language)}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Tags */}
+                        {item.tags && item.tags.length > 0 && (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '0.75rem' }}>
+                            {item.tags.map((tag, tIdx) => (
+                              <span
+                                key={tIdx}
+                                style={{
+                                  fontSize: '0.68rem',
+                                  padding: '1px 6px',
+                                  borderRadius: '4px',
+                                  background: 'rgba(99, 102, 241, 0.12)',
+                                  color: '#a5b4fc',
+                                  fontWeight: 700,
+                                  letterSpacing: '0.03em',
+                                }}
+                              >
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Card Footer: Stock Switch + Actions */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          paddingTop: '0.75rem',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                          marginTop: '0.5rem',
+                        }}
+                      >
+                        {/* Stock Toggle Switch */}
+                        <label
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.45rem',
+                            cursor: 'pointer',
+                            fontSize: '0.78rem',
+                            fontWeight: 600,
+                            color: item.is_active ? '#34d399' : 'var(--text-muted)',
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={item.is_active}
+                            onChange={() => handleToggleProductStatus(item)}
+                            style={{ accentColor: '#10b981', cursor: 'pointer' }}
+                          />
+                          <span>{item.is_active ? 'Stokta Var' : 'Tükendi'}</span>
+                        </label>
+
+                        {/* Edit & Delete Buttons */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => openEditProduct(item)}
+                            style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem' }}
+                            title="Düzenle"
+                          >
+                            <Edit2 size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => handleDeleteProduct(item)}
+                            style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem', color: '#f87171' }}
+                            title="Sil"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* CATEGORY MODAL */}
+      <Modal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        title={editingCategory ? t('menu.editCategory') : t('menu.addCategory')}
+        maxWidth="480px"
+      >
+        <form onSubmit={handleCategorySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+              {t('menu.categoryName')} *
+            </label>
+            <input
+              type="text"
+              className="input"
+              required
+              placeholder={t('menu.categoryNamePlaceholder') || 'Örn: Sıcak İçecekler'}
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+              {t('menu.categoryDesc')}
+            </label>
+            <textarea
+              className="input"
+              rows={2}
+              placeholder={t('menu.categoryDescPlaceholder') || 'Açıklama'}
+              value={categoryDesc}
+              onChange={(e) => setCategoryDesc(e.target.value)}
+            />
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setIsCategoryModalOpen(false)}
+              disabled={submittingCategory}
+            >
+              {t('common.cancel')}
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={submittingCategory}>
+              {submittingCategory ? t('common.saving') : t('common.save')}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* PRODUCT MODAL */}
+      <Modal
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        title={editingProduct ? t('menu.editProduct') : t('menu.addProduct')}
+        maxWidth="680px"
+      >
+        <form onSubmit={handleProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', maxHeight: '80vh', overflowY: 'auto', paddingRight: '0.25rem' }}>
+          {/* Category selection */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                Kategori *
+              </label>
+              <select
+                className="input"
+                value={productCategoryId}
+                onChange={(e) => setProductCategoryId(e.target.value)}
+                required
+              >
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                {t('menu.status')}
+              </label>
+              <select
+                className="input"
+                value={productIsActive ? 'active' : 'inactive'}
+                onChange={(e) => setProductIsActive(e.target.value === 'active')}
+              >
+                <option value="active">{t('menu.inStock')}</option>
+                <option value="inactive">{t('menu.outOfStock')}</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Name and Price */}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                {t('menu.productName')} *
+              </label>
+              <input
+                type="text"
+                className="input"
+                required
+                placeholder={t('menu.productNamePlaceholder') || 'Örn: Latte'}
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                {t('menu.price')} *
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                className="input"
+                required
+                placeholder="150"
+                value={productPrice}
+                onChange={(e) => setProductPrice(e.target.value)}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                {t('menu.currency')}
+              </label>
+              <input
+                type="text"
+                className="input"
+                maxLength={3}
+                value={productCurrency}
+                onChange={(e) => setProductCurrency(e.target.value.toUpperCase())}
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+              {t('menu.productDesc')}
+            </label>
+            <textarea
+              className="input"
+              rows={2}
+              placeholder={t('menu.productDescPlaceholder') || 'Espresso, buharda ısıtılmış süt...'}
+              value={productDesc}
+              onChange={(e) => setProductDesc(e.target.value)}
+            />
+          </div>
+
+          {/* Image URL */}
+          <div>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+              {t('menu.imageUrl')}
+            </label>
+            <input
+              type="url"
+              className="input"
+              placeholder="https://images.unsplash.com/... veya görsel URL"
+              value={productImageUrl}
+              onChange={(e) => setProductImageUrl(e.target.value)}
+            />
+          </div>
+
+          {/* ALLERGEN SELECTOR (Grid of 14 standard allergens) */}
+          <div
+            style={{
+              padding: '1rem',
+              borderRadius: '10px',
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+              <div>
+                <label style={{ fontSize: '0.84rem', fontWeight: 700, margin: 0 }}>
+                  ⚠️ {t('menu.allergens')}
+                </label>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                  {t('menu.allergensSelectHelp')}
+                </div>
+              </div>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fbbf24' }}>
+                {productAllergens.length > 0 ? `${productAllergens.length} ${t('menu.allergensSelectedCount')}` : t('menu.noAllergensSelected')}
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+                gap: '0.5rem',
+              }}
+            >
+              {ALLERGEN_CATALOG.map((allergen) => {
+                const isSelected = productAllergens.includes(allergen.id);
+                return (
+                  <button
+                    key={allergen.id}
+                    type="button"
+                    onClick={() => toggleAllergen(allergen.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      fontSize: '0.78rem',
+                      fontWeight: isSelected ? 700 : 500,
+                      cursor: 'pointer',
+                      border: '1px solid',
+                      textAlign: 'left',
+                      transition: 'all 0.15s',
+                      background: isSelected ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.03)',
+                      borderColor: isSelected ? '#fbbf24' : 'rgba(255, 255, 255, 0.09)',
+                      color: isSelected ? '#fbbf24' : 'var(--text-secondary)',
+                    }}
+                    title={getAllergenDetail(allergen.id, language)}
+                  >
+                    <span style={{ fontSize: '1rem' }}>{allergen.icon}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {getAllergenLabel(allergen.id, language)}
+                    </span>
+                    {isSelected && <Check size={13} style={{ marginLeft: 'auto', flexShrink: 0 }} />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+              {t('menu.tags')} (Virgülle ayırarak yazın)
+            </label>
+            <input
+              type="text"
+              className="input"
+              placeholder={t('menu.tagPlaceholder') || 'POPULER, SEFIN_SECIMI, VEGAN'}
+              value={productTags}
+              onChange={(e) => setProductTags(e.target.value)}
+            />
+          </div>
+
+          {/* Submit Actions */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.75rem' }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setIsProductModalOpen(false)}
+              disabled={submittingProduct}
+            >
+              {t('common.cancel')}
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={submittingProduct}>
+              {submittingProduct ? t('common.saving') : t('common.save')}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+};
+export default MenuManagementPage;

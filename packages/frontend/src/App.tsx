@@ -37,11 +37,11 @@ const RegisterPage = React.lazy(() => import('./pages/auth/RegisterPage').then((
 const ForgotPasswordPage = React.lazy(() => import('./pages/auth/ForgotPasswordPage'));
 const ResetPasswordPage = React.lazy(() => import('./pages/auth/ResetPasswordPage'));
 
-// Business Dashboard Pages
 const BusinessDashboard = React.lazy(() => import('./pages/business/BusinessDashboard').then((m) => ({ default: m.BusinessDashboard })));
 const BusinessProfilePage = React.lazy(() => import('./pages/business/BusinessProfilePage').then((m) => ({ default: m.BusinessProfilePage })));
 const EmployeesPage = React.lazy(() => import('./pages/business/EmployeesPage').then((m) => ({ default: m.EmployeesPage })));
 const TablesPage = React.lazy(() => import('./pages/business/TablesPage').then((m) => ({ default: m.TablesPage })));
+const MenuManagementPage = React.lazy(() => import('./pages/business/MenuManagementPage').then((m) => ({ default: m.MenuManagementPage })));
 const QrCodesPage = React.lazy(() => import('./pages/business/QrCodesPage').then((m) => ({ default: m.QrCodesPage })));
 const PaymentMethodsPage = React.lazy(() => import('./pages/business/PaymentMethodsPage').then((m) => ({ default: m.PaymentMethodsPage })));
 const PosIntegrationsPage = React.lazy(() => import('./pages/business/PosIntegrationsPage').then((m) => ({ default: m.PosIntegrationsPage })));
@@ -50,6 +50,7 @@ const AnalyticsPage = React.lazy(() => import('./pages/business/AnalyticsPage').
 const FeedbacksPage = React.lazy(() => import('./pages/business/FeedbacksPage').then((m) => ({ default: m.FeedbacksPage })));
 const ProfileSettingsPage = React.lazy(() => import('./pages/business/ProfileSettingsPage').then((m) => ({ default: m.ProfileSettingsPage })));
 const BusinessLoyaltyPage = React.lazy(() => import('./pages/business/BusinessLoyaltyPage').then((m) => ({ default: m.BusinessLoyaltyPage })));
+const MenuPage = React.lazy(() => import('./pages/public/MenuPage').then((m) => ({ default: m.MenuPage })));
 
 // Employee Pages
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/EmployeeDashboard').then((m) => ({ default: m.EmployeeDashboard })));
@@ -162,8 +163,9 @@ export const App: React.FC = () => {
                 <Route path="/technology-partners" element={<TechnologyPartnersPage />} />
                 <Route path="/teknoloji-partnerleri" element={<Navigate to="/technology-partners" replace />} />
 
-                {/* Public Customer Tip Routes */}
+                {/* Public Customer Tip & Menu Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />
+                <Route path="/menu/:publicToken" element={<MenuPage />} />
 
                 {/* Public Loyalty Routes */}
                 <Route path="/loyalty/enroll/:businessId" element={<CustomerEnrollPage />} />
@@ -182,6 +184,7 @@ export const App: React.FC = () => {
                   <Route path="/business/profile" element={<BusinessProfilePage />} />
                   <Route path="/business/employees" element={<EmployeesPage />} />
                   <Route path="/business/tables" element={<TablesPage />} />
+                  <Route path="/business/menu" element={<MenuManagementPage />} />
                   <Route path="/business/qr" element={<QrCodesPage />} />
                   <Route path="/business/payment-methods" element={<PaymentMethodsPage />} />
                   <Route path="/business/pos-integrations" element={<PosIntegrationsPage />} />

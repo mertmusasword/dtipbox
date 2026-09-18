@@ -219,6 +219,8 @@ model Business {
   smart_qr_campaigns      SmartQrCampaign[]
   customer_leads          CustomerLead[]
   smart_qr_events         SmartQrEvent[]
+  menu_categories         MenuCategory[]
+  menu_items              MenuItem[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -892,6 +894,8 @@ model SmartQrConfig {
   enable_signup     Boolean  @default(false)
 
   // Digital Menu Settings
+  menu_mode         String   @default("DISABLED") // DISABLED, EXTERNAL_URL, NATIVE
+  primary_action    String   @default("TIP")      // TIP, MENU
   menu_url          String?
   menu_title        String?  // e.g. "Dijital Menü", "Menüyü Gör"
 
@@ -965,7 +969,7 @@ model SmartQrEvent {
   business_id String
   qr_id       String?
   table_id    String?
-  event_type  String   // SCAN, TIP_CLICK, TIP_SUCCESS, WIFI_CLICK, CAMPAIGN_CLICK, FEEDBACK_SUBMIT, LEAD_SUBMIT
+  event_type  String   // SCAN, TIP_CLICK, TIP_SUCCESS, WIFI_CLICK, CAMPAIGN_CLICK, FEEDBACK_SUBMIT, LEAD_SUBMIT, MENU_CLICK, MENU_VIEW
   metadata    Json?
 
   created_at  DateTime @default(now())
@@ -977,4 +981,55 @@ model SmartQrEvent {
   @@index([event_type])
   @@index([created_at])
   @@map("smart_qr_events")
+}
+
+// ==================== NATIVE QR MENU & ALLERGEN MODELS ====================
+
+model MenuCategory {
+  id          String     @id @default(uuid())
+  business_id String
+  name        String
+  description String?
+  sort_order  Int        @default(0)
+  is_active   Boolean    @default(true)
+
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+
+  // Relations
+  business    Business   @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  items       MenuItem[]
+
+  @@index([business_id])
+  @@index([is_active])
+  @@index([sort_order])
+  @@map("menu_categories")
+}
+
+model MenuItem {
+  id          String       @id @default(uuid())
+  business_id String
+  category_id String
+  name        String
+  description String?      @db.Text
+  price       Decimal      @db.Decimal(10, 2)
+  currency    String       @default("TRY")
+  image_url   String?
+  is_active   Boolean      @default(true)
+  sort_order  Int          @default(0)
+  allergens   String[]     @default([])
+  tags        String[]     @default([])
+
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+
+  // Relations
+  business    Business     @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  category    MenuCategory @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@index([business_id])
+  @@index([category_id])
+  @@index([is_active])
+  @@index([sort_order])
+  @@map("menu_items")
 }

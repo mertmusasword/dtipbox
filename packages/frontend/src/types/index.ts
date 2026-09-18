@@ -203,6 +203,9 @@ export interface TipPageDetails {
     isSmartEnabled: boolean;
     enableTips: boolean;
     enableMenu?: boolean;
+    menuMode?: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
+    primaryAction?: 'TIP' | 'MENU';
+    hasNativeMenu?: boolean;
     menuUrl?: string | null;
     menuTitle?: string | null;
     enableWifi: boolean;
@@ -233,6 +236,8 @@ export interface SmartQrConfig {
   is_smart_enabled: boolean;
   enable_tips: boolean;
   enable_menu?: boolean;
+  menu_mode?: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
+  primary_action?: 'TIP' | 'MENU';
   menu_url?: string | null;
   menu_title?: string | null;
   enable_wifi: boolean;
@@ -481,4 +486,97 @@ export interface PosSyncLogItem {
   error_details?: string | null;
   created_at: string;
 }
+
+// ==================== NATIVE MENU & ALLERGEN INTERFACES ====================
+
+export interface MenuItem {
+  id: string;
+  business_id: string;
+  category_id: string;
+  name: string;
+  description?: string | null;
+  price: number | string;
+  currency: string;
+  image_url?: string | null;
+  is_active: boolean;
+  sort_order: number;
+  allergens: string[];
+  tags: string[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MenuCategory {
+  id: string;
+  business_id: string;
+  name: string;
+  description?: string | null;
+  sort_order: number;
+  is_active: boolean;
+  items: MenuItem[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MenuConfig {
+  menu_mode: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
+  primary_action: 'TIP' | 'MENU';
+  menu_url?: string | null;
+  menu_title?: string | null;
+  enable_menu?: boolean;
+}
+
+export interface BusinessMenuResponse {
+  config: MenuConfig;
+  businessCurrency: string;
+  categories: MenuCategory[];
+  totalItems: number;
+  allergensCatalog: Array<{
+    id: string;
+    icon: string;
+    names: Record<string, string>;
+    details: Record<string, string>;
+  }>;
+}
+
+export interface PublicMenuDetails {
+  qrCode: {
+    id: string;
+    type: string;
+    publicToken: string;
+  };
+  venue: {
+    id: string;
+    name: string;
+    logo?: string | null;
+    country: string;
+    currency: string;
+    description?: string | null;
+  };
+  table?: { id: string; name: string } | null;
+  menu: {
+    categories: MenuCategory[];
+    totalItems: number;
+  };
+  allergenCatalog: Array<{
+    id: string;
+    icon: string;
+    names: Record<string, string>;
+    details: Record<string, string>;
+  }>;
+  allergenDisclaimer: Record<string, string>;
+  smartQr: {
+    isSmartEnabled: boolean;
+    enableTips: boolean;
+    menuMode: string;
+    menuTitle?: string | null;
+    primaryAction: string;
+    enableWifi: boolean;
+    wifiSsid?: string | null;
+    wifiPassword?: string | null;
+    wifiEncryption?: string;
+    googleReviewUrl?: string | null;
+  };
+}
+
 

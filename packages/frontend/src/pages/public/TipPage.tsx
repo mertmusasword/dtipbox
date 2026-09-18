@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import QRCode from 'qrcode';
 import { api } from '../../api/client';
 import { TipPageDetails, PaymentMethodType } from '../../types';
@@ -42,6 +42,8 @@ export type SmartTab = 'tip' | 'wifi' | 'campaigns' | 'feedback' | 'signup';
 
 export const TipPage: React.FC = () => {
   const { publicToken } = useParams<{ publicToken: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { t, formatCurrency, dir, language } = useLanguage();
 
   const [loading, setLoading] = useState(true);
@@ -122,9 +124,20 @@ export const TipPage: React.FC = () => {
           setSelectedPaymentMethod(d.activePaymentMethods[0].type);
         }
 
-        // Auto-select first available tab if tips disabled
+        // Smart QR primary routing & auto-selection
         const sq = d.smartQr;
         if (sq?.isSmartEnabled) {
+          const searchParams = new URLSearchParams(window.location.search);
+          const forceTipView = searchParams.get('view') === 'tip';
+          const isNativeMenu = sq?.menuMode === 'NATIVE' || sq?.hasNativeMenu;
+
+          if (!forceTipView && isNativeMenu && sq?.enableMenu) {
+            if (sq.primaryAction === 'MENU' || sq.enableTips === false) {
+              navigate(`/menu/${publicToken}${window.location.search}`, { replace: true });
+              return;
+            }
+          }
+
           if (sq.enableTips === false) {
             if (sq.enableWifi) setActiveSmartTab('wifi');
             else if (sq.enableCampaigns) setActiveSmartTab('campaigns');
@@ -241,15 +254,26 @@ export const TipPage: React.FC = () => {
   };
 
   const handleMenuClick = () => {
-    if (!details?.smartQr?.menuUrl) return;
-    let url = details.smartQr.menuUrl.trim();
-    if (!/^https?:\/\//i.test(url)) {
-      url = `https://${url}`;
-    }
+    const sq = details?.smartQr;
+    if (!sq) return;
+
     if (publicToken) {
       api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'MENU_CLICK' }).catch(() => {});
     }
-    window.open(url, '_blank', 'noopener,noreferrer');
+
+    const isNative = sq.menuMode === 'NATIVE' || sq.hasNativeMenu;
+    if (isNative && publicToken) {
+      navigate(`/menu/${publicToken}${window.location.search}`);
+      return;
+    }
+
+    if (sq.menuUrl) {
+      let url = sq.menuUrl.trim();
+      if (!/^https?:\/\//i.test(url)) {
+        url = `https://${url}`;
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const handleTabChange = (tab: SmartTab) => {
@@ -1376,7 +1400,9 @@ export const TipPage: React.FC = () => {
         {(() => {
           const sq = details.smartQr;
           const isSmart = Boolean(sq?.isSmartEnabled);
-          const hasMenu = Boolean(isSmart && sq?.enableMenu && sq?.menuUrl);
+          const isNativeMenu = sq?.menuMode === 'NATIVE' || Boolean(sq?.hasNativeMenu);
+          const hasExternalMenu = (sq?.menuMode === 'EXTERNAL_URL' || !sq?.menuMode) && Boolean(sq?.menuUrl);
+          const hasMenu = Boolean(isSmart && sq?.enableMenu && (isNativeMenu || hasExternalMenu));
           const hasWifi = Boolean(isSmart && sq?.enableWifi && sq?.wifiSsid);
           const hasCampaigns = Boolean(isSmart && sq?.enableCampaigns && (sq?.campaigns?.length || 0) > 0);
           const hasFeedback = Boolean(isSmart && sq?.enableFeedback);
@@ -1419,7 +1445,7 @@ export const TipPage: React.FC = () => {
                   >
                     <UtensilsCrossed size={14} />
                     <span>{sq?.menuTitle || (language === 'tr' ? 'Menü' : 'Menu')}</span>
-                    <ExternalLink size={12} style={{ opacity: 0.75 }} />
+                    {isNativeMenu ? <ArrowRight size={12} style={{ opacity: 0.85 }} /> : <ExternalLink size={12} style={{ opacity: 0.75 }} />}
                   </button>
                 )}
                 {hasWifi && (
@@ -1572,7 +1598,7 @@ export const TipPage: React.FC = () => {
                 >
                   <UtensilsCrossed size={16} />
                   <span>{sq?.menuTitle || (language === 'tr' ? 'Menüyü Gör' : 'View Menu')}</span>
-                  <ExternalLink size={13} />
+                  {isNativeMenu ? <ArrowRight size={14} /> : <ExternalLink size={13} />}
                 </button>
               )}
               {hasWifi && (

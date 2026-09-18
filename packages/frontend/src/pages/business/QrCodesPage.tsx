@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { QrCode, Table, Business } from '../../types';
 import { Modal } from '../../components/Modal';
@@ -31,6 +32,7 @@ import {
   Star,
   Mail,
   ShieldCheck,
+  BookOpen,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 
@@ -40,6 +42,8 @@ interface SmartQrConfig {
   is_smart_enabled: boolean;
   enable_tips: boolean;
   enable_menu?: boolean;
+  menu_mode?: 'EXTERNAL_URL' | 'NATIVE' | 'DISABLED';
+  primary_action?: 'TIP' | 'MENU';
   menu_url?: string | null;
   menu_title?: string | null;
   enable_wifi: boolean;
@@ -757,47 +761,180 @@ export const QrCodesPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <UtensilsCrossed size={18} style={{ color: '#10b981' }} />
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-                    {isTr ? 'Dijital Menü Entegrasyonu' : 'Digital Menu Integration'}
+                    {isTr ? 'Dijital Menü & Alerjen Sistemi' : 'Digital Menu & Allergen System'}
                   </h4>
                 </div>
                 <input
                   type="checkbox"
                   checked={Boolean(smartConfig.enable_menu)}
-                  onChange={(e) => setSmartConfig({ ...smartConfig, enable_menu: e.target.checked })}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    setSmartConfig({
+                      ...smartConfig,
+                      enable_menu: isChecked,
+                      menu_mode: isChecked ? (smartConfig.menu_mode && smartConfig.menu_mode !== 'DISABLED' ? smartConfig.menu_mode : 'NATIVE') : 'DISABLED'
+                    });
+                  }}
                   style={{ width: '18px', height: '18px', accentColor: 'var(--accent-primary)' }}
                 />
               </div>
               <p style={{ fontSize: '0.83rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
                 {isTr
-                  ? 'Mevcut dijital menünüzün (FineDine, Menulux, web sitesi veya PDF) linkini ekleyin. Masada tek bir QR ile hem menü açılsın hem bahşiş verilsin.'
-                  : 'Link your existing digital menu (FineDine, Menulux, website, or PDF). Eliminate duplicate table stands with a unified QR.'}
+                  ? 'Naponi bünyesinde kategorili, fotoğraflı ve 14 standart alerjenli native menü oluşturun veya mevcut harici menü linkinizi tek bir QR koda bağlayın.'
+                  : 'Build a native digital menu with 14 allergens directly inside Naponi, or link your existing external menu URL to a single unified Smart QR.'}
               </p>
 
               {smartConfig.enable_menu && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                      {isTr ? 'Menü Linki (URL) *' : 'Digital Menu URL *'}
+                    <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.35rem', display: 'block' }}>
+                      {isTr ? 'Menü Çalışma Modu' : 'Menu Mode'}
                     </label>
-                    <input
-                      type="url"
-                      className="input"
-                      placeholder="https://menu.mekaniniz.com veya https://finedine.co/..."
-                      value={smartConfig.menu_url || ''}
-                      onChange={(e) => setSmartConfig({ ...smartConfig, menu_url: e.target.value })}
-                    />
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.5rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setSmartConfig({ ...smartConfig, menu_mode: 'NATIVE' })}
+                        style={{
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          border: smartConfig.menu_mode === 'NATIVE' ? '2px solid #10b981' : '1px solid var(--border-color)',
+                          background: smartConfig.menu_mode === 'NATIVE' ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-secondary)',
+                          color: smartConfig.menu_mode === 'NATIVE' ? '#10b981' : 'var(--text-secondary)',
+                          fontWeight: 600,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        🥗 {isTr ? 'Naponi Menüsü (Native + Alerjen)' : 'Naponi Native Menu'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSmartConfig({ ...smartConfig, menu_mode: 'EXTERNAL_URL' })}
+                        style={{
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          border: smartConfig.menu_mode === 'EXTERNAL_URL' ? '2px solid #6366f1' : '1px solid var(--border-color)',
+                          background: smartConfig.menu_mode === 'EXTERNAL_URL' ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-secondary)',
+                          color: smartConfig.menu_mode === 'EXTERNAL_URL' ? '#818cf8' : 'var(--text-secondary)',
+                          fontWeight: 600,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        🔗 {isTr ? 'Mevcut Linkime Yönlendir' : 'External Link'}
+                      </button>
+                    </div>
                   </div>
+
+                  {smartConfig.menu_mode === 'NATIVE' && (
+                    <div style={{
+                      padding: '0.85rem',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05))',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
+                    }}>
+                      <div style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <CheckCircle2 size={16} />
+                        <span>{isTr ? 'Naponi Native Menü Aktif' : 'Naponi Native Menu Active'}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                        {isTr
+                          ? 'Kategorileri, ürünleri, fiyatları ve 14 standart alerjen bilgisini Menü sayfasından anında yönetebilirsiniz.'
+                          : 'Manage categories, items, prices, and 14 allergen declarations from the Menu management page.'}
+                      </p>
+                      <Link
+                        to="/business/menu"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          color: '#10b981',
+                          textDecoration: 'none',
+                          marginTop: '0.2rem'
+                        }}
+                      >
+                        <BookOpen size={14} />
+                        <span>{isTr ? 'Menü ve Alerjenleri Düzenle →' : 'Edit Menu & Allergens →'}</span>
+                      </Link>
+                    </div>
+                  )}
+
+                  {smartConfig.menu_mode === 'EXTERNAL_URL' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <div>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                          {isTr ? 'Menü Linki (URL) *' : 'Digital Menu URL *'}
+                        </label>
+                        <input
+                          type="url"
+                          className="input"
+                          placeholder="https://menu.mekaniniz.com veya https://finedine.co/..."
+                          value={smartConfig.menu_url || ''}
+                          onChange={(e) => setSmartConfig({ ...smartConfig, menu_url: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                          {isTr ? 'Menü Buton Başlığı (İsteğe Bağlı)' : 'Button Label (Optional)'}
+                        </label>
+                        <input
+                          type="text"
+                          className="input"
+                          placeholder={isTr ? 'Örn: Dijital Menü / Menüyü Gör' : 'e.g. View Menu'}
+                          value={smartConfig.menu_title || ''}
+                          onChange={(e) => setSmartConfig({ ...smartConfig, menu_title: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                      {isTr ? 'Menü Buton Başlığı (İsteğe Bağlı)' : 'Button Label (Optional)'}
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.35rem', display: 'block' }}>
+                      {isTr ? 'Smart QR Okutulduğunda Öncelikli Açılış' : 'Primary Landing Screen on QR Scan'}
                     </label>
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder={isTr ? 'Örn: Dijital Menü / Menüyü Gör' : 'e.g. View Menu'}
-                      value={smartConfig.menu_title || ''}
-                      onChange={(e) => setSmartConfig({ ...smartConfig, menu_title: e.target.value })}
-                    />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setSmartConfig({ ...smartConfig, primary_action: 'TIP' })}
+                        style={{
+                          flex: 1,
+                          padding: '0.5rem',
+                          borderRadius: '8px',
+                          border: smartConfig.primary_action !== 'MENU' ? '1px solid #6366f1' : '1px solid var(--border-color)',
+                          background: smartConfig.primary_action !== 'MENU' ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
+                          color: smartConfig.primary_action !== 'MENU' ? '#a5b4fc' : 'var(--text-muted)',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {isTr ? '💳 Bahşiş Ekranı (Önerilen)' : '💳 Tipping Screen'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSmartConfig({ ...smartConfig, primary_action: 'MENU' })}
+                        style={{
+                          flex: 1,
+                          padding: '0.5rem',
+                          borderRadius: '8px',
+                          border: smartConfig.primary_action === 'MENU' ? '1px solid #10b981' : '1px solid var(--border-color)',
+                          background: smartConfig.primary_action === 'MENU' ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
+                          color: smartConfig.primary_action === 'MENU' ? '#34d399' : 'var(--text-muted)',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {isTr ? '📖 QR Menü Ekranı' : '📖 Menu Screen'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
