@@ -1349,76 +1349,116 @@ export const TipPage: React.FC = () => {
 
   // --- Main 4-Step Tip Form ---
   return (
-    <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-      {/* Top Floating Language Selector */}
-      <div style={{ alignSelf: 'flex-end', maxWidth: '480px', width: '100%', display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-        <LanguageSelector variant="compact" />
-      </div>
-
+    <div style={{ minHeight: '100vh', padding: '1.25rem 1rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
       <div style={{ maxWidth: '480px', width: '100%' }}>
-        {/* Business Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          {details.business.logo ? (
-            <img
-              src={details.business.logo}
-              alt={details.business.name}
-              style={{
-                width: '76px',
-                height: '76px',
-                borderRadius: '20px',
-                margin: '0 auto 1rem',
-                objectFit: 'cover',
-                border: '2px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-                display: 'block',
-              }}
-            />
-          ) : (
-            <div style={{
-              width: '68px',
-              height: '68px',
-              borderRadius: '20px',
-              background: 'var(--accent-gradient)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 1rem',
-              color: '#fff',
-              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)',
-            }}>
-              <Heart size={30} />
-            </div>
-          )}
-          <h1 style={{ fontSize: '1.65rem', fontWeight: 800, letterSpacing: '-0.025em' }}>
-            {details.business.name}
-          </h1>
-          {details.table && (
-            <div className="badge badge-neutral" style={{ marginTop: '0.35rem' }}>
-              {details.table.name}
-            </div>
-          )}
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
-            {t('home.heroHighlight')} • {t('tip.pageTitle')}
-          </p>
+        {/* Sleek Horizontal App Header (Option B) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.75rem',
+            marginBottom: '0.85rem',
+          }}
+        >
+          {/* Left: Logo + Business Name & Table Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0, flex: 1 }}>
+            {details.business.logo ? (
+              <img
+                src={details.business.logo}
+                alt={details.business.name}
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '14px',
+                  objectFit: 'cover',
+                  border: '1.5px solid rgba(255, 255, 255, 0.18)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.35)',
+                  flexShrink: 0,
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '14px',
+                  background: 'var(--accent-gradient)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                  flexShrink: 0,
+                }}
+              >
+                <Heart size={22} />
+              </div>
+            )}
 
-          {/* Smart QR Custom Welcome Message */}
-          {details.smartQr?.welcomeMessage && (
-            <div style={{
-              margin: '0.75rem auto 0',
-              padding: '0.65rem 1rem',
-              borderRadius: '12px',
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                <h1
+                  style={{
+                    fontSize: '1.2rem',
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    color: '#ffffff',
+                    margin: 0,
+                    lineHeight: 1.25,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '100%',
+                  }}
+                >
+                  {details.business.name}
+                </h1>
+                {details.table && (
+                  <span
+                    className="badge badge-neutral"
+                    style={{
+                      fontSize: '0.72rem',
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: 'var(--text-secondary)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {details.table.name}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Compact Language Selector */}
+          <div style={{ flexShrink: 0 }}>
+            <LanguageSelector variant="compact" />
+          </div>
+        </div>
+
+        {/* Smart QR Custom Welcome Message */}
+        {details.smartQr?.welcomeMessage && (
+          <div
+            style={{
+              margin: '0 0 0.85rem 0',
+              padding: '0.55rem 0.85rem',
+              borderRadius: '10px',
               background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.08))',
               border: '1px solid rgba(99, 102, 241, 0.25)',
               color: '#e0e7ff',
-              fontSize: '0.88rem',
+              fontSize: '0.82rem',
               fontWeight: 500,
-              maxWidth: '380px',
-              lineHeight: 1.4,
-            }}>
-              ✨ {details.smartQr.welcomeMessage}
-            </div>
-          )}
-        </div>
+              lineHeight: 1.35,
+              textAlign: 'center',
+            }}
+          >
+            ✨ {details.smartQr.welcomeMessage}
+          </div>
+        )}
 
         {/* Smart QR Secondary Features Bar */}
         {(() => {
@@ -1445,7 +1485,7 @@ export const TipPage: React.FC = () => {
                 justifyContent: 'center',
                 flexWrap: 'wrap',
                 gap: '0.5rem',
-                marginBottom: '1.75rem',
+                marginBottom: '1.25rem',
               }}>
                 {hasMenu && (
                   <button
