@@ -134,13 +134,13 @@ export const MenuPage: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'radial-gradient(ellipse at top, #0f172a, #020617)',
-          color: '#ffffff',
+          background: '#FAF9F6',
+          color: '#1C1917',
           padding: '2rem',
         }}
       >
-        <div className="spinner" style={{ marginBottom: '1.25rem' }} />
-        <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>Menü hazırlanıyor...</div>
+        <div className="spinner" style={{ marginBottom: '1.25rem', borderColor: 'rgba(0, 0, 0, 0.1)', borderTopColor: '#059669' }} />
+        <div style={{ fontSize: '0.95rem', color: '#78716C', fontWeight: 600 }}>Menü hazırlanıyor...</div>
       </div>
     );
   }
@@ -154,19 +154,19 @@ export const MenuPage: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'radial-gradient(ellipse at top, #0f172a, #020617)',
-          color: '#ffffff',
+          background: '#FAF9F6',
+          color: '#1C1917',
           padding: '2rem',
           textAlign: 'center',
         }}
       >
-        <AlertTriangle size={48} style={{ color: '#f59e0b', marginBottom: '1rem' }} />
-        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.5rem' }}>Menü Açılamadı</h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '380px', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+        <AlertTriangle size={48} style={{ color: '#D97706', marginBottom: '1rem' }} />
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.5rem', color: '#1C1917' }}>Menü Açılamadı</h2>
+        <p style={{ color: '#78716C', maxWidth: '380px', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
           {error}
         </p>
         {publicToken && (
-          <Link to={`/tip/${publicToken}`} className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
+          <Link to={`/tip/${publicToken}`} className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', background: '#059669', borderColor: '#059669' }}>
             Bahşiş Ekranına Git
           </Link>
         )}
@@ -182,9 +182,9 @@ export const MenuPage: React.FC = () => {
       className="naponi-native-menu"
       style={{
         minHeight: '100vh',
-        background: 'radial-gradient(ellipse at top, #0f172a, #020617)',
-        color: '#ffffff',
-        paddingBottom: smartQr.enableTips ? '6rem' : '3rem',
+        background: '#FAF9F6',
+        color: '#1C1917',
+        paddingBottom: smartQr.enableTips ? '6.5rem' : '3rem',
       }}
     >
       {/* TOP COMPACT BRAND & ACTION BAR */}
@@ -194,9 +194,11 @@ export const MenuPage: React.FC = () => {
           top: 0,
           zIndex: 40,
           backdropFilter: 'blur(16px)',
-          background: 'rgba(15, 23, 42, 0.85)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          padding: '0.75rem 1rem',
+          WebkitBackdropFilter: 'blur(16px)',
+          background: 'rgba(250, 249, 246, 0.94)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
+          padding: '0.85rem 1rem',
+          boxShadow: '0 1px 6px rgba(0, 0, 0, 0.02)',
         }}
       >
         <div
@@ -210,33 +212,34 @@ export const MenuPage: React.FC = () => {
           }}
         >
           {/* Venue Avatar & Name */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
             {venue.logo ? (
               <img
                 src={venue.logo}
                 alt={venue.name}
                 style={{
-                  width: '36px',
-                  height: '36px',
+                  width: '40px',
+                  height: '40px',
                   borderRadius: '50%',
                   objectFit: 'cover',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
                   flexShrink: 0,
                 }}
               />
             ) : (
               <div
                 style={{
-                  width: '36px',
-                  height: '36px',
+                  width: '40px',
+                  height: '40px',
                   borderRadius: '50%',
-                  background: 'rgba(99, 102, 241, 0.2)',
+                  background: 'linear-gradient(135deg, #E7E5E4, #D6D3D1)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#a5b4fc',
+                  color: '#44403C',
                   fontWeight: 800,
-                  fontSize: '0.9rem',
+                  fontSize: '1rem',
                   flexShrink: 0,
                 }}
               >
@@ -248,7 +251,9 @@ export const MenuPage: React.FC = () => {
               <div
                 style={{
                   fontWeight: 800,
-                  fontSize: '0.96rem',
+                  fontSize: '1.05rem',
+                  color: '#1C1917',
+                  letterSpacing: '-0.01em',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
@@ -257,8 +262,9 @@ export const MenuPage: React.FC = () => {
                 {venue.name}
               </div>
               {table && (
-                <div style={{ fontSize: '0.74rem', color: '#34d399', fontWeight: 600 }}>
-                  📍 {table.name}
+                <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                  <span>📍</span>
+                  <span>{table.name}</span>
                 </div>
               )}
             </div>
@@ -272,17 +278,18 @@ export const MenuPage: React.FC = () => {
                 type="button"
                 onClick={() => setIsWifiModalOpen(true)}
                 style={{
-                  padding: '0.45rem 0.75rem',
+                  padding: '0.45rem 0.8rem',
                   borderRadius: '999px',
-                  background: 'rgba(14, 165, 233, 0.15)',
-                  border: '1px solid rgba(14, 165, 233, 0.35)',
-                  color: '#38bdf8',
+                  background: 'rgba(14, 165, 233, 0.08)',
+                  border: '1px solid rgba(14, 165, 233, 0.25)',
+                  color: '#0284C7',
                   fontSize: '0.78rem',
                   fontWeight: 700,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.35rem',
                   cursor: 'pointer',
+                  transition: 'all 0.2s',
                 }}
               >
                 <Wifi size={13} />
@@ -301,11 +308,12 @@ export const MenuPage: React.FC = () => {
         {/* ALLERGEN DISCLAIMER NOTICE BANNER */}
         <div
           style={{
-            background: 'rgba(245, 158, 11, 0.08)',
-            border: '1px solid rgba(245, 158, 11, 0.25)',
-            borderRadius: '12px',
-            padding: '0.85rem 1rem',
+            background: '#FFFBEB',
+            border: '1px solid #FDE68A',
+            borderRadius: '14px',
+            padding: '0.85rem 1.1rem',
             marginBottom: '1rem',
+            boxShadow: '0 2px 6px rgba(245, 158, 11, 0.05)',
           }}
         >
           <div
@@ -317,56 +325,70 @@ export const MenuPage: React.FC = () => {
               cursor: 'pointer',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fbbf24', fontWeight: 700, fontSize: '0.86rem' }}>
-              <AlertTriangle size={17} style={{ flexShrink: 0 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: '#B45309', fontWeight: 700, fontSize: '0.88rem' }}>
+              <AlertTriangle size={18} style={{ flexShrink: 0, color: '#D97706' }} />
               <span>{t('menu.allergenNoticeTitle') || 'Alerjen Bilgisi'}</span>
             </div>
             <button
               type="button"
-              style={{ background: 'none', border: 'none', color: '#fbbf24', cursor: 'pointer', padding: 0 }}
+              style={{ background: 'none', border: 'none', color: '#B45309', cursor: 'pointer', padding: 0 }}
             >
               {isDisclaimerExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
 
           {isDisclaimerExpanded ? (
-            <div style={{ marginTop: '0.65rem', fontSize: '0.78rem', color: '#fef3c7', lineHeight: 1.5, borderTop: '1px solid rgba(245, 158, 11, 0.2)', paddingTop: '0.5rem' }}>
+            <div style={{ marginTop: '0.65rem', fontSize: '0.8rem', color: '#78350F', lineHeight: 1.5, borderTop: '1px solid #FDE68A', paddingTop: '0.5rem' }}>
               {disclaimerText}
             </div>
           ) : (
-            <div style={{ marginTop: '0.35rem', fontSize: '0.74rem', color: '#fef3c7', opacity: 0.85 }}>
+            <div style={{ marginTop: '0.35rem', fontSize: '0.76rem', color: '#92400E', opacity: 0.9 }}>
               Menüdeki alerjen bilgileri işletme beyanına dayanmaktadır. Detay için tıklayın.
             </div>
           )}
         </div>
 
         {/* SEARCH & FILTER ROW */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.25rem' }}>
           {/* Live Search Input */}
           <div style={{ position: 'relative', flex: 1 }}>
             <Search
-              size={16}
+              size={17}
               style={{
                 position: 'absolute',
-                left: '0.85rem',
+                left: '0.95rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: 'var(--text-muted)',
+                color: '#78716C',
               }}
             />
             <input
               type="text"
-              className="input"
               placeholder={t('menu.searchPlaceholder') || 'Menüde yemek veya içecek ara...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
-                paddingLeft: '2.4rem',
+                width: '100%',
+                boxSizing: 'border-box',
+                paddingLeft: '2.5rem',
+                paddingRight: searchQuery ? '2.2rem' : '1rem',
                 borderRadius: '999px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderColor: 'rgba(255, 255, 255, 0.12)',
-                fontSize: '0.86rem',
-                height: '42px',
+                background: '#FFFFFF',
+                border: '1px solid rgba(0, 0, 0, 0.08)',
+                color: '#1C1917',
+                fontSize: '0.88rem',
+                height: '44px',
+                outline: 'none',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)',
+                transition: 'border-color 0.2s, box-shadow 0.2s',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#059669';
+                e.target.style.boxShadow = '0 0 0 3px rgba(5, 150, 105, 0.12)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(0, 0, 0, 0.08)';
+                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.03)';
               }}
             />
             {searchQuery && (
@@ -375,17 +397,23 @@ export const MenuPage: React.FC = () => {
                 onClick={() => setSearchQuery('')}
                 style={{
                   position: 'absolute',
-                  right: '0.75rem',
+                  right: '0.85rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  background: 'none',
+                  background: '#E7E5E4',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
                   border: 'none',
-                  color: 'var(--text-muted)',
+                  color: '#57534E',
                   cursor: 'pointer',
-                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
                 }}
               >
-                <X size={15} />
+                <X size={13} />
               </button>
             )}
           </div>
@@ -395,33 +423,35 @@ export const MenuPage: React.FC = () => {
             type="button"
             onClick={() => setIsFilterModalOpen(true)}
             style={{
-              padding: '0 1rem',
+              padding: '0 1.15rem',
               borderRadius: '999px',
               border: '1px solid',
-              borderColor: excludedAllergens.length > 0 ? '#fbbf24' : 'rgba(255, 255, 255, 0.12)',
-              background: excludedAllergens.length > 0 ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              color: excludedAllergens.length > 0 ? '#fbbf24' : 'var(--text-secondary)',
-              fontSize: '0.82rem',
+              borderColor: excludedAllergens.length > 0 ? '#F59E0B' : 'rgba(0, 0, 0, 0.08)',
+              background: excludedAllergens.length > 0 ? '#FEF3C7' : '#FFFFFF',
+              color: excludedAllergens.length > 0 ? '#92400E' : '#44403C',
+              fontSize: '0.84rem',
               fontWeight: 700,
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.45rem',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              height: '42px',
+              height: '44px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)',
+              transition: 'all 0.2s',
             }}
           >
-            <Filter size={15} />
+            <Filter size={16} style={{ color: excludedAllergens.length > 0 ? '#D97706' : '#78716C' }} />
             <span>{t('menu.allergenFilterBtn')}</span>
             {excludedAllergens.length > 0 && (
               <span
                 style={{
-                  width: '18px',
-                  height: '18px',
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
-                  background: '#fbbf24',
-                  color: '#0f172a',
-                  fontSize: '0.7rem',
+                  background: '#F59E0B',
+                  color: '#FFFFFF',
+                  fontSize: '0.72rem',
                   fontWeight: 800,
                   display: 'flex',
                   alignItems: 'center',
@@ -441,17 +471,18 @@ export const MenuPage: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              background: 'rgba(245, 158, 11, 0.12)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              borderRadius: '8px',
-              padding: '0.5rem 0.75rem',
-              marginBottom: '1rem',
-              fontSize: '0.78rem',
-              color: '#fef3c7',
+              background: '#FFFBEB',
+              border: '1px solid #FDE68A',
+              borderRadius: '12px',
+              padding: '0.65rem 0.95rem',
+              marginBottom: '1.25rem',
+              fontSize: '0.82rem',
+              color: '#78350F',
+              boxShadow: '0 2px 6px rgba(245, 158, 11, 0.06)',
             }}
           >
             <div>
-              <span style={{ fontWeight: 700, color: '#fbbf24' }}>
+              <span style={{ fontWeight: 700, color: '#B45309' }}>
                 {excludedAllergens.length} {t('menu.filterActiveNotice')}
               </span>
               : {excludedAllergens.map((id) => getAllergenLabel(id, language)).join(', ')} (Gizlendi)
@@ -462,10 +493,10 @@ export const MenuPage: React.FC = () => {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#fbbf24',
+                color: '#B45309',
                 fontWeight: 700,
                 cursor: 'pointer',
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 textDecoration: 'underline',
               }}
             >
@@ -478,10 +509,10 @@ export const MenuPage: React.FC = () => {
         <div
           style={{
             display: 'flex',
-            gap: '0.5rem',
+            gap: '0.55rem',
             overflowX: 'auto',
             paddingBottom: '0.75rem',
-            marginBottom: '1.25rem',
+            marginBottom: '1.5rem',
             scrollbarWidth: 'none',
           }}
         >
@@ -489,17 +520,18 @@ export const MenuPage: React.FC = () => {
             type="button"
             onClick={() => setSelectedCategoryId('ALL')}
             style={{
-              padding: '0.5rem 1rem',
+              padding: '0.55rem 1.15rem',
               borderRadius: '999px',
-              fontSize: '0.84rem',
+              fontSize: '0.86rem',
               fontWeight: 700,
               cursor: 'pointer',
               border: '1px solid',
               whiteSpace: 'nowrap',
               transition: 'all 0.2s',
-              background: selectedCategoryId === 'ALL' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.05)',
-              borderColor: selectedCategoryId === 'ALL' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
-              color: selectedCategoryId === 'ALL' ? '#ffffff' : 'var(--text-secondary)',
+              background: selectedCategoryId === 'ALL' ? '#1C1917' : '#FFFFFF',
+              borderColor: selectedCategoryId === 'ALL' ? '#1C1917' : 'rgba(0, 0, 0, 0.08)',
+              color: selectedCategoryId === 'ALL' ? '#FFFFFF' : '#57534E',
+              boxShadow: selectedCategoryId === 'ALL' ? '0 4px 12px rgba(28, 25, 23, 0.15)' : '0 1px 4px rgba(0, 0, 0, 0.03)',
             }}
           >
             {t('menu.allCategories') || 'Tümü'}
@@ -513,17 +545,18 @@ export const MenuPage: React.FC = () => {
                 type="button"
                 onClick={() => setSelectedCategoryId(cat.id)}
                 style={{
-                  padding: '0.5rem 1rem',
+                  padding: '0.55rem 1.15rem',
                   borderRadius: '999px',
-                  fontSize: '0.84rem',
+                  fontSize: '0.86rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   border: '1px solid',
                   whiteSpace: 'nowrap',
                   transition: 'all 0.2s',
-                  background: isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.05)',
-                  borderColor: isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
-                  color: isSelected ? '#ffffff' : 'var(--text-secondary)',
+                  background: isSelected ? '#1C1917' : '#FFFFFF',
+                  borderColor: isSelected ? '#1C1917' : 'rgba(0, 0, 0, 0.08)',
+                  color: isSelected ? '#FFFFFF' : '#57534E',
+                  boxShadow: isSelected ? '0 4px 12px rgba(28, 25, 23, 0.15)' : '0 1px 4px rgba(0, 0, 0, 0.03)',
                 }}
               >
                 {cat.name}
@@ -538,75 +571,85 @@ export const MenuPage: React.FC = () => {
             style={{
               textAlign: 'center',
               padding: '3.5rem 1rem',
-              color: 'var(--text-muted)',
-              background: 'rgba(255, 255, 255, 0.02)',
+              color: '#78716C',
+              background: '#FFFFFF',
               borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
             }}
           >
-            <UtensilsCrossed size={40} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
+            <UtensilsCrossed size={40} style={{ margin: '0 auto 1rem', opacity: 0.3, color: '#78716C' }} />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1C1917', marginBottom: '0.35rem' }}>
               {t('menu.noProductsFound')}
             </h3>
-            <p style={{ fontSize: '0.82rem', margin: '0 0 1.25rem 0' }}>
+            <p style={{ fontSize: '0.84rem', margin: '0 0 1.25rem 0' }}>
               Arama terimini değiştirebilir veya alerjen filtrelerini sıfırlayabilirsiniz.
             </p>
             <button
               type="button"
-              className="btn btn-secondary"
               onClick={clearAllFilters}
-              style={{ fontSize: '0.82rem' }}
+              style={{
+                fontSize: '0.84rem',
+                padding: '0.55rem 1.2rem',
+                borderRadius: '999px',
+                background: '#F5F5F4',
+                border: '1px solid #E7E5E4',
+                color: '#1C1917',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
             >
               Filtreleri Temizle
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {filteredCategories.map((category) => (
               <section key={category.id} className="menu-category-section">
                 {/* Category Title */}
-                <div style={{ marginBottom: '0.85rem' }}>
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: '#f8fafc' }}>
+                <div style={{ marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: '#1C1917' }}>
                     {category.name}
                   </h2>
                   {category.description && (
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    <p style={{ margin: 0, fontSize: '0.84rem', color: '#78716C' }}>
                       {category.description}
                     </p>
                   )}
                 </div>
 
                 {/* Items in this category */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   {category.items.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => setInspectingItem(item)}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        borderRadius: '14px',
-                        border: '1px solid rgba(255, 255, 255, 0.07)',
-                        padding: '0.9rem',
+                        background: '#FFFFFF',
+                        borderRadius: '16px',
+                        border: '1px solid rgba(0, 0, 0, 0.06)',
+                        padding: '1rem',
                         display: 'flex',
-                        gap: '0.85rem',
+                        gap: '0.95rem',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         cursor: 'pointer',
-                        transition: 'transform 0.15s, border-color 0.15s, background 0.15s',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
+                        transition: 'transform 0.15s, border-color 0.15s, box-shadow 0.15s',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.3)';
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.borderColor = 'rgba(5, 150, 105, 0.35)';
+                        e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 0, 0, 0.06)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)';
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                        e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)';
+                        e.currentTarget.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.03)';
                       }}
                     >
                       {/* Left: Info */}
                       <div style={{ flex: 1, minWidth: 0, paddingRight: '0.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-                          <h3 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700, color: '#ffffff' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                          <h3 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700, color: '#1C1917' }}>
                             {item.name}
                           </h3>
                         </div>
@@ -614,10 +657,10 @@ export const MenuPage: React.FC = () => {
                         {item.description && (
                           <p
                             style={{
-                              margin: '0 0 0.45rem 0',
-                              fontSize: '0.8rem',
-                              color: 'var(--text-secondary)',
-                              lineHeight: 1.4,
+                              margin: '0 0 0.5rem 0',
+                              fontSize: '0.82rem',
+                              color: '#57534E',
+                              lineHeight: 1.45,
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical',
@@ -629,27 +672,27 @@ export const MenuPage: React.FC = () => {
                         )}
 
                         {/* Price */}
-                        <div style={{ fontSize: '1rem', fontWeight: 800, color: '#34d399', marginBottom: '0.4rem' }}>
+                        <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#059669', marginBottom: '0.45rem' }}>
                           {formatCurrency(Number(item.price), item.currency)}
                         </div>
 
                         {/* Allergen Pills on Card */}
                         {item.allergens && item.allergens.length > 0 && (
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                             {item.allergens.map((algId) => (
                               <span
                                 key={algId}
                                 style={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  gap: '0.2rem',
-                                  padding: '1px 6px',
-                                  borderRadius: '5px',
-                                  fontSize: '0.7rem',
+                                  gap: '0.25rem',
+                                  padding: '2px 7px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.72rem',
                                   fontWeight: 600,
-                                  background: 'rgba(245, 158, 11, 0.12)',
-                                  color: '#fbbf24',
-                                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                                  background: '#F5F5F4',
+                                  color: '#44403C',
+                                  border: '1px solid #E7E5E4',
                                 }}
                                 title={getAllergenDetail(algId, language)}
                               >
@@ -667,12 +710,12 @@ export const MenuPage: React.FC = () => {
                           src={item.image_url}
                           alt={item.name}
                           style={{
-                            width: '84px',
-                            height: '84px',
-                            borderRadius: '10px',
+                            width: '88px',
+                            height: '88px',
+                            borderRadius: '12px',
                             objectFit: 'cover',
                             flexShrink: 0,
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(0, 0, 0, 0.06)',
                           }}
                           onError={(e) => {
                             (e.target as HTMLElement).style.display = 'none';
@@ -681,18 +724,19 @@ export const MenuPage: React.FC = () => {
                       ) : (
                         <div
                           style={{
-                            width: '68px',
-                            height: '68px',
-                            borderRadius: '10px',
-                            background: 'rgba(255, 255, 255, 0.04)',
+                            width: '72px',
+                            height: '72px',
+                            borderRadius: '12px',
+                            background: '#F5F5F4',
+                            border: '1px solid #E7E5E4',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'var(--text-muted)',
+                            color: '#A8A29E',
                             flexShrink: 0,
                           }}
                         >
-                          <UtensilsCrossed size={22} style={{ opacity: 0.5 }} />
+                          <UtensilsCrossed size={24} style={{ opacity: 0.6 }} />
                         </div>
                       )}
                     </div>
@@ -723,12 +767,12 @@ export const MenuPage: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0.85rem 1.25rem',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #10b981, #059669)',
+              padding: '0.9rem 1.35rem',
+              borderRadius: '18px',
+              background: 'linear-gradient(135deg, #059669, #047857)',
               color: '#ffffff',
-              boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 10px 28px rgba(5, 150, 105, 0.38)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
               textDecoration: 'none',
               fontWeight: 700,
               fontSize: '0.94rem',
@@ -741,11 +785,11 @@ export const MenuPage: React.FC = () => {
               e.currentTarget.style.transform = 'scale(1)';
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '34px',
+                  height: '34px',
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
@@ -757,13 +801,13 @@ export const MenuPage: React.FC = () => {
               </div>
               <div>
                 <div style={{ fontWeight: 800 }}>{t('menu.tipStaffMobile') || 'Garsona Bahşiş Bırak'}</div>
-                <div style={{ fontSize: '0.72rem', opacity: 0.9, fontWeight: 500 }}>
+                <div style={{ fontSize: '0.74rem', opacity: 0.92, fontWeight: 500 }}>
                   {table ? `Masa: ${table.name}` : 'Dijital bahşiş ile ekibi destekleyin'}
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.84rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.86rem' }}>
               <span>Bahşiş Ver</span>
               <ArrowRight size={16} />
             </div>
@@ -780,8 +824,8 @@ export const MenuPage: React.FC = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 100,
-            background: 'rgba(2, 6, 23, 0.8)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(28, 25, 23, 0.65)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -792,33 +836,35 @@ export const MenuPage: React.FC = () => {
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '16px',
+              background: '#FFFFFF',
+              border: '1px solid rgba(0, 0, 0, 0.08)',
+              borderRadius: '20px',
               padding: '1.5rem',
               maxWidth: '520px',
               width: '100%',
               maxHeight: '85vh',
               overflowY: 'auto',
+              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.18)',
+              color: '#1C1917',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Filter size={18} style={{ color: '#fbbf24' }} />
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>
+                <Filter size={18} style={{ color: '#D97706' }} />
+                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#1C1917' }}>
                   {t('menu.allergenFilterBtn')}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsFilterModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#78716C', cursor: 'pointer', padding: '4px' }}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            <p style={{ fontSize: '0.84rem', color: '#57534E', marginBottom: '1.25rem', lineHeight: 1.45 }}>
               {t('menu.filterExcludesLabel')}
             </p>
 
@@ -842,24 +888,24 @@ export const MenuPage: React.FC = () => {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.45rem',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '10px',
-                      fontSize: '0.8rem',
-                      fontWeight: isExcluded ? 800 : 500,
+                      padding: '0.65rem 0.8rem',
+                      borderRadius: '12px',
+                      fontSize: '0.82rem',
+                      fontWeight: isExcluded ? 800 : 600,
                       cursor: 'pointer',
                       border: '1px solid',
                       textAlign: 'left',
                       transition: 'all 0.15s',
-                      background: isExcluded ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                      borderColor: isExcluded ? '#ef4444' : 'rgba(255, 255, 255, 0.1)',
-                      color: isExcluded ? '#fca5a5' : 'var(--text-secondary)',
+                      background: isExcluded ? '#FEE2E2' : '#F5F5F4',
+                      borderColor: isExcluded ? '#EF4444' : '#E7E5E4',
+                      color: isExcluded ? '#991B1B' : '#44403C',
                     }}
                   >
-                    <span style={{ fontSize: '1.1rem' }}>{alg.icon}</span>
+                    <span style={{ fontSize: '1.15rem' }}>{alg.icon}</span>
                     <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {getAllergenLabel(alg.id, language)}
                     </span>
-                    {isExcluded && <X size={14} style={{ color: '#ef4444', flexShrink: 0 }} />}
+                    {isExcluded && <X size={14} style={{ color: '#EF4444', flexShrink: 0 }} />}
                   </button>
                 );
               })}
@@ -868,12 +914,12 @@ export const MenuPage: React.FC = () => {
             {/* Health Disclaimer */}
             <div
               style={{
-                padding: '0.75rem',
-                background: 'rgba(245, 158, 11, 0.08)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                borderRadius: '8px',
-                fontSize: '0.75rem',
-                color: '#fef3c7',
+                padding: '0.85rem',
+                background: '#FFFBEB',
+                border: '1px solid #FDE68A',
+                borderRadius: '10px',
+                fontSize: '0.78rem',
+                color: '#78350F',
                 lineHeight: 1.45,
                 marginBottom: '1.25rem',
               }}
@@ -889,10 +935,11 @@ export const MenuPage: React.FC = () => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: 'var(--text-muted)',
-                  fontSize: '0.82rem',
+                  color: '#78716C',
+                  fontSize: '0.84rem',
                   cursor: 'pointer',
                   textDecoration: 'underline',
+                  fontWeight: 600,
                 }}
               >
                 {t('menu.clearFilter')}
@@ -900,9 +947,18 @@ export const MenuPage: React.FC = () => {
 
               <button
                 type="button"
-                className="btn btn-primary"
                 onClick={() => setIsFilterModalOpen(false)}
-                style={{ padding: '0.6rem 1.5rem', fontSize: '0.86rem' }}
+                style={{
+                  padding: '0.65rem 1.6rem',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  borderRadius: '999px',
+                  background: '#1C1917',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(28, 25, 23, 0.2)',
+                }}
               >
                 Filtreleri Uygula
               </button>
@@ -920,8 +976,8 @@ export const MenuPage: React.FC = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 100,
-            background: 'rgba(2, 6, 23, 0.85)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(28, 25, 23, 0.65)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -932,13 +988,14 @@ export const MenuPage: React.FC = () => {
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '16px',
+              background: '#FFFFFF',
+              border: '1px solid rgba(0, 0, 0, 0.08)',
+              borderRadius: '20px',
               maxWidth: '480px',
               width: '100%',
               overflow: 'hidden',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.18)',
+              color: '#1C1917',
             }}
           >
             {inspectingItem.image_url && (
@@ -947,25 +1004,25 @@ export const MenuPage: React.FC = () => {
                 alt={inspectingItem.name}
                 style={{
                   width: '100%',
-                  height: '200px',
+                  height: '220px',
                   objectFit: 'cover',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
                 }}
               />
             )}
 
-            <div style={{ padding: '1.25rem' }}>
+            <div style={{ padding: '1.35rem' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#1C1917' }}>
                   {inspectingItem.name}
                 </h3>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#34d399', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#059669', whiteSpace: 'nowrap' }}>
                   {formatCurrency(Number(inspectingItem.price), inspectingItem.currency)}
                 </div>
               </div>
 
               {inspectingItem.description && (
-                <p style={{ margin: '0 0 1rem', fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <p style={{ margin: '0 0 1.15rem', fontSize: '0.9rem', color: '#57534E', lineHeight: 1.5 }}>
                   {inspectingItem.description}
                 </p>
               )}
@@ -974,14 +1031,14 @@ export const MenuPage: React.FC = () => {
               {inspectingItem.allergens && inspectingItem.allergens.length > 0 && (
                 <div
                   style={{
-                    padding: '0.85rem',
-                    borderRadius: '10px',
-                    background: 'rgba(245, 158, 11, 0.08)',
-                    border: '1px solid rgba(245, 158, 11, 0.25)',
-                    marginBottom: '1rem',
+                    padding: '0.9rem',
+                    borderRadius: '12px',
+                    background: '#FFFBEB',
+                    border: '1px solid #FDE68A',
+                    marginBottom: '1.25rem',
                   }}
                 >
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#fbbf24', marginBottom: '0.45rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#92400E', marginBottom: '0.5rem' }}>
                     ⚠️ İçerdiği Alerjenler (İşletme Beyanı):
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
@@ -992,18 +1049,18 @@ export const MenuPage: React.FC = () => {
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.35rem',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          fontSize: '0.76rem',
+                          padding: '3px 9px',
+                          borderRadius: '8px',
+                          fontSize: '0.78rem',
                           fontWeight: 700,
-                          background: 'rgba(245, 158, 11, 0.2)',
-                          color: '#fbbf24',
-                          border: '1px solid rgba(245, 158, 11, 0.35)',
+                          background: '#FEF3C7',
+                          color: '#92400E',
+                          border: '1px solid #FCD34D',
                         }}
                       >
                         <span>{getAllergenIcon(algId)}</span>
                         <span>{getAllergenLabel(algId, language)}</span>
-                        <span style={{ opacity: 0.75, fontSize: '0.7rem' }}>
+                        <span style={{ opacity: 0.8, fontSize: '0.72rem' }}>
                           ({getAllergenDetail(algId, language)})
                         </span>
                       </div>
@@ -1014,9 +1071,18 @@ export const MenuPage: React.FC = () => {
 
               <button
                 type="button"
-                className="btn btn-secondary"
                 onClick={() => setInspectingItem(null)}
-                style={{ width: '100%', padding: '0.65rem', fontWeight: 700 }}
+                style={{
+                  width: '100%',
+                  padding: '0.7rem',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  borderRadius: '12px',
+                  background: '#F5F5F4',
+                  border: '1px solid #E7E5E4',
+                  color: '#1C1917',
+                  cursor: 'pointer',
+                }}
               >
                 Kapat
               </button>
@@ -1034,8 +1100,8 @@ export const MenuPage: React.FC = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 100,
-            background: 'rgba(2, 6, 23, 0.85)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(28, 25, 23, 0.65)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1046,76 +1112,79 @@ export const MenuPage: React.FC = () => {
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '16px',
-              padding: '1.5rem',
+              background: '#FFFFFF',
+              border: '1px solid rgba(0, 0, 0, 0.08)',
+              borderRadius: '20px',
+              padding: '1.65rem',
               maxWidth: '380px',
               width: '100%',
               textAlign: 'center',
+              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.18)',
+              color: '#1C1917',
             }}
           >
             <div
               style={{
-                width: '48px',
-                height: '48px',
+                width: '50px',
+                height: '50px',
                 borderRadius: '50%',
-                background: 'rgba(14, 165, 233, 0.15)',
+                background: 'rgba(5, 150, 105, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#38bdf8',
+                color: '#059669',
                 margin: '0 auto 1rem',
               }}
             >
-              <Wifi size={24} />
+              <Wifi size={26} />
             </div>
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: 800 }}>
+            <h3 style={{ margin: '0 0 0.4rem', fontSize: '1.15rem', fontWeight: 800, color: '#1C1917' }}>
               Misafir Wi-Fi Ağı
             </h3>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+            <div style={{ fontSize: '0.86rem', color: '#78716C', marginBottom: '1.25rem' }}>
               Aşağıdaki şifre ile işletmenin misafir Wi-Fi ağına bağlanabilirsiniz.
             </div>
 
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '10px',
-                padding: '0.85rem',
-                marginBottom: '1rem',
+                background: '#F5F5F4',
+                border: '1px solid #E7E5E4',
+                borderRadius: '12px',
+                padding: '0.9rem 1rem',
+                marginBottom: '1.25rem',
                 textAlign: 'left',
               }}
             >
-              <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Ağ Adı (SSID):</div>
-              <div style={{ fontWeight: 700, fontSize: '0.94rem', color: '#ffffff', marginBottom: '0.5rem' }}>
+              <div style={{ fontSize: '0.74rem', color: '#78716C' }}>Ağ Adı (SSID):</div>
+              <div style={{ fontWeight: 700, fontSize: '0.96rem', color: '#1C1917', marginBottom: '0.6rem' }}>
                 {smartQr.wifiSsid}
               </div>
 
               {smartQr.wifiPassword && (
                 <>
-                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Şifre:</div>
+                  <div style={{ fontSize: '0.74rem', color: '#78716C' }}>Şifre:</div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ fontWeight: 800, fontSize: '1rem', color: '#38bdf8', fontFamily: 'monospace' }}>
+                    <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#059669', fontFamily: 'monospace' }}>
                       {smartQr.wifiPassword}
                     </div>
                     <button
                       type="button"
                       onClick={() => copyWifiPassword(smartQr.wifiPassword!)}
                       style={{
-                        padding: '3px 8px',
-                        borderRadius: '6px',
-                        background: copiedWifi ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-                        color: copiedWifi ? '#34d399' : '#ffffff',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        fontSize: '0.75rem',
+                        padding: '4px 10px',
+                        borderRadius: '8px',
+                        background: copiedWifi ? '#D1FAE5' : '#FFFFFF',
+                        color: copiedWifi ? '#065F46' : '#1C1917',
+                        border: '1px solid #D6D3D1',
+                        fontSize: '0.76rem',
+                        fontWeight: 600,
                         cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.3rem',
+                        gap: '0.35rem',
                       }}
                     >
-                      {copiedWifi ? <Check size={12} /> : <Copy size={12} />}
+                      {copiedWifi ? <Check size={13} /> : <Copy size={13} />}
                       <span>{copiedWifi ? 'Kopyalandı' : 'Kopyala'}</span>
                     </button>
                   </div>
@@ -1125,9 +1194,18 @@ export const MenuPage: React.FC = () => {
 
             <button
               type="button"
-              className="btn btn-secondary"
               onClick={() => setIsWifiModalOpen(false)}
-              style={{ width: '100%' }}
+              style={{
+                width: '100%',
+                padding: '0.7rem',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                borderRadius: '12px',
+                background: '#F5F5F4',
+                border: '1px solid #E7E5E4',
+                color: '#1C1917',
+                cursor: 'pointer',
+              }}
             >
               Kapat
             </button>
