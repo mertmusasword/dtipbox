@@ -44,6 +44,7 @@ import {
   PARTNER_STEPS,
   PARTNER_MODELS
 } from '../../content/partners/technology-partners-data';
+import { SeoHead } from '../../components/SeoHead';
 import '../../styles/partners.css';
 
 export const TechnologyPartnersPage: React.FC = () => {
@@ -197,6 +198,25 @@ export const TechnologyPartnersPage: React.FC = () => {
 
   return (
     <div className="partners-page-wrapper">
+      <SeoHead
+        title={
+          isTr
+            ? 'Naponi Teknoloji Ortaklığı Programı — POS, PMS ve Yazılım Entegrasyonları'
+            : 'Naponi Technology Partnership Program — POS, PMS & Hospitality Integrations'
+        }
+        description={
+          isTr
+            ? 'Adisyon, POS, PMS ve otel yönetim sisteminiz ile Naponi QR bahşiş sistemini entegre edin. Ortak gelir modelleri ve kurumsal API olanakları.'
+            : 'Integrate your POS, PMS, and hospitality software ecosystem with Naponi direct QR tipping. Revenue share models and developer-friendly APIs.'
+        }
+        canonicalUrl="https://www.naponi.com/technology-partners"
+        keywords={['naponi partners', 'pos integration tipping', 'pms integration', 'hospitality api']}
+        alternateLanguages={[
+          { lang: 'x-default', url: 'https://www.naponi.com/technology-partners' },
+          { lang: 'tr', url: 'https://www.naponi.com/technology-partners' },
+          { lang: 'en', url: 'https://www.naponi.com/technology-partners' },
+        ]}
+      />
       {/* Background Ambient Glows */}
       <div className="partners-glow-top" />
       <div className="partners-glow-middle" />

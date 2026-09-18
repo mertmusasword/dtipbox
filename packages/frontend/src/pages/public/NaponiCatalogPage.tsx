@@ -24,6 +24,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { getCatalogContent } from '../../content/catalog/catalog-data';
+import { SeoHead } from '../../components/SeoHead';
 import '../../styles/catalog.css';
 
 export const NaponiCatalogPage: React.FC = () => {
@@ -73,6 +74,25 @@ export const NaponiCatalogPage: React.FC = () => {
 
   return (
     <div className="catalog-wrapper">
+      <SeoHead
+        title={
+          language === 'tr'
+            ? 'Naponi — Kurumsal Ürün & Çözüm Kataloğu 2026'
+            : 'Naponi — Corporate Product & Solutions Catalog 2026'
+        }
+        description={
+          language === 'tr'
+            ? 'Restoranlar, oteller ve zincir işletmeler için Naponi doğrudan QR dijital bahşiş, akıllı POS entegrasyonu ve kurumsal çözümler kataloğu.'
+            : 'Comprehensive corporate catalog and presentation of Naponi direct QR digital tipping, POS integrations, and hospitality payment workflows.'
+        }
+        canonicalUrl="https://www.naponi.com/catalog"
+        keywords={['naponi catalog', 'corporate tipping catalog', 'b2b hospitality tipping presentation']}
+        alternateLanguages={[
+          { lang: 'x-default', url: 'https://www.naponi.com/catalog' },
+          { lang: 'tr', url: 'https://www.naponi.com/catalog' },
+          { lang: 'en', url: 'https://www.naponi.com/catalog' },
+        ]}
+      />
       {/* Floating Action Toolbar */}
       <nav className="catalog-toolbar">
         <div className="catalog-toolbar-left">

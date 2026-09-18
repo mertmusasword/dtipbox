@@ -20,6 +20,19 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 function detectInitialLanguage(): SupportedLanguage {
+  // 0. Check URL pathname prefix (e.g. /tr or /tr/)
+  try {
+    if (typeof window !== 'undefined' && window.location?.pathname) {
+      const pathSegments = window.location.pathname.split('/').filter(Boolean);
+      const firstSegment = pathSegments[0]?.toLowerCase();
+      if (firstSegment && SUPPORTED_LANGUAGES.some((l) => l.code === firstSegment)) {
+        return firstSegment as SupportedLanguage;
+      }
+    }
+  } catch (e) {
+    // ignore URL parsing error
+  }
+
   // 1. Check URL query param (?lang=tr) for search engine crawlers & direct links
   try {
     if (typeof window !== 'undefined' && window.location?.search) {

@@ -129,6 +129,7 @@ export const App: React.FC = () => {
               <Routes>
                 {/* Public Landing & Showcase */}
                 <Route path="/" element={<HomePage />} />
+                <Route path="/tr" element={<HomePage />} />
 
                 {/* Public Blog & Content Hub */}
                 <Route path="/blog" element={<BlogIndexPage />} />

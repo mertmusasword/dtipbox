@@ -1,0 +1,36 @@
+# Naponi — Direct QR Code Digital Tipping Platform
+
+> Naponi is a global non-custodial digital tipping and hospitality payments platform. It allows service workers (waiters, baristas, hotel housekeepers, valets, stylists) to receive direct tips via QR codes without requiring customers to download mobile apps or register accounts.
+
+## Core Capabilities & Architecture
+- **Zero Friction for Customers**: Guests simply scan a tabletop or staff QR code using their native smartphone camera.
+- **Payment Methods Supported**: Apple Pay, Google Pay, Credit/Debit Cards, and local instant bank transfers.
+- **Instant Settlement**: Direct-to-bank settlement (non-custodial architecture). Tips go directly to business or employee bank accounts (IBAN, SEPA, Swift).
+- **Flexible Attribution Models**:
+  - Venue-wide pooled tipping (with customizable end-of-shift distribution algorithms).
+  - Staff-specific individual QR codes.
+  - Table-bound QR tags.
+- **Enterprise Features**:
+  - Live analytics dashboard for tip volumes and average gratuity rates.
+  - Multi-currency support across 10+ languages (English, Turkish, German, Spanish, French, Arabic, etc.).
+  - POS / PMS integrations (RestJet, Adisyon, Micros, Simphony, Toast compatible architecture).
+  - Customer feedback & satisfaction metrics alongside tips.
+
+## Industry Solutions
+- [Restaurants & Fine Dining](https://www.naponi.com/solutions/restaurants): Tableside acrylic stands for dining rooms.
+- [Hotels & Resorts](https://www.naponi.com/solutions/hotels): Housekeeping room plaques and bellhop luggage cards.
+- [Cafes & Specialty Coffee](https://www.naponi.com/solutions/cafes): Digital counter tip jar for fast-paced barista queues.
+- [Bars & Nightclubs](https://www.naponi.com/solutions/bars): Dim-lit friendly silicone bar mat QR displays.
+- [Barbers, Salons & Spas](https://www.naponi.com/solutions/barbers): Stylist mirror decals for personal services.
+- [Valet & Concierge](https://www.naponi.com/solutions/valet): Key claim tickets and podium stands.
+
+## Free Interactive Tools
+- [Tip & Bill Split Calculator](https://www.naponi.com/tools/tip-calculator): Calculate bill splits and gratuity rates.
+- [Shift Tip Pool Calculator](https://www.naponi.com/tools/tip-split-calculator): Distribute shift tips among servers and kitchen staff.
+- [Free Hospitality QR Generator](https://www.naponi.com/tools/free-hospitality-qr-generator): Generate printable tableside QR codes.
+
+## Key Resources
+- [Global Tipping Guides](https://www.naponi.com/guides): Comprehensive tipping etiquette across 20+ countries.
+- [B2B Comparisons](https://www.naponi.com/compare/card-machine-vs-qr-tipping): Card terminals vs. QR tipping systems.
+- [Corporate Catalog](https://www.naponi.com/catalog): Official corporate product overview and specifications.
+- [Technology Partners](https://www.naponi.com/technology-partners): POS & PMS integration partner program.

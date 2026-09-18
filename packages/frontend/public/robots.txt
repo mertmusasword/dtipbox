@@ -5,9 +5,17 @@
 
 User-agent: *
 Allow: /
+Allow: /tr
+Allow: /tr/
 Allow: /blog
+Allow: /blog/
 Allow: /solutions/
 Allow: /tools/
+Allow: /guides/
+Allow: /compare/
+Allow: /catalog
+Allow: /technology-partners
+Allow: /llms.txt
 Allow: /login
 Allow: /register
 
@@ -27,4 +35,3 @@ Disallow: /tip/
 
 # Sitemap Location
 Sitemap: https://www.naponi.com/sitemap.xml
-Host: https://www.naponi.com

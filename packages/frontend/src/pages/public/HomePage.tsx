@@ -60,6 +60,7 @@ import { CorporateApplicationModal } from '../../components/CorporateApplication
 import { SupportTicketModal } from '../../components/SupportTicketModal';
 import { LegalModal, LegalTab } from '../../components/LegalModal';
 import { CookieBanner } from '../../components/CookieBanner';
+import { SeoHead } from '../../components/SeoHead';
 import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
@@ -297,6 +298,33 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="home-wrapper">
+      <SeoHead
+        title={
+          language === 'tr'
+            ? 'Naponi — Restoran ve Oteller İçin Doğrudan QR Kod Dijital Bahşiş Sistemi'
+            : 'Naponi — Direct QR Digital Tipping Platform for Global Businesses'
+        }
+        description={
+          language === 'tr'
+            ? 'Personel ve hizmet ekipleriniz için temassız, anında IBAN transferli QR kod dijital bahşiş platformu. Uygulama indirme yok, üyelik yok.'
+            : 'Empower your hospitality and service team with direct QR code digital tipping. No app downloads, no customer accounts. Instant, direct-to-bank settlement.'
+        }
+        canonicalUrl={language === 'tr' ? 'https://www.naponi.com/tr' : 'https://www.naponi.com/'}
+        keywords={[
+          'digital tipping',
+          'QR code tipping',
+          'restaurant tips',
+          'cashless tipping',
+          'hospitality payments',
+          'dijital bahşiş',
+          'qr bahşiş sistemi',
+        ]}
+        alternateLanguages={[
+          { lang: 'x-default', url: 'https://www.naponi.com/' },
+          { lang: 'en', url: 'https://www.naponi.com/' },
+          { lang: 'tr', url: 'https://www.naponi.com/tr' },
+        ]}
+      />
       {/* Background Ambience Gradients */}
       <div className="home-bg-glow-top" />
       <div className="home-bg-glow-middle" />

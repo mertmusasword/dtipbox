@@ -42,6 +42,7 @@ function writeStaticRoute(routePath: string, options: {
   canonicalUrl: string;
   keywords?: string[];
   ogType?: string;
+  ogImage?: string;
   publishedTime?: string;
   modifiedTime?: string;
   authorName?: string;
@@ -72,7 +73,16 @@ function writeStaticRoute(routePath: string, options: {
     html = html.replace('</head>', `<link rel="canonical" href="${options.canonicalUrl}" />\n</head>`);
   }
 
-  // 3B. Alternate Hreflang Tags
+  // 4. CLEAN EXISTING OPEN GRAPH, TWITTER, ALTERNATE HREFLANG & JSON-LD to prevent duplicate tags
+  html = html.replace(/<meta\s+property="og:[^"]*"\s+content="[^"]*"\s*\/?>\s*/gi, '');
+  html = html.replace(/<meta\s+name="twitter:[^"]*"\s+content="[^"]*"\s*\/?>\s*/gi, '');
+  if (options.alternateLanguages && options.alternateLanguages.length > 0) {
+    html = html.replace(/<link\s+rel="alternate"\s+hreflang="[^"]*"\s+href="[^"]*"\s*\/?>\s*/gi, '');
+  }
+  // Unconditionally remove template JSON-LD so root FAQ/Application schema doesn't bleed into subpages
+  html = html.replace(/<script\s+type="application\/ld\+json">[\s\S]*?<\/script>\s*/gi, '');
+
+  // 5. Build Alternate Hreflang Tags
   let alternateHreflangs = '';
   if (options.alternateLanguages && options.alternateLanguages.length > 0) {
     alternateHreflangs = options.alternateLanguages
@@ -80,23 +90,24 @@ function writeStaticRoute(routePath: string, options: {
       .join('\n    ');
   }
 
-  // 4. Open Graph & Twitter
+  // 6. Build Fresh Route-Specific Open Graph & Twitter Tags
+  const ogImg = options.ogImage || 'https://www.naponi.com/logo.png';
   const extraMetas = `
-    <!-- Dynamic Pre-rendered Open Graph & Alternate Links -->
+    <!-- Route-Specific Pre-rendered Open Graph & Alternate Links -->
     ${alternateHreflangs}
     <meta property="og:title" content="${options.title}" />
     <meta property="og:description" content="${options.description}" />
     <meta property="og:url" content="${options.canonicalUrl}" />
     <meta property="og:type" content="${options.ogType || 'website'}" />
     <meta property="og:site_name" content="Naponi" />
-    <meta property="og:image" content="https://www.naponi.com/logo.png" />
+    <meta property="og:image" content="${ogImg}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${options.title}" />
     <meta name="twitter:description" content="${options.description}" />
-    <meta name="twitter:image" content="https://www.naponi.com/logo.png" />
+    <meta name="twitter:image" content="${ogImg}" />
   `;
 
-  // 5. JSON-LD Structured Data
+  // 7. Route-Specific JSON-LD Structured Data
   let jsonLdScript = '';
   if (options.jsonLd && options.jsonLd.length > 0) {
     jsonLdScript = `
@@ -111,7 +122,7 @@ function writeStaticRoute(routePath: string, options: {
 
   html = html.replace('</head>', `${extraMetas}\n${jsonLdScript}\n</head>`);
 
-  // 6. Pre-rendered HTML inside #root
+  // 8. Pre-rendered HTML inside #root
   html = html.replace(
     '<div id="root"></div>',
     `<div id="root">${options.contentHtml}</div>`
@@ -242,8 +253,8 @@ writeStaticRoute('', {
   canonicalUrl: 'https://www.naponi.com/',
   alternateLanguages: [
     { lang: 'x-default', url: 'https://www.naponi.com/' },
-    { lang: 'en', url: 'https://www.naponi.com/?lang=en' },
-    { lang: 'tr', url: 'https://www.naponi.com/?lang=tr' },
+    { lang: 'en', url: 'https://www.naponi.com/' },
+    { lang: 'tr', url: 'https://www.naponi.com/tr' },
     { lang: 'es', url: 'https://www.naponi.com/?lang=es' },
     { lang: 'zh', url: 'https://www.naponi.com/?lang=zh' },
     { lang: 'ar', url: 'https://www.naponi.com/?lang=ar' },
@@ -254,6 +265,194 @@ writeStaticRoute('', {
     { lang: 'ja', url: 'https://www.naponi.com/?lang=ja' },
   ],
   contentHtml: homepageSemanticContent,
+  jsonLd: [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.naponi.com/#organization',
+      name: 'Naponi',
+      url: 'https://www.naponi.com',
+      logo: 'https://www.naponi.com/logo.png',
+      sameAs: ['https://twitter.com/naponifin'],
+      description: 'Global QR code digital tipping and service payments platform.',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://www.naponi.com/#website',
+      url: 'https://www.naponi.com',
+      name: 'Naponi',
+      publisher: { '@id': 'https://www.naponi.com/#organization' },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Naponi Digital Tipping',
+      operatingSystem: 'All (Web Browser)',
+      applicationCategory: 'BusinessApplication',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      description: 'Direct QR-based digital tipping platform for restaurants, cafes, hotels, and service teams worldwide.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Do customers need to download an app or create an account to tip?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Customers simply scan the QR code using their standard phone camera, select a tip amount or staff member, and pay using Apple Pay, Google Pay, credit cards, or instant bank wire.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Naponi hold customer funds in a digital wallet?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Naponi is non-custodial. Tips settle directly into the business payment account you configure (IBAN, Swift, routing numbers).',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can we track tips by employee or table?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Naponi supports both general venue QR codes and table-bound or staff-attributed QR codes, giving businesses granular real-time metrics and individual staff tracking.',
+          },
+        },
+      ],
+    },
+  ],
+});
+
+// =============================================================================
+// 0B. PRE-RENDER TURKISH HOMEPAGE (dist/tr/index.html)
+// =============================================================================
+const homepageSemanticContentTr = `
+  <main class="home-wrapper" lang="tr">
+    <header class="home-nav-wrapper">
+      <nav class="home-nav" aria-label="Ana Menü">
+        <a href="/tr" class="home-nav-brand">
+          <img src="/naponi-brand.svg" alt="Naponi Dijital Bahşiş Sistemi" style="height: 40px; width: auto;" />
+        </a>
+        <div class="home-nav-links">
+          <a href="/solutions/restaurants" class="home-nav-link">Restoranlar</a>
+          <a href="/solutions/hotels" class="home-nav-link">Oteller</a>
+          <a href="/solutions/cafes" class="home-nav-link">Kafeler</a>
+          <a href="/tools/tip-calculator" class="home-nav-link">Bahşiş Hesaplayıcı</a>
+          <a href="/blog" class="home-nav-link">Blog & Rehber</a>
+          <a href="/login" class="home-btn-ghost">Giriş Yap</a>
+          <a href="/register" class="home-btn-primary">Hemen Başla</a>
+        </div>
+      </nav>
+    </header>
+
+    <section class="home-hero-section" style="padding-top: 6rem; padding-bottom: 4rem; text-align: center;">
+      <div class="home-container">
+        <span class="home-section-tag">Doğrudan QR Kod Dijital Bahşiş Platformu</span>
+        <h1 class="home-hero-title" style="font-size: 3rem; max-width: 900px; margin: 1rem auto;">
+          Restoran ve Hizmet Ekipleri İçin Yeni Nesil QR Dijital Bahşiş Sistemi
+        </h1>
+        <p class="home-hero-desc" style="font-size: 1.2rem; max-width: 760px; margin: 1rem auto 2rem; color: #94a3b8;">
+          Garsonlar, baristalar, otel kat görevlileri ve servis çalışanları için temassız QR bahşiş. Uygulama indirme yok, üye olma zorunluluğu yok, doğrudan banka hesabına transfer.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/register" class="home-btn-primary home-btn-hero-large">Ücretsiz İşletme Hesabı Aç &rarr;</a>
+          <a href="/tools/tip-calculator" class="home-btn-secondary">Bahşiş Hesaplama Aracı</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sektörel Çözümler -->
+    <section class="home-section">
+      <div class="home-container">
+        <div class="home-section-header">
+          <span class="home-section-tag">Sektörel Çözümler</span>
+          <h2 class="home-section-title">Her Hizmet Alanı İçin Özel QR Bahşiş Modelleri</h2>
+          <p class="home-section-desc">Masa üstü pleksi stantlardan vale kuponlarına kadar her operasyona uygun temassız akışlar.</p>
+        </div>
+        <div class="home-features-grid">
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/restaurants">Restoranlar ve Gastronomi</a></h3>
+            <p class="home-feature-desc">Masaüstü QR stantlar sayesinde müşteriler saniyeler içinde kredi kartı veya dijital cüzdan ile garsona bahşiş bırakır.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/cafes">Kahve Dükkanları & Kafeler</a></h3>
+            <p class="home-feature-desc">Baristalar için dijital bahşiş kutusu. Sıra beklemeden ve bozuk para aramadan hızlı mikro bahşiş.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/hotels">Oteller & Tatil Köyleri</a></h3>
+            <p class="home-feature-desc">Oda içi kat hizmetleri plaketleri ve bavul görevlileri için çoklu para birimi destekli uluslararası bahşiş.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/bars">Barlar, Publar & Gece Kulüpleri</a></h3>
+            <p class="home-feature-desc">Loş ışıkta ve kalabalık bar tezgahlarında kolay okunan, yüksek hızlı bar matı QR tasarımları.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/barbers">Kuaförler, Berberler & Spa</a></h3>
+            <p class="home-feature-desc">Ayna yanına yerleştirilen kişiye özel QR etiketleri ile doğrudan stilistinize veya terapistinize teşekkür edin.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/valet">Vale & Danışma Hizmetleri</a></h3>
+            <p class="home-feature-desc">Araç teslim fişlerine ve vale karşılama masasına basılan QR kodlar ile araç beklerken anında bahşiş.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Footer -->
+    <footer class="home-footer">
+      <div class="home-container">
+        <p>© ${new Date().getFullYear()} NAPONI Technologies. Doğrudan QR Kod Dijital Bahşiş Platformu.</p>
+        <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+          <a href="/solutions/restaurants">Restoranlar</a>
+          <a href="/solutions/cafes">Kafeler</a>
+          <a href="/solutions/hotels">Oteller</a>
+          <a href="/solutions/bars">Barlar</a>
+          <a href="/solutions/barbers">Berberler</a>
+          <a href="/solutions/valet">Vale</a>
+          <a href="/tools/tip-calculator">Bahşiş Hesaplama</a>
+          <a href="/tools/tip-split-calculator">Havuz Paylaşımı</a>
+          <a href="/blog">Blog & Rehberler</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+`;
+
+writeStaticRoute('tr', {
+  title: 'Naponi — Restoran ve Oteller İçin Doğrudan QR Kod Dijital Bahşiş Sistemi',
+  description: 'Personel ve hizmet ekipleriniz için temassız, anında IBAN transferli QR kod dijital bahşiş platformu. Uygulama indirme yok, üyelik yok.',
+  canonicalUrl: 'https://www.naponi.com/tr',
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/' },
+    { lang: 'en', url: 'https://www.naponi.com/' },
+    { lang: 'tr', url: 'https://www.naponi.com/tr' },
+  ],
+  jsonLd: [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.naponi.com/#organization',
+      name: 'Naponi',
+      url: 'https://www.naponi.com',
+      logo: 'https://www.naponi.com/logo.png',
+      description: 'Restoran ve oteller için temassız QR kod dijital bahşiş platformu.',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Naponi Dijital Bahşiş Sistemi',
+      operatingSystem: 'All (Web Tarayıcı)',
+      applicationCategory: 'BusinessApplication',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'TRY',
+      },
+      description: 'Restoran, kafe ve otel personeline temassız kredi kartıyla doğrudan bahşiş ödeme sistemi.',
+    },
+  ],
+  contentHtml: homepageSemanticContentTr,
 });
 
 // =============================================================================
