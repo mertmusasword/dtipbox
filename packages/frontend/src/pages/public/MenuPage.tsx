@@ -298,7 +298,7 @@ export const MenuPage: React.FC = () => {
             )}
 
             {/* Language Switcher */}
-            <LanguageSelector />
+            <LanguageSelector theme="light" />
           </div>
         </div>
       </header>

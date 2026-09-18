@@ -7,17 +7,21 @@ interface LanguageSelectorProps {
   variant?: 'navbar' | 'compact' | 'flagOnly' | 'footer' | 'floating';
   direction?: 'up' | 'down' | 'auto';
   className?: string;
+  theme?: 'dark' | 'light';
 }
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   variant = 'navbar',
   direction = 'auto',
   className = '',
+  theme = 'dark',
 }) => {
   const { language, setLanguage, supportedLanguages, currentMeta, dir } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [openUpwards, setOpenUpwards] = useState(direction === 'up');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isLight = theme === 'light';
 
   // Determine opening direction
   useEffect(() => {
@@ -92,12 +96,12 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           display: 'flex',
           alignItems: 'center',
           gap: isFlagOnly ? '4px' : '8px',
-          padding: isFlagOnly ? '5px 8px' : variant === 'compact' ? '6px 12px' : '8px 16px',
+          padding: isFlagOnly ? '5px 8px' : variant === 'compact' ? '6px 12px' : '7px 14px',
           borderRadius: '9999px',
-          background: 'rgba(255, 255, 255, 0.12)',
-          border: '1px solid rgba(255, 255, 255, 0.28)',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.25)',
-          color: '#ffffff',
+          background: isLight ? '#FFFFFF' : 'rgba(255, 255, 255, 0.12)',
+          border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.28)',
+          boxShadow: isLight ? '0 2px 8px rgba(0, 0, 0, 0.04)' : '0 2px 10px rgba(0, 0, 0, 0.25)',
+          color: isLight ? '#1C1917' : '#ffffff',
           fontSize: '14px',
           fontWeight: 600,
           cursor: 'pointer',
@@ -117,6 +121,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             width: isFlagOnly ? '11px' : '14px',
             height: isFlagOnly ? '11px' : '14px',
             opacity: 0.75,
+            color: isLight ? '#78716C' : 'currentColor',
             transform: openUpwards
               ? isOpen ? 'rotate(0deg)' : 'rotate(180deg)'
               : isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -146,12 +151,14 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             minWidth: '220px',
             maxHeight: '340px',
             overflowY: 'auto',
-            background: '#0f172a',
-            border: '1px solid rgba(255, 255, 255, 0.14)',
+            background: isLight ? '#FFFFFF' : '#0f172a',
+            border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.14)',
             borderRadius: '16px',
-            boxShadow: openUpwards
-              ? '0 -16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08)'
-              : '0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+            boxShadow: isLight
+              ? '0 16px 36px -6px rgba(0, 0, 0, 0.15)'
+              : openUpwards
+                ? '0 -16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08)'
+                : '0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08)',
             padding: '6px',
             backdropFilter: 'blur(20px)',
           }}
@@ -163,8 +170,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#94a3b8',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+              color: isLight ? '#78716C' : '#94a3b8',
+              borderBottom: isLight ? '1px solid rgba(0, 0, 0, 0.06)' : '1px solid rgba(255, 255, 255, 0.06)',
               marginBottom: '4px',
             }}
           >
@@ -185,9 +192,23 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                   width: '100%',
                   padding: '9px 12px',
                   borderRadius: '10px',
-                  background: isSelected ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isSelected ? '1px solid rgba(99, 102, 241, 0.3)' : '1px solid transparent',
-                  color: isSelected ? '#a5b4fc' : '#e2e8f0',
+                  background: isSelected
+                    ? isLight
+                      ? 'rgba(5, 150, 105, 0.1)'
+                      : 'rgba(99, 102, 241, 0.18)'
+                    : 'transparent',
+                  border: isSelected
+                    ? isLight
+                      ? '1px solid rgba(5, 150, 105, 0.25)'
+                      : '1px solid rgba(99, 102, 241, 0.3)'
+                    : '1px solid transparent',
+                  color: isSelected
+                    ? isLight
+                      ? '#065F46'
+                      : '#a5b4fc'
+                    : isLight
+                      ? '#1C1917'
+                      : '#e2e8f0',
                   fontSize: '13.5px',
                   textAlign: dir === 'rtl' ? 'right' : 'left',
                   cursor: 'pointer',
@@ -195,7 +216,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                   outline: 'none',
                 }}
                 onMouseEnter={(e) => {
-                  if (!isSelected) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                  if (!isSelected) e.currentTarget.style.background = isLight ? '#F5F5F4' : 'rgba(255, 255, 255, 0.06)';
                 }}
                 onMouseLeave={(e) => {
                   if (!isSelected) e.currentTarget.style.background = 'transparent';
@@ -205,12 +226,17 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                   <span style={{ fontSize: '18px', lineHeight: 1 }}>{lang.flag}</span>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontWeight: isSelected ? 600 : 500 }}>{lang.nativeName}</span>
-                    <span style={{ fontSize: '11px', color: '#64748b' }}>{lang.name}</span>
+                    <span style={{ fontSize: '11px', color: isLight ? '#78716C' : '#64748b' }}>{lang.name}</span>
                   </div>
                 </div>
                 {isSelected && (
                   <svg
-                    style={{ width: '16px', height: '16px', color: '#818cf8', flexShrink: 0 }}
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      color: isLight ? '#059669' : '#818cf8',
+                      flexShrink: 0,
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
