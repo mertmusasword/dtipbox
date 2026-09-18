@@ -28,6 +28,10 @@ import {
   AlertTriangle,
   QrCode,
   Smartphone,
+  Camera,
+  Upload,
+  Image as ImageIcon,
+  X,
 } from 'lucide-react';
 
 export const MenuManagementPage: React.FC = () => {
@@ -73,6 +77,12 @@ export const MenuManagementPage: React.FC = () => {
   const [productAllergens, setProductAllergens] = useState<string[]>([]);
   const [productTags, setProductTags] = useState('');
   const [submittingProduct, setSubmittingProduct] = useState(false);
+
+  // Product Image Upload / URL Mode State
+  const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [dragOverPhoto, setDragOverPhoto] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   // Product Search within category
   const [productSearch, setProductSearch] = useState('');
@@ -209,6 +219,71 @@ export const MenuManagementPage: React.FC = () => {
     }
   };
 
+  // Product Photo Upload Handler
+  const handleProductImageUpload = (file: File) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      showToast(language === 'tr' ? 'Lütfen geçerli bir görsel formatı seçiniz (PNG, JPG veya WebP).' : 'Please select a valid image format (PNG, JPG, or WebP).', 'error');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast(language === 'tr' ? 'Görsel boyutu en fazla 10 MB olabilir.' : 'Image size must be under 10 MB.', 'error');
+      return;
+    }
+
+    setIsProcessingImage(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          setIsProcessingImage(false);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let optimized = '';
+        try {
+          optimized = canvas.toDataURL('image/webp', 0.85);
+        } catch {
+          optimized = canvas.toDataURL('image/jpeg', 0.85);
+        }
+        setProductImageUrl(optimized);
+        setIsProcessingImage(false);
+        showToast(language === 'tr' ? 'Ürün fotoğrafı başarıyla yüklendi ve optimize edildi' : 'Product photo uploaded and optimized successfully');
+      };
+      img.onerror = () => {
+        setIsProcessingImage(false);
+        showToast(language === 'tr' ? 'Görsel işlenirken hata oluştu' : 'Failed to process image', 'error');
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => {
+      setIsProcessingImage(false);
+      showToast(language === 'tr' ? 'Dosya okunamadı' : 'Failed to read file', 'error');
+    };
+    reader.readAsDataURL(file);
+  };
+
   // Product Actions
   const openCreateProduct = () => {
     setEditingProduct(null);
@@ -217,6 +292,7 @@ export const MenuManagementPage: React.FC = () => {
     setProductPrice('');
     setProductCurrency(businessCurrency);
     setProductImageUrl('');
+    setImageInputMode('upload');
     setProductCategoryId(activeCategoryId || (categories[0]?.id ?? ''));
     setProductIsActive(true);
     setProductAllergens([]);
@@ -231,6 +307,7 @@ export const MenuManagementPage: React.FC = () => {
     setProductPrice(String(item.price));
     setProductCurrency(item.currency || businessCurrency);
     setProductImageUrl(item.image_url || '');
+    setImageInputMode(item.image_url?.startsWith('data:') ? 'upload' : (item.image_url ? 'url' : 'upload'));
     setProductCategoryId(item.category_id);
     setProductIsActive(item.is_active);
     setProductAllergens(item.allergens || []);
@@ -1218,18 +1295,218 @@ export const MenuManagementPage: React.FC = () => {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload & URL Section */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
-              {t('menu.imageUrl')}
-            </label>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
+              <label style={{ fontSize: '0.82rem', fontWeight: 600, margin: 0 }}>
+                {t('menu.imageUrl')}
+              </label>
+              {/* Mode toggle pills */}
+              <div style={{ display: 'flex', background: 'rgba(255, 255, 255, 0.06)', borderRadius: '6px', padding: '2px' }}>
+                <button
+                  type="button"
+                  onClick={() => setImageInputMode('upload')}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                    padding: '0.25rem 0.55rem',
+                    fontSize: '0.74rem',
+                    fontWeight: 600,
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: imageInputMode === 'upload' ? 'var(--accent-primary)' : 'transparent',
+                    color: imageInputMode === 'upload' ? '#fff' : 'var(--text-muted)',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <Upload size={12} />
+                  <span>{t('menu.uploadPhoto')}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImageInputMode('url')}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                    padding: '0.25rem 0.55rem',
+                    fontSize: '0.74rem',
+                    fontWeight: 600,
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: imageInputMode === 'url' ? 'var(--accent-primary)' : 'transparent',
+                    color: imageInputMode === 'url' ? '#fff' : 'var(--text-muted)',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <ExternalLink size={12} />
+                  <span>{t('menu.enterImageUrl')}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Hidden file input */}
             <input
-              type="url"
-              className="input"
-              placeholder="https://images.unsplash.com/... veya görsel URL"
-              value={productImageUrl}
-              onChange={(e) => setProductImageUrl(e.target.value)}
+              ref={fileInputRef}
+              type="file"
+              accept="image/png, image/jpeg, image/webp, image/jpg"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  handleProductImageUpload(file);
+                  e.target.value = '';
+                }
+              }}
             />
+
+            {/* If an image is already selected or entered */}
+            {productImageUrl ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  padding: '0.75rem',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '76px',
+                    height: '76px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                  }}
+                >
+                  <img
+                    src={productImageUrl}
+                    alt={productName || 'Preview'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23334155"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="10">Hatalı Görsel</text></svg>';
+                    }}
+                  />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
+                    {t('menu.photoPreview')}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '300px' }}>
+                    {productImageUrl.startsWith('data:') ? (language === 'tr' ? 'Cihazdan Yüklendi (WebP Optimize)' : 'Uploaded from Device (WebP)') : productImageUrl}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.45rem', marginTop: '0.5rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        fontSize: '0.74rem',
+                        fontWeight: 600,
+                        padding: '0.3rem 0.65rem',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(255,255,255,0.18)',
+                        background: 'rgba(255,255,255,0.08)',
+                        color: '#ffffff',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Camera size={13} />
+                      <span>{t('menu.changePhoto')}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProductImageUrl('')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        fontSize: '0.74rem',
+                        fontWeight: 600,
+                        padding: '0.3rem 0.65rem',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        color: '#f87171',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Trash2 size={13} />
+                      <span>{t('menu.removePhoto')}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : imageInputMode === 'upload' ? (
+              /* Upload Dropzone */
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOverPhoto(true);
+                }}
+                onDragLeave={() => setDragOverPhoto(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOverPhoto(false);
+                  const file = e.dataTransfer.files?.[0];
+                  if (file) handleProductImageUpload(file);
+                }}
+                style={{
+                  padding: '1.5rem 1rem',
+                  borderRadius: '10px',
+                  border: dragOverPhoto ? '2px dashed var(--accent-primary)' : '1px dashed rgba(255, 255, 255, 0.2)',
+                  background: dragOverPhoto ? 'rgba(99, 102, 241, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '50%',
+                    background: 'rgba(99, 102, 241, 0.12)',
+                    color: 'var(--accent-primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 0.6rem',
+                  }}
+                >
+                  {isProcessingImage ? <div className="spinner-small" /> : <Camera size={20} />}
+                </div>
+                <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {isProcessingImage ? (language === 'tr' ? 'Görsel işleniyor ve optimize ediliyor...' : 'Optimizing photo...') : t('menu.selectOrDropPhoto')}
+                </div>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                  {t('menu.photoFormatsHelp')}
+                </div>
+              </div>
+            ) : (
+              /* URL input fallback */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <input
+                  type="url"
+                  className="input"
+                  placeholder={t('menu.imageUrlPlaceholder') || 'https://images.unsplash.com/... veya görsel URL'}
+                  value={productImageUrl}
+                  onChange={(e) => setProductImageUrl(e.target.value)}
+                />
+              </div>
+            )}
           </div>
 
           {/* ALLERGEN SELECTOR (Grid of 14 standard allergens) */}
