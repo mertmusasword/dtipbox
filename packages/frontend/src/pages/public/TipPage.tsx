@@ -1211,29 +1211,53 @@ export const TipPage: React.FC = () => {
           </div>
         ) : (
           <form onSubmit={handleLeadSubmit} style={{ textAlign: 'left' }}>
-            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-              <div style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1))',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                color: '#34d399',
+            {/* Standalone card title if not rendered inside modal */}
+            {!activeModal && (
+              <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
+                  {details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club')}
+                </h3>
+              </div>
+            )}
+
+            {/* Compact Highlight Reward Banner */}
+            <div
+              style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 0.85rem',
-              }}>
-                <Mail size={24} />
+                gap: '0.75rem',
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.05))',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: '12px',
+                padding: '0.75rem 0.95rem',
+                marginBottom: '1.25rem',
+              }}
+            >
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  color: '#34d399',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Gift size={20} />
               </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
-                {details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club')}
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
-                {details.smartQr.signupReward || (language === 'tr'
-                  ? 'Özel ikramlar, doğum günü hediyeleri ve indirimlerden haberdar olun.'
-                  : 'Enjoy complimentary rewards and exclusive invitations.')}
-              </p>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.1rem' }}>
+                  {language === 'tr' ? 'Üyelik Avantajı' : 'Membership Perk'}
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc', lineHeight: 1.3 }}>
+                  {details.smartQr.signupReward || (language === 'tr'
+                    ? 'Özel ikramlar ve indirim fırsatları'
+                    : 'Exclusive perks and special invitations')}
+                </div>
+              </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.25rem' }}>
