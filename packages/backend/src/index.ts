@@ -194,6 +194,29 @@ async function bootstrapAdmin() {
   }
 }
 
+async function bootstrapFounderMembership() {
+  try {
+    const deadline = new Date(env.FOUNDER_MEMBER_DEADLINE);
+    const updated = await prisma.business.updateMany({
+      where: {
+        created_at: { lte: deadline },
+        is_founder_member: false,
+      },
+      data: {
+        is_founder_member: true,
+        is_lifetime_free: true,
+        membership_plan: 'FOUNDER',
+        membership_status: 'LIFETIME_FREE',
+      },
+    });
+    if (updated.count > 0) {
+      logger.info(`Bootstrapped ${updated.count} existing businesses to Founder Member status`, 'FOUNDER');
+    }
+  } catch (err) {
+    logger.warn(`Founder membership bootstrap skipped/deferred: ${(err as Error).message}`, 'FOUNDER');
+  }
+}
+
 // Start server
 const PORT = env.PORT;
 app.listen(PORT, '0.0.0.0', async () => {
@@ -201,6 +224,7 @@ app.listen(PORT, '0.0.0.0', async () => {
   await bootstrapAdmin();
   await providerRegistry.syncCatalogToDatabase();
   await bootstrapDefaultAgreement();
+  await bootstrapFounderMembership();
 });
 
 export default app;

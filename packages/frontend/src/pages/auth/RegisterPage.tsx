@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { ArrowRight, FileText, ShieldCheck, Building2, CheckCircle2 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
-import { trackBusinessRegisterStarted, trackBusinessRegistered } from '../../analytics';
+import { trackBusinessRegisterStarted, trackBusinessRegistered, trackFounderSignupStarted, trackFounderSignupCompleted } from '../../analytics';
 import { AgreementModal } from '../../components/AgreementModal';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 
@@ -57,6 +57,7 @@ export const RegisterPage: React.FC = () => {
 
   React.useEffect(() => {
     trackBusinessRegisterStarted('register_page');
+    trackFounderSignupStarted('register_page');
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,6 +74,7 @@ export const RegisterPage: React.FC = () => {
     try {
       await register({ ...formData, acceptedAgreement: true } as any);
       trackBusinessRegistered(formData.country, formData.currency, 'form');
+      trackFounderSignupCompleted(formData.country);
       navigate('/dashboard');
     } catch (err: any) {
       const responseData = err.response?.data;
@@ -131,6 +133,56 @@ export const RegisterPage: React.FC = () => {
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
             {t('auth.registerSubtitle')}
           </p>
+        </div>
+
+        {/* 2026 Founder Membership Callout */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(99, 102, 241, 0.12) 100%)',
+          border: '1px solid rgba(245, 158, 11, 0.35)',
+          borderRadius: '12px',
+          padding: '1rem 1.15rem',
+          marginBottom: '1.5rem',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+          display: 'flex',
+          gap: '0.85rem',
+          alignItems: 'flex-start',
+        }}>
+          <div style={{
+            width: 38,
+            height: 38,
+            borderRadius: 10,
+            background: 'rgba(245, 158, 11, 0.2)',
+            border: '1px solid rgba(245, 158, 11, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.2rem',
+            flexShrink: 0,
+            marginTop: '2px',
+          }}>
+            🏆
+          </div>
+          <div style={{ flex: 1, minWidth: 0, textAlign: dir === 'rtl' ? 'right' : 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span style={{ color: '#fbbf24', fontWeight: 800, fontSize: '0.9rem', letterSpacing: '-0.01em' }}>
+                {t('auth.founderTitle')}
+              </span>
+              <span style={{
+                background: 'rgba(245, 158, 11, 0.2)',
+                color: '#fef08a',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: '6px',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+              }}>
+                {language === 'tr' ? '31 Aralık 2026\'ya Kadar' : 'Until Dec 31, 2026'}
+              </span>
+            </div>
+            <p style={{ color: '#e2e8f0', fontSize: '0.82rem', marginTop: '0.35rem', lineHeight: 1.45, marginBottom: 0 }}>
+              {t('auth.founderSubtitle')}
+            </p>
+          </div>
         </div>
 
         {/* Multi-Branch / Enterprise Callout Banner */}
@@ -386,14 +438,36 @@ export const RegisterPage: React.FC = () => {
             type="submit"
             disabled={loading}
             className="btn btn-primary"
-            style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem', marginTop: '0.5rem' }}
+            style={{
+              width: '100%',
+              padding: '0.9rem',
+              fontSize: '0.98rem',
+              fontWeight: 700,
+              marginTop: '0.5rem',
+              background: 'linear-gradient(135deg, #f59e0b 0%, #6366f1 100%)',
+              border: 'none',
+              boxShadow: '0 4px 18px rgba(245, 158, 11, 0.3)',
+            }}
           >
             {loading ? t('auth.creatingAccount') : (
               <>
-                {t('auth.createAccountBtn')} <ArrowRight size={18} />
+                <span>🏆 {t('auth.founderCta')}</span>
+                <ArrowRight size={18} />
               </>
             )}
           </button>
+
+          {/* Legal / Founder Terms Disclaimer */}
+          <p style={{
+            fontSize: '0.72rem',
+            color: '#94a3b8',
+            textAlign: 'center',
+            marginTop: '0.75rem',
+            lineHeight: 1.45,
+            marginBottom: 0,
+          }}>
+            {t('auth.founderDisclaimer')}
+          </p>
         </form>
 
         <AgreementModal

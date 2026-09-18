@@ -5,7 +5,7 @@ import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
-import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe, Split, Users, User, Scale, Percent, CheckCircle, Info } from 'lucide-react';
+import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe, Split, Users, User, Scale, Percent, CheckCircle, Info, Award } from 'lucide-react';
 import { AgreementModal } from '../../components/AgreementModal';
 import { TipDistributionMode, PosFeePayer } from '../../types';
 
@@ -16,6 +16,7 @@ export const ProfileSettingsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [businessData, setBusinessData] = useState<any | null>(null);
 
   // Account settings
   const [changingPassword, setChangingPassword] = useState(false);
@@ -51,6 +52,7 @@ export const ProfileSettingsPage: React.FC = () => {
     ])
       .then(([bizRes, tipRes]) => {
         const data = bizRes.data.data;
+        setBusinessData(data);
         setBusinessConfig({
           locale: data.locale || 'en-US',
           timezone: data.timezone || 'America/New_York',
@@ -176,6 +178,84 @@ export const ProfileSettingsPage: React.FC = () => {
             <span className="badge badge-accent">{user?.role}</span>
           </div>
         </div>
+      </div>
+
+      {/* Membership & Plan Status */}
+      <div className="glass-card" style={{
+        marginBottom: '1.5rem',
+        border: businessData?.is_founder_member ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border-color)',
+        background: businessData?.is_founder_member
+          ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%)'
+          : undefined,
+      }}>
+        <div className="section-header" style={{ marginBottom: '1rem' }}>
+          <Award size={20} className="section-icon" style={{ color: businessData?.is_founder_member ? '#fbbf24' : 'var(--primary)' }} />
+          <div>
+            <h3 className="section-title mb-0" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span>Üyelik & Plan Durumu</span>
+              {businessData?.is_founder_member && (
+                <span style={{
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: '#fbbf24',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                }}>
+                  🏆 Kurucu Üye
+                </span>
+              )}
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
+              Naponi platform kullanım planınız ve faturalandırma detayları
+            </p>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div style={{ padding: '0.85rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div className="form-label" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Mevcut Plan</div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: businessData?.is_founder_member ? '#fbbf24' : '#ffffff', marginTop: '0.2rem' }}>
+              {businessData?.is_founder_member ? '2026 Kurucu Üye (Founder)' : (businessData?.membership_plan || 'Standard')}
+            </div>
+          </div>
+          <div style={{ padding: '0.85rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div className="form-label" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Faturalandırma Durumu</div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#34d399', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>{businessData?.is_lifetime_free ? 'Ömür Boyu Ücretsiz (Lifetime Free)' : 'Standart'}</span>
+            </div>
+          </div>
+          <div style={{ padding: '0.85rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div className="form-label" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Platform Komisyonu</div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#60a5fa', marginTop: '0.2rem' }}>
+              {businessData?.is_founder_member ? '%0 (Ömür Boyu)' : '%0'}
+            </div>
+          </div>
+        </div>
+
+        {businessData?.is_founder_member && (
+          <div style={{
+            background: 'rgba(0, 0, 0, 0.25)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            borderRadius: '10px',
+            padding: '1rem',
+            fontSize: '0.82rem',
+            lineHeight: 1.5,
+          }}>
+            <div style={{ color: '#fbbf24', fontWeight: 700, marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <CheckCircle size={15} /> Kurucu Üye Haklarınız Aktif
+            </div>
+            <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#cbd5e1' }}>
+              <li>Tüm masaüstü QR kodları ve Smart QR özellikleri ömür boyu ücretsizdir.</li>
+              <li>İşletme ve çalışan panelleri, bahşiş havuzu ve vardiya paylaşım araçları dahildir.</li>
+              <li>İşletmenizden asla platform abonelik ücreti veya aylık sabit ücret talep edilmeyecektir.</li>
+            </ul>
+            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', fontSize: '0.74rem', color: '#94a3b8' }}>
+              ℹ️ <strong>Kapsam Dışı:</strong> Ödeme kuruluşlarının (Iyzico, Stripe vb.) banka işlem komisyonları, fiziksel stant siparişleri ve harici kurumsal entegrasyonlar bu kapsama dahil değildir.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Bahşiş Dağıtım ve Havuzlama Ayarları */}

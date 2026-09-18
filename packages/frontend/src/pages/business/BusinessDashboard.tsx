@@ -125,11 +125,33 @@ export const BusinessDashboard: React.FC = () => {
             />
           )}
           <div>
-            <h1 className="page-title">
-              {loading ? t('business.dashboardTitle') : `${business?.name || t('business.dashboardTitle')}`}
-            </h1>
-            <p className="page-subtitle mb-0">
-              {t('business.dashboardSubtitle')}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+              <h1 className="page-title" style={{ marginBottom: 0 }}>
+                {loading ? t('business.dashboardTitle') : `${business?.name || t('business.dashboardTitle')}`}
+              </h1>
+              {business?.is_founder_member && (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(99, 102, 241, 0.16) 100%)',
+                  border: '1px solid rgba(245, 158, 11, 0.45)',
+                  color: '#fbbf24',
+                  padding: '2px 10px',
+                  borderRadius: '20px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  boxShadow: '0 2px 8px rgba(245, 158, 11, 0.15)',
+                }}>
+                  <span>🏆</span>
+                  <span>{t('auth.founderActiveBadge')}</span>
+                </div>
+              )}
+            </div>
+            <p className="page-subtitle mb-0" style={{ marginTop: '0.35rem' }}>
+              {business?.is_founder_member
+                ? t('auth.founderDashboardNote')
+                : t('business.dashboardSubtitle')}
             </p>
           </div>
         </div>

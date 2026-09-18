@@ -48,6 +48,9 @@ export const env = {
   SMTP_FROM: process.env.SMTP_FROM || 'Naponi <noreply@naponi.com>',
   SMTP_SECURE: process.env.SMTP_SECURE === 'true',
 
+  // 2026 Founder Membership Campaign Deadline (ISO string)
+  FOUNDER_MEMBER_DEADLINE: process.env.FOUNDER_MEMBER_DEADLINE || '2026-12-31T23:59:59.999Z',
+
   // Helpers
   isDev: process.env.NODE_ENV !== 'production',
   isProd: process.env.NODE_ENV === 'production',

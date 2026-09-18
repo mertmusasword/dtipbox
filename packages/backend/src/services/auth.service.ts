@@ -68,6 +68,11 @@ export async function register(input: RegisterInput) {
   const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
   const role = input.role || Role.BUSINESS;
 
+  // Server-side enforcement of 2026 Founder Membership Campaign
+  const now = new Date();
+  const deadline = new Date(env.FOUNDER_MEMBER_DEADLINE);
+  const isFounder = now <= deadline;
+
   const user = await prisma.user.create({
     data: {
       email: input.email.toLowerCase().trim(),
@@ -80,6 +85,11 @@ export async function register(input: RegisterInput) {
             country: input.country || 'US',
             currency: input.currency || 'USD',
             timezone: input.timezone || 'America/New_York',
+            is_founder_member: isFounder,
+            is_lifetime_free: isFounder,
+            founder_joined_at: isFounder ? now : null,
+            membership_plan: isFounder ? 'FOUNDER' : 'STANDARD',
+            membership_status: isFounder ? 'LIFETIME_FREE' : 'ACTIVE',
           },
         },
       }),

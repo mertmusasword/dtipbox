@@ -21,7 +21,11 @@ export type GAEventName =
   | 'blog_category_click'
   | 'blog_related_article_click'
   | 'tool_used'
-  | 'register_from_blog';
+  | 'register_from_blog'
+  | 'founder_cta_clicked'
+  | 'founder_signup_started'
+  | 'founder_signup_completed'
+  | 'founder_member_created';
 
 export interface PageViewParams {
   page_path: string;

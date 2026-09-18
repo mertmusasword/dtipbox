@@ -76,6 +76,7 @@ export const AdminBusinessesPage: React.FC = () => {
                   <th>Country / Currency</th>
                   <th>Owner</th>
                   <th>Staff / Tables</th>
+                  <th>Plan</th>
                   <th>Status</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
@@ -90,6 +91,17 @@ export const AdminBusinessesPage: React.FC = () => {
                     <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{b.owner?.email}</td>
                     <td>
                       {b._count?.employees || 0} staff • {b._count?.tables || 0} tables
+                    </td>
+                    <td>
+                      {b.is_founder_member ? (
+                        <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.4)', fontSize: '0.72rem' }}>
+                          🏆 Founder (Free)
+                        </span>
+                      ) : (
+                        <span className="badge badge-secondary" style={{ fontSize: '0.72rem' }}>
+                          {b.membership_plan || 'Standard'}
+                        </span>
+                      )}
                     </td>
                     <td>
                       <span className={`badge ${b.is_active ? 'badge-success' : 'badge-danger'}`}>
@@ -134,6 +146,13 @@ export const AdminBusinessesPage: React.FC = () => {
               <div><strong>Owner:</strong> {selectedBusiness.owner?.email}</div>
               <div><strong>Timezone:</strong> {selectedBusiness.timezone}</div>
               <div><strong>Created:</strong> {new Date(selectedBusiness.created_at).toLocaleString()}</div>
+              <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div><strong>Plan:</strong> <span style={{ color: selectedBusiness.is_founder_member ? '#fbbf24' : 'inherit', fontWeight: 600 }}>{selectedBusiness.is_founder_member ? '🏆 2026 Kurucu Üye (Founder)' : (selectedBusiness.membership_plan || 'Standard')}</span></div>
+                <div><strong>Billing:</strong> <span style={{ color: selectedBusiness.is_lifetime_free ? '#34d399' : 'inherit' }}>{selectedBusiness.is_lifetime_free ? 'Ömür Boyu Ücretsiz (Lifetime Free)' : 'Standart'}</span></div>
+                {selectedBusiness.founder_joined_at && (
+                  <div><strong>Founder Joined:</strong> {new Date(selectedBusiness.founder_joined_at).toLocaleString()}</div>
+                )}
+              </div>
             </div>
 
             <div>

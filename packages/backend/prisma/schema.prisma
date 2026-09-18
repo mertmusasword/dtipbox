@@ -184,6 +184,13 @@ model Business {
   tax_deduction_enabled   Boolean               @default(false)
   tax_deduction_rate      Decimal?              @default(0.00) @db.Decimal(5, 2)
 
+  // Membership & Entitlement (2026 Founder Member & Future Pricing Architecture)
+  is_founder_member       Boolean               @default(false)
+  is_lifetime_free        Boolean               @default(false)
+  founder_joined_at       DateTime?
+  membership_plan         String                @default("FOUNDER")
+  membership_status       String                @default("LIFETIME_FREE")
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

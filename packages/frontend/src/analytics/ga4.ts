@@ -341,6 +341,34 @@ export function trackRegisterFromBlog(source_page: string): void {
   trackEvent('register_from_blog', { source_page });
 }
 
+/**
+ * 19. founder_cta_clicked — Track clicks on 2026 Founder Member CTAs
+ */
+export function trackFounderCtaClicked(source: string): void {
+  trackEvent('founder_cta_clicked', { source });
+}
+
+/**
+ * 20. founder_signup_started — Track when user begins registration with founder offer
+ */
+export function trackFounderSignupStarted(source: string): void {
+  trackEvent('founder_signup_started', { source });
+}
+
+/**
+ * 21. founder_signup_completed — Track successful registration under founder offer
+ */
+export function trackFounderSignupCompleted(country?: string): void {
+  trackEvent('founder_signup_completed', { country });
+}
+
+/**
+ * 22. founder_member_created — Track when founder member entitlement is confirmed
+ */
+export function trackFounderMemberCreated(plan: string = 'FOUNDER'): void {
+  trackEvent('founder_member_created', { plan });
+}
+
 // =============================================================================
 // Testing & Telemetry Inspection Helpers
 // =============================================================================

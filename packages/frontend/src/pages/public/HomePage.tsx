@@ -55,7 +55,7 @@ import {
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
-import { trackBusinessRegisterStarted } from '../../analytics';
+import { trackBusinessRegisterStarted, trackFounderCtaClicked } from '../../analytics';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 import { SupportTicketModal } from '../../components/SupportTicketModal';
 import { LegalModal, LegalTab } from '../../components/LegalModal';
@@ -443,9 +443,9 @@ export const HomePage: React.FC = () => {
           <div className="home-hero-grid">
             {/* Left Hero Column */}
             <div className="home-hero-content">
-              <div className="home-hero-badge">
-                <Sparkles size={14} className="sparkle" />
-                <span>{t('home.heroBadge')}</span>
+              <div className="home-hero-badge" style={{ background: 'rgba(234, 179, 8, 0.12)', border: '1px solid rgba(234, 179, 8, 0.35)', color: '#facc15' }}>
+                <Award size={14} className="sparkle" />
+                <span>{t('founder.heroBadge')}</span>
               </div>
 
               <h1 className="home-hero-title">
@@ -458,8 +458,15 @@ export const HomePage: React.FC = () => {
               </p>
 
               <div className="home-hero-cta-group">
-                <Link to="/register" className="home-btn-primary home-btn-hero-large" onClick={() => trackBusinessRegisterStarted('hero_cta')}>
-                  {t('home.ctaGetStarted')} <ArrowRight size={18} />
+                <Link
+                  to="/register"
+                  className="home-btn-primary home-btn-hero-large"
+                  onClick={() => {
+                    trackFounderCtaClicked('hero_cta');
+                    trackBusinessRegisterStarted('hero_cta');
+                  }}
+                >
+                  {t('founder.ctaButton')} <ArrowRight size={18} />
                 </Link>
                 <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
                   {t('home.ctaLogin')}
@@ -1800,6 +1807,274 @@ export const HomePage: React.FC = () => {
             <div className="home-pay-badge-item">
               <Zap size={18} />
               <span>{t('home.payDirectBank')}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          7B. 2026 KURUCU ÜYELİK / FOUNDER MEMBERSHIP (LIFETIME FREE)
+          ==================================================================== */}
+      <section className="home-section" id="founder-program" style={{ paddingTop: 30, paddingBottom: 60 }}>
+        <div className="home-container">
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(15, 23, 42, 0.96) 50%, rgba(99, 102, 241, 0.08) 100%)',
+              border: '1px solid rgba(234, 179, 8, 0.3)',
+              borderRadius: '24px',
+              padding: '3rem 2rem',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            {/* Top Tag & Deadline */}
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.4rem 1.2rem',
+                  borderRadius: '999px',
+                  background: 'rgba(234, 179, 8, 0.15)',
+                  border: '1px solid rgba(234, 179, 8, 0.35)',
+                  color: '#facc15',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '1rem',
+                }}
+              >
+                <Award size={16} />
+                <span>{t('founder.sectionTag')}</span>
+              </div>
+
+              <h2
+                style={{
+                  fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
+                  fontWeight: 800,
+                  color: '#ffffff',
+                  marginBottom: '1rem',
+                  lineHeight: 1.25,
+                }}
+              >
+                {t('founder.sectionTitle')}
+              </h2>
+
+              <p
+                style={{
+                  fontSize: '1.05rem',
+                  color: '#cbd5e1',
+                  maxWidth: '780px',
+                  margin: '0 auto 1rem',
+                  lineHeight: 1.6,
+                }}
+              >
+                {t('founder.sectionSubtitle')}
+              </p>
+
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#facc15', fontSize: '0.85rem', fontWeight: 600 }}>
+                <Clock size={15} />
+                <span>{t('founder.deadlineNotice')}</span>
+              </div>
+            </div>
+
+            {/* 4 Core Pillars Grid */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '1.25rem',
+                marginBottom: '2.5rem',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 12,
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#34d399',
+                  }}
+                >
+                  <Percent size={20} />
+                </div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                  {t('founder.card1Title')}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {t('founder.card1Desc')}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 12,
+                    background: 'rgba(234, 179, 8, 0.15)',
+                    border: '1px solid rgba(234, 179, 8, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#facc15',
+                  }}
+                >
+                  <Award size={20} />
+                </div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                  {t('founder.card2Title')}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {t('founder.card2Desc')}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 12,
+                    background: 'rgba(99, 102, 241, 0.15)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#a5b4fc',
+                  }}
+                >
+                  <QrCode size={20} />
+                </div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                  {t('founder.card3Title')}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {t('founder.card3Desc')}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 12,
+                    background: 'rgba(56, 189, 248, 0.15)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#38bdf8',
+                  }}
+                >
+                  <ShieldCheck size={20} />
+                </div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                  {t('founder.card4Title')}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {t('founder.card4Desc')}
+                </p>
+              </div>
+            </div>
+
+            {/* CTA & Legal Disclaimer */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.35)',
+                borderRadius: '16px',
+                padding: '1.5rem 2rem',
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1.5rem',
+              }}
+            >
+              <div style={{ maxWidth: '750px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#facc15', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                  <Sparkles size={16} />
+                  <span>{t('auth.founderTitle')}</span>
+                </div>
+                <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.78rem', lineHeight: 1.6 }}>
+                  {t('founder.disclaimer')}
+                </p>
+              </div>
+
+              <Link
+                to="/register"
+                className="home-btn-primary"
+                style={{
+                  padding: '0.9rem 2rem',
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
+                  color: '#090d16',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  textDecoration: 'none',
+                  borderRadius: '12px',
+                  whiteSpace: 'nowrap',
+                }}
+                onClick={() => {
+                  trackFounderCtaClicked('home_founder_section');
+                  trackBusinessRegisterStarted('founder_section_cta');
+                }}
+              >
+                <span>{t('founder.ctaBottom')}</span>
+                <ArrowRight size={16} />
+              </Link>
             </div>
           </div>
         </div>

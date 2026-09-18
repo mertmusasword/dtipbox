@@ -37,6 +37,11 @@ export interface Business {
   tax_deduction_enabled?: boolean;
   tax_deduction_rate?: number | string | null;
   payment_account?: BusinessPaymentAccount | null;
+  is_founder_member?: boolean;
+  is_lifetime_free?: boolean;
+  founder_joined_at?: string | null;
+  membership_plan?: string;
+  membership_status?: string;
 }
 
 export interface BusinessPaymentAccount {
