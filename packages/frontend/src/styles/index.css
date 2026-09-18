@@ -2052,3 +2052,87 @@ h1, h2, h3, h4, h5, h6,
     padding: 0.5rem 0.5rem !important;
   }
 }
+
+/* ===================== Warm Boutique Light Theme ===================== */
+.theme-warm-light {
+  background-color: #FAF9F6;
+  color: #1C1917;
+}
+
+.theme-warm-light .glass-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.03);
+  color: #1C1917;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.theme-warm-light .input,
+.theme-warm-light input.input,
+.theme-warm-light textarea.input {
+  background: #F5F5F4;
+  border: 1.5px solid #E7E5E4;
+  color: #1C1917;
+}
+
+.theme-warm-light .input:focus,
+.theme-warm-light input.input:focus,
+.theme-warm-light textarea.input:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.16);
+  background: #FFFFFF;
+}
+
+.theme-warm-light .input::placeholder,
+.theme-warm-light input.input::placeholder,
+.theme-warm-light textarea.input::placeholder {
+  color: #A8A29E;
+}
+
+.theme-warm-light .btn-primary {
+  background: linear-gradient(135deg, #059669, #047857);
+  border: 1px solid #059669;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.28);
+}
+
+.theme-warm-light .btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #047857, #065F46);
+  box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+}
+
+.theme-warm-light .btn-secondary {
+  background: #F5F5F4;
+  border: 1px solid #E7E5E4;
+  color: #44403C;
+}
+
+.theme-warm-light .btn-secondary:hover:not(:disabled) {
+  background: #E7E5E4;
+  color: #1C1917;
+}
+
+.theme-warm-light .badge-neutral {
+  background: #F5F5F4;
+  border: 1px solid #E7E5E4;
+  color: #57534E;
+}
+
+.theme-warm-light .smart-sheet-overlay {
+  background: rgba(28, 25, 23, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.theme-warm-light .smart-sheet-content {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1C1917;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.theme-warm-light .smart-sheet-handle {
+  background: #D6D3D1;
+}
+

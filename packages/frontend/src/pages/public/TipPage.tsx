@@ -347,10 +347,10 @@ export const TipPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="theme-warm-light" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAF9F6', color: '#1C1917' }}>
         <div style={{ textAlign: 'center' }}>
-          <Sparkles className="animate-spin" size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 1rem' }} />
-          <div style={{ color: 'var(--text-secondary)' }}>{t('tip.loadingDetails')}</div>
+          <Sparkles className="animate-spin" size={36} style={{ color: '#059669', margin: '0 auto 1rem' }} />
+          <div style={{ color: '#78716C', fontWeight: 600 }}>{t('tip.loadingDetails')}</div>
         </div>
       </div>
     );
@@ -358,14 +358,14 @@ export const TipPage: React.FC = () => {
 
   if (error || !details) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', position: 'relative' }}>
+      <div className="theme-warm-light" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', position: 'relative', background: '#FAF9F6', color: '#1C1917' }}>
         <div style={{ position: 'absolute', top: '1rem', right: dir === 'rtl' ? 'auto' : '1rem', left: dir === 'rtl' ? '1rem' : 'auto' }}>
-          <LanguageSelector variant="compact" />
+          <LanguageSelector variant="compact" theme="light" />
         </div>
-        <div className="glass-card" style={{ maxWidth: '440px', width: '100%', textAlign: 'center', padding: '2.5rem' }}>
+        <div className="glass-card" style={{ maxWidth: '440px', width: '100%', textAlign: 'center', padding: '2.5rem', background: '#FFFFFF', border: '1px solid rgba(0, 0, 0, 0.06)', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)', color: '#1C1917' }}>
           <AlertCircle size={48} style={{ color: '#ef4444', margin: '0 auto 1rem' }} />
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{t('tip.invalidQr')}</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>{error || t('tip.inactiveBusiness')}</p>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: '#1C1917', fontWeight: 800 }}>{t('tip.invalidQr')}</h2>
+          <p style={{ color: '#78716C', fontSize: '0.9rem', marginBottom: '1.5rem' }}>{error || t('tip.inactiveBusiness')}</p>
           <Link to="/" className="btn btn-secondary">
             {t('tip.backToHome')}
           </Link>
@@ -390,12 +390,12 @@ export const TipPage: React.FC = () => {
     const paymentUrl = paymentResult.payment?.paymentUrl;
 
     return (
-      <div style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+      <div className="theme-warm-light" style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', background: '#FAF9F6', color: '#1C1917' }}>
         <div style={{ position: 'absolute', top: '1rem', right: dir === 'rtl' ? 'auto' : '1rem', left: dir === 'rtl' ? '1rem' : 'auto' }}>
-          <LanguageSelector variant="compact" />
+          <LanguageSelector variant="compact" theme="light" />
         </div>
 
-        <div className="glass-card" style={{ maxWidth: '480px', width: '100%', padding: '2.5rem', textAlign: 'center' }}>
+        <div className="glass-card" style={{ maxWidth: '480px', width: '100%', padding: '2.5rem', textAlign: 'center', background: '#FFFFFF', border: '1px solid rgba(0, 0, 0, 0.06)', borderRadius: '24px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04)', color: '#1C1917' }}>
           {/* Status Icon */}
           <div style={{
             width: '64px',
@@ -404,21 +404,21 @@ export const TipPage: React.FC = () => {
             background: isUnverified
               ? 'rgba(245, 158, 11, 0.15)'
               : isSuccess
-              ? 'rgba(16, 185, 129, 0.15)'
+              ? 'rgba(5, 150, 105, 0.15)'
               : isFailed
               ? 'rgba(239, 68, 68, 0.15)'
               : isCancelled
-              ? 'rgba(107, 114, 128, 0.15)'
-              : 'rgba(59, 130, 246, 0.15)',
+              ? 'rgba(120, 113, 108, 0.15)'
+              : 'rgba(2, 132, 199, 0.15)',
             color: isUnverified
-              ? '#f59e0b'
+              ? '#D97706'
               : isSuccess
-              ? '#10b981'
+              ? '#059669'
               : isFailed
               ? '#ef4444'
               : isCancelled
-              ? '#9ca3af'
-              : '#3b82f6',
+              ? '#78716C'
+              : '#0284C7',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -438,7 +438,7 @@ export const TipPage: React.FC = () => {
           </div>
 
           {/* Status Title & Subtitle */}
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem', color: '#1C1917' }}>
             {isUnverified
               ? t('tip.transferInstructions')
               : isSuccess
@@ -449,7 +449,7 @@ export const TipPage: React.FC = () => {
               ? 'Ödeme İptal Edildi'
               : 'Ödeme Bekleniyor'}
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+          <p style={{ color: '#78716C', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
             {isUnverified
               ? t('tip.bankNotice')
               : isSuccess
@@ -464,21 +464,23 @@ export const TipPage: React.FC = () => {
           </p>
 
           <div style={{
-            background: 'var(--bg-input)',
-            borderRadius: 'var(--radius-md)',
+            background: '#F5F5F4',
+            border: '1px solid #E7E5E4',
+            borderRadius: '14px',
             padding: '1.25rem',
             textAlign: dir === 'rtl' ? 'right' : 'left',
             marginBottom: '1.5rem',
             fontSize: '0.9rem',
+            color: '#1C1917',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>{t('common.amount')}:</span>
-              <span style={{ fontWeight: 700 }}>
+              <span style={{ color: '#78716C' }}>{t('common.amount')}:</span>
+              <span style={{ fontWeight: 700, color: '#1C1917' }}>
                 {formatCurrency(paymentResult.tip.amount, details.business.currency)}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--text-muted)', flexShrink: 0 }}>{t('common.status')}:</span>
+              <span style={{ color: '#78716C', flexShrink: 0 }}>{t('common.status')}:</span>
               <span className={`badge ${
                 isSuccess
                   ? 'badge-success'
@@ -501,17 +503,17 @@ export const TipPage: React.FC = () => {
             </div>
 
             {isUnverified && ibanDetails && (
-              <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
+              <div style={{ marginTop: '1rem', borderTop: '1px solid #E7E5E4', paddingTop: '1rem' }}>
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.accountHolder')}</div>
-                  <div style={{ fontWeight: 600 }}>{ibanDetails.accountHolderName}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#78716C' }}>{t('tip.accountHolder')}</div>
+                  <div style={{ fontWeight: 600, color: '#1C1917' }}>{ibanDetails.accountHolderName}</div>
                 </div>
                 {ibanDetails.iban && (
                   <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.ibanLabel')}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#78716C' }}>{t('tip.ibanLabel')}</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <code style={{ fontSize: '0.85rem', fontWeight: 600 }}>{ibanDetails.iban}</code>
-                      <button type="button" onClick={() => copyToClipboard(ibanDetails.iban!)} style={{ color: 'var(--accent-primary)', padding: '4px' }}>
+                      <code style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1C1917', background: '#E7E5E4', padding: '2px 6px', borderRadius: '6px' }}>{ibanDetails.iban}</code>
+                      <button type="button" onClick={() => copyToClipboard(ibanDetails.iban!)} style={{ color: '#059669', padding: '4px' }}>
                         {copiedIban ? <Check size={16} /> : <Copy size={16} />}
                       </button>
                     </div>
@@ -519,14 +521,14 @@ export const TipPage: React.FC = () => {
                 )}
                 {ibanDetails.bankName && (
                   <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.bankName')}</div>
-                    <div style={{ fontWeight: 600 }}>{ibanDetails.bankName}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#78716C' }}>{t('tip.bankName')}</div>
+                    <div style={{ fontWeight: 600, color: '#1C1917' }}>{ibanDetails.bankName}</div>
                   </div>
                 )}
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('tip.refCodeLabel')}</div>
-                  <div style={{ fontWeight: 700, color: 'var(--accent-primary)', fontSize: '1.1rem' }}>{ibanDetails.referenceCode}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{t('tip.refCodeNotice')}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#78716C' }}>{t('tip.refCodeLabel')}</div>
+                  <div style={{ fontWeight: 700, color: '#059669', fontSize: '1.1rem' }}>{ibanDetails.referenceCode}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#78716C', marginTop: '0.2rem' }}>{t('tip.refCodeNotice')}</div>
                 </div>
               </div>
             )}
@@ -547,9 +549,9 @@ export const TipPage: React.FC = () => {
           {/* Customer Feedback Card (Post-Tip) */}
           {(isSuccess || isUnverified) && (
             <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 'var(--radius-md)',
+              background: '#F5F5F4',
+              border: '1px solid #E7E5E4',
+              borderRadius: '16px',
               padding: '1.25rem',
               marginBottom: '1.25rem',
               textAlign: 'center',
@@ -560,8 +562,8 @@ export const TipPage: React.FC = () => {
                     width: '44px',
                     height: '44px',
                     borderRadius: '50%',
-                    background: 'rgba(16, 185, 129, 0.15)',
-                    color: '#10b981',
+                    background: 'rgba(5, 150, 105, 0.15)',
+                    color: '#059669',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -569,10 +571,10 @@ export const TipPage: React.FC = () => {
                   }}>
                     <CheckCircle2 size={24} />
                   </div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.25rem', color: '#10b981' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.25rem', color: '#059669' }}>
                     {t('feedback.thankYouTitle')}
                   </h4>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                  <p style={{ fontSize: '0.85rem', color: '#78716C', margin: 0 }}>
                     {t('feedback.thankYouSubtitle')}
                   </p>
 
@@ -582,8 +584,8 @@ export const TipPage: React.FC = () => {
                       marginTop: '1.25rem',
                       padding: '1.25rem',
                       borderRadius: '16px',
-                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(66, 133, 244, 0.12))',
-                      border: '1.5px solid rgba(245, 158, 11, 0.35)',
+                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(66, 133, 244, 0.08))',
+                      border: '1.5px solid rgba(245, 158, 11, 0.3)',
                       textAlign: 'center',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', marginBottom: '0.45rem' }}>
@@ -591,10 +593,10 @@ export const TipPage: React.FC = () => {
                           <Star key={s} size={15} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
                         ))}
                       </div>
-                      <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#1C1917', marginBottom: '0.35rem' }}>
                         {language === 'tr' ? 'Bizi Çok Mutlu Ettiniz! 🎉' : 'You Made Our Day! 🎉'}
                       </h4>
-                      <p style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.45, marginBottom: '0.9rem' }}>
+                      <p style={{ fontSize: '0.82rem', color: '#57534E', lineHeight: 1.45, marginBottom: '0.9rem' }}>
                         {language === 'tr'
                           ? `${details?.business?.name || 'Ekibimize'} destek olmak için 5 yıldızlı değerlendirmenizi Google Haritalar'da da paylaşmak ister misiniz?`
                           : `Would you like to support ${details?.business?.name || 'our team'} by posting your 5-star review on Google Maps?`}
@@ -631,7 +633,7 @@ export const TipPage: React.FC = () => {
                         <ExternalLink size={14} />
                       </button>
                       {copiedReviewText && (
-                        <div style={{ fontSize: '0.74rem', color: '#34d399', marginTop: '0.45rem', fontWeight: 600 }}>
+                        <div style={{ fontSize: '0.74rem', color: '#059669', marginTop: '0.45rem', fontWeight: 600 }}>
                           {language === 'tr' ? '✓ Yorumunuz panoya kopyalandı! Google sayfasına yapıştırabilirsiniz.' : '✓ Review copied to clipboard! Paste it on Google.'}
                         </div>
                       )}
@@ -640,10 +642,10 @@ export const TipPage: React.FC = () => {
                 </div>
               ) : feedbackSkipped ? null : (
                 <div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.35rem', color: '#1C1917' }}>
                     {t('feedback.satisfactionQuestion')}
                   </h4>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.82rem', color: '#78716C', marginBottom: '1rem' }}>
                     {t('feedback.ratingLabel')}
                   </p>
 
@@ -671,7 +673,7 @@ export const TipPage: React.FC = () => {
                           <Star
                             size={32}
                             style={{
-                              color: isActive ? '#f59e0b' : 'rgba(255, 255, 255, 0.2)',
+                              color: isActive ? '#f59e0b' : '#D6D3D1',
                               fill: isActive ? '#f59e0b' : 'transparent',
                               transition: 'all 0.15s ease',
                             }}
@@ -692,17 +694,17 @@ export const TipPage: React.FC = () => {
                         style={{
                           width: '100%',
                           padding: '0.75rem',
-                          borderRadius: 'var(--radius-sm)',
-                          background: 'var(--bg-input)',
-                          border: '1px solid var(--border-color)',
-                          color: 'var(--text-primary)',
+                          borderRadius: '12px',
+                          background: '#FFFFFF',
+                          border: '1.5px solid #E7E5E4',
+                          color: '#1C1917',
                           fontSize: '0.88rem',
                           resize: 'none',
                           boxSizing: 'border-box',
                           fontFamily: 'inherit',
                         }}
                       />
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', fontSize: '0.75rem', color: '#78716C', marginTop: '0.25rem' }}>
                         {feedbackComment.length}/500
                       </div>
                     </div>
@@ -729,7 +731,7 @@ export const TipPage: React.FC = () => {
                       style={{
                         background: 'transparent',
                         border: 'none',
-                        color: 'var(--text-muted)',
+                        color: '#78716C',
                         fontSize: '0.85rem',
                         cursor: 'pointer',
                         padding: '0.35rem',
@@ -772,9 +774,9 @@ export const TipPage: React.FC = () => {
           width: '52px',
           height: '52px',
           borderRadius: '16px',
-          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(2, 132, 199, 0.1))',
-          border: '1px solid rgba(14, 165, 233, 0.3)',
-          color: '#38bdf8',
+          background: 'rgba(2, 132, 199, 0.1)',
+          border: '1px solid rgba(2, 132, 199, 0.2)',
+          color: '#0284C7',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -783,36 +785,36 @@ export const TipPage: React.FC = () => {
           <Wifi size={26} />
         </div>
 
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
           {language === 'tr' ? 'Misafir Wi-Fi Ağı' : 'Guest Wi-Fi Network'}
         </h3>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+        <p style={{ color: '#78716C', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
           {language === 'tr'
             ? 'İşletmemize özel yüksek hızlı kablosuz internete bağlanın.'
             : 'Connect to our high-speed guest Wi-Fi network.'}
         </p>
 
         <div style={{
-          background: 'rgba(15, 23, 42, 0.6)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: '#F5F5F4',
+          border: '1px solid #E7E5E4',
           borderRadius: '12px',
           padding: '0.9rem',
           marginBottom: '0.85rem',
           textAlign: 'left',
         }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
+          <div style={{ fontSize: '0.72rem', color: '#78716C', marginBottom: '0.2rem', fontWeight: 600 }}>
             {language === 'tr' ? 'AĞ ADI (SSID)' : 'NETWORK NAME (SSID)'}
           </div>
-          <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span>{details.smartQr.wifiSsid}</span>
-            <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>2.4G / 5G</span>
+            <span className="badge badge-primary" style={{ fontSize: '0.7rem', background: 'rgba(2, 132, 199, 0.12)', color: '#0284C7', border: '1px solid rgba(2, 132, 199, 0.25)' }}>2.4G / 5G</span>
           </div>
         </div>
 
         {details.smartQr.wifiPassword && (
           <div style={{
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: '#F5F5F4',
+            border: '1px solid #E7E5E4',
             borderRadius: '12px',
             padding: '0.9rem',
             marginBottom: '1.25rem',
@@ -821,10 +823,10 @@ export const TipPage: React.FC = () => {
             justifyContent: 'space-between',
           }}>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
+              <div style={{ fontSize: '0.72rem', color: '#78716C', marginBottom: '0.2rem', fontWeight: 600 }}>
                 {language === 'tr' ? 'Wİ-Fİ ŞİFRESİ' : 'WI-FI PASSWORD'}
               </div>
-              <div style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.05em', color: '#38bdf8' }}>
+              <div style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.05em', color: '#0284C7' }}>
                 {details.smartQr.wifiPassword}
               </div>
             </div>
@@ -838,8 +840,8 @@ export const TipPage: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
-                background: copiedWifi ? '#10b981' : undefined,
-                borderColor: copiedWifi ? '#10b981' : undefined,
+                background: copiedWifi ? '#059669' : '#0284C7',
+                borderColor: copiedWifi ? '#059669' : '#0284C7',
               }}
             >
               {copiedWifi ? <Check size={15} /> : <Copy size={15} />}
@@ -850,8 +852,8 @@ export const TipPage: React.FC = () => {
 
         {wifiQrUrl && (
           <div style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: '#F5F5F4',
+            border: '1px solid #E7E5E4',
             borderRadius: '16px',
             padding: '1.1rem',
             marginBottom: '1.25rem',
@@ -868,9 +870,10 @@ export const TipPage: React.FC = () => {
                 margin: '0 auto',
                 background: '#fff',
                 padding: '8px',
+                border: '1px solid #E7E5E4',
               }}
             />
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+            <div style={{ fontSize: '0.75rem', color: '#78716C', marginTop: '0.5rem' }}>
               {language === 'tr'
                 ? 'Kameranızı tutarak doğrudan bağlanın'
                 : 'Point camera to join automatically'}
@@ -879,13 +882,13 @@ export const TipPage: React.FC = () => {
         )}
 
         <div style={{
-          background: 'rgba(14, 165, 233, 0.08)',
-          border: '1px solid rgba(14, 165, 233, 0.2)',
+          background: 'rgba(2, 132, 199, 0.08)',
+          border: '1px solid rgba(2, 132, 199, 0.2)',
           borderRadius: '12px',
           padding: '0.85rem',
           textAlign: 'left',
           fontSize: '0.8rem',
-          color: '#bae6fd',
+          color: '#0369A1',
           lineHeight: 1.5,
         }}>
           <div style={{ fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -910,8 +913,9 @@ export const TipPage: React.FC = () => {
             style={{
               padding: '1.25rem',
               position: 'relative',
-              border: '1px solid rgba(236, 72, 153, 0.25)',
-              background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.05), rgba(15, 23, 42, 0.8))',
+              border: '1px solid rgba(219, 39, 119, 0.25)',
+              background: '#FFFFFF',
+              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
             }}
           >
             {camp.badge && (
@@ -932,19 +936,19 @@ export const TipPage: React.FC = () => {
               </div>
             )}
 
-            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
               {camp.title}
             </h4>
             {camp.description && (
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem', lineHeight: 1.45 }}>
+              <p style={{ color: '#57534E', fontSize: '0.85rem', marginBottom: '1rem', lineHeight: 1.45 }}>
                 {camp.description}
               </p>
             )}
 
             {camp.discountCode && (
               <div style={{
-                background: 'rgba(0, 0, 0, 0.35)',
-                border: '1px dashed rgba(236, 72, 153, 0.4)',
+                background: '#FDF2F8',
+                border: '1px dashed rgba(219, 39, 119, 0.35)',
                 borderRadius: '10px',
                 padding: '0.65rem 0.9rem',
                 display: 'flex',
@@ -952,10 +956,10 @@ export const TipPage: React.FC = () => {
                 justifyContent: 'space-between',
               }}>
                 <div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#9D174D', fontWeight: 600 }}>
                     {language === 'tr' ? 'KAMPANYA KODU' : 'PROMO CODE'}
                   </div>
-                  <div style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '0.08em', color: '#f472b6' }}>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '0.08em', color: '#DB2777' }}>
                     {camp.discountCode}
                   </div>
                 </div>
@@ -969,16 +973,18 @@ export const TipPage: React.FC = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.35rem',
+                    background: '#FFFFFF',
+                    border: '1px solid #E7E5E4',
                   }}
                 >
-                  {copiedCoupon === camp.discountCode ? <Check size={14} style={{ color: '#10b981' }} /> : <Copy size={14} />}
+                  {copiedCoupon === camp.discountCode ? <Check size={14} style={{ color: '#059669' }} /> : <Copy size={14} />}
                   {copiedCoupon === camp.discountCode ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Kodu Al' : 'Copy')}
                 </button>
               </div>
             )}
 
             {camp.expiresAt && (
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.6rem' }}>
+              <div style={{ fontSize: '0.72rem', color: '#78716C', marginTop: '0.6rem' }}>
                 ⏳ {language === 'tr' ? 'Son geçerlilik:' : 'Valid until:'} {new Date(camp.expiresAt).toLocaleDateString()}
               </div>
             )}
@@ -997,8 +1003,8 @@ export const TipPage: React.FC = () => {
               width: '52px',
               height: '52px',
               borderRadius: '50%',
-              background: 'rgba(16, 185, 129, 0.15)',
-              color: '#10b981',
+              background: 'rgba(5, 150, 105, 0.15)',
+              color: '#059669',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1006,10 +1012,10 @@ export const TipPage: React.FC = () => {
             }}>
               <CheckCircle2 size={30} />
             </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669', marginBottom: '0.4rem' }}>
               {language === 'tr' ? 'Geri Bildiriminiz Alındı!' : 'Feedback Received!'}
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ color: '#78716C', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
               {language === 'tr'
                 ? 'Değerli görüşleriniz doğrudan işletme yönetimine iletilmiştir. Teşekkür ederiz.'
                 : 'Your valuable feedback has been submitted to management. Thank you!'}
@@ -1021,8 +1027,8 @@ export const TipPage: React.FC = () => {
                 marginTop: '1.25rem',
                 padding: '1.25rem',
                 borderRadius: '16px',
-                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(66, 133, 244, 0.12))',
-                border: '1.5px solid rgba(245, 158, 11, 0.35)',
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(66, 133, 244, 0.08))',
+                border: '1.5px solid rgba(245, 158, 11, 0.3)',
                 textAlign: 'center',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', marginBottom: '0.45rem' }}>
@@ -1030,10 +1036,10 @@ export const TipPage: React.FC = () => {
                     <Star key={s} size={15} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
                   ))}
                 </div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
+                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#1C1917', marginBottom: '0.35rem' }}>
                   {language === 'tr' ? 'Bizi Çok Mutlu Ettiniz! 🎉' : 'You Made Our Day! 🎉'}
                 </h4>
-                <p style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.45, marginBottom: '0.9rem' }}>
+                <p style={{ fontSize: '0.82rem', color: '#57534E', lineHeight: 1.45, marginBottom: '0.9rem' }}>
                   {language === 'tr'
                     ? `${details?.business?.name || 'Ekibimize'} destek olmak için 5 yıldızlı değerlendirmenizi Google Haritalar'da da paylaşmak ister misiniz?`
                     : `Would you like to support ${details?.business?.name || 'our team'} by posting your 5-star review on Google Maps?`}
@@ -1070,7 +1076,7 @@ export const TipPage: React.FC = () => {
                   <ExternalLink size={14} />
                 </button>
                 {copiedReviewText && (
-                  <div style={{ fontSize: '0.74rem', color: '#34d399', marginTop: '0.45rem', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.74rem', color: '#059669', marginTop: '0.45rem', fontWeight: 600 }}>
                     {language === 'tr' ? '✓ Yorumunuz panoya kopyalandı! Google sayfasına yapıştırabilirsiniz.' : '✓ Review copied to clipboard! Paste it on Google.'}
                   </div>
                 )}
@@ -1094,9 +1100,9 @@ export const TipPage: React.FC = () => {
               width: '50px',
               height: '50px',
               borderRadius: '16px',
-              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1))',
+              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1))',
               border: '1px solid rgba(245, 158, 11, 0.3)',
-              color: '#fbbf24',
+              color: '#D97706',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1105,10 +1111,10 @@ export const TipPage: React.FC = () => {
               <MessageSquareText size={24} />
             </div>
 
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
               {language === 'tr' ? 'Deneyiminizi Nasıl Buldunuz?' : 'How was your experience?'}
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+            <p style={{ color: '#78716C', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
               {language === 'tr'
                 ? 'Görüşleriniz hizmet kalitemizi artırmamız için çok değerlidir.'
                 : 'Your review helps us maintain and improve our quality of service.'}
@@ -1129,7 +1135,7 @@ export const TipPage: React.FC = () => {
                       border: 'none',
                       cursor: 'pointer',
                       padding: '0.25rem',
-                      color: isActive ? '#f59e0b' : 'rgba(255, 255, 255, 0.15)',
+                      color: isActive ? '#f59e0b' : '#D6D3D1',
                       transition: 'transform 0.15s, color 0.15s',
                       transform: isActive ? 'scale(1.15)' : 'scale(1)',
                     }}
@@ -1147,7 +1153,7 @@ export const TipPage: React.FC = () => {
               placeholder={language === 'tr' ? 'Görüş veya önerinizi yazabilirsiniz (isteğe bağlı)...' : 'Write your comment or suggestion (optional)...'}
               maxLength={500}
               className="input"
-              style={{ marginBottom: '1.25rem', resize: 'vertical' }}
+              style={{ marginBottom: '1.25rem', resize: 'vertical', background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
             />
 
             <button
@@ -1181,8 +1187,8 @@ export const TipPage: React.FC = () => {
               width: '52px',
               height: '52px',
               borderRadius: '50%',
-              background: 'rgba(16, 185, 129, 0.15)',
-              color: '#10b981',
+              background: 'rgba(5, 150, 105, 0.15)',
+              color: '#059669',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1190,10 +1196,10 @@ export const TipPage: React.FC = () => {
             }}>
               <CheckCircle2 size={30} />
             </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669', marginBottom: '0.4rem' }}>
               {language === 'tr' ? 'Aramıza Hoş Geldiniz!' : 'Welcome to the Club!'}
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ color: '#78716C', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
               {language === 'tr'
                 ? 'Kaydınız başarıyla tamamlandı. Özel ikram ve fırsatlar ilk size ulaşacak!'
                 : 'You are now enrolled. Look out for VIP perks and invitations!'}
@@ -1214,7 +1220,7 @@ export const TipPage: React.FC = () => {
             {/* Standalone card title if not rendered inside modal */}
             {!activeModal && (
               <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#f8fafc' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
                   {details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club')}
                 </h3>
               </div>
@@ -1226,8 +1232,8 @@ export const TipPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.05))',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                background: 'linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(13, 148, 136, 0.04))',
+                border: '1px solid rgba(5, 150, 105, 0.22)',
                 borderRadius: '12px',
                 padding: '0.75rem 0.95rem',
                 marginBottom: '1.25rem',
@@ -1238,8 +1244,8 @@ export const TipPage: React.FC = () => {
                   width: '36px',
                   height: '36px',
                   borderRadius: '10px',
-                  background: 'rgba(16, 185, 129, 0.2)',
-                  color: '#34d399',
+                  background: 'rgba(5, 150, 105, 0.15)',
+                  color: '#059669',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1249,10 +1255,10 @@ export const TipPage: React.FC = () => {
                 <Gift size={20} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.1rem' }}>
+                <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.1rem' }}>
                   {language === 'tr' ? 'Üyelik Avantajı' : 'Membership Perk'}
                 </div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc', lineHeight: 1.3 }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1C1917', lineHeight: 1.3 }}>
                   {details.smartQr.signupReward || (language === 'tr'
                     ? 'Özel ikramlar ve indirim fırsatları'
                     : 'Exclusive perks and special invitations')}
@@ -1262,7 +1268,7 @@ export const TipPage: React.FC = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.25rem' }}>
               <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#57534E', display: 'block', marginBottom: '0.3rem' }}>
                   {language === 'tr' ? 'Adınız Soyadınız' : 'Full Name'}
                 </label>
                 <input
@@ -1271,11 +1277,12 @@ export const TipPage: React.FC = () => {
                   onChange={(e) => setLeadName(e.target.value)}
                   placeholder={language === 'tr' ? 'Örn: Ahmet Yılmaz' : 'e.g. John Doe'}
                   className="input"
+                  style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#57534E', display: 'block', marginBottom: '0.3rem' }}>
                   {language === 'tr' ? 'E-posta Adresiniz' : 'Email Address'}
                 </label>
                 <input
@@ -1284,11 +1291,12 @@ export const TipPage: React.FC = () => {
                   onChange={(e) => setLeadEmail(e.target.value)}
                   placeholder="adiniz@ornek.com"
                   className="input"
+                  style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.3rem' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#57534E', display: 'block', marginBottom: '0.3rem' }}>
                   {language === 'tr' ? 'Telefon Numaranız (İsteğe Bağlı)' : 'Phone Number (Optional)'}
                 </label>
                 <input
@@ -1297,6 +1305,7 @@ export const TipPage: React.FC = () => {
                   onChange={(e) => setLeadPhone(e.target.value)}
                   placeholder="+90 5XX XXX XX XX"
                   className="input"
+                  style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
                 />
               </div>
 
@@ -1306,7 +1315,7 @@ export const TipPage: React.FC = () => {
                 gap: '0.65rem',
                 cursor: 'pointer',
                 fontSize: '0.75rem',
-                color: 'var(--text-secondary)',
+                color: '#57534E',
                 marginTop: '0.35rem',
                 lineHeight: 1.4,
               }}>
@@ -1314,7 +1323,7 @@ export const TipPage: React.FC = () => {
                   type="checkbox"
                   checked={leadConsent}
                   onChange={(e) => setLeadConsent(e.target.checked)}
-                  style={{ marginTop: '0.15rem', accentColor: '#10b981', width: '16px', height: '16px' }}
+                  style={{ marginTop: '0.15rem', accentColor: '#059669', width: '16px', height: '16px' }}
                 />
                 <span>
                   {language === 'tr'
@@ -1332,8 +1341,6 @@ export const TipPage: React.FC = () => {
                 width: '100%',
                 padding: '0.85rem',
                 fontWeight: 700,
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                borderColor: '#10b981',
                 opacity: (!leadEmail && !leadPhone) || leadSubmitting ? 0.5 : 1,
               }}
             >
@@ -1349,7 +1356,7 @@ export const TipPage: React.FC = () => {
 
   // --- Main 4-Step Tip Form ---
   return (
-    <div style={{ minHeight: '100vh', padding: '1.25rem 1rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+    <div className="theme-warm-light" style={{ minHeight: '100vh', padding: '1.25rem 1rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', background: '#FAF9F6', color: '#1C1917' }}>
       <div style={{ maxWidth: '480px', width: '100%' }}>
         {/* Sleek Horizontal App Header (Option B) */}
         <div
@@ -1372,8 +1379,8 @@ export const TipPage: React.FC = () => {
                   height: '46px',
                   borderRadius: '14px',
                   objectFit: 'cover',
-                  border: '1.5px solid rgba(255, 255, 255, 0.18)',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.35)',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
                   flexShrink: 0,
                 }}
               />
@@ -1383,12 +1390,12 @@ export const TipPage: React.FC = () => {
                   width: '46px',
                   height: '46px',
                   borderRadius: '14px',
-                  background: 'var(--accent-gradient)',
+                  background: 'linear-gradient(135deg, #059669, #047857)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#fff',
-                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                  boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)',
                   flexShrink: 0,
                 }}
               >
@@ -1403,7 +1410,7 @@ export const TipPage: React.FC = () => {
                     fontSize: '1.2rem',
                     fontWeight: 800,
                     letterSpacing: '-0.02em',
-                    color: '#ffffff',
+                    color: '#1C1917',
                     margin: 0,
                     lineHeight: 1.25,
                     overflow: 'hidden',
@@ -1421,9 +1428,9 @@ export const TipPage: React.FC = () => {
                       fontSize: '0.72rem',
                       padding: '2px 8px',
                       borderRadius: '6px',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      color: 'var(--text-secondary)',
+                      background: '#F5F5F4',
+                      border: '1px solid #E7E5E4',
+                      color: '#57534E',
                       whiteSpace: 'nowrap',
                     }}
                   >
@@ -1436,7 +1443,7 @@ export const TipPage: React.FC = () => {
 
           {/* Right: Compact Language Selector */}
           <div style={{ flexShrink: 0 }}>
-            <LanguageSelector variant="compact" />
+            <LanguageSelector variant="compact" theme="light" />
           </div>
         </div>
 
@@ -1447,11 +1454,11 @@ export const TipPage: React.FC = () => {
               margin: '0 0 0.85rem 0',
               padding: '0.55rem 0.85rem',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.08))',
-              border: '1px solid rgba(99, 102, 241, 0.25)',
-              color: '#e0e7ff',
+              background: 'linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(13, 148, 136, 0.05))',
+              border: '1px solid rgba(5, 150, 105, 0.22)',
+              color: '#065F46',
               fontSize: '0.82rem',
-              fontWeight: 500,
+              fontWeight: 600,
               lineHeight: 1.35,
               textAlign: 'center',
             }}
@@ -1500,10 +1507,10 @@ export const TipPage: React.FC = () => {
                       fontSize: '0.82rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      border: '1px solid rgba(16, 185, 129, 0.45)',
-                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.22))',
-                      color: '#34d399',
-                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
+                      border: '1px solid rgba(5, 150, 105, 0.35)',
+                      background: 'rgba(5, 150, 105, 0.08)',
+                      color: '#059669',
+                      boxShadow: '0 2px 6px rgba(5, 150, 105, 0.08)',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
@@ -1525,10 +1532,10 @@ export const TipPage: React.FC = () => {
                       fontSize: '0.82rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      border: '1px solid rgba(14, 165, 233, 0.35)',
-                      background: 'rgba(14, 165, 233, 0.12)',
-                      color: '#38bdf8',
-                      boxShadow: '0 2px 8px rgba(14, 165, 233, 0.15)',
+                      border: '1px solid rgba(2, 132, 199, 0.3)',
+                      background: 'rgba(2, 132, 199, 0.08)',
+                      color: '#0284C7',
+                      boxShadow: '0 2px 6px rgba(2, 132, 199, 0.08)',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
@@ -1550,10 +1557,10 @@ export const TipPage: React.FC = () => {
                       fontSize: '0.82rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      border: '1px solid rgba(236, 72, 153, 0.35)',
-                      background: 'rgba(236, 72, 153, 0.12)',
-                      color: '#f472b6',
-                      boxShadow: '0 2px 8px rgba(236, 72, 153, 0.15)',
+                      border: '1px solid rgba(219, 39, 119, 0.3)',
+                      background: 'rgba(219, 39, 119, 0.08)',
+                      color: '#DB2777',
+                      boxShadow: '0 2px 6px rgba(219, 39, 119, 0.08)',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
@@ -1587,10 +1594,10 @@ export const TipPage: React.FC = () => {
                       fontSize: '0.82rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      border: '1px solid rgba(245, 158, 11, 0.35)',
-                      background: 'rgba(245, 158, 11, 0.12)',
-                      color: '#fbbf24',
-                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.15)',
+                      border: '1px solid rgba(217, 119, 6, 0.3)',
+                      background: 'rgba(217, 119, 6, 0.08)',
+                      color: '#D97706',
+                      boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
@@ -1612,10 +1619,10 @@ export const TipPage: React.FC = () => {
                       fontSize: '0.82rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      border: '1px solid rgba(16, 185, 129, 0.35)',
-                      background: 'rgba(16, 185, 129, 0.12)',
-                      color: '#34d399',
-                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.15)',
+                      border: '1px solid rgba(13, 148, 136, 0.3)',
+                      background: 'rgba(13, 148, 136, 0.08)',
+                      color: '#0D9488',
+                      boxShadow: '0 2px 6px rgba(13, 148, 136, 0.08)',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
@@ -1653,11 +1660,11 @@ export const TipPage: React.FC = () => {
                     fontSize: '0.88rem',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                    border: '1px solid #059669',
                     transition: 'all 0.2s',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: 'linear-gradient(135deg, #059669, #047857)',
                     color: '#ffffff',
-                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                    boxShadow: '0 4px 12px rgba(5, 150, 105, 0.25)',
                   }}
                 >
                   <UtensilsCrossed size={16} />
@@ -1683,11 +1690,11 @@ export const TipPage: React.FC = () => {
                     border: '1px solid',
                     transition: 'all 0.2s',
                     background: activeSmartTab === 'wifi'
-                      ? 'linear-gradient(135deg, #0ea5e9, #0284c7)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    borderColor: activeSmartTab === 'wifi' ? '#0ea5e9' : 'rgba(255, 255, 255, 0.1)',
-                    color: activeSmartTab === 'wifi' ? '#ffffff' : 'var(--text-secondary)',
-                    boxShadow: activeSmartTab === 'wifi' ? '0 4px 12px rgba(14, 165, 233, 0.35)' : 'none',
+                      ? 'linear-gradient(135deg, #0284c7, #0369a1)'
+                      : '#F5F5F4',
+                    borderColor: activeSmartTab === 'wifi' ? '#0284c7' : '#E7E5E4',
+                    color: activeSmartTab === 'wifi' ? '#ffffff' : '#57534E',
+                    boxShadow: activeSmartTab === 'wifi' ? '0 4px 12px rgba(2, 132, 199, 0.25)' : 'none',
                   }}
                 >
                   <Wifi size={16} />
@@ -1713,10 +1720,10 @@ export const TipPage: React.FC = () => {
                     transition: 'all 0.2s',
                     background: activeSmartTab === 'campaigns'
                       ? 'linear-gradient(135deg, #ec4899, #db2777)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    borderColor: activeSmartTab === 'campaigns' ? '#ec4899' : 'rgba(255, 255, 255, 0.1)',
-                    color: activeSmartTab === 'campaigns' ? '#ffffff' : 'var(--text-secondary)',
-                    boxShadow: activeSmartTab === 'campaigns' ? '0 4px 12px rgba(236, 72, 153, 0.35)' : 'none',
+                      : '#F5F5F4',
+                    borderColor: activeSmartTab === 'campaigns' ? '#ec4899' : '#E7E5E4',
+                    color: activeSmartTab === 'campaigns' ? '#ffffff' : '#57534E',
+                    boxShadow: activeSmartTab === 'campaigns' ? '0 4px 12px rgba(236, 72, 153, 0.25)' : 'none',
                   }}
                 >
                   <Gift size={16} />
@@ -1742,10 +1749,10 @@ export const TipPage: React.FC = () => {
                     transition: 'all 0.2s',
                     background: activeSmartTab === 'feedback'
                       ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    borderColor: activeSmartTab === 'feedback' ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)',
-                    color: activeSmartTab === 'feedback' ? '#ffffff' : 'var(--text-secondary)',
-                    boxShadow: activeSmartTab === 'feedback' ? '0 4px 12px rgba(245, 158, 11, 0.35)' : 'none',
+                      : '#F5F5F4',
+                    borderColor: activeSmartTab === 'feedback' ? '#f59e0b' : '#E7E5E4',
+                    color: activeSmartTab === 'feedback' ? '#ffffff' : '#57534E',
+                    boxShadow: activeSmartTab === 'feedback' ? '0 4px 12px rgba(245, 158, 11, 0.25)' : 'none',
                   }}
                 >
                   <MessageSquareText size={16} />
@@ -1770,11 +1777,11 @@ export const TipPage: React.FC = () => {
                     border: '1px solid',
                     transition: 'all 0.2s',
                     background: activeSmartTab === 'signup'
-                      ? 'linear-gradient(135deg, #10b981, #059669)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    borderColor: activeSmartTab === 'signup' ? '#10b981' : 'rgba(255, 255, 255, 0.1)',
-                    color: activeSmartTab === 'signup' ? '#ffffff' : 'var(--text-secondary)',
-                    boxShadow: activeSmartTab === 'signup' ? '0 4px 12px rgba(16, 185, 129, 0.35)' : 'none',
+                      ? 'linear-gradient(135deg, #059669, #047857)'
+                      : '#F5F5F4',
+                    borderColor: activeSmartTab === 'signup' ? '#059669' : '#E7E5E4',
+                    color: activeSmartTab === 'signup' ? '#ffffff' : '#57534E',
+                    boxShadow: activeSmartTab === 'signup' ? '0 4px 12px rgba(5, 150, 105, 0.25)' : 'none',
                   }}
                 >
                   <Mail size={16} />
@@ -1792,14 +1799,14 @@ export const TipPage: React.FC = () => {
             {details.employees.length > 0 && (
               <div className="glass-card" style={{ padding: '1.25rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C' }}>
                     1. {t('tip.selectStaffTitle')}
                   </span>
                   {selectedEmployeeId && (
                     <button
                       type="button"
                       onClick={() => setSelectedEmployeeId(undefined)}
-                      style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600 }}
+                      style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}
                     >
                       {t('tip.wholeTeam')}
                     </button>
@@ -1819,9 +1826,10 @@ export const TipPage: React.FC = () => {
                         onClick={() => setSelectedEmployeeId(emp.id)}
                         style={{
                           padding: '0.75rem',
-                          borderRadius: 'var(--radius-md)',
-                          border: `2px solid ${isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.05)'}`,
-                          background: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                          borderRadius: '14px',
+                          border: `2px solid ${isSelected ? '#059669' : '#E7E5E4'}`,
+                          background: isSelected ? 'rgba(5, 150, 105, 0.08)' : '#F5F5F4',
+                          color: '#1C1917',
                           cursor: 'pointer',
                           textAlign: 'center',
                           transition: 'all 0.2s',
@@ -1831,14 +1839,15 @@ export const TipPage: React.FC = () => {
                           <img
                             src={emp.avatar}
                             alt={emp.first_name}
-                            style={{ width: '44px', height: '44px', borderRadius: '50%', margin: '0 auto 0.5rem', objectFit: 'cover' }}
+                            style={{ width: '44px', height: '44px', borderRadius: '50%', margin: '0 auto 0.5rem', objectFit: 'cover', border: '1px solid rgba(0, 0, 0, 0.08)' }}
                           />
                         ) : (
                           <div style={{
                             width: '44px',
                             height: '44px',
                             borderRadius: '50%',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            background: '#E7E5E4',
+                            color: '#44403C',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -1848,9 +1857,9 @@ export const TipPage: React.FC = () => {
                             {emp.first_name[0]}
                           </div>
                         )}
-                        <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{emp.first_name} {emp.last_name}</div>
+                        <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>{emp.first_name} {emp.last_name}</div>
                         {emp.position && (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{emp.position}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#78716C' }}>{emp.position}</div>
                         )}
                       </div>
                     );
@@ -1861,7 +1870,7 @@ export const TipPage: React.FC = () => {
 
             {/* Step 2: Select Amount */}
             <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C', display: 'block', marginBottom: '0.75rem' }}>
                 2. {t('tip.selectAmountTitle')}
               </span>
 
@@ -1879,10 +1888,10 @@ export const TipPage: React.FC = () => {
                       }}
                       style={{
                         padding: '0.75rem 0.25rem',
-                        borderRadius: 'var(--radius-md)',
-                        border: `1.5px solid ${isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)'}`,
-                        background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255, 255, 255, 0.02)',
-                        color: isSelected ? '#fff' : 'var(--text-secondary)',
+                        borderRadius: '12px',
+                        border: `1.5px solid ${isSelected ? '#059669' : '#E7E5E4'}`,
+                        background: isSelected ? '#059669' : '#F5F5F4',
+                        color: isSelected ? '#ffffff' : '#1C1917',
                         fontWeight: 700,
                         fontSize: 'clamp(0.85rem, 3.2vw, 1.05rem)',
                         cursor: 'pointer',
@@ -1894,6 +1903,7 @@ export const TipPage: React.FC = () => {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         minWidth: 0,
+                        boxShadow: isSelected ? '0 4px 14px rgba(5, 150, 105, 0.35)' : 'none',
                       }}
                     >
                       {formatCurrency(amt, details.business.currency, {
@@ -1917,7 +1927,7 @@ export const TipPage: React.FC = () => {
                     }
                   }}
                   className="input"
-                  style={{ textAlign: 'center', fontSize: '1.1rem', fontWeight: 700 }}
+                  style={{ textAlign: 'center', fontSize: '1.1rem', fontWeight: 700, background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917', borderRadius: '12px' }}
                   min="1"
                 />
               </div>
@@ -1925,7 +1935,7 @@ export const TipPage: React.FC = () => {
 
             {/* Optional Note & Customer Info */}
             <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C', display: 'block', marginBottom: '0.75rem' }}>
                 {t('tip.customerMessageLabel') || t('tip.optionalMessageTitle')}
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -1935,6 +1945,7 @@ export const TipPage: React.FC = () => {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   className="input"
+                  style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917', borderRadius: '10px' }}
                   maxLength={100}
                 />
                 <textarea
@@ -1944,22 +1955,22 @@ export const TipPage: React.FC = () => {
                   className="input"
                   rows={2}
                   maxLength={500}
-                  style={{ resize: 'vertical' }}
+                  style={{ resize: 'vertical', background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917', borderRadius: '10px' }}
                 />
               </div>
             </div>
 
             {/* Step 3: Payment Method */}
             <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C', display: 'block', marginBottom: '0.75rem' }}>
                 3. {t('tip.paymentMethodTitle')}
               </span>
 
               {!details.hasAvailablePaymentMethod ? (
-                <div style={{ textAlign: 'center', padding: '1rem', color: '#f59e0b' }}>
+                <div style={{ textAlign: 'center', padding: '1rem', color: '#D97706' }}>
                   <AlertCircle size={24} style={{ margin: '0 auto 0.5rem' }} />
                   <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{t('tip.noPaymentMethods')}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#78716C', marginTop: '0.25rem' }}>
                     {t('tip.noPaymentMethodsHelp')}
                   </div>
                 </div>
@@ -1993,34 +2004,34 @@ export const TipPage: React.FC = () => {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           padding: '0.85rem 1rem',
-                          borderRadius: 'var(--radius-md)',
-                          background: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'var(--bg-input)',
+                          borderRadius: '12px',
+                          background: isSelected ? 'rgba(5, 150, 105, 0.08)' : '#F5F5F4',
                           border: isSelected
-                            ? '2px solid var(--accent-primary)'
+                            ? '2px solid #059669'
                             : isAvailable
-                            ? '1px solid var(--border-color)'
-                            : '1px solid rgba(255, 255, 255, 0.04)',
+                            ? '1px solid #E7E5E4'
+                            : '1px solid #E7E5E4',
                           opacity: isAvailable ? 1 : 0.5,
                           cursor: isAvailable ? 'pointer' : 'not-allowed',
                           transition: 'all 0.15s ease',
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <span style={{ color: isAvailable ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
+                          <span style={{ color: isSelected || isAvailable ? '#059669' : '#78716C' }}>
                             {icon}
                           </span>
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{label}</div>
+                            <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1C1917' }}>{label}</div>
                             {!isAvailable && reason && (
-                              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{reason}</div>
+                              <div style={{ fontSize: '0.72rem', color: '#78716C' }}>{reason}</div>
                             )}
                           </div>
                         </div>
                         <div>
                           {isAvailable ? (
-                            <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: 700 }}>🟢 {t('common.active')}</span>
+                            <span style={{ color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>🟢 {t('common.active')}</span>
                           ) : (
-                            <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem', background: 'rgba(255,255,255,0.06)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                            <span style={{ color: '#78716C', fontSize: '0.78rem', background: '#E7E5E4', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
                               {t('common.inactive')}
                             </span>
                           )}
@@ -2042,7 +2053,7 @@ export const TipPage: React.FC = () => {
                 fontSize: '1.1rem',
                 fontWeight: 800,
                 width: '100%',
-                borderRadius: 'var(--radius-lg)',
+                borderRadius: '14px',
                 opacity: submitting || !details.hasAvailablePaymentMethod || effectiveAmount <= 0 ? 0.6 : 1,
               }}
             >
@@ -2083,8 +2094,8 @@ export const TipPage: React.FC = () => {
         {/* Bottom Sheet / Modal for Secondary Smart QR Features */}
         {activeModal && details.smartQr && (
           <div className="smart-sheet-overlay" onClick={() => setActiveModal(null)}>
-            <div className="smart-sheet-content" onClick={(e) => e.stopPropagation()}>
-              <div className="smart-sheet-handle" />
+            <div className="smart-sheet-content" style={{ background: '#FFFFFF', border: '1px solid rgba(0, 0, 0, 0.08)', color: '#1C1917' }} onClick={(e) => e.stopPropagation()}>
+              <div className="smart-sheet-handle" style={{ background: '#D6D3D1' }} />
 
               <div style={{
                 display: 'flex',
@@ -2092,14 +2103,14 @@ export const TipPage: React.FC = () => {
                 justifyContent: 'space-between',
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                borderBottom: '1px solid #E7E5E4',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  {activeModal === 'wifi' && <Wifi size={20} style={{ color: '#38bdf8' }} />}
-                  {activeModal === 'campaigns' && <Gift size={20} style={{ color: '#f472b6' }} />}
-                  {activeModal === 'feedback' && <MessageSquareText size={20} style={{ color: '#fbbf24' }} />}
-                  {activeModal === 'signup' && <Sparkles size={20} style={{ color: '#34d399' }} />}
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
+                  {activeModal === 'wifi' && <Wifi size={20} style={{ color: '#0284C7' }} />}
+                  {activeModal === 'campaigns' && <Gift size={20} style={{ color: '#DB2777' }} />}
+                  {activeModal === 'feedback' && <MessageSquareText size={20} style={{ color: '#D97706' }} />}
+                  {activeModal === 'signup' && <Sparkles size={20} style={{ color: '#059669' }} />}
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#1C1917' }}>
                     {activeModal === 'wifi' && (language === 'tr' ? 'Wi-Fi Bağlantısı' : 'Wi-Fi Connection')}
                     {activeModal === 'campaigns' && (language === 'tr' ? 'Özel Fırsatlar & Kampanyalar' : 'Special Offers')}
                     {activeModal === 'feedback' && (language === 'tr' ? 'Görüş & Değerlendirme' : 'Customer Feedback')}
@@ -2110,15 +2121,15 @@ export const TipPage: React.FC = () => {
                   type="button"
                   onClick={() => setActiveModal(null)}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: 'none',
+                    background: '#F5F5F4',
+                    border: '1px solid #E7E5E4',
                     borderRadius: '50%',
                     width: '32px',
                     height: '32px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--text-secondary)',
+                    color: '#57534E',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
                   }}
@@ -2138,7 +2149,7 @@ export const TipPage: React.FC = () => {
 
         <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.9 }} />
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('home.footerTagline')}</span>
+          <span style={{ fontSize: '0.75rem', color: '#78716C' }}>{t('home.footerTagline')}</span>
         </div>
       </div>
     </div>
