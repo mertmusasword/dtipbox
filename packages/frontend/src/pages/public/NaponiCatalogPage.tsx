@@ -82,8 +82,8 @@ export const NaponiCatalogPage: React.FC = () => {
         }
         description={
           language === 'tr'
-            ? 'Restoranlar, oteller ve zincir işletmeler için Naponi doğrudan QR dijital bahşiş, akıllı POS entegrasyonu ve kurumsal çözümler kataloğu.'
-            : 'Comprehensive corporate catalog and presentation of Naponi direct QR digital tipping, POS integrations, and hospitality payment workflows.'
+            ? 'Restoranlar, oteller ve zincir işletmeler için Naponi doğrudan QR dijital bahşiş, akıllı doğrudan ödeme uyumu ve kurumsal çözümler kataloğu.'
+            : 'Comprehensive corporate catalog and presentation of Naponi direct QR digital tipping, direct payment gateway routing, and hospitality workflows.'
         }
         canonicalUrl="https://www.naponi.com/catalog"
         keywords={['naponi catalog', 'corporate tipping catalog', 'b2b hospitality tipping presentation']}

@@ -173,8 +173,8 @@ export const COMPARISONS: ComparisonItem[] = [
       en: 'Hotel general managers, restaurant franchise operators, and hospitality HR directors.'
     },
     quickVerdict: {
-      tr: 'Naponi, 35+ dili destekleyen turist dostu arayüzü, hibrit havuz (nakit + POS + QR) desteği ve dahili Google Harita yorum motoruyla hem Türkiye hem de global pazarda en bütüncül çözümü sunmaktadır.',
-      en: 'Naponi stands out with built-in support for 35+ tourist languages, hybrid pooling (combining cash tipboxes + POS + QR), and automated Google Reviews acceleration.'
+      tr: 'Naponi, 35+ dili destekleyen turist dostu arayüzü, hibrit havuz (nakit + doğrudan transfer + QR) desteği ve dahili Google Harita yorum motoruyla hem Türkiye hem de global pazarda en bütüncül çözümü sunmaktadır.',
+      en: 'Naponi stands out with built-in support for 35+ tourist languages, hybrid pooling (combining cash tipboxes + direct bank wire + QR), and automated Google Reviews acceleration.'
     },
     comparisonTable: {
       headers: {
@@ -191,9 +191,9 @@ export const COMPARISONS: ComparisonItem[] = [
           verdict: { tr: 'Yabancı turistler kendi ana dillerinde güvenle bahşiş bırakır.', en: 'Eliminates language barriers for international travelers in tourist hotspots.' }
         },
         {
-          feature: { tr: 'Hibrit Bahşiş Havuzu (Nakit + POS + QR)', en: 'Hybrid Pool (Cash + POS + QR)' },
+          feature: { tr: 'Hibrit Bahşiş Havuzu (Nakit + Banka/IBAN + QR)', en: 'Hybrid Pool (Cash + Direct Wire + QR)' },
           optionA: { tr: 'Sadece kendi uygulamasından geçen dijital ödemeyi sayar.', highlight: 'bad', en: 'Only tracks digital tips sent inside their proprietary gateway.' },
-          optionB: { tr: 'Masa nakitleri, banka POS bahşişleri ve QR gelirlerini tek ekranda toplar.', highlight: 'good', en: 'Combines physical cash box, POS slips, and QR tips into one auditable pool.' },
+          optionB: { tr: 'Masa nakitleri, elden bahşişler ve doğrudan QR gelirlerini tek ekranda toplar.', highlight: 'good', en: 'Combines physical cash box, direct bank transfers, and QR tips into one auditable pool.' },
           verdict: { tr: 'Tüm bahşiş kaynakları tek adil formülle personelin hakkı olarak dağıtılır.', en: 'Ensures total fairness across both cash and digital shift proceeds.' }
         },
         {

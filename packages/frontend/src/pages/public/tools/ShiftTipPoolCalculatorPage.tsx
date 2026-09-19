@@ -482,8 +482,8 @@ export const ShiftTipPoolCalculatorPage: React.FC = () => {
             </div>
             <p style={{ marginBottom: '1.5rem' }}>
               {isEn
-                ? 'Naponi connects physical cash tip boxes, external card terminals, and table QR tips into a single live dashboard. Staff see their exact shift earnings instantly on their phones, with automated payouts directly to their bank accounts.'
-                : 'Naponi hem masadaki nakit tip kutularını hem banka POS fişlerini hem de QR kodlu bahşişleri tek bir dijital havuzda birleştirir. Personel kazancını kendi mobil panelinden anında görür, tartışmalar ve hesaplama hataları son bulur.'}
+                ? 'Naponi brings physical cash tip records and table QR tips into a single live dashboard. Staff see their exact shift earnings transparently on their phones, eliminating calculation errors and disputes.'
+                : 'Naponi hem masadaki nakit bahşişleri hem de QR kodlu bahşişleri tek bir dijital havuzda birleştirir. Personel vardiya payını şeffafça görür, tartışmalar ve hesaplama hataları son bulur.'}
             </p>
             <Link to="/register" className="home-btn-primary">
               {isEn ? 'Create Free Business Account' : 'Ücretsiz İşletme Hesabı Aç'} <ArrowRight size={16} />
