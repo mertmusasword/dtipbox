@@ -35,11 +35,11 @@ export const EmployeesPage: React.FC = () => {
   const handleImageUpload = (file: File) => {
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
-      showToast('Lütfen JPG, PNG veya WebP formatında bir görsel seçin.', 'error');
+      showToast(t('employees.imageFormatError'), 'error');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      showToast('Görsel boyutu en fazla 5 MB olabilir.', 'error');
+      showToast(t('employees.imageSizeError'), 'error');
       return;
     }
 
@@ -63,7 +63,7 @@ export const EmployeesPage: React.FC = () => {
 
         const optimized = canvas.toDataURL('image/jpeg', 0.85);
         setFormData((prev) => ({ ...prev, avatar: optimized }));
-        showToast('Fotoğraf başarıyla yüklendi ve uyarlandı');
+        showToast(t('employees.photoUploadedSuccess'));
       };
       img.src = e.target?.result as string;
     };
@@ -209,7 +209,7 @@ export const EmployeesPage: React.FC = () => {
               <thead>
                 <tr>
                   <th>{t('common.name')}</th>
-                  <th>Görev & Havuz Payı</th>
+                  <th>{t('employees.roleAndPoolShare')}</th>
                   <th>{t('common.status')}</th>
                   <th>{t('nav.payments')}</th>
                   <th className="text-right">{t('common.actions')}</th>
@@ -334,10 +334,10 @@ export const EmployeesPage: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
               <div>
                 <label className="form-label mb-0" style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-                  Bahşiş Havuz Payı
+                  {t('employees.tipPoolShare')}
                 </label>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  Havuzlu dağıtımda personelin alacağı pay oranı
+                  {t('employees.tipPoolShareDesc')}
                 </div>
               </div>
               <span
@@ -363,10 +363,10 @@ export const EmployeesPage: React.FC = () => {
                     : 'rgba(245, 158, 11, 0.3)',
                 }}
               >
-                {Number(formData.share_weight) === 1.0 && '🎯 Tam Pay (1.0x)'}
+                {Number(formData.share_weight) === 1.0 && `🎯 ${t('employees.fullShare')}`}
                 {Number(formData.share_weight) === 0.75 && '🎯 3/4 Pay (0.75x)'}
-                {Number(formData.share_weight) === 0.5 && '🎯 Yarım Pay (0.50x)'}
-                {![1.0, 0.75, 0.5].includes(Number(formData.share_weight)) && `🎯 Özel Pay (${Number(formData.share_weight).toFixed(2)}x)`}
+                {Number(formData.share_weight) === 0.5 && `🎯 ${t('employees.halfShare')}`}
+                {![1.0, 0.75, 0.5].includes(Number(formData.share_weight)) && `🎯 (${Number(formData.share_weight).toFixed(2)}x)`}
               </span>
             </div>
 
@@ -524,7 +524,7 @@ export const EmployeesPage: React.FC = () => {
                         className="btn btn-secondary"
                         style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
                       >
-                        <Camera size={13} /> Fotoğrafı Değiştir
+                        <Camera size={13} /> {t('employees.photoChange')}
                       </button>
                       <button
                         type="button"
@@ -540,7 +540,7 @@ export const EmployeesPage: React.FC = () => {
                           gap: '0.35rem',
                         }}
                       >
-                        <Trash2 size={13} /> Fotoğrafı Kaldır
+                        <Trash2 size={13} /> {t('employees.photoRemove')}
                       </button>
                     </div>
                   </div>
@@ -564,9 +564,9 @@ export const EmployeesPage: React.FC = () => {
                     >
                       <Upload size={24} />
                     </div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>Fotoğraf Seç veya Sürükle</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{t('employees.photoSelect')}</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                      Cihazınızdan görsel yüklemek için tıklayın
+                      {t('employees.photoUploadHint')}
                     </div>
                   </div>
                 )}
@@ -587,10 +587,10 @@ export const EmployeesPage: React.FC = () => {
                   }}
                 >
                   <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
-                    📐 Önerilen Görsel Standartları:
+                    📐 {t('employees.recommendedStandards')}
                   </div>
-                  <div>• <strong>Ölçü & Oran:</strong> 1:1 Kare format (ideal olarak en az <strong>400×400 px</strong>)</div>
-                  <div>• <strong>Format & Boyut:</strong> JPG, PNG veya WebP (maksimum <strong>5 MB</strong>)</div>
+                  <div>• <strong>400×400 px</strong> (1:1)</div>
+                  <div>• JPG, PNG, WebP (max 5 MB)</div>
                   <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.5)', marginTop: '0.25rem' }}>
                     * Yüklediğiniz görsel bahşiş ekranındaki personel kartlarına taşma yapmayacak şekilde otomatik olarak optimize edilir.
                   </div>

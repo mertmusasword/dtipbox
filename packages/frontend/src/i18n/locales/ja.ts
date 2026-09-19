@@ -1,4 +1,4 @@
-const ja = {
+export const ja = {
   "common": {
     "loading": "読み込み中...",
     "saving": "保存中...",
@@ -426,7 +426,14 @@ const ja = {
     "tipCount": "総チップ受取件数",
     "employeePerformance": "スタッフ別実績ランキング",
     "tablePerformance": "エリア・テーブル別実績",
-    "paymentMethodUsage": "決済手段別シェア"
+    "paymentMethodUsage": "決済手段別シェア",
+    "distributeTipsBtn": "チップ配分＆締め作業",
+    "agreementPendingTitle": "要対応: 加盟店利用規約の承認",
+    "agreementPendingDesc": "プラットフォームの全機能を有効にするため、Naponi加盟店利用規約をご確認のうえご承認ください。",
+    "reviewAgreementBtn": "規約を確認して承認",
+    "confirmTransferBtn": "振込を確認済み",
+    "rejectTransferBtn": "却下",
+    "rejectConfirmPrompt": "振込が確認できない場合、このチップ記録をキャンセルしてもよろしいですか？"
   },
   "payments": {
     "pageTitle": "決済チャネル＆プロバイダー",
@@ -495,7 +502,26 @@ const ja = {
     "localAccountNumber": "支店番号・口座番号",
     "routingNumber": "金融機関コード・支店コード",
     "swiftBic": "SWIFT / BICコード（海外送金時）",
-    "saveBankBtn": "口座情報を保存"
+    "saveBankBtn": "口座情報を保存",
+    "externalLinkTitle": "1. 外部セキュア決済リンク",
+    "externalLinkDesc": "カード決済用のお客様専用チェックアウトリンク",
+    "externalLinkNotice": "決済プロバイダー（Stripe Payment Link、Square、または自社の決済画面）のリンクを入力してください。チップを支払うお客様はこのリンクに直接誘導されます。",
+    "externalLinkPlaceholder": "https://checkout.yourshop.jp/... またはStripe/Squareリンク",
+    "saveLinkBtn": "リンクを保存",
+    "testLinkBtn": "リンクをテスト",
+    "clearLinkBtn": "リンクをクリア",
+    "directBankTitle": "2. 銀行直接振込（口座情報）",
+    "directBankDesc": "店舗口座への直接振込",
+    "directBankNotice": "銀行振込を受け付けるための口座情報を登録します。チップはお客様から店舗口座へ直接送金されます。Naponiが資金を預かることはありません。",
+    "accountHolderPlaceholder": "例: 株式会社グランドビストロ",
+    "bankNamePlaceholder": "例: 三菱UFJ銀行、三井住友銀行、みずほ銀行...",
+    "ibanPlaceholder": "口座番号 / IBAN",
+    "saveBankDetailsBtn": "口座情報を保存",
+    "naponiDoesNotHoldFundsTitle": "Naponiは資金を預かりません。",
+    "naponiDoesNotHoldFundsDesc": "お客様がチップを支払う際、店舗が指定した安全な決済リンクまたは銀行口座へ直接送金されます。Naponiはお客様のカード情報を保持せず、資金を一時預かりすることもありません。",
+    "httpsRequiredToast": "セキュリティ上、決済リンクは「https://」で始まる必要があります。",
+    "linkSavedToast": "セキュア決済リンクを保存しました！",
+    "bankSavedToast": "銀行口座情報を保存しました！"
   },
   "admin": {
     "pageTitle": "プラットフォーム管理",
@@ -709,7 +735,46 @@ const ja = {
     "filterDisclaimerNote": "本フィルターは店舗からの情報に基づいています。重度のアレルギーをお持ちの場合は必ずスタッフにお声がけください。",
     "noProductsFound": "条件に一致するお料理やドリンクは見つかりませんでした。",
     "clearSearch": "検索条件をクリア"
+  },
+  "profile": {
+    "distributionTitle": "チップ配分＆プールシステム",
+    "distributionDesc": "集まったチップのスタッフ間での配分方法や控除設定を管理します。",
+    "modelIndividualTitle": "個別受け取り",
+    "modelIndividualDesc": "各スタッフが担当テーブルまたは個人QRコードから得たチップを個別に受け取ります。",
+    "modelEqualPoolTitle": "均等プール（店舗共有）",
+    "modelEqualPoolDesc": "全チップを店舗プールに集約し、シフトに入っているスタッフに均等に配分します。",
+    "modelRoleWeightedTitle": "役職・スキルウェイト配分",
+    "modelRoleWeightedDesc": "役職ごとの配分倍率（例: ホール 1.0x、バーテンダー 0.75x、補助 0.50x）に基づいて公正に配分します。",
+    "posFeePayer": "決済手数料＆税金控除設定",
+    "posFeeWhoPays": "決済手数料は誰が負担しますか？",
+    "posStaff": "チッププールから差し引く",
+    "posBusiness": "店舗が全額負担（スタッフには100%手取り反映）",
+    "posCustomer": "お客様が負担（決済画面に加算）",
+    "posRateLabel": "決済手数料率 (%)",
+    "taxRateLabel": "源泉徴収・税率 (%)",
+    "saveDistributionBtn": "配分設定を保存",
+    "founderStatusActive": "創設メンバー特典が有効です",
+    "legalTermsHeader": "利用規約＆デジタル署名承認",
+    "legalTermsNotice": "Naponiプラットフォームの運用に関して承認された最新の加盟店利用規約です。",
+    "legalTermsBadge": "暗号化検証プロトコル (SHA-256)",
+    "viewAgreementBtn": "規約と承認証明書を表示"
+  },
+  "employees": {
+    "roleAndPoolShare": "役職＆プール配分比率",
+    "tipPoolShare": "チッププール配分配率",
+    "tipPoolShareDesc": "チッププール均等配分時の乗数倍率",
+    "halfShare": "ハーフシェア (0.50x)",
+    "fullShare": "フルシェア (1.00x)",
+    "seniorShare": "シニアシェア (1.50x)",
+    "photoSelect": "写真を選択またはドラッグ＆ドロップ",
+    "photoChange": "写真を変更",
+    "photoRemove": "写真を削除",
+    "photoUploadHint": "端末から写真をアップロードするにはクリック",
+    "recommendedStandards": "推奨画像仕様:",
+    "imageFormatError": "JPG、PNG、またはWebP形式の画像を選択してください。",
+    "imageSizeError": "画像サイズは最大5MBまでです。",
+    "photoUploadedSuccess": "写真が正常にアップロードされ最適化されました"
   }
-};
+} as const;
 
 export default ja;

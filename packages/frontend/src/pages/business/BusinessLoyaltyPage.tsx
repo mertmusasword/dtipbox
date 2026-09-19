@@ -54,7 +54,8 @@ interface LoyaltyStats {
 
 export const BusinessLoyaltyPage: React.FC = () => {
   const { showToast } = useToast();
-  const { t, formatDate } = useLanguage();
+  const { t, formatDate, language } = useLanguage();
+  const isTr = language === 'tr';
 
   const [program, setProgram] = useState<LoyaltyProgramData | null>(null);
   const [businessId, setBusinessId] = useState<string>('');
@@ -201,11 +202,17 @@ export const BusinessLoyaltyPage: React.FC = () => {
   const printQr = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
+    const printTitle = `${businessName} - ${isTr ? 'Sadakat Kartı Kayıt QR Kodu' : 'Loyalty Card Registration QR Code'}`;
+    const badgeText = `${targetStamps} ${isTr ? 'Damga' : 'Stamps'} = ${rewardDesc}`;
+    const subText = isTr ? 'Dijital sadakat kartınızı oluşturmak için QR kodu telefonunuzun kamerasıyla tarayın.' : 'Scan the QR code with your phone camera to create your digital loyalty card.';
+    const noteText = isTr ? 'Uygulama yükleme gerekmez. Kartınız tarayıcınızda açılır.' : 'No app download required. Your card opens in your browser.';
+    const qrAlt = isTr ? 'Kayıt QR Kodu' : 'Registration QR Code';
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${businessName} - Sadakat Kartı Kayıt QR Kodu</title>
+          <title>${printTitle}</title>
           <style>
             body {
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -278,13 +285,13 @@ export const BusinessLoyaltyPage: React.FC = () => {
           <div class="card">
             <div class="logo">NAPONI LOYALTY</div>
             <h1>${businessName}</h1>
-            <div class="badge">${targetStamps} Damga = ${rewardDesc}</div>
-            <p class="sub">Dijital sadakat kartınızı oluşturmak için QR kodu telefonunuzun kamerasıyla tarayın.</p>
+            <div class="badge">${badgeText}</div>
+            <p class="sub">${subText}</p>
             <div class="qr-wrapper">
-              <img src="${qrDataUrl}" alt="Kayıt QR Kodu" />
+              <img src="${qrDataUrl}" alt="${qrAlt}" />
             </div>
             <p class="sub" style="font-size: 12px; margin-bottom: 0;">
-              Uygulama yükleme gerekmez. Kartınız tarayıcınızda açılır.
+              ${noteText}
             </p>
             <div class="footer-note">Powered by Naponi Loyalty</div>
           </div>
@@ -324,10 +331,10 @@ export const BusinessLoyaltyPage: React.FC = () => {
             }}>
               <Award size={22} />
             </div>
-            <h1 className="page-title" style={{ margin: 0, fontSize: '1.75rem' }}>Sadakat Programı (Loyalty)</h1>
+            <h1 className="page-title" style={{ margin: 0, fontSize: '1.75rem' }}>{isTr ? 'Sadakat Programı (Loyalty)' : 'Loyalty Program'}</h1>
           </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-            Müşterilerinize her ziyarette damga kazandırın, sadakatlerini ödüllendirin.
+            {isTr ? 'Müşterilerinize her ziyarette damga kazandırın, sadakatlerini ödüllendirin.' : 'Reward your customers with digital stamps on every visit.'}
           </p>
         </div>
 
@@ -346,7 +353,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
               border: `1px solid ${program.is_active ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`
             }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: program.is_active ? '#34d399' : '#f87171' }} />
-              {program.is_active ? 'Program Aktif' : 'Program Pasif'}
+              {program.is_active ? (isTr ? 'Program Aktif' : 'Program Active') : (isTr ? 'Program Pasif' : 'Program Inactive')}
             </span>
           )}
           <Link
@@ -363,7 +370,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
             }}
           >
             <QrIcon size={16} />
-            Damga Okut / Kamera Aç
+            {isTr ? 'Damga Okut / Kamera Aç' : 'Scan Stamp / Open Camera'}
           </Link>
         </div>
       </div>
@@ -376,28 +383,28 @@ export const BusinessLoyaltyPage: React.FC = () => {
         marginBottom: '2rem'
       }}>
         <div className="loyalty-metric-card">
-          <div className="loyalty-metric-label">Toplam Sadakat Kartı</div>
+          <div className="loyalty-metric-label">{isTr ? 'Toplam Sadakat Kartı' : 'Total Loyalty Cards'}</div>
           <div className="loyalty-metric-val">{stats?.totalCards || 0}</div>
-          <div className="loyalty-metric-sub">Kayıtlı müşteri kartı</div>
+          <div className="loyalty-metric-sub">{isTr ? 'Kayıtlı müşteri kartı' : 'Registered customer cards'}</div>
         </div>
         <div className="loyalty-metric-card">
-          <div className="loyalty-metric-label">Aktif Müşteri (30 Gün)</div>
+          <div className="loyalty-metric-label">{isTr ? 'Aktif Müşteri (30 Gün)' : 'Active Customers (30 Days)'}</div>
           <div className="loyalty-metric-val" style={{ color: '#818cf8' }}>
             {stats?.activeCards30d ?? stats?.activeCustomers ?? 0}
           </div>
-          <div className="loyalty-metric-sub">Son 30 günde damga alan</div>
+          <div className="loyalty-metric-sub">{isTr ? 'Son 30 günde damga alan' : 'Stamped in the last 30 days'}</div>
         </div>
         <div className="loyalty-metric-card">
-          <div className="loyalty-metric-label">Verilen Damga</div>
+          <div className="loyalty-metric-label">{isTr ? 'Verilen Damga' : 'Total Stamps Given'}</div>
           <div className="loyalty-metric-val" style={{ color: '#34d399' }}>{stats?.totalStampsGiven || 0}</div>
-          <div className="loyalty-metric-sub">Toplam kazanılan damga</div>
+          <div className="loyalty-metric-sub">{isTr ? 'Toplam kazanılan damga' : 'Total earned stamps'}</div>
         </div>
         <div className="loyalty-metric-card">
-          <div className="loyalty-metric-label">Kullanılan Ödül</div>
+          <div className="loyalty-metric-label">{isTr ? 'Kullanılan Ödül' : 'Rewards Redeemed'}</div>
           <div className="loyalty-metric-val" style={{ color: '#fbbf24' }}>
             {stats?.totalRewardsRedeemed ?? stats?.redeemedRewards ?? 0}
           </div>
-          <div className="loyalty-metric-sub">Teslim edilen ikramlar</div>
+          <div className="loyalty-metric-sub">{isTr ? 'Teslim edilen ikramlar' : 'Claimed rewards'}</div>
         </div>
       </div>
 
@@ -412,16 +419,16 @@ export const BusinessLoyaltyPage: React.FC = () => {
         <div className="loyalty-card-wrapper" style={{ padding: '1.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <Sparkles size={20} color="#818cf8" />
-            <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>Program Ayarları</h2>
+            <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>{isTr ? 'Program Ayarları' : 'Program Settings'}</h2>
           </div>
 
           <form onSubmit={handleSave}>
             <div style={{ marginBottom: '1.25rem' }}>
-              <label className="loyalty-input-label">Program / Kart Adı</label>
+              <label className="loyalty-input-label">{isTr ? 'Program / Kart Adı' : 'Program / Card Name'}</label>
               <input
                 type="text"
                 className="loyalty-text-input"
-                placeholder="Örn: Kahve Sadakat Kulübü"
+                placeholder={isTr ? 'Örn: Kahve Sadakat Kulübü' : 'e.g. Coffee Loyalty Club'}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -430,7 +437,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
               <div>
-                <label className="loyalty-input-label">Hedef Damga Sayısı</label>
+                <label className="loyalty-input-label">{isTr ? 'Hedef Damga Sayısı' : 'Target Stamp Count'}</label>
                 <input
                   type="number"
                   min={2}
@@ -440,10 +447,12 @@ export const BusinessLoyaltyPage: React.FC = () => {
                   onChange={(e) => setTargetStamps(Number(e.target.value))}
                   required
                 />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>Örn: 10 damga</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>
+                  {isTr ? 'Örn: 10 damga' : 'e.g. 10 stamps'}
+                </span>
               </div>
               <div>
-                <label className="loyalty-input-label">Damga Arası Bekleme (Dk)</label>
+                <label className="loyalty-input-label">{isTr ? 'Damga Arası Bekleme (Dk)' : 'Stamp Cooldown (Min)'}</label>
                 <input
                   type="number"
                   min={0}
@@ -453,16 +462,18 @@ export const BusinessLoyaltyPage: React.FC = () => {
                   onChange={(e) => setCooldownMin(Number(e.target.value))}
                   required
                 />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>Çift basmayı önler (dk)</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>
+                  {isTr ? 'Çift basmayı önler (dk)' : 'Prevents duplicate stamps (min)'}
+                </span>
               </div>
             </div>
 
             <div style={{ marginBottom: '1.25rem' }}>
-              <label className="loyalty-input-label">Kazanılacak Ödül Açıklaması</label>
+              <label className="loyalty-input-label">{isTr ? 'Kazanılacak Ödül Açıklaması' : 'Reward Description'}</label>
               <input
                 type="text"
                 className="loyalty-text-input"
-                placeholder="Örn: 1 Adet Ücretsiz Filtre Kahve"
+                placeholder={isTr ? 'Örn: 1 Adet Ücretsiz Filtre Kahve' : 'e.g. 1 Free Specialty Coffee'}
                 value={rewardDesc}
                 onChange={(e) => setRewardDesc(e.target.value)}
                 required
@@ -480,9 +491,11 @@ export const BusinessLoyaltyPage: React.FC = () => {
               marginBottom: '1.5rem'
             }}>
               <div>
-                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Program Durumu</div>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{isTr ? 'Program Durumu' : 'Program Status'}</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Program aktif olduğunda müşteriler kart oluşturabilir ve damga toplayabilir.
+                  {isTr
+                    ? 'Program aktif olduğunda müşteriler kart oluşturabilir ve damga toplayabilir.'
+                    : 'When active, customers can create loyalty cards and collect stamps.'}
                 </div>
               </div>
               <label className="loyalty-toggle-switch">
@@ -501,7 +514,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
               className="loyalty-primary-btn"
               style={{ width: '100%', padding: '0.85rem 1.5rem', fontWeight: 600 }}
             >
-              {saving ? t('common.saving') : 'Programı Kaydet'}
+              {saving ? t('common.saving') : (isTr ? 'Programı Kaydet' : 'Save Program')}
             </button>
           </form>
         </div>
@@ -510,7 +523,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
         <div className="loyalty-card-wrapper" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
             <QrIcon size={20} color="#818cf8" />
-            <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>İşletme Kayıt QR Kodu</h2>
+            <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>{isTr ? 'İşletme Kayıt QR Kodu' : 'Enrollment QR Code'}</h2>
           </div>
 
           <div style={{
@@ -523,7 +536,10 @@ export const BusinessLoyaltyPage: React.FC = () => {
             padding: '0.75rem 1rem',
             borderRadius: '10px'
           }}>
-            <strong style={{ color: '#a5b4fc' }}>Önemli Kural:</strong> Müşterileriniz bu QR kodu <u>yalnızca ilk kez kart oluştururken</u> tarar. Sonraki ziyaretlerde damga almak için kendi dijital kartlarını personele gösterirler.
+            <strong style={{ color: '#a5b4fc' }}>{isTr ? 'Önemli Kural:' : 'Important Notice:'}</strong>{' '}
+            {isTr
+              ? 'Müşterileriniz bu QR kodu yalnızca ilk kez kart oluştururken tarar. Sonraki ziyaretlerde damga almak için kendi dijital kartlarını personele gösterirler.'
+              : 'Customers scan this QR code only once to create their card. On return visits, they present their own digital card to staff for stamps.'}
           </div>
 
           <div style={{ textAlign: 'center', margin: 'auto 0', padding: '1rem 0' }}>
@@ -538,7 +554,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
-                  alt="Sadakat Kayıt QR Kodu"
+                  alt={isTr ? 'Sadakat Kayıt QR Kodu' : 'Loyalty Registration QR Code'}
                   style={{ width: '200px', height: '200px', display: 'block' }}
                 />
               ) : (
@@ -549,7 +565,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
             </div>
 
             <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Kayıt Bağlantısı:
+              {isTr ? 'Kayıt Bağlantısı:' : 'Enrollment Link:'}
             </div>
             <div style={{
               display: 'flex',
@@ -574,7 +590,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
               <button
                 type="button"
                 onClick={copyEnrollLink}
-                title="Kopyala"
+                title={t('common.copied') || 'Copy'}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -598,7 +614,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
               <Download size={16} />
-              QR İndir (PNG)
+              {isTr ? 'QR İndir (PNG)' : 'Download QR (PNG)'}
             </button>
             <button
               type="button"
@@ -608,7 +624,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
               <Printer size={16} />
-              Masaüstü Yazdır
+              {isTr ? 'Masaüstü Yazdır' : 'Print QR'}
             </button>
           </div>
         </div>
@@ -618,9 +634,9 @@ export const BusinessLoyaltyPage: React.FC = () => {
       <div className="loyalty-card-wrapper" style={{ padding: '1.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>Son Sadakat İşlemleri</h2>
+            <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>{isTr ? 'Son Sadakat İşlemleri' : 'Recent Loyalty Activity'}</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0.2rem 0 0' }}>
-              Personelleriniz tarafından verilen damgalar ve onaylanan ödüller.
+              {isTr ? 'Personelleriniz tarafından verilen damgalar ve onaylanan ödüller.' : 'Stamps awarded and rewards claimed by your staff.'}
             </p>
           </div>
         </div>
@@ -630,18 +646,18 @@ export const BusinessLoyaltyPage: React.FC = () => {
             <table className="loyalty-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-muted)' }}>
-                  <th style={{ padding: '0.75rem 1rem' }}>Tarih / Saat</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>İşlem</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Müşteri</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Kart Kodu</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Personel</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>{isTr ? 'Tarih / Saat' : 'Date / Time'}</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>{isTr ? 'İşlem' : 'Action'}</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>{isTr ? 'Müşteri' : 'Customer'}</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>{isTr ? 'Kart Kodu' : 'Card Code'}</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>{isTr ? 'Personel' : 'Staff'}</th>
                 </tr>
               </thead>
               <tbody>
                 {stats.recentTransactions.map((tx) => (
                   <tr key={tx.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                      {new Date(tx.createdAt || tx.created_at || '').toLocaleString('tr-TR', {
+                      {new Date(tx.createdAt || tx.created_at || '').toLocaleString(isTr ? 'tr-TR' : 'en-US', {
                         day: '2-digit',
                         month: 'short',
                         hour: '2-digit',
@@ -658,7 +674,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                           fontWeight: 600
                         }}>
                           <CheckCircle2 size={14} />
-                          +{tx.stampsDelta || 1} Damga
+                          +{tx.stampsDelta || 1} {isTr ? 'Damga' : 'Stamps'}
                         </span>
                       ) : (
                         <span style={{
@@ -669,12 +685,12 @@ export const BusinessLoyaltyPage: React.FC = () => {
                           fontWeight: 600
                         }}>
                           <Gift size={14} />
-                          Ödül Teslimi
+                          {isTr ? 'Ödül Teslimi' : 'Reward Redeemed'}
                         </span>
                       )}
                     </td>
                     <td style={{ padding: '0.85rem 1rem', color: 'var(--text-primary)' }}>
-                      {tx.customerEmail || tx.customer_name || tx.customer_masked_email || 'Misafir'}
+                      {tx.customerEmail || tx.customer_name || tx.customer_masked_email || (isTr ? 'Misafir' : 'Guest')}
                     </td>
                     <td style={{ padding: '0.85rem 1rem' }}>
                       <code style={{
@@ -689,7 +705,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
                       </code>
                     </td>
                     <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                      {tx.employeeName || tx.staff_name || 'Yönetici / Kasa'}
+                      {tx.employeeName || tx.staff_name || (isTr ? 'Yönetici / Kasa' : 'Admin / POS')}
                     </td>
                   </tr>
                 ))}
@@ -699,9 +715,11 @@ export const BusinessLoyaltyPage: React.FC = () => {
         ) : (
           <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
             <Award size={40} style={{ opacity: 0.3, marginBottom: '0.75rem' }} />
-            <div>Henüz bir sadakat işlemi gerçekleşmedi.</div>
+            <div>{isTr ? 'Henüz bir sadakat işlemi gerçekleşmedi.' : 'No loyalty transactions yet.'}</div>
             <div style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
-              İşletme kayıt QR kodunuzu masalara veya kasaya yerleştirerek başlayın.
+              {isTr
+                ? 'İşletme kayıt QR kodunuzu masalara veya kasaya yerleştirerek başlayın.'
+                : 'Get started by displaying your registration QR code on tables or checkout counter.'}
             </div>
           </div>
         )}

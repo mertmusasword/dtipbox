@@ -75,7 +75,7 @@ export const BusinessDashboard: React.FC = () => {
   };
 
   const handleRejectTip = async (tipId: string) => {
-    const confirmed = window.confirm('Bu bahşiş için banka havalesi ulaşmadıysa kaydı iptal etmek istiyor musunuz?');
+    const confirmed = window.confirm(t('business.rejectConfirmPrompt'));
     if (!confirmed) return;
 
     try {
@@ -83,7 +83,7 @@ export const BusinessDashboard: React.FC = () => {
       await api.put(`/business/tips/${tipId}/reject`);
       loadData();
     } catch {
-      alert('Bahşiş iptal edilirken bir hata oluştu.');
+      alert(t('common.error'));
     } finally {
       setRejectingId(null);
     }
@@ -169,7 +169,7 @@ export const BusinessDashboard: React.FC = () => {
               background: 'rgba(99, 102, 241, 0.08)',
             }}
           >
-            <Split size={16} /> Bahşiş Dağıt & Kasa Kapat
+            <Split size={16} /> {t('business.distributeTipsBtn')}
           </button>
           <Link to="/business/qr" className="btn btn-secondary">
             <QrCode size={16} /> {t('nav.qrCodes')}
@@ -189,10 +189,10 @@ export const BusinessDashboard: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200">
-                Naponi İşletme Hizmet ve Kullanım Sözleşmesi Onayı Bekleniyor
+                {t('business.agreementPendingTitle')}
               </h3>
               <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-0.5">
-                Canlı ödeme altyapısı ve QR kod operasyonlarını eksiksiz yönetebilmek için lütfen güncel sözleşmeyi inceleyip onaylayınız.
+                {t('business.agreementPendingDesc')}
               </p>
             </div>
           </div>
@@ -200,7 +200,7 @@ export const BusinessDashboard: React.FC = () => {
             onClick={() => setShowAgreementModal(true)}
             className="btn btn-primary bg-amber-600 hover:bg-amber-700 text-white text-xs whitespace-nowrap shrink-0 flex items-center gap-1.5 shadow-sm"
           >
-            <FileText size={14} /> Sözleşmeyi İncele ve Onayla
+            <FileText size={14} /> {t('business.reviewAgreementBtn')}
           </button>
         </div>
       )}
@@ -338,7 +338,7 @@ export const BusinessDashboard: React.FC = () => {
                               style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap' }}
                             >
                               <Check size={13} />
-                              <span>{verifyingId === tip.id ? '...' : (language === 'tr' ? 'Havale Alındı' : 'Confirm')}</span>
+                              <span>{verifyingId === tip.id ? '...' : t('business.confirmTransferBtn')}</span>
                             </button>
                             <button
                               type="button"
@@ -355,10 +355,10 @@ export const BusinessDashboard: React.FC = () => {
                                 alignItems: 'center',
                                 gap: '0.25rem',
                               }}
-                              title={language === 'tr' ? 'Havale Gelmedi / İptal Et' : 'Reject / Cancel'}
+                              title={t('business.rejectTransferBtn')}
                             >
                               <X size={13} />
-                              <span>{rejectingId === tip.id ? '...' : (language === 'tr' ? 'Alınmadı' : 'Reject')}</span>
+                              <span>{rejectingId === tip.id ? '...' : t('business.rejectTransferBtn')}</span>
                             </button>
                           </div>
                         ) : (
@@ -413,7 +413,7 @@ export const BusinessDashboard: React.FC = () => {
                         className="btn btn-primary"
                       >
                         <Check size={16} />
-                        <span>{verifyingId === tip.id ? '...' : (language === 'tr' ? 'Havale Alındı' : 'Confirm')}</span>
+                        <span>{verifyingId === tip.id ? '...' : t('business.confirmTransferBtn')}</span>
                       </button>
                       <button
                         type="button"
@@ -421,10 +421,10 @@ export const BusinessDashboard: React.FC = () => {
                         disabled={verifyingId === tip.id || rejectingId === tip.id}
                         className="btn btn-secondary"
                         style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.35)' }}
-                        title={language === 'tr' ? 'Havale Gelmedi / İptal Et' : 'Reject / Cancel'}
+                        title={t('business.rejectTransferBtn')}
                       >
                         <X size={16} />
-                        <span>{rejectingId === tip.id ? '...' : (language === 'tr' ? 'Alınmadı' : 'Reject')}</span>
+                        <span>{rejectingId === tip.id ? '...' : t('business.rejectTransferBtn')}</span>
                       </button>
                     </div>
                   )}

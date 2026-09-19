@@ -1,4 +1,4 @@
-const es = {
+export const es = {
   "common": {
     "loading": "Cargando...",
     "saving": "Guardando...",
@@ -426,7 +426,14 @@ const es = {
     "tipCount": "Total de propinas recibidas",
     "employeePerformance": "Rendimiento del personal",
     "tablePerformance": "Actividad por zona / mesa",
-    "paymentMethodUsage": "Desglose por método de pago"
+    "paymentMethodUsage": "Desglose por método de pago",
+    "distributeTipsBtn": "Repartir Propinas y Cerrar Caja",
+    "agreementPendingTitle": "Acción Requerida: Confirmación del Contrato de Servicio Mercantil",
+    "agreementPendingDesc": "Revise y acepte los Términos de Servicio de Naponi para operar sin restricciones.",
+    "reviewAgreementBtn": "Revisar y Aceptar Contrato",
+    "confirmTransferBtn": "Transferencia Recibida",
+    "rejectTransferBtn": "Rechazar",
+    "rejectConfirmPrompt": "¿Está seguro de que desea cancelar este registro de propina si no recibió la transferencia?"
   },
   "payments": {
     "pageTitle": "Canales y Proveedores de Pago",
@@ -495,7 +502,26 @@ const es = {
     "localAccountNumber": "Número de cuenta local (regiones sin IBAN)",
     "routingNumber": "Código de sucursal / Routing Number",
     "swiftBic": "Código SWIFT / BIC (transferencias internacionales)",
-    "saveBankBtn": "Guardar datos bancarios"
+    "saveBankBtn": "Guardar datos bancarios",
+    "externalLinkTitle": "1. Enlace de Pago Seguro Externo",
+    "externalLinkDesc": "Su enlace de pago alojado para tarjetas de crédito",
+    "externalLinkNotice": "Ingrese el enlace de pago proporcionado por su pasarela (p. ej. Stripe Payment Link, SumUp o checkout propio). Los clientes que dejen propina serán redirigidos a este enlace.",
+    "externalLinkPlaceholder": "https://pago.surestaurante.es/... o enlace Stripe/SumUp",
+    "saveLinkBtn": "Guardar Enlace",
+    "testLinkBtn": "Probar Enlace",
+    "clearLinkBtn": "Borrar Enlace",
+    "directBankTitle": "2. Transferencia Bancaria Directa (IBAN)",
+    "directBankDesc": "Transferencia bancaria directa a la cuenta del local",
+    "directBankNotice": "Agregue su IBAN para transferencias directas. Los clientes transfieren directamente a su cuenta bancaria. Naponi no retiene ni intermedia fondos.",
+    "accountHolderPlaceholder": "Ej: Grand Bistro Hostelería S.L.",
+    "bankNamePlaceholder": "Ej: Santander, BBVA, CaixaBank...",
+    "ibanPlaceholder": "ES91 2100 0418 4502 0005 1332",
+    "saveBankDetailsBtn": "Guardar Datos Bancarios",
+    "naponiDoesNotHoldFundsTitle": "Naponi no recauda ni retiene fondos.",
+    "naponiDoesNotHoldFundsDesc": "Al dar propina, los clientes son redirigidos directamente a su enlace de pago seguro o cuenta bancaria. Naponi nunca almacena datos de tarjetas ni retiene fondos.",
+    "httpsRequiredToast": "El enlace de pago debe comenzar obligatoriamente con \"https://\".",
+    "linkSavedToast": "¡Enlace de pago seguro guardado con éxito!",
+    "bankSavedToast": "¡Datos bancarios guardados con éxito!"
   },
   "admin": {
     "pageTitle": "Administración de la plataforma",
@@ -709,7 +735,46 @@ const es = {
     "filterDisclaimerNote": "Este filtro se basa en la información facilitada por el local. Si tiene alergias severas, confirme siempre con el personal.",
     "noProductsFound": "No se encontraron platos o bebidas con estos criterios de búsqueda.",
     "clearSearch": "Limpiar búsqueda"
+  },
+  "profile": {
+    "distributionTitle": "Sistema de Distribución y Bote de Propinas",
+    "distributionDesc": "Gestione cómo se reparten las propinas entre el personal y configure deducciones.",
+    "modelIndividualTitle": "Propina Individual",
+    "modelIndividualDesc": "Cada empleado recibe las propinas de sus mesas asignadas o código QR personal.",
+    "modelEqualPoolTitle": "Bote Igualitario (Pool)",
+    "modelEqualPoolDesc": "Todas las propinas se acumulan en un bote común y se reparten a partes iguales al final del turno.",
+    "modelRoleWeightedTitle": "Ponderado por Puesto / Rol",
+    "modelRoleWeightedDesc": "Reparto justo según multiplicadores de puesto (ej: Camarero 1.0x, Barman 0.75x, Ayudante 0.50x).",
+    "posFeePayer": "Comisiones de Pasarela y Retenciones Fiscales",
+    "posFeeWhoPays": "¿Quién asume la comisión de la pasarela?",
+    "posStaff": "Descontar de las propinas (del bote)",
+    "posBusiness": "Asumido por el local (100% neto para el personal)",
+    "posCustomer": "Pagado por el cliente (Recargo en checkout)",
+    "posRateLabel": "Comisión de Pasarela (%)",
+    "taxRateLabel": "Retención Fiscal (%)",
+    "saveDistributionBtn": "Guardar Ajustes de Distribución",
+    "founderStatusActive": "Estado de Miembro Fundador Activo",
+    "legalTermsHeader": "Acuerdo Legal y Verificación Digital",
+    "legalTermsNotice": "El contrato de servicios mercantil vigente aceptado para operar con Naponi.",
+    "legalTermsBadge": "Protocolo de Verificación Criptográfica (SHA-256)",
+    "viewAgreementBtn": "Ver Acuerdo y Comprobante"
+  },
+  "employees": {
+    "roleAndPoolShare": "Puesto y Cuota de Bote",
+    "tipPoolShare": "Ponderación en Bote",
+    "tipPoolShareDesc": "Multiplicador de reparto en el bote de propinas",
+    "halfShare": "Media Cuota (0.50x)",
+    "fullShare": "Cuota Completa (1.00x)",
+    "seniorShare": "Cuota Senior (1.50x)",
+    "photoSelect": "Seleccionar o Arrastrar Foto",
+    "photoChange": "Cambiar Foto",
+    "photoRemove": "Eliminar Foto",
+    "photoUploadHint": "Haga clic para subir una foto desde su dispositivo",
+    "recommendedStandards": "Especificaciones recomendadas para imágenes:",
+    "imageFormatError": "Seleccione un archivo en formato JPG, PNG o WebP.",
+    "imageSizeError": "El tamaño de la imagen debe ser como máximo de 5 MB.",
+    "photoUploadedSuccess": "Foto subida y optimizada con éxito"
   }
-};
+} as const;
 
 export default es;

@@ -1,4 +1,4 @@
-const pt = {
+export const pt = {
   "common": {
     "loading": "Carregando...",
     "saving": "Salvando...",
@@ -426,7 +426,14 @@ const pt = {
     "tipCount": "Total de Gorjetas Recebidas",
     "employeePerformance": "Destaques da Equipe",
     "tablePerformance": "Atividade por Mesa / Setor",
-    "paymentMethodUsage": "Divisão por Meio de Pagamento"
+    "paymentMethodUsage": "Divisão por Meio de Pagamento",
+    "distributeTipsBtn": "Distribuir Gorjetas e Fechar Caixa",
+    "agreementPendingTitle": "Ação Necessária: Confirmação do Contrato de Serviço Comercial",
+    "agreementPendingDesc": "Por favor, revise e aceite os Termos de Serviço do Naponi para operar sem restrições.",
+    "reviewAgreementBtn": "Revisar e Aceitar Contrato",
+    "confirmTransferBtn": "Transferência Recebida",
+    "rejectTransferBtn": "Rejeitar",
+    "rejectConfirmPrompt": "Tem certeza de que deseja cancelar este registro de gorjeta caso a transferência não tenha chegado?"
   },
   "payments": {
     "pageTitle": "Canais e Provedores de Pagamento",
@@ -495,7 +502,26 @@ const pt = {
     "localAccountNumber": "Número da Conta Local (regiões fora do IBAN)",
     "routingNumber": "Agência / Código de Roteamento",
     "swiftBic": "Código SWIFT / BIC (transferências internacionais)",
-    "saveBankBtn": "Salvar Dados Bancários"
+    "saveBankBtn": "Salvar Dados Bancários",
+    "externalLinkTitle": "1. Link de Pagamento Seguro Externo",
+    "externalLinkDesc": "Seu link de checkout para pagamentos com cartão",
+    "externalLinkNotice": "Insira o link de pagamento da sua operadora (ex: Stripe Payment Link, SumUp ou checkout próprio). Os clientes serão redirecionados diretamente para este link.",
+    "externalLinkPlaceholder": "https://pagamento.seunegocio.com/... ou link Stripe",
+    "saveLinkBtn": "Salvar Link",
+    "testLinkBtn": "Testar Link",
+    "clearLinkBtn": "Limpar Link",
+    "directBankTitle": "2. Transferência Bancária Direta (IBAN / PIX)",
+    "directBankDesc": "Transferência direta para a conta bancária do estabelecimento",
+    "directBankNotice": "Cadastre seus dados bancários para transferências diretas. Os clientes transferem diretamente para sua conta. O Naponi não retém nem faz custódia de valores.",
+    "accountHolderPlaceholder": "Ex: Grand Bistro Gastronomia Ltda.",
+    "bankNamePlaceholder": "Ex: Itaú, Bradesco, Santander, Banco do Brasil...",
+    "ibanPlaceholder": "IBAN / Chave PIX / Conta Bancária",
+    "saveBankDetailsBtn": "Salvar Dados Bancários",
+    "naponiDoesNotHoldFundsTitle": "O Naponi não recebe nem retém fundos.",
+    "naponiDoesNotHoldFundsDesc": "Ao dar gorjeta, os clientes são direcionados ao seu link de pagamento seguro ou conta bancária. O Naponi nunca armazena dados de cartão e não retém o dinheiro dos clientes.",
+    "httpsRequiredToast": "Por motivos de segurança, o link de pagamento deve começar com \"https://\".",
+    "linkSavedToast": "Link de pagamento seguro salvo com sucesso!",
+    "bankSavedToast": "Dados bancários salvos com sucesso!"
   },
   "admin": {
     "pageTitle": "Administração da Plataforma",
@@ -709,7 +735,46 @@ const pt = {
     "filterDisclaimerNote": "Este filtro baseia-se nas informações prestadas pelo estabelecimento. Em caso de alergias graves, confirme sempre com a equipe.",
     "noProductsFound": "Nenhum prato ou bebida corresponde aos seus critérios de busca.",
     "clearSearch": "Limpar busca"
+  },
+  "profile": {
+    "distributionTitle": "Sistema de Distribuição e Caixinha de Gorjetas",
+    "distributionDesc": "Gerencie como as gorjetas são divididas entre os funcionários e configure deduções.",
+    "modelIndividualTitle": "Gorjeta Individual",
+    "modelIndividualDesc": "Cada colaborador recebe as gorjetas geradas em suas mesas atribuídas ou QR code.",
+    "modelEqualPoolTitle": "Caixinha Compartilhada (Divisão Igual)",
+    "modelEqualPoolDesc": "Todas as gorjetas vão para um fundo comum e são divididas igualmente entre os funcionários do turno.",
+    "modelRoleWeightedTitle": "Ponderado por Função / Pontos",
+    "modelRoleWeightedDesc": "Distribuição justa com base em multiplicadores (ex: Garçom 1.0x, Barman 0.75x, Cumim 0.50x).",
+    "posFeePayer": "Taxas de Gateway e Retenções Fiscais",
+    "posFeeWhoPays": "Quem arca com as taxas do gateway de pagamento?",
+    "posStaff": "Deduzir da caixinha de gorjetas",
+    "posBusiness": "Assumido pela casa (equipe recebe 100% líquido)",
+    "posCustomer": "Pago pelo cliente (taxa de conveniência)",
+    "posRateLabel": "Taxa da Operadora (%)",
+    "taxRateLabel": "Retenção de Imposto (%)",
+    "saveDistributionBtn": "Salvar Configurações de Distribuição",
+    "founderStatusActive": "Benefícios de Membro Fundador Ativos",
+    "legalTermsHeader": "Acordo Legal e Verificação Digital",
+    "legalTermsNotice": "O contrato de prestação de serviços mercantis vigente aceito para operar no Naponi.",
+    "legalTermsBadge": "Protocolo de Verificação Criptográfica (SHA-256)",
+    "viewAgreementBtn": "Visualizar Acordo e Comprovante"
+  },
+  "employees": {
+    "roleAndPoolShare": "Cargo e Cota da Caixinha",
+    "tipPoolShare": "Peso na Caixinha",
+    "tipPoolShareDesc": "Multiplicador de divisão no fundo de gorjetas",
+    "halfShare": "Meia Cota (0.50x)",
+    "fullShare": "Cota Cheia (1.00x)",
+    "seniorShare": "Cota Sênior (1.50x)",
+    "photoSelect": "Selecionar ou Arrastar Foto",
+    "photoChange": "Alterar Foto",
+    "photoRemove": "Remover Foto",
+    "photoUploadHint": "Clique para enviar uma foto do seu dispositivo",
+    "recommendedStandards": "Padrões recomendados para imagem:",
+    "imageFormatError": "Selecione uma imagem nos formatos JPG, PNG ou WebP.",
+    "imageSizeError": "O tamanho da foto deve ser de no máximo 5 MB.",
+    "photoUploadedSuccess": "Foto enviada e otimizada com sucesso"
   }
-};
+} as const;
 
 export default pt;

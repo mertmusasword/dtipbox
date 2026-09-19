@@ -1,4 +1,4 @@
-const ar = {
+export const ar = {
   "common": {
     "loading": "جار التحميل...",
     "saving": "جار الحفظ...",
@@ -426,7 +426,14 @@ const ar = {
     "tipCount": "عدد الإكراميات المستلمة",
     "employeePerformance": "أداء أفضل الموظفين",
     "tablePerformance": "نشاط المناطق والطاولات",
-    "paymentMethodUsage": "توزيع طرق الدفع المستخدمة"
+    "paymentMethodUsage": "توزيع طرق الدفع المستخدمة",
+    "distributeTipsBtn": "توزيع الإكراميات وإغلاق الصندوق",
+    "agreementPendingTitle": "مطلوب إجراء: اعتماد اتفاقية خدمة التاجر",
+    "agreementPendingDesc": "يرجى مراجعة وقبول شروط خدمة نابوني لتشغيل كافة ميزات المنصة بكفاءة.",
+    "reviewAgreementBtn": "مراجعة وقبول الاتفاقية",
+    "confirmTransferBtn": "تم استلام الحوالة",
+    "rejectTransferBtn": "رفض",
+    "rejectConfirmPrompt": "هل أنت متأكد من رغبتك في إلغاء سجل الإكرامية هذا في حال لم يصل التحويل البنكي؟"
   },
   "payments": {
     "pageTitle": "قنوات ومزودو الدفع",
@@ -495,7 +502,26 @@ const ar = {
     "localAccountNumber": "رقم الحساب المحلي (للدول التي لا تستخدم IBAN)",
     "routingNumber": "رمز التوجيه البنكي / كود الفرع",
     "swiftBic": "رمز سويفت / BIC (للتحويلات الدولية)",
-    "saveBankBtn": "حفظ بيانات الحساب البنكي"
+    "saveBankBtn": "حفظ بيانات الحساب البنكي",
+    "externalLinkTitle": "١. رابط الدفع الآمن الخارجي",
+    "externalLinkDesc": "رابط الدفع المستضاف الخاص بمتجرك لبطاقات الائتمان",
+    "externalLinkNotice": "أدخل رابط الدفع المقدم من مزود الخدمة الخاص بك (مثل Stripe أو بوابة دفع محلية). يتم توجيه الضيوف مباشرة إلى هذا الرابط.",
+    "externalLinkPlaceholder": "https://pay.yourbusiness.com/... أو رابط الدفع",
+    "saveLinkBtn": "حفظ الرابط",
+    "testLinkBtn": "اختبار الرابط",
+    "clearLinkBtn": "مسح الرابط",
+    "directBankTitle": "٢. التحويل المصرفي المباشر (آيبان)",
+    "directBankDesc": "تحويل بنكي مباشر إلى حساب المنشأة",
+    "directBankNotice": "أضف رقم الآيبان لاستقبال التحويلات المصرفية المباشرة. يحول الضيوف مباشرة إلى حسابك. نابوني لا تحتجز ولا تدير الأموال.",
+    "accountHolderPlaceholder": "مثال: شركة مطعم ومقهى الأفق ذ.م.م",
+    "bankNamePlaceholder": "مثال: بنك الراجحي، بنك أبوظبي الأول، البنك الأهلي...",
+    "ibanPlaceholder": "SA03 8000 0000 6080 1016 7519",
+    "saveBankDetailsBtn": "حفظ البيانات البنكية",
+    "naponiDoesNotHoldFundsTitle": "نابوني لا تستلم ولا تحتفظ بأي أموال.",
+    "naponiDoesNotHoldFundsDesc": "عند تقديم الإكرامية، يتم توجيه الضيوف مباشرة إلى رابط الدفع الآمن الخاص بك أو حسابك البنكي. نابوني لا تخزن بيانات البطاقات أبداً.",
+    "httpsRequiredToast": "يجب أن يبدأ رابط الدفع بـ \"https://\" لضمان الأمان.",
+    "linkSavedToast": "تم حفظ رابط الدفع الآمن بنجاح!",
+    "bankSavedToast": "تم حفظ البيانات البنكية بنجاح!"
   },
   "admin": {
     "pageTitle": "إدارة المنصة",
@@ -709,7 +735,46 @@ const ar = {
     "filterDisclaimerNote": "يعتمد هذا الفلتر على إفصاح المنشأة للمكونات. في حالات الحساسية الشديدة، يرجى دائماً التأكيد مع طاقم الخدمة.",
     "noProductsFound": "لم يتم العثور على أطباق أو مشروبات تطابق خياراتك.",
     "clearSearch": "مسح البحث"
+  },
+  "profile": {
+    "distributionTitle": "نظام توزيع وتقاسم الإكراميات (المجموع)",
+    "distributionDesc": "إدارة كيفية توزيع الإكراميات المجمعة على فريق العمل وتحديد الاستقطاعات.",
+    "modelIndividualTitle": "توزيع فردي",
+    "modelIndividualDesc": "يحصل كل موظف على الإكراميات الخاصة بطاولاته المخصصة أو رمزه الشخصي.",
+    "modelEqualPoolTitle": "مجموعة مشتركة متساوية",
+    "modelEqualPoolDesc": "تجمع كافة الإكراميات في وعاء مشترك وتقسم بالتساوي على الموظفين النشطين في نهاية الوردية.",
+    "modelRoleWeightedTitle": "موزع حسب الرتبة والدور",
+    "modelRoleWeightedDesc": "توزيع عادل وفق مضاعفات الأدوار (مثال: نادل 1.0x، باريستا 0.75x، مساعد 0.50x).",
+    "posFeePayer": "رسوم بوابة الدفع والاستقطاعات الضريبية",
+    "posFeeWhoPays": "من يتحمل رسوم بوابة الدفع الإلكتروني؟",
+    "posStaff": "تخصم من وعاء الإكراميات",
+    "posBusiness": "تتحملها المنشأة (تصل صافية بالكامل للموظف)",
+    "posCustomer": "يدفعها العميل (رسوم خدمة إضافية)",
+    "posRateLabel": "نسبة عمولة بوابة الدفع (%)",
+    "taxRateLabel": "نسبة الاستقطاع الضريبي (%)",
+    "saveDistributionBtn": "حفظ إعدادات التوزيع",
+    "founderStatusActive": "مزايا العضوية التأسيسية مفعلة",
+    "legalTermsHeader": "الاتفاقية القانونية والتوثيق الرقمي",
+    "legalTermsNotice": "اتفاقية شروط الخدمة والامتثال المعتمدة لمنشأتك على منصة نابوني.",
+    "legalTermsBadge": "بروتوكول التحقق المشفر (SHA-256)",
+    "viewAgreementBtn": "عرض الاتفاقية وإثبات الموافقة"
+  },
+  "employees": {
+    "roleAndPoolShare": "المسمى الوظيفي وحصة الوعاء",
+    "tipPoolShare": "وزن حصة الإكرامية",
+    "tipPoolShareDesc": "مضاعف نصيب الموظف في التوزيع المجمع للإكراميات",
+    "halfShare": "نصف حصة (0.50x)",
+    "fullShare": "حصة كاملة (1.00x)",
+    "seniorShare": "حصة كبار الموظفين (1.50x)",
+    "photoSelect": "اختر صورة أو اسحبها هنا",
+    "photoChange": "تغيير الصورة",
+    "photoRemove": "حذف الصورة",
+    "photoUploadHint": "انقر لتحميل صورة الموظف من جهازك",
+    "recommendedStandards": "المعايير الموصى بها للصورة:",
+    "imageFormatError": "يرجى اختيار صورة بصيغة JPG أو PNG أو WebP.",
+    "imageSizeError": "الحد الأقصى لحجم الصورة هو 5 ميغابايت.",
+    "photoUploadedSuccess": "تم تحميل الصورة وتحسينها بنجاح"
   }
-};
+} as const;
 
 export default ar;

@@ -1,4 +1,4 @@
-const en = {
+export const en = {
   "common": {
     "loading": "Loading...",
     "saving": "Saving...",
@@ -426,7 +426,14 @@ const en = {
     "tipCount": "Total Tips Received",
     "employeePerformance": "Top Staff Performance",
     "tablePerformance": "Zone / Table Activity",
-    "paymentMethodUsage": "Payment Method Breakdown"
+    "paymentMethodUsage": "Payment Method Breakdown",
+    "distributeTipsBtn": "Distribute Tips & Close Shift",
+    "agreementPendingTitle": "Action Required: Merchant Service Agreement Verification",
+    "agreementPendingDesc": "Please review and accept the Naponi Merchant Terms of Service to enable all platform features.",
+    "reviewAgreementBtn": "Review & Accept Agreement",
+    "confirmTransferBtn": "Confirm Transfer",
+    "rejectTransferBtn": "Reject",
+    "rejectConfirmPrompt": "Are you sure you want to cancel this tip record if the transfer was not received?"
   },
   "payments": {
     "pageTitle": "Payment Channels & Providers",
@@ -495,7 +502,26 @@ const en = {
     "localAccountNumber": "Local Account Number (non-IBAN regions)",
     "routingNumber": "Routing Number / Sort Code",
     "swiftBic": "SWIFT / BIC Code (for cross-border routing)",
-    "saveBankBtn": "Save Bank Details"
+    "saveBankBtn": "Save Bank Details",
+    "externalLinkTitle": "1. External Secure Payment Link",
+    "externalLinkDesc": "Your hosted checkout link for card payments",
+    "externalLinkNotice": "Enter the hosted checkout link provided by your payment provider (e.g. Stripe Payment Link, PayTR, iyzico, SumUp, or your own checkout). Tipping guests will be forwarded directly to this link.",
+    "externalLinkPlaceholder": "https://checkout.yourvenue.com/... or Stripe/SumUp link",
+    "saveLinkBtn": "Save Link",
+    "testLinkBtn": "Test Link",
+    "clearLinkBtn": "Clear Link",
+    "directBankTitle": "2. Direct Bank Transfer (IBAN / Wire)",
+    "directBankDesc": "Direct bank transfer to venue account",
+    "directBankNotice": "Add your IBAN details for direct bank transfers (wire/FAST/SEPA). Guests transfer directly to your venue bank account. Naponi does not touch or mediate the funds.",
+    "accountHolderPlaceholder": "e.g. Grand Bistro Hospitality Ltd.",
+    "bankNamePlaceholder": "e.g. Chase, Barclays, Deutsche Bank...",
+    "ibanPlaceholder": "IBAN / Account Number (e.g. DE89... or US...)",
+    "saveBankDetailsBtn": "Save Bank Details",
+    "naponiDoesNotHoldFundsTitle": "Naponi does not collect or hold funds.",
+    "naponiDoesNotHoldFundsDesc": "When guests tip, they are directed straight to your designated secure checkout link or direct bank account. Payment occurs through your provider or bank. Naponi never collects or stores card details and never holds customer funds.",
+    "httpsRequiredToast": "Payment link must start with secure \"https://\"",
+    "linkSavedToast": "External payment link saved successfully!",
+    "bankSavedToast": "Bank account details saved successfully!"
   },
   "admin": {
     "pageTitle": "Platform Administration",
@@ -709,7 +735,46 @@ const en = {
     "filterDisclaimerNote": "This filter is based on venue-provided ingredient disclosures. Due to cross-contamination risk, please confirm with staff if you have severe allergies.",
     "noProductsFound": "No dishes or drinks match your search or filter criteria.",
     "clearSearch": "Clear Search"
+  },
+  "profile": {
+    "distributionTitle": "Tip Distribution & Pooling System",
+    "distributionDesc": "Manage how collected tips are distributed among staff and configure deductions.",
+    "modelIndividualTitle": "Individual Tipping",
+    "modelIndividualDesc": "Each staff member receives the tips generated from their own assigned tables or personal QR code.",
+    "modelEqualPoolTitle": "Equal Tip Pool",
+    "modelEqualPoolDesc": "All tips are aggregated into a shared house pool and divided equally among active on-shift staff.",
+    "modelRoleWeightedTitle": "Role-Weighted Pool",
+    "modelRoleWeightedDesc": "Tips are distributed proportionally based on role point multipliers (e.g. Server 1.0x, Bartender 0.75x, Busser 0.50x).",
+    "posFeePayer": "Gateway Fee & Tax Deduction Settings",
+    "posFeeWhoPays": "Who Covers Gateway Processing Fees?",
+    "posStaff": "Deduct from Staff Tips (Subtracted from Pool)",
+    "posBusiness": "Covered by Venue (Staff Receives 100% Net)",
+    "posCustomer": "Added to Customer Bill (Convenience Surcharge)",
+    "posRateLabel": "Processing Fee Percentage (%)",
+    "taxRateLabel": "Withholding / Tax Deduction (%)",
+    "saveDistributionBtn": "Save Distribution Settings",
+    "founderStatusActive": "Founder Member Status Active",
+    "legalTermsHeader": "Legal Agreement & Digital Verification",
+    "legalTermsNotice": "The active merchant terms of service and compliance agreement governing your venue on Naponi.",
+    "legalTermsBadge": "Cryptographic (SHA-256) Verification Protocol",
+    "viewAgreementBtn": "View Agreement & Proof of Consent"
+  },
+  "employees": {
+    "roleAndPoolShare": "Role & Pool Share",
+    "tipPoolShare": "Tip Pool Weight",
+    "tipPoolShareDesc": "Distribution weight multiplier in house tip pool",
+    "halfShare": "Half Share (0.50x)",
+    "fullShare": "Full Share (1.00x)",
+    "seniorShare": "Senior Share (1.50x)",
+    "photoSelect": "Select or Drop Photo",
+    "photoChange": "Change Photo",
+    "photoRemove": "Remove Photo",
+    "photoUploadHint": "Click or tap to upload photo from your device",
+    "recommendedStandards": "Recommended Image Specifications:",
+    "imageFormatError": "Please select a JPG, PNG, or WebP image file.",
+    "imageSizeError": "Image file size must be 5 MB or less.",
+    "photoUploadedSuccess": "Photo uploaded and optimized successfully"
   }
-};
+} as const;
 
 export default en;

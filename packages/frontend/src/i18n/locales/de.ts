@@ -1,4 +1,4 @@
-const de = {
+export const de = {
   "common": {
     "loading": "Wird geladen...",
     "saving": "Wird gespeichert...",
@@ -426,7 +426,14 @@ const de = {
     "tipCount": "Erhaltene Trinkgelder",
     "employeePerformance": "Top-Mitarbeiter",
     "tablePerformance": "Bereichs- & Tischaktivität",
-    "paymentMethodUsage": "Genutzte Zahlungsarten"
+    "paymentMethodUsage": "Genutzte Zahlungsarten",
+    "distributeTipsBtn": "Trinkgeld verteilen & Schicht schließen",
+    "agreementPendingTitle": "Erforderlich: Bestätigung des Händler-Dienstleistungsvertrags",
+    "agreementPendingDesc": "Bitte prüfen und akzeptieren Sie die Naponi-Nutzungsbedingungen, um alle Funktionen uneingeschränkt zu nutzen.",
+    "reviewAgreementBtn": "Vertrag prüfen & annehmen",
+    "confirmTransferBtn": "Überweisung bestätigt",
+    "rejectTransferBtn": "Ablehnen",
+    "rejectConfirmPrompt": "Sind Sie sicher, dass Sie diesen Trinkgeldeintrag stornieren möchten, falls keine Überweisung eingegangen ist?"
   },
   "payments": {
     "pageTitle": "Zahlungskanäle & Zahlungsanbieter",
@@ -495,7 +502,26 @@ const de = {
     "localAccountNumber": "Lokale Kontonummer (außerhalb des SEPA-Raums)",
     "routingNumber": "Bankleitzahl / Sort Code",
     "swiftBic": "SWIFT / BIC-Code",
-    "saveBankBtn": "Bankdaten speichern"
+    "saveBankBtn": "Bankdaten speichern",
+    "externalLinkTitle": "1. Externer sicherer Zahlungslink",
+    "externalLinkDesc": "Ihr gehosteter Checkout-Link für Kartenzahlungen",
+    "externalLinkNotice": "Geben Sie den Checkout-Link Ihres Zahlungsanbieters (z. B. Stripe Payment Link, SumUp oder eigener Checkout) ein. Trinkgeldgeber werden direkt zu diesem Link weitergeleitet.",
+    "externalLinkPlaceholder": "https://checkout.ihrelokal.de/... oder Stripe/SumUp-Link",
+    "saveLinkBtn": "Link speichern",
+    "testLinkBtn": "Link testen",
+    "clearLinkBtn": "Link löschen",
+    "directBankTitle": "2. Direkte Banküberweisung (IBAN)",
+    "directBankDesc": "Direkte Banküberweisung auf das Betriebskonto",
+    "directBankNotice": "Hinterlegen Sie Ihre IBAN für SEPA-Überweisungen. Gäste überweisen Trinkgelder direkt auf Ihr Bankkonto. Naponi verwahrt oder vermittelt keine Gelder.",
+    "accountHolderPlaceholder": "z. B. Grand Bistro Gastronomie GmbH",
+    "bankNamePlaceholder": "z. B. Deutsche Bank, Commerzbank, Sparkasse...",
+    "ibanPlaceholder": "DE89 3704 0044 0532 0130 00",
+    "saveBankDetailsBtn": "Bankdaten speichern",
+    "naponiDoesNotHoldFundsTitle": "Naponi nimmt keine Gelder an.",
+    "naponiDoesNotHoldFundsDesc": "Wenn Gäste Trinkgeld geben, werden sie direkt auf Ihre sichere Bezahlseite oder Ihr Bankkonto weitergeleitet. Naponi speichert keine Kartendaten und verwahrt niemals Kundengelder.",
+    "httpsRequiredToast": "Der Zahlungslink muss aus Sicherheitsgründen mit \"https://\" beginnen.",
+    "linkSavedToast": "Sicherer Zahlungslink erfolgreich gespeichert!",
+    "bankSavedToast": "Bankverbindung erfolgreich gespeichert!"
   },
   "admin": {
     "pageTitle": "Plattform-Administration",
@@ -709,7 +735,46 @@ const de = {
     "filterDisclaimerNote": "Dieser Filter basiert auf den Angaben des Betriebs. Bei schweren Allergien bitten wir Sie, das Servicepersonal vor Ort zu informieren.",
     "noProductsFound": "Keine Gerichte oder Getränke entsprechen Ihrer Suche oder Filterung.",
     "clearSearch": "Suche zurücksetzen"
+  },
+  "profile": {
+    "distributionTitle": "Trinkgeld-Verteilungs- & Pool-System",
+    "distributionDesc": "Verwalten Sie die Aufteilung gesammelter Trinkgelder auf das Personal sowie etwaige Abzüge.",
+    "modelIndividualTitle": "Individuelles Trinkgeld",
+    "modelIndividualDesc": "Jeder Mitarbeiter erhält das Trinkgeld seiner zugewiesenen Tische oder persönlichen QR-Codes.",
+    "modelEqualPoolTitle": "Gleicher Trinkgeld-Pool",
+    "modelEqualPoolDesc": "Alle Trinkgelder fließen in einen gemeinsamen Pool und werden zu Schichtende zu gleichen Teilen aufgeteilt.",
+    "modelRoleWeightedTitle": "Rollen- / Punkte-gewichteter Pool",
+    "modelRoleWeightedDesc": "Faire Verteilung nach Multiplikatoren (z. B. Kellner 1.0x, Barkeeper 0.75x, Hilfskraft 0.50x).",
+    "posFeePayer": "Zahlungsgebühren & Steuerabzüge",
+    "posFeeWhoPays": "Wer übernimmt die Transaktionsgebühren?",
+    "posStaff": "Vom Trinkgeld-Pool abziehen",
+    "posBusiness": "Betrieb übernimmt Gebühren (100% netto für Personal)",
+    "posCustomer": "Kunde zahlt Gebühr (Zuschlag auf Rechnung)",
+    "posRateLabel": "Zahlungsanbieter-Gebühr (%)",
+    "taxRateLabel": "Steuer- / Abzugssatz (%)",
+    "saveDistributionBtn": "Verteilungseinstellungen speichern",
+    "founderStatusActive": "Gründungsmitglied-Status Aktiv",
+    "legalTermsHeader": "Nutzungsvertrag & Digitale Bestätigung",
+    "legalTermsNotice": "Der von Ihnen bestätigte Nutzungs- und Dienstleistungsvertrag für die Naponi-Plattform.",
+    "legalTermsBadge": "Kryptografisches (SHA-256) Bestätigungsprotokoll",
+    "viewAgreementBtn": "Vertrag & Nachweis anzeigen"
+  },
+  "employees": {
+    "roleAndPoolShare": "Rolle & Pool-Anteil",
+    "tipPoolShare": "Trinkgeld-Pool-Gewichtung",
+    "tipPoolShareDesc": "Multiplikator für die Schichtverteilung im Trinkgeld-Pool",
+    "halfShare": "Halber Anteil (0.50x)",
+    "fullShare": "Voller Anteil (1.00x)",
+    "seniorShare": "Senior-Anteil (1.50x)",
+    "photoSelect": "Foto auswählen oder hineinziehen",
+    "photoChange": "Foto ändern",
+    "photoRemove": "Foto entfernen",
+    "photoUploadHint": "Klicken, um Foto vom Gerät hochzuladen",
+    "recommendedStandards": "Empfohlene Bildstandards:",
+    "imageFormatError": "Bitte wählen Sie eine Datei im Format JPG, PNG oder WebP.",
+    "imageSizeError": "Die Dateigröße darf maximal 5 MB betragen.",
+    "photoUploadedSuccess": "Foto erfolgreich hochgeladen und angepasst"
   }
-};
+} as const;
 
 export default de;

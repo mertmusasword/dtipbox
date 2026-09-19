@@ -1,4 +1,4 @@
-const id = {
+export const id = {
   "common": {
     "loading": "Memuat...",
     "saving": "Menyimpan...",
@@ -426,7 +426,14 @@ const id = {
     "tipCount": "Total Tip Diterima",
     "employeePerformance": "Performa Staf Terbaik",
     "tablePerformance": "Aktivitas Area / Meja",
-    "paymentMethodUsage": "Rincian Metode Pembayaran"
+    "paymentMethodUsage": "Rincian Metode Pembayaran",
+    "distributeTipsBtn": "Bagi Tip & Tutup Kasir Shift",
+    "agreementPendingTitle": "Tindakan Diperlukan: Persetujuan Perjanjian Layanan Bisnis",
+    "agreementPendingDesc": "Harap tinjau dan setujui Syarat Layanan Naponi untuk mengaktifkan seluruh fitur platform secara penuh.",
+    "reviewAgreementBtn": "Tinjau & Setujui Perjanjian",
+    "confirmTransferBtn": "Transfer Dikonfirmasi",
+    "rejectTransferBtn": "Tolak",
+    "rejectConfirmPrompt": "Apakah Anda yakin ingin membatalkan catatan tip ini jika transfer bank belum diterima?"
   },
   "payments": {
     "pageTitle": "Saluran & Penyedia Pembayaran",
@@ -495,7 +502,26 @@ const id = {
     "localAccountNumber": "Nomor Rekening Lokal",
     "routingNumber": "Kode Kliring / Kode Bank",
     "swiftBic": "Kode SWIFT / BIC (untuk transfer internasional)",
-    "saveBankBtn": "Simpan Data Rekening"
+    "saveBankBtn": "Simpan Data Rekening",
+    "externalLinkTitle": "1. Tautan Pembayaran Aman Eksternal",
+    "externalLinkDesc": "Tautan checkout bisnis Anda untuk pembayaran kartu & e-wallet",
+    "externalLinkNotice": "Masukkan tautan checkout dari penyedia pembayaran Anda (misalnya Stripe Payment Link, Midtrans, Xendit, atau checkout mandiri). Tamu akan langsung diarahkan ke tautan ini.",
+    "externalLinkPlaceholder": "https://bayar.bisnisanda.com/... atau tautan pembayaran",
+    "saveLinkBtn": "Simpan Tautan",
+    "testLinkBtn": "Uji Tautan",
+    "clearLinkBtn": "Hapus Tautan",
+    "directBankTitle": "2. Transfer Bank Langsung (IBAN / Rekening)",
+    "directBankDesc": "Transfer bank langsung ke rekening tempat usaha",
+    "directBankNotice": "Tambahkan nomor rekening Anda untuk transfer bank langsung. Tamu mentransfer tip langsung ke rekening Anda. Naponi tidak memegang atau memediasi dana Anda.",
+    "accountHolderPlaceholder": "Contoh: PT Kuliner Nusantara Sejahtera",
+    "bankNamePlaceholder": "Contoh: Bank Mandiri, BCA, BRI, BNI...",
+    "ibanPlaceholder": "Nomor Rekening / IBAN",
+    "saveBankDetailsBtn": "Simpan Detail Bank",
+    "naponiDoesNotHoldFundsTitle": "Naponi tidak memungut atau menahan dana.",
+    "naponiDoesNotHoldFundsDesc": "Saat memberi tip, tamu langsung diarahkan ke tautan pembayaran aman atau rekening bank Anda. Naponi tidak pernah menyimpan informasi kartu dan tidak menampung dana pelanggan.",
+    "httpsRequiredToast": "Demi keamanan, tautan pembayaran wajib diawali dengan \"https://\".",
+    "linkSavedToast": "Tautan pembayaran aman berhasil disimpan!",
+    "bankSavedToast": "Detail rekening bank berhasil disimpan!"
   },
   "admin": {
     "pageTitle": "Administrasi Platform",
@@ -709,7 +735,46 @@ const id = {
     "filterDisclaimerNote": "Filter ini didasarkan pada informasi bahan yang diberikan restoran. Jika Anda memiliki alergi berat, mohon konfirmasikan dengan staf.",
     "noProductsFound": "Tidak ada makanan atau minuman yang cocok dengan pencarian Anda.",
     "clearSearch": "Bersihkan Pencarian"
+  },
+  "profile": {
+    "distributionTitle": "Sistem Pembagian & Pooling Tip Staf",
+    "distributionDesc": "Atur bagaimana tip yang terkumpul dibagikan kepada staf beserta potongan biayanya.",
+    "modelIndividualTitle": "Tip Perorangan",
+    "modelIndividualDesc": "Setiap staf menerima tip yang dihasilkan langsung dari meja atau kode QR pribadinya.",
+    "modelEqualPoolTitle": "Pool Bersama (Bagi Rata)",
+    "modelEqualPoolDesc": "Semua tip dikumpulkan dalam pool bersama dan dibagi rata kepada staf aktif di akhir shift.",
+    "modelRoleWeightedTitle": "Pembagian Berbobot Peran / Poin",
+    "modelRoleWeightedDesc": "Pembagian adil berdasarkan koefisien peran (misalnya: Pelayan 1.0x, Bartender 0.75x, Busboy 0.50x).",
+    "posFeePayer": "Pengaturan Biaya Gateway & Potongan Pajak",
+    "posFeeWhoPays": "Siapa yang menanggung biaya gateway pembayaran?",
+    "posStaff": "Dipotong dari pool tip staf",
+    "posBusiness": "Ditanggung tempat usaha (staf menerima 100% bersih)",
+    "posCustomer": "Dibayar oleh pelanggan (biaya layanan tambahan)",
+    "posRateLabel": "Persentase Biaya Gateway (%)",
+    "taxRateLabel": "Persentase Potongan Pajak (%)",
+    "saveDistributionBtn": "Simpan Pengaturan Pembagian",
+    "founderStatusActive": "Status Anggota Founder Aktif",
+    "legalTermsHeader": "Perjanjian Hukum & Verifikasi Digital",
+    "legalTermsNotice": "Syarat dan ketentuan layanan bisnis yang disetujui untuk beroperasi di Naponi.",
+    "legalTermsBadge": "Protokol Verifikasi Kriptografi (SHA-256)",
+    "viewAgreementBtn": "Lihat Perjanjian & Bukti Persetujuan"
+  },
+  "employees": {
+    "roleAndPoolShare": "Peran & Bagian Pool",
+    "tipPoolShare": "Bobot Pool Tip",
+    "tipPoolShareDesc": "Pengali pembagian dalam pool tip bersama",
+    "halfShare": "Setengah Bagian (0.50x)",
+    "fullShare": "Bagian Penuh (1.00x)",
+    "seniorShare": "Bagian Senior (1.50x)",
+    "photoSelect": "Pilih atau Tarik Foto",
+    "photoChange": "Ubah Foto",
+    "photoRemove": "Hapus Foto",
+    "photoUploadHint": "Klik untuk mengunggah foto dari perangkat Anda",
+    "recommendedStandards": "Standar gambar yang disarankan:",
+    "imageFormatError": "Pilih file gambar berformat JPG, PNG, atau WebP.",
+    "imageSizeError": "Ukuran file gambar maksimal 5 MB.",
+    "photoUploadedSuccess": "Foto berhasil diunggah dan disesuaikan"
   }
-};
+} as const;
 
 export default id;

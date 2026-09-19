@@ -1,4 +1,4 @@
-const fr = {
+export const fr = {
   "common": {
     "loading": "Chargement...",
     "saving": "Enregistrement...",
@@ -426,7 +426,14 @@ const fr = {
     "tipCount": "Nombre total de pourboires",
     "employeePerformance": "Meilleures performances employés",
     "tablePerformance": "Activité par zone / table",
-    "paymentMethodUsage": "Répartition des modes de paiement"
+    "paymentMethodUsage": "Répartition des modes de paiement",
+    "distributeTipsBtn": "Distribuer les Pourboires & Clôturer",
+    "agreementPendingTitle": "Action Requise : Validation du Contrat de Service Commerçant",
+    "agreementPendingDesc": "Veuillez examiner et accepter les Conditions Générales de Service de Naponi pour activer toutes les fonctionnalités.",
+    "reviewAgreementBtn": "Consulter et Accepter le Contrat",
+    "confirmTransferBtn": "Virement Confirmé",
+    "rejectTransferBtn": "Rejeter",
+    "rejectConfirmPrompt": "Êtes-vous sûr de vouloir annuler ce pourboire si le virement n’a pas été reçu ?"
   },
   "payments": {
     "pageTitle": "Canaux et fournisseurs de paiement",
@@ -495,7 +502,26 @@ const fr = {
     "localAccountNumber": "Numéro de compte local (hors zone IBAN)",
     "routingNumber": "Code guichet / Code de routage",
     "swiftBic": "Code SWIFT / BIC (virements internationaux)",
-    "saveBankBtn": "Enregistrer les coordonnées bancaires"
+    "saveBankBtn": "Enregistrer les coordonnées bancaires",
+    "externalLinkTitle": "1. Lien de Paiement Sécurisé Externe",
+    "externalLinkDesc": "Votre lien de paiement hébergé pour les cartes bancaires",
+    "externalLinkNotice": "Saisissez le lien de paiement fourni par votre prestataire (ex. Stripe Payment Link, SumUp ou votre propre caisse). Les clients y seront directement redirigés.",
+    "externalLinkPlaceholder": "https://paiement.votrebrasserie.fr/... ou lien Stripe",
+    "saveLinkBtn": "Enregistrer le Lien",
+    "testLinkBtn": "Tester le Lien",
+    "clearLinkBtn": "Effacer le Lien",
+    "directBankTitle": "2. Virement Bancaire Direct (IBAN)",
+    "directBankDesc": "Virement bancaire direct sur le compte de l’établissement",
+    "directBankNotice": "Ajoutez votre IBAN pour les virements directs (SEPA). Les clients versent directement sur votre compte. Naponi ne conserve ni ne transite de fonds.",
+    "accountHolderPlaceholder": "Ex : Grand Bistro Restauration SAS",
+    "bankNamePlaceholder": "Ex : BNP Paribas, Société Générale, Crédit Agricole...",
+    "ibanPlaceholder": "FR76 3000 6000 0112 3456 7890 189",
+    "saveBankDetailsBtn": "Enregistrer les Coordonnées Bancaires",
+    "naponiDoesNotHoldFundsTitle": "Naponi n’encaisse ni ne retient de fonds.",
+    "naponiDoesNotHoldFundsDesc": "Lors du pourboire, les clients sont dirigés vers votre lien de paiement ou votre compte bancaire. Naponi ne stocke jamais les données de carte et ne détient aucun fonds.",
+    "httpsRequiredToast": "Le lien de paiement doit impérativement commencer par \"https://\".",
+    "linkSavedToast": "Lien de paiement sécurisé enregistré avec succès !",
+    "bankSavedToast": "Coordonnées bancaires enregistrées avec succès !"
   },
   "admin": {
     "pageTitle": "Administration de la plateforme",
@@ -709,7 +735,46 @@ const fr = {
     "filterDisclaimerNote": "Ce filtre repose sur les déclarations de l'établissement. En cas d'allergie sévère, veuillez impérativement vous renseigner auprès du personnel.",
     "noProductsFound": "Aucun plat ou boisson ne correspond à vos critères.",
     "clearSearch": "Réinitialiser la recherche"
+  },
+  "profile": {
+    "distributionTitle": "Système de Répartition et Cagnotte de Pourboires",
+    "distributionDesc": "Gérez la redistribution des pourboires collectés à votre équipe et configurez les déductions.",
+    "modelIndividualTitle": "Pourboire Individuel",
+    "modelIndividualDesc": "Chaque équipier perçoit les pourboires générés sur ses tables attribuées ou son QR code.",
+    "modelEqualPoolTitle": "Cagnotte Égalitaire (Tronc Commun)",
+    "modelEqualPoolDesc": "L’ensemble des pourboires est mutualisé et réparti à parts égales entre les équipiers en service.",
+    "modelRoleWeightedTitle": "Pondéré par Rôle / Points",
+    "modelRoleWeightedDesc": "Distribution équitable selon les coefficients métier (ex : Serveur 1.0x, Barman 0.75x, Commis 0.50x).",
+    "posFeePayer": "Frais de Passerelle et Déductions Fiscales",
+    "posFeeWhoPays": "Qui prend en charge les frais de passerelle ?",
+    "posStaff": "Déduit du tronc commun de pourboires",
+    "posBusiness": "Pris en charge par l’établissement (100% net pour l’équipe)",
+    "posCustomer": "Réglé par le client (Frais de service additionnels)",
+    "posRateLabel": "Taux de Commission Passerelle (%)",
+    "taxRateLabel": "Taux de Retenue Fiscale (%)",
+    "saveDistributionBtn": "Enregistrer les Paramètres de Répartition",
+    "founderStatusActive": "Statut de Membre Fondateur Actif",
+    "legalTermsHeader": "Accord Juridique et Vérification Numérique",
+    "legalTermsNotice": "Les conditions générales de service et l’accord d’exploitation validés sur Naponi.",
+    "legalTermsBadge": "Protocole de Vérification Cryptographique (SHA-256)",
+    "viewAgreementBtn": "Consulter l’Accord et la Preuve de Consentement"
+  },
+  "employees": {
+    "roleAndPoolShare": "Rôle & Part de Cagnotte",
+    "tipPoolShare": "Coefficient de Cagnotte",
+    "tipPoolShareDesc": "Coefficient multiplicateur de redistribution dans le tronc",
+    "halfShare": "Demi-Part (0.50x)",
+    "fullShare": "Part Entière (1.00x)",
+    "seniorShare": "Part Senior (1.50x)",
+    "photoSelect": "Choisir ou Déposer une Photo",
+    "photoChange": "Changer la Photo",
+    "photoRemove": "Supprimer la Photo",
+    "photoUploadHint": "Cliquez pour importer une photo depuis votre appareil",
+    "recommendedStandards": "Recommandations pour les visuels :",
+    "imageFormatError": "Veuillez sélectionner un fichier JPG, PNG ou WebP.",
+    "imageSizeError": "La taille du fichier ne doit pas dépasser 5 Mo.",
+    "photoUploadedSuccess": "Photo importée et ajustée avec succès"
   }
-};
+} as const;
 
 export default fr;

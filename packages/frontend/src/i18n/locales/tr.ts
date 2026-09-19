@@ -1,4 +1,4 @@
-const tr = {
+export const tr = {
   "common": {
     "loading": "Yükleniyor...",
     "saving": "Kaydediliyor...",
@@ -426,7 +426,14 @@ const tr = {
     "tipCount": "Alınan Bahşiş Adedi",
     "employeePerformance": "En Çok Bahşiş Alan Personel",
     "tablePerformance": "Bölge / Masa Aktivitesi",
-    "paymentMethodUsage": "Ödeme Yöntemi Dağılımı"
+    "paymentMethodUsage": "Ödeme Yöntemi Dağılımı",
+    "distributeTipsBtn": "Bahşiş Dağıt & Kasa Kapat",
+    "agreementPendingTitle": "Naponi İşletme Hizmet ve Kullanım Sözleşmesi Onayı Bekleniyor",
+    "agreementPendingDesc": "Canlı ödeme altyapısı ve QR kod operasyonlarını eksiksiz yönetebilmek için lütfen işletme sözleşmesini inceleyip onaylayınız.",
+    "reviewAgreementBtn": "Sözleşmeyi İncele ve Onayla",
+    "confirmTransferBtn": "Havale Alındı",
+    "rejectTransferBtn": "Alınmadı",
+    "rejectConfirmPrompt": "Bu bahşiş için banka havalesi ulaşmadıysa kaydı iptal etmek istediğinize emin misiniz?"
   },
   "payments": {
     "pageTitle": "Ödeme Kanalları & Sağlayıcılar",
@@ -495,7 +502,26 @@ const tr = {
     "localAccountNumber": "Yerel Hesap No (IBAN olmayan bölgeler için)",
     "routingNumber": "Şube / Yönlendirme Kodu",
     "swiftBic": "SWIFT / BIC Kodu (Yurt dışı transferler için)",
-    "saveBankBtn": "Banka Bilgilerini Kaydet"
+    "saveBankBtn": "Banka Bilgilerini Kaydet",
+    "externalLinkTitle": "1. Harici Güvenli Ödeme Bağlantısı",
+    "externalLinkDesc": "Kartlı ödemeler için işletmenizin checkout linki",
+    "externalLinkNotice": "Kullandığınız ödeme sağlayıcısından (PayTR, iyzico, Stripe Payment Link, SumUp veya işletmenize ait güvenli ödeme sayfası) aldığınız bağlantıyı buraya girin. Müşterileriniz kartla bahşiş vermek istediğinde doğrudan bu bağlantıya yönlendirilir.",
+    "externalLinkPlaceholder": "https://odeme.isletmeniz.com/... veya Stripe/PayTR linki",
+    "saveLinkBtn": "Bağlantıyı Kaydet",
+    "testLinkBtn": "Bağlantıyı Test Et",
+    "clearLinkBtn": "Bağlantıyı Temizle",
+    "directBankTitle": "2. Doğrudan Banka Transferi (IBAN)",
+    "directBankDesc": "İşletmenizin banka hesabına havale / FAST",
+    "directBankNotice": "Bahşişleri doğrudan işletmenizin banka hesabına almak için IBAN bilginizi ekleyin. Müşterileriniz doğrudan sizin banka hesabınıza transfer yapar. Naponi para transferi yapmaz veya tutmaz.",
+    "accountHolderPlaceholder": "Örn: Grand Bistro Cafe Ltd. Şti.",
+    "bankNamePlaceholder": "Örn: Garanti BBVA, İş Bankası, Chase...",
+    "ibanPlaceholder": "TR00 0000 0000 0000 0000 0000 00",
+    "saveBankDetailsBtn": "Banka Bilgilerini Kaydet",
+    "naponiDoesNotHoldFundsTitle": "Naponi ödeme almaz.",
+    "naponiDoesNotHoldFundsDesc": "Müşterileriniz ödeme yapmak istediğinde doğrudan işletmenizin belirlediği güvenli ödeme sayfasına veya banka hesabınıza yönlendirilir. Ödeme, seçtiğiniz ödeme sağlayıcısı veya banka hesabınız üzerinden gerçekleşir. Naponi müşteri kart bilgilerini almaz ve müşteri parasını kendi hesabında tutmaz.",
+    "httpsRequiredToast": "Güvenlik nedeniyle ödeme bağlantısı zorunlu olarak \"https://\" ile başlamalıdır.",
+    "linkSavedToast": "Güvenli ödeme bağlantısı kaydedildi!",
+    "bankSavedToast": "Banka (IBAN) bilgileri kaydedildi!"
   },
   "admin": {
     "pageTitle": "Platform Yönetimi",
@@ -709,7 +735,46 @@ const tr = {
     "filterDisclaimerNote": "Bu filtreleme, işletmenin beyan ettiği içerik bilgilerine dayanır. Mutfak ortamında çapraz bulaşma riski olabileceğinden lütfen servis personeline danışınız.",
     "noProductsFound": "Arama veya filtre kriterlerine uygun ürün bulunamadı.",
     "clearSearch": "Aramayı Temizle"
+  },
+  "profile": {
+    "distributionTitle": "Bahşiş Dağıtım & Havuzlama Sistemi",
+    "distributionDesc": "Toplanan bahşişlerin personele nasıl paylaştırılacağını ve kesintileri yönetin.",
+    "modelIndividualTitle": "Bireysel Dağıtım",
+    "modelIndividualDesc": "Her personel, kendi masa veya QR kodundan gelen bahşişi doğrudan kendi kaydına alır.",
+    "modelEqualPoolTitle": "Eşit Havuz (Pool)",
+    "modelEqualPoolDesc": "Tüm bahşişler ortak bir havuzda toplanır ve gün sonunda aktif çalışanlara kişi başına eşit paylaştırılır.",
+    "modelRoleWeightedTitle": "Puan / Rol Ağırlıklı",
+    "modelRoleWeightedDesc": "Garson (1.0x), Barmen (0.75x), Komi (0.50x) gibi rol ağırlıklarına göre adil havuz dağıtımı yapılır.",
+    "posFeePayer": "POS ve Muhasebe / Stopaj Kesinti Ayarları",
+    "posFeeWhoPays": "POS Komisyonunu Kim Karşılar?",
+    "posStaff": "Personel Bahşişinden Düşülsün (Havuzdan Kesilir)",
+    "posBusiness": "İşletme Karşılasın (Personele Net Yansır)",
+    "posCustomer": "Müşteri Ödesin (Ödeme Ekranına Eklenir)",
+    "posRateLabel": "POS Komisyon Oranı (%)",
+    "taxRateLabel": "Vergi / Stopaj Kesinti Oranı (%)",
+    "saveDistributionBtn": "Dağıtım Ayarlarını Kaydet",
+    "founderStatusActive": "Kurucu Üye Haklarınız Aktif",
+    "legalTermsHeader": "Hukuki Sözleşme ve Dijital Onay",
+    "legalTermsNotice": "Naponi platformu üzerinden dijital bahşiş ve akıllı QR altyapısını kullanırken tarafınızca onaylanan güncel sözleşme.",
+    "legalTermsBadge": "Kriptografik (SHA-256) İspat ve Onay Protokolü",
+    "viewAgreementBtn": "Sözleşmeyi ve Makbuzu Görüntüle"
+  },
+  "employees": {
+    "roleAndPoolShare": "Görev & Havuz Payı",
+    "tipPoolShare": "Bahşiş Havuz Payı",
+    "tipPoolShareDesc": "Havuzlu dağıtımda personelin alacağı pay oranı",
+    "halfShare": "Yarım Pay (0.50x)",
+    "fullShare": "Tam Pay (1.00x)",
+    "seniorShare": "Kıdemli Pay (1.50x)",
+    "photoSelect": "Fotoğraf Seç veya Sürükle",
+    "photoChange": "Fotoğrafı Değiştir",
+    "photoRemove": "Fotoğrafı Kaldır",
+    "photoUploadHint": "Cihazınızdan görsel yüklemek için tıklayın",
+    "recommendedStandards": "Önerilen Görsel Standartları:",
+    "imageFormatError": "Lütfen JPG, PNG veya WebP formatında bir görsel seçin.",
+    "imageSizeError": "Görsel boyutu en fazla 5 MB olabilir.",
+    "photoUploadedSuccess": "Fotoğraf başarıyla yüklendi ve uyarlandı"
   }
-};
+} as const;
 
 export default tr;

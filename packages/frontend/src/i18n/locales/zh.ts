@@ -1,4 +1,4 @@
-const zh = {
+export const zh = {
   "common": {
     "loading": "加载中...",
     "saving": "保存中...",
@@ -426,7 +426,14 @@ const zh = {
     "tipCount": "收到小费总笔数",
     "employeePerformance": "优秀员工榜单",
     "tablePerformance": "就餐区域/桌位热度",
-    "paymentMethodUsage": "支付渠道占比"
+    "paymentMethodUsage": "支付渠道占比",
+    "distributeTipsBtn": "小费分配与班次结账",
+    "agreementPendingTitle": "需要操作：请确认商户服务与合规协议",
+    "agreementPendingDesc": "请审阅并同意Naponi商户服务协议，以全面启用实时小费与二维码管理功能。",
+    "reviewAgreementBtn": "审阅并同意协议",
+    "confirmTransferBtn": "确认转账到账",
+    "rejectTransferBtn": "驳回",
+    "rejectConfirmPrompt": "如果未收到该笔银行转账，您确定要取消此打赏记录吗？"
   },
   "payments": {
     "pageTitle": "支付渠道与提供商",
@@ -495,7 +502,26 @@ const zh = {
     "localAccountNumber": "本地银行账号（非 IBAN 地区填写）",
     "routingNumber": "联行号 / 路由代码 / 支行号",
     "swiftBic": "SWIFT / BIC 码（用于跨境跨行汇兑）",
-    "saveBankBtn": "保存银行账户资料"
+    "saveBankBtn": "保存银行账户资料",
+    "externalLinkTitle": "1. 外部安全支付链接",
+    "externalLinkDesc": "用于刷卡支付的独立结账链接",
+    "externalLinkNotice": "请输入支付服务商（如Stripe Payment Link或自有结账通道）提供的安全链接。顾客打赏时将直接跳转至该页面。",
+    "externalLinkPlaceholder": "https://pay.yourbusiness.com/... 或Stripe链接",
+    "saveLinkBtn": "保存链接",
+    "testLinkBtn": "测试链接",
+    "clearLinkBtn": "清除链接",
+    "directBankTitle": "2. 银行直接转账（IBAN / 银行账户）",
+    "directBankDesc": "直接转账至商户银行账户",
+    "directBankNotice": "添加您的银行账户或IBAN以便接收直接转账。顾客小费将直接进入您的账户，Naponi不持有或托管任何资金。",
+    "accountHolderPlaceholder": "例如：大地餐饮管理有限公司",
+    "bankNamePlaceholder": "例如：中国工商银行、汇丰银行、招商银行...",
+    "ibanPlaceholder": "IBAN / 银行账号",
+    "saveBankDetailsBtn": "保存银行信息",
+    "naponiDoesNotHoldFundsTitle": "Naponi绝不托管或沉淀资金。",
+    "naponiDoesNotHoldFundsDesc": "当顾客支付小费时，将直接跳转到您设定的安全支付页面或银行账户。Naponi绝不存储银行卡信息，也不代收客户资金。",
+    "httpsRequiredToast": "为确保安全，支付链接必须以 \"https://\" 开头。",
+    "linkSavedToast": "安全支付链接保存成功！",
+    "bankSavedToast": "银行信息保存成功！"
   },
   "admin": {
     "pageTitle": "平台总控系统",
@@ -709,7 +735,46 @@ const zh = {
     "filterDisclaimerNote": "此过滤基于餐厅提供的配料表。如有严重过敏史，请务必向店内服务人员确认。",
     "noProductsFound": "未找到符合条件的菜品或饮品。",
     "clearSearch": "重置搜索"
+  },
+  "profile": {
+    "distributionTitle": "小费分配与共享池系统",
+    "distributionDesc": "管理店内小费的分配规则以及网关费率扣除设置。",
+    "modelIndividualTitle": "个人独立分配",
+    "modelIndividualDesc": "每位服务员直接获取其负责餐桌或个人二维码产生的全部小费。",
+    "modelEqualPoolTitle": "均等小费池（全员平分）",
+    "modelEqualPoolDesc": "全店小费汇总至公共池，在班次结束时均等分发给在岗员工。",
+    "modelRoleWeightedTitle": "按岗位权重分配",
+    "modelRoleWeightedDesc": "依据岗位系数公平分配（例如：服务员 1.0x、调酒师 0.75x、传菜员 0.50x）。",
+    "posFeePayer": "网关手续费与税务扣除设置",
+    "posFeeWhoPays": "由谁承担支付网关手续费？",
+    "posStaff": "从小费池中扣除",
+    "posBusiness": "由商户承担（员工获得100%净小费）",
+    "posCustomer": "由顾客支付（结账时加收服务费）",
+    "posRateLabel": "网关手续费率 (%)",
+    "taxRateLabel": "税费/预扣率 (%)",
+    "saveDistributionBtn": "保存小费分配设置",
+    "founderStatusActive": "创设创始会员权益已激活",
+    "legalTermsHeader": "法律协议与数字存证确认",
+    "legalTermsNotice": "您在Naponi平台上经营服务所签署并生效的商户服务协议。",
+    "legalTermsBadge": "密码学存证核验协议 (SHA-256)",
+    "viewAgreementBtn": "查看协议与存证凭据"
+  },
+  "employees": {
+    "roleAndPoolShare": "职务与小费池权重",
+    "tipPoolShare": "小费池分配权重",
+    "tipPoolShareDesc": "在全员小费池分配中的加权系数",
+    "halfShare": "半份份额 (0.50x)",
+    "fullShare": "全额份额 (1.00x)",
+    "seniorShare": "资深员工份额 (1.50x)",
+    "photoSelect": "选择或拖拽员工照片",
+    "photoChange": "更换照片",
+    "photoRemove": "移除照片",
+    "photoUploadHint": "点击上传本地设备中的照片",
+    "recommendedStandards": "建议图像规格：",
+    "imageFormatError": "请选择 JPG、PNG 或 WebP 格式的图片。",
+    "imageSizeError": "图片大小不能超过 5 MB。",
+    "photoUploadedSuccess": "员工照片已成功上传并适配"
   }
-};
+} as const;
 
 export default zh;

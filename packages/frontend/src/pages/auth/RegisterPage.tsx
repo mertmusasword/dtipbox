@@ -65,7 +65,11 @@ export const RegisterPage: React.FC = () => {
     setError(null);
 
     if (!acceptedAgreement) {
-      setError("Devam etmek için lütfen Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni okuyup kabul ediniz.");
+      setError(
+        language === 'tr'
+          ? "Devam etmek için lütfen Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni okuyup kabul ediniz."
+          : "Please read and accept the Naponi Merchant Service and Terms of Use Agreement to continue."
+      );
       return;
     }
 
@@ -82,7 +86,11 @@ export const RegisterPage: React.FC = () => {
         const detailMsg = responseData.details.map((d: any) => d.message).join(' • ');
         setError(detailMsg);
       } else if (responseData?.error === 'Email already registered' || err.response?.status === 409) {
-        setError('Bu e-posta adresi ile kayıtlı bir işletme hesabı zaten mevcut. Lütfen giriş yapınız veya farklı bir e-posta deneyiniz.');
+        setError(
+          language === 'tr'
+            ? 'Bu e-posta adresi ile kayıtlı bir işletme hesabı zaten mevcut. Lütfen giriş yapınız veya farklı bir e-posta deneyiniz.'
+            : 'An account with this email address already exists. Please log in or try a different email.'
+        );
       } else if (responseData?.error) {
         setError(responseData.error);
       } else {

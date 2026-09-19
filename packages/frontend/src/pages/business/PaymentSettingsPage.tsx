@@ -10,14 +10,12 @@ import {
   CheckCircle2,
   ExternalLink,
   Save,
-  AlertCircle,
-  HelpCircle,
-  Check,
-  Copy,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const PaymentSettingsPage: React.FC = () => {
+  const { user } = useAuth();
   const { showToast } = useToast();
   const { t, language } = useLanguage();
 
@@ -32,7 +30,7 @@ export const PaymentSettingsPage: React.FC = () => {
   const [accountHolderName, setAccountHolderName] = useState('');
   const [bankName, setBankName] = useState('');
   const [iban, setIban] = useState('');
-  const [country, setCountry] = useState('TR');
+  const [country, setCountry] = useState(user?.business?.country || 'TR');
   const [savingBank, setSavingBank] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -47,15 +45,15 @@ export const PaymentSettingsPage: React.FC = () => {
           setAccountHolderName(data.paymentAccount.account_holder_name || '');
           setBankName(data.paymentAccount.bank_name || '');
           setIban(data.paymentAccount.iban || '');
-          setCountry(data.paymentAccount.country || 'TR');
+          setCountry(data.paymentAccount.country || user?.business?.country || 'TR');
         }
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || (language === 'tr' ? 'Ödeme ayarları yüklenemedi' : 'Failed to load payment settings'));
+      setError(err.response?.data?.error || t('common.error'));
     } finally {
       setLoading(false);
     }
-  }, [language]);
+  }, [user?.business?.country, t]);
 
   useEffect(() => {
     loadData();
@@ -67,12 +65,7 @@ export const PaymentSettingsPage: React.FC = () => {
     const trimmed = externalPaymentUrl.trim();
 
     if (trimmed && !trimmed.toLowerCase().startsWith('https://')) {
-      showToast(
-        language === 'tr'
-          ? 'Güvenlik nedeniyle ödeme bağlantısı zorunlu olarak "https://" ile başlamalıdır.'
-          : 'Payment link must start with secure "https://"',
-        'error'
-      );
+      showToast(t('payments.httpsRequiredToast'), 'error');
       return;
     }
 
@@ -81,10 +74,10 @@ export const PaymentSettingsPage: React.FC = () => {
       await api.put('/business/payment-settings', {
         externalPaymentUrl: trimmed || null,
       });
-      showToast(language === 'tr' ? 'Güvenli ödeme bağlantısı kaydedildi!' : 'External payment link saved!');
+      showToast(t('payments.linkSavedToast'));
       loadData();
     } catch (err: any) {
-      showToast(err.response?.data?.error || (language === 'tr' ? 'Kayıt başarısız oldu' : 'Failed to save'), 'error');
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setSavingUrl(false);
     }
@@ -94,7 +87,7 @@ export const PaymentSettingsPage: React.FC = () => {
   const handleTestLink = () => {
     const trimmed = externalPaymentUrl.trim();
     if (!trimmed || !trimmed.toLowerCase().startsWith('https://')) {
-      showToast(language === 'tr' ? 'Lütfen geçerli bir https:// bağlantısı giriniz.' : 'Please enter a valid https:// URL.', 'error');
+      showToast(t('payments.httpsRequiredToast'), 'error');
       return;
     }
     window.open(trimmed, '_blank', 'noopener,noreferrer');
@@ -104,7 +97,7 @@ export const PaymentSettingsPage: React.FC = () => {
   const handleSaveBankDetails = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!accountHolderName.trim() && !iban.trim()) {
-      showToast(language === 'tr' ? 'Lütfen hesap sahibi ve IBAN giriniz.' : 'Please enter account holder name and IBAN.', 'error');
+      showToast(t('payments.missingBank'), 'error');
       return;
     }
 
@@ -114,21 +107,59 @@ export const PaymentSettingsPage: React.FC = () => {
         account_holder_name: accountHolderName.trim(),
         bank_name: bankName.trim() || undefined,
         iban: iban.trim().replace(/\s+/g, '') || undefined,
-        country: country || 'TR',
+        country: country || user?.business?.country || 'TR',
       });
-      showToast(language === 'tr' ? 'Banka (IBAN) bilgileri kaydedildi!' : 'Bank account details saved!');
+      showToast(t('payments.bankSavedToast'));
       loadData();
     } catch (err: any) {
-      showToast(err.response?.data?.error || (language === 'tr' ? 'Kayıt başarısız oldu' : 'Failed to save'), 'error');
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setSavingBank(false);
     }
   };
 
+  // Country-aware Placeholders
+  const activeCountry = (country || user?.business?.country || 'TR').toUpperCase();
+  const ibanPlaceholder = activeCountry === 'TR'
+    ? 'TR00 0000 0000 0000 0000 0000 00'
+    : activeCountry === 'DE'
+    ? 'DE89 3704 0044 0532 0130 00'
+    : activeCountry === 'FR'
+    ? 'FR76 3000 6000 0112 3456 7890 189'
+    : activeCountry === 'ES'
+    ? 'ES91 2100 0418 4502 0005 1332'
+    : activeCountry === 'GB'
+    ? 'GB29 NWBK 6016 1331 9268 19'
+    : activeCountry === 'SA'
+    ? 'SA03 8000 0000 6080 1016 7519'
+    : activeCountry === 'AE'
+    ? 'AE07 0331 2345 6789 0123 456'
+    : t('payments.ibanPlaceholder');
+
+  const bankPlaceholder = activeCountry === 'TR'
+    ? 'Örn: Garanti BBVA, İş Bankası, Akbank...'
+    : activeCountry === 'DE'
+    ? 'z. B. Deutsche Bank, Commerzbank, Sparkasse...'
+    : activeCountry === 'FR'
+    ? 'Ex : BNP Paribas, Société Générale, Crédit Agricole...'
+    : activeCountry === 'ES'
+    ? 'Ej: Banco Santander, BBVA, CaixaBank...'
+    : t('payments.bankNamePlaceholder');
+
+  const holderPlaceholder = activeCountry === 'TR'
+    ? 'Örn: Grand Bistro Cafe Ltd. Şti.'
+    : activeCountry === 'DE'
+    ? 'z. B. Grand Bistro Gastronomie GmbH'
+    : activeCountry === 'FR'
+    ? 'Ex : Grand Bistro Restauration SAS'
+    : activeCountry === 'ES'
+    ? 'Ej: Grand Bistro Hostelería S.L.'
+    : t('payments.accountHolderPlaceholder');
+
   if (loading) {
     return (
       <div className="page-wrapper">
-        <LoadingState message={language === 'tr' ? 'Ödeme ayarları yükleniyor...' : 'Loading payment settings...'} />
+        <LoadingState message={t('common.loading')} />
       </div>
     );
   }
@@ -146,11 +177,9 @@ export const PaymentSettingsPage: React.FC = () => {
       {/* Page Header */}
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
         <div>
-          <h1 className="page-title">{language === 'tr' ? 'Ödeme Ayarları' : 'Payment Settings'}</h1>
+          <h1 className="page-title">{t('payments.pageTitle')}</h1>
           <p className="page-subtitle mb-0">
-            {language === 'tr'
-              ? 'Müşterilerinizin bahşiş ödemelerini doğrudan işletmenize yapmasını sağlayacak bağlantı ve hesap ayarları.'
-              : 'Configure your direct checkout links and bank account for seamless, non-custodial tipping.'}
+            {t('payments.pageSubtitle')}
           </p>
         </div>
       </div>
@@ -187,12 +216,10 @@ export const PaymentSettingsPage: React.FC = () => {
         </div>
         <div>
           <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 0.35rem', color: '#f8fafc' }}>
-            {language === 'tr' ? 'Naponi ödeme almaz.' : 'Naponi does not collect or hold funds.'}
+            {t('payments.naponiDoesNotHoldFundsTitle')}
           </h3>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8', lineHeight: 1.55 }}>
-            {language === 'tr'
-              ? 'Müşterileriniz ödeme yapmak istediğinde doğrudan işletmenizin belirlediği güvenli ödeme sayfasına veya banka hesabınıza yönlendirilir. Ödeme, seçtiğiniz ödeme sağlayıcısı veya banka hesabınız üzerinden gerçekleşir. Naponi müşteri kart bilgilerini almaz ve müşteri parasını kendi hesabında tutmaz.'
-              : 'When guests tip, they are directed straight to your designated secure checkout link or direct bank account. Payment occurs through your provider or bank. Naponi never collects or stores card details and never holds customer funds.'}
+            {t('payments.naponiDoesNotHoldFundsDesc')}
           </p>
         </div>
       </div>
@@ -218,40 +245,38 @@ export const PaymentSettingsPage: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#f8fafc' }}>
-                  {language === 'tr' ? '1. Harici Güvenli Ödeme Bağlantısı' : '1. External Secure Payment Link'}
+                  {t('payments.externalLinkTitle')}
                 </h3>
                 <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-                  {language === 'tr' ? 'Kartlı ödemeler için işletmenizin checkout linki' : 'Your hosted checkout link for card payments'}
+                  {t('payments.externalLinkDesc')}
                 </span>
               </div>
             </div>
 
             {externalPaymentUrl ? (
               <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <CheckCircle2 size={13} /> {language === 'tr' ? 'Aktif' : 'Active'}
+                <CheckCircle2 size={13} /> {t('common.active')}
               </span>
             ) : (
               <span className="badge badge-neutral">
-                {language === 'tr' ? 'Tanımlanmadı' : 'Not configured'}
+                {t('common.inactive')}
               </span>
             )}
           </div>
 
           <p style={{ fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-            {language === 'tr'
-              ? 'Kullandığınız ödeme sağlayıcısından (PayTR, iyzico, Stripe Payment Link, SumUp veya işletmenize ait güvenli ödeme sayfası) aldığınız bağlantıyı buraya girin. Müşterileriniz kartla bahşiş vermek istediğinde aynı sekmede doğrudan bu bağlantıya yönlendirilir.'
-              : 'Enter the hosted checkout link provided by your payment provider (e.g. Stripe Payment Link, PayTR, iyzico, SumUp, or your own secure checkout). Tipping guests will be forwarded directly to this link.'}
+            {t('payments.externalLinkNotice')}
           </p>
 
           <form onSubmit={handleSaveExternalUrl}>
             <div className="form-group" style={{ marginBottom: '1rem' }}>
               <label className="form-label" style={{ fontWeight: 600 }}>
-                {language === 'tr' ? 'Güvenli Ödeme Bağlantınız' : 'Secure Payment Link URL'}
+                {t('payments.externalLinkTitle')}
               </label>
               <div style={{ position: 'relative' }}>
                 <input
                   type="url"
-                  placeholder="https://odeme-sayfaniz.com/link..."
+                  placeholder={t('payments.externalLinkPlaceholder')}
                   value={externalPaymentUrl}
                   onChange={(e) => setExternalPaymentUrl(e.target.value)}
                   className="form-input"
@@ -259,9 +284,7 @@ export const PaymentSettingsPage: React.FC = () => {
                 />
               </div>
               <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '0.35rem' }}>
-                {language === 'tr'
-                  ? '🔒 Güvenlik gereği sadece "https://" ile başlayan güvenli bağlantılar kabul edilir.'
-                  : '🔒 For security, only URLs beginning with "https://" are permitted.'}
+                🔒 {t('payments.httpsRequiredToast')}
               </div>
             </div>
 
@@ -273,7 +296,7 @@ export const PaymentSettingsPage: React.FC = () => {
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
               >
                 <Save size={16} />
-                {savingUrl ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...') : (language === 'tr' ? 'Bağlantıyı Kaydet' : 'Save Link')}
+                {savingUrl ? t('common.saving') : t('payments.saveLinkBtn')}
               </button>
 
               {externalPaymentUrl && (
@@ -284,7 +307,7 @@ export const PaymentSettingsPage: React.FC = () => {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
                 >
                   <ExternalLink size={16} />
-                  {language === 'tr' ? 'Bağlantıyı Test Et' : 'Test Link'}
+                  {t('payments.testLinkBtn')}
                 </button>
               )}
 
@@ -297,7 +320,7 @@ export const PaymentSettingsPage: React.FC = () => {
                   className="btn btn-secondary"
                   style={{ color: '#f87171' }}
                 >
-                  {language === 'tr' ? 'Bağlantıyı Temizle' : 'Clear'}
+                  {t('payments.clearLinkBtn')}
                 </button>
               )}
             </div>
@@ -324,41 +347,39 @@ export const PaymentSettingsPage: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#f8fafc' }}>
-                  {language === 'tr' ? '2. Doğrudan Banka Transferi (IBAN)' : '2. Direct Bank Transfer (IBAN)'}
+                  {t('payments.directBankTitle')}
                 </h3>
                 <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-                  {language === 'tr' ? 'İşletmenizin banka hesabına havale / FAST' : 'Direct bank transfer to venue account'}
+                  {t('payments.directBankDesc')}
                 </span>
               </div>
             </div>
 
             {iban ? (
               <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <CheckCircle2 size={13} /> {language === 'tr' ? 'Aktif' : 'Active'}
+                <CheckCircle2 size={13} /> {t('common.active')}
               </span>
             ) : (
               <span className="badge badge-neutral">
-                {language === 'tr' ? 'Tanımlanmadı' : 'Not configured'}
+                {t('common.inactive')}
               </span>
             )}
           </div>
 
           <p style={{ fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-            {language === 'tr'
-              ? 'Bahşişleri doğrudan işletmenizin banka hesabına almak için IBAN bilginizi ekleyin. Müşterileriniz doğrudan sizin banka hesabınıza transfer yapar. Naponi para transferi yapmaz veya tutmaz.'
-              : 'Add your IBAN details for direct bank transfers (wire/FAST). Guests transfer directly to your venue bank account. Naponi does not touch or mediate the funds.'}
+            {t('payments.directBankNotice')}
           </p>
 
           <form onSubmit={handleSaveBankDetails}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
               <div className="form-group mb-0">
                 <label className="form-label" style={{ fontWeight: 600 }}>
-                  {language === 'tr' ? 'Hesap Sahibi (Alıcı Adı)' : 'Account Holder Name'} *
+                  {t('payments.accountHolderName')} *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Örn: Grand Bistro Cafe Ltd. Şti."
+                  placeholder={holderPlaceholder}
                   value={accountHolderName}
                   onChange={(e) => setAccountHolderName(e.target.value)}
                   className="form-input"
@@ -367,11 +388,11 @@ export const PaymentSettingsPage: React.FC = () => {
 
               <div className="form-group mb-0">
                 <label className="form-label" style={{ fontWeight: 600 }}>
-                  {language === 'tr' ? 'Banka Adı' : 'Bank Name'}
+                  {t('payments.bankNameLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder="Örn: Garanti BBVA, İş Bankası, Chase..."
+                  placeholder={bankPlaceholder}
                   value={bankName}
                   onChange={(e) => setBankName(e.target.value)}
                   className="form-input"
@@ -381,12 +402,12 @@ export const PaymentSettingsPage: React.FC = () => {
 
             <div className="form-group" style={{ marginBottom: '1.25rem' }}>
               <label className="form-label" style={{ fontWeight: 600 }}>
-                {language === 'tr' ? 'IBAN Numarası' : 'IBAN / Account Number'} *
+                {t('payments.ibanField')} *
               </label>
               <input
                 type="text"
                 required
-                placeholder="TR00 0000 0000 0000 0000 0000 00"
+                placeholder={ibanPlaceholder}
                 value={iban}
                 onChange={(e) => setIban(e.target.value.toUpperCase())}
                 className="form-input"
@@ -401,7 +422,7 @@ export const PaymentSettingsPage: React.FC = () => {
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
               <Save size={16} />
-              {savingBank ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...') : (language === 'tr' ? 'Banka Bilgilerini Kaydet' : 'Save Bank Details')}
+              {savingBank ? t('common.saving') : t('payments.saveBankDetailsBtn')}
             </button>
           </form>
         </div>
@@ -409,3 +430,4 @@ export const PaymentSettingsPage: React.FC = () => {
     </div>
   );
 };
+

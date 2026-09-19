@@ -244,15 +244,15 @@ export const ProfileSettingsPage: React.FC = () => {
             lineHeight: 1.5,
           }}>
             <div style={{ color: '#fbbf24', fontWeight: 700, marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <CheckCircle size={15} /> Kurucu Üye Haklarınız Aktif
+              <CheckCircle size={15} /> {t('profile.founderStatusActive')}
             </div>
             <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#cbd5e1' }}>
-              <li>Tüm masaüstü QR kodları ve Smart QR özellikleri ömür boyu ücretsizdir.</li>
-              <li>İşletme ve çalışan panelleri, bahşiş havuzu ve vardiya paylaşım araçları dahildir.</li>
-              <li>İşletmenizden asla platform abonelik ücreti veya aylık sabit ücret talep edilmeyecektir.</li>
+              <li>{t('founder.card1Desc')}</li>
+              <li>{t('founder.card2Desc')}</li>
+              <li>{t('founder.card3Desc')}</li>
             </ul>
             <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', fontSize: '0.74rem', color: '#94a3b8' }}>
-              ℹ️ <strong>Kapsam Dışı:</strong> Ödeme kuruluşlarının (Iyzico, Stripe vb.) banka işlem komisyonları, fiziksel stant siparişleri ve harici kurumsal entegrasyonlar bu kapsama dahil değildir.
+              ℹ️ {t('founder.disclaimer')}
             </div>
           </div>
         )}
@@ -263,9 +263,9 @@ export const ProfileSettingsPage: React.FC = () => {
         <div className="section-header" style={{ marginBottom: '0.75rem' }}>
           <Split size={20} className="section-icon" style={{ color: 'var(--primary)' }} />
           <div>
-            <h3 className="section-title mb-0">Bahşiş Dağıtım & Havuzlama Sistemi</h3>
+            <h3 className="section-title mb-0">{t('profile.distributionTitle')}</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
-              Toplanan bahşişlerin personele nasıl paylaştırılacağını ve kesintileri yönetin.
+              {t('profile.distributionDesc')}
             </p>
           </div>
         </div>
@@ -273,7 +273,7 @@ export const ProfileSettingsPage: React.FC = () => {
         {/* Dağıtım Modelleri */}
         <div style={{ marginBottom: '1.5rem' }}>
           <label className="form-label" style={{ marginBottom: '0.75rem', display: 'block' }}>
-            Bahşiş Dağıtım Modeli
+            {t('profile.distributionTitle')}
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             {/* INDIVIDUAL */}
@@ -295,14 +295,14 @@ export const ProfileSettingsPage: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <User size={18} style={{ color: tipSettings.tip_distribution_mode === 'INDIVIDUAL' ? 'var(--primary)' : 'var(--text-muted)' }} />
-                  <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Bireysel Dağıtım</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{t('profile.modelIndividualTitle')}</span>
                 </div>
                 {tipSettings.tip_distribution_mode === 'INDIVIDUAL' && (
                   <CheckCircle size={16} style={{ color: 'var(--primary)' }} />
                 )}
               </div>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Her personel, kendi masa veya QR kodundan gelen bahşişi doğrudan kendi hesabına alır.
+                {t('profile.modelIndividualDesc')}
               </p>
             </div>
 
@@ -325,14 +325,14 @@ export const ProfileSettingsPage: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Users size={18} style={{ color: tipSettings.tip_distribution_mode === 'EQUAL_POOL' ? 'var(--primary)' : 'var(--text-muted)' }} />
-                  <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Eşit Havuz (Pool)</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{t('profile.modelEqualPoolTitle')}</span>
                 </div>
                 {tipSettings.tip_distribution_mode === 'EQUAL_POOL' && (
                   <CheckCircle size={16} style={{ color: 'var(--primary)' }} />
                 )}
               </div>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Tüm bahşişler ortak bir havuzda toplanır ve gün sonunda aktif çalışanlara kişi başı eşit bölünür.
+                {t('profile.modelEqualPoolDesc')}
               </p>
             </div>
 
@@ -355,14 +355,14 @@ export const ProfileSettingsPage: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Scale size={18} style={{ color: tipSettings.tip_distribution_mode === 'POINT_POOL' ? 'var(--primary)' : 'var(--text-muted)' }} />
-                  <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Puan / Rol Ağırlıklı</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{t('profile.modelRoleWeightedTitle')}</span>
                 </div>
                 {tipSettings.tip_distribution_mode === 'POINT_POOL' && (
                   <CheckCircle size={16} style={{ color: 'var(--primary)' }} />
                 )}
               </div>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Garson (1.0x), Barmen (0.75x), Komi (0.50x) gibi rol ağırlıklarına göre adil havuz paylaşımı yapılır.
+                {t('profile.modelRoleWeightedDesc')}
               </p>
             </div>
           </div>
@@ -372,32 +372,27 @@ export const ProfileSettingsPage: React.FC = () => {
         <div style={{ background: 'var(--bg-input)', padding: '1.25rem', borderRadius: '12px', marginBottom: '1.25rem' }}>
           <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Percent size={16} style={{ color: 'var(--primary)' }} />
-            POS ve Muhasebe / Stopaj Kesinti Ayarları
+            {t('profile.posFeePayer')}
           </h4>
 
           <div className="form-grid form-grid-2" style={{ gap: '1rem', marginBottom: '1rem' }}>
             {/* POS Komisyon Sorumlusu */}
             <div className="form-group mb-0">
-              <label className="form-label">POS Komisyonunu Kim Karşılar?</label>
+              <label className="form-label">{t('profile.posFeeWhoPays')}</label>
               <select
                 value={tipSettings.pos_fee_payer}
                 onChange={(e) => setTipSettings({ ...tipSettings, pos_fee_payer: e.target.value as PosFeePayer })}
                 className="form-input"
               >
-                <option value="STAFF">Personel Bahşişinden Düşülsün (Havuzdan Kesilir)</option>
-                <option value="BUSINESS">İşletme Karşılasın (Personele Net Yansır)</option>
-                <option value="CUSTOMER">Müşteri Ödesin (Ödeme Ekranına Eklenir)</option>
+                <option value="STAFF">{t('profile.posStaff')}</option>
+                <option value="BUSINESS">{t('profile.posBusiness')}</option>
+                <option value="CUSTOMER">{t('profile.posCustomer')}</option>
               </select>
-              <div className="form-hint">
-                {tipSettings.pos_fee_payer === 'STAFF' && 'Sanal POS komisyonu toplanan bahşişten otomatik tenzil edilir.'}
-                {tipSettings.pos_fee_payer === 'BUSINESS' && 'Komisyonu işletme üstlenir, personel brüt tutar üzerinden pay alır.'}
-                {tipSettings.pos_fee_payer === 'CUSTOMER' && 'Bahşiş tutarına işlem bedeli olarak ilave edilir.'}
-              </div>
             </div>
 
             {/* POS Komisyon Oranı */}
             <div className="form-group mb-0">
-              <label className="form-label">POS Komisyon Oranı (%)</label>
+              <label className="form-label">{t('profile.posRateLabel')}</label>
               <input
                 type="number"
                 step="0.01"
@@ -408,7 +403,6 @@ export const ProfileSettingsPage: React.FC = () => {
                 className="form-input"
                 placeholder="2.90"
               />
-              <div className="form-hint">Bankanızın veya ödeme sağlayıcınızın kestiği komisyon yüzdesi.</div>
             </div>
           </div>
 
@@ -485,7 +479,7 @@ export const ProfileSettingsPage: React.FC = () => {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <button type="submit" className="btn btn-primary" disabled={savingTipSettings}>
-            {savingTipSettings ? 'Kaydediliyor...' : 'Dağıtım Ayarlarını Kaydet'}
+            {savingTipSettings ? t('common.saving') : t('profile.saveDistributionBtn')}
           </button>
         </div>
       </form>
@@ -585,20 +579,20 @@ export const ProfileSettingsPage: React.FC = () => {
       <div className="glass-card">
         <div className="section-header">
           <Shield size={20} className="section-icon" />
-          <h3 className="section-title">Hukuki Sözleşme ve Dijital Onay</h3>
+          <h3 className="section-title">{t('profile.legalTermsHeader')}</h3>
         </div>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.6 }}>
-          Naponi platformu üzerinden dijital bahşiş ve ödeme altyapısını kullanırken tarafların hak ve yükümlülüklerini belirleyen çerçeve hizmet sözleşmesi.
+          {t('profile.legalTermsNotice')}
         </p>
 
         <div style={{ padding: '1rem', background: 'var(--bg-input)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-              <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Naponi İşletme Hizmet ve Kullanım Sözleşmesi</span>
+              <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Naponi Merchant Terms & Compliance</span>
               <span className="badge badge-success" style={{ fontSize: '0.75rem' }}>v1.0.0</span>
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              HMK m. 193 Uyarınca Kriptografik (SHA-256) İspat ve Onay Protokolü
+              {t('profile.legalTermsBadge')}
             </div>
           </div>
 
@@ -608,7 +602,7 @@ export const ProfileSettingsPage: React.FC = () => {
             className="btn btn-secondary"
             style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            Sözleşmeyi ve Makbuzu Görüntüle
+            {t('profile.viewAgreementBtn')}
           </button>
         </div>
       </div>
