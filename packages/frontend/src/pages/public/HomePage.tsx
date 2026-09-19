@@ -211,8 +211,8 @@ export const HomePage: React.FC = () => {
         topic: isTr ? 'Bahşiş Kaynakları' : 'Tip Sources',
         ordinary: isTr ? 'Genellikle yalnızca QR üzerinden gelen bahşiş.' : 'Typically QR tips only.',
         naponi: isTr
-          ? 'QR + POS + Nakit bahşişlerini tek sistemde yönet.'
-          : 'Manage QR + POS terminal + Cash tips unified in one system.',
+          ? 'Kendi Ödeme Sağlayıcınız / Linkiniz + FAST / IBAN + Nakit kayıtları tek sistemde.'
+          : 'Unified management for Hosted Payment Links + Direct Bank/IBAN + Cash records.',
       },
       {
         topic: isTr ? 'Bahşiş Dağıtımı' : 'Tip Pooling & Distribution',
@@ -236,11 +236,11 @@ export const HomePage: React.FC = () => {
           : '35+ languages auto-detected instantly based on guest phone language.',
       },
       {
-        topic: isTr ? 'Ödeme' : 'Payment Experience',
-        ordinary: isTr ? 'Basit ödeme akışı.' : 'Standard payment form.',
+        topic: isTr ? 'Ödeme ve Tahsilat' : 'Payment & Settlements',
+        ordinary: isTr ? 'Aracı platform parayı günlerce bloke eder veya yüksek komisyon keser.' : 'Platform holds merchant funds for days or takes heavy commission.',
         naponi: isTr
-          ? 'Hızlı dijital ödeme deneyimi + Apple Pay / Google Pay desteği.'
-          : 'Instant frictionless payment + Native 1-tap Apple Pay & Google Pay.',
+          ? 'Sıfır Bloke, Sıfır Aracı: Ödemeler doğrudan kendi ödeme sağlayıcınıza veya banka hesabınıza geçer.'
+          : 'Zero Held Funds, Zero Intermediary: Payments settle directly into your own merchant account or bank.',
       },
       {
         topic: isTr ? 'Dijital Menü' : 'Digital Menu',
@@ -851,12 +851,12 @@ export const HomePage: React.FC = () => {
 
                     <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
                       <div style={{ fontSize: '0.72rem', color: '#fde047', marginBottom: '0.2rem' }}>
-                        🏧 {language === 'tr' ? 'İşletme Kendi POS\'u' : 'Venue POS Tips'}
+                        🏧 {language === 'tr' ? 'Doğrudan Banka / IBAN' : 'Direct Bank / Wire'}
                       </div>
                       <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#facc15' }}>
                         {simConfig.currency}{language === 'tr' ? '1.800' : '180'}.00
                       </div>
-                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Z-Raporu {language === 'tr' ? 'entegrasyonu' : 'reconciliation'}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>{language === 'tr' ? 'Doğrudan hesap mutabakatı' : 'Direct account reconciliation'}</div>
                     </div>
 
                     <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)', border: '1px solid rgba(34, 197, 94, 0.4)' }}>
@@ -967,51 +967,51 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          GLOBAL POS INTEGRATION LAYER: KEEP YOUR POS. ADD NAPONI.
+          GLOBAL PAYMENT GATEWAY & DIRECT ROUTING LAYER: BRING YOUR OWN PROVIDER
           ==================================================================== */}
       <section className="home-section" id="pos-integrations" style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <div className="home-container">
           <div className="home-section-header">
             <span className="home-section-tag" style={{ background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
-              <Cpu size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
-              {language === 'tr' ? 'Açık POS & Kasa Entegrasyonu' : 'Open POS & Terminal Integration'}
+              <Globe size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
+              {language === 'tr' ? 'Global Ödeme & Doğrudan Tahsilat Uyumu' : 'Global Payment & Direct Routing'}
             </span>
             <h2 className="home-section-title">
-              {language === 'tr' ? 'Mevcut POS Sisteminizi Değiştirmeyin. Naponi Ekleyin.' : 'Keep Your POS. Add Naponi.'}
+              {language === 'tr' ? 'Kendi Ödeme Sağlayıcınızı veya Bankanızı Kullanın. Sıfır Finansal Aracı.' : 'Bring Your Own Payment Gateway. Zero Financial Middleman.'}
             </h2>
             <p className="home-section-desc">
               {language === 'tr'
-                ? 'Donanım çöpe atmak veya alışılmış kasa yazılımlarını terk etmek yok. Naponi, dünyanın önde gelen restoran ve otel POS sistemleriyle çift kanallı senkronize çalışır.'
-                : 'Zero hardware replacement. Zero operational disruption. Naponi seamlessly layers on top of your existing point-of-sale to automate tips, shift pooling, and staff payouts.'}
+                ? 'Naponi bir ödeme kuruluşu veya POS cihazı satıcısı değildir; paranızı asla emanet havuzunda tutmaz. İşletmenizin mevcut ödeme bağlantısını (Payment Link) veya doğrudan banka/IBAN hesabınızı bağlayın; bahşişler aracısız doğrudan sizin hesabınıza aksın.'
+                : 'Naponi is not a payment facilitator or POS hardware vendor. We never hold your funds or touch your money. Simply connect your existing hosted checkout link or direct bank/IBAN details. Tips flow 100% directly into your merchant account or bank.'}
             </p>
           </div>
 
-          {/* POS Compatibility Showcase */}
+          {/* Payment Gateway Compatibility Showcase */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
             {[
               {
                 region: language === 'tr' ? 'Türkiye & MENA' : 'Turkey & MENA',
-                systems: ['Simpra', 'SambaPOS', 'Menulux', 'Foodics'],
+                systems: ['PayTR Link', 'iyzico Link', 'FAST / Kolay Adres', 'Banka IBAN'],
                 badge: 'TR & Körfez',
-                desc: language === 'tr' ? 'Türkiye ve Körfez bölgesinin popüler restoran ve kafe adisyon sistemleri.' : 'Leading hospitality POS platforms across Turkey and the Gulf region.',
+                desc: language === 'tr' ? 'Türkiye ve Körfez bölgesinde işletmenizin sahip olduğu lisanslı ödeme linkleri ve anında banka transferleri.' : 'Licensed local checkout links and instant bank transfers across Turkey and the Gulf.',
               },
               {
                 region: language === 'tr' ? 'Kuzey Amerika' : 'North America',
-                systems: ['Toast POS', 'Square POS', 'Clover', 'TouchBistro'],
+                systems: ['Stripe Payment Links', 'Square Online Checkout', 'PayPal.me', 'ACH Wire'],
                 badge: 'US & CA',
-                desc: language === 'tr' ? 'ABD ve Kanada genelinde yaygın bulut tabanlı restoran otomasyonları.' : 'Dominant cloud restaurant management platforms across the United States & Canada.',
+                desc: language === 'tr' ? 'ABD ve Kanada genelinde işletmelerin kendi Stripe, Square veya PayPal hesapları üzerinden doğrudan tahsilat.' : 'Direct settlement into your own US/Canadian merchant accounts via Stripe, Square, or PayPal links.',
               },
               {
                 region: language === 'tr' ? 'Avrupa & Birleşik Krallık' : 'Europe & UK',
-                systems: ['Lightspeed', 'SumUp POS', 'Vectron (Almanya)', 'Tiller'],
+                systems: ['Adyen Hosted Checkout', 'SumUp Payment Links', 'SEPA Instant Wire', 'Revolut Pay'],
                 badge: 'UK & EU',
-                desc: language === 'tr' ? 'İngiltere, Almanya, Fransa ve Avrupa genelinde onaylı kasa çözümleri.' : 'Standard point-of-sale and terminal networks deployed across the UK and Continental Europe.',
+                desc: language === 'tr' ? 'İngiltere ve AB genelinde PSD2 uyumlu doğrudan banka veya barındırılan ödeme linkleri.' : 'PSD2-compliant hosted checkout links and instant SEPA/Faster Payments directly to your venue.',
               },
               {
                 region: language === 'tr' ? 'Global Zincirler & Asya' : 'Global Enterprise & Asia',
-                systems: ['Oracle MICROS Simphony', 'NCR Aloha', 'Meituan POS (Çin)', 'Smaregi (Japonya)'],
+                systems: ['Stripe Global', 'Checkout.com', 'PIX (Brezilya)', 'PromptPay / Local QR'],
                 badge: 'Global 🌐',
-                desc: language === 'tr' ? 'Global 5 yıldızlı oteller, lüks tatil köyleri ve yüksek hacimli zincirler.' : 'Enterprise-tier hospitality solutions for global resort chains and high-volume brands.',
+                desc: language === 'tr' ? 'Dünya çapında yerel ödeme ağları ve uluslararası ödeme ağ geçitleri ile tam uyum.' : 'Seamless compatibility with global payment gateways and regional instant settlement rails.',
               },
             ].map((col, idx) => (
               <div
@@ -1071,13 +1071,13 @@ export const HomePage: React.FC = () => {
           >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#818cf8', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.35rem' }}>
-                <CheckCircle2 size={18} />
-                {language === 'tr' ? 'Aynı Anda İki Kanal: QR Bahşiş + Kasa Bahşişi' : 'Dual-Channel Harmony: QR Tips + POS Tips'}
+                <ShieldCheck size={18} />
+                {language === 'tr' ? 'Paranız Asla Naponi\'de Beklemez: %100 Doğrudan Sizin Hesabınıza' : 'Zero Held Funds: 100% Direct Settlement to Your Business'}
               </div>
               <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.875rem', maxWidth: '680px' }}>
                 {language === 'tr'
-                  ? 'Müşteri ister masadaki QR kodu okutup 10 saniyede doğrudan bahşiş bıraksın, ister garsona kredi kartı slipiyle bahşiş versin; Naponi her iki kaydı da tek havuzda birleştirir ve vardiya sonunda adaleti garanti eder.'
-                  : 'Guests can either scan the table QR code in 10 seconds via Apple Pay/Google Pay or add a tip to the terminal bill. Naponi combines both streams into a single compliant ledger.'}
+                  ? 'Müşteri masadaki QR kodu okutup bahşiş bırakmak istediğinde, doğrudan işletmenizin belirlediği lisanslı ödeme sayfasına veya güvenli banka/FAST transferine yönlendirilir. Naponi finansal aracı değildir; takas komisyonu kesmez, fon bloke etmez.'
+                  : 'When guests scan the table QR code, they are directed straight to your venue\'s verified checkout page or secure bank transfer. Naponi never holds merchant funds, collects card numbers, or charges payout delays.'}
               </p>
             </div>
 
@@ -1097,7 +1097,7 @@ export const HomePage: React.FC = () => {
                 boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
               }}
             >
-              {language === 'tr' ? 'POS Entegrasyonunu İncele' : 'Explore POS Architecture'}
+              {language === 'tr' ? 'Altyapı Detaylarını İncele' : 'Explore Architecture'}
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -1160,8 +1160,8 @@ export const HomePage: React.FC = () => {
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
                   {language === 'tr'
-                    ? 'Uygulama indirmeden, üyelik olmadan Apple Pay, Google Pay veya kartla 10 saniyede doğrudan personele veya havuza aktarım.'
-                    : 'Instant gratuity direct to staff or team pool in 10 seconds via Apple Pay, Google Pay, or card.'}
+                    ? 'Uygulama indirmeden, üyelik olmadan işletmenizin güvenli ödeme bağlantısı veya FAST/IBAN ile 10 saniyede doğrudan aktarım.'
+                    : 'Direct gratuity to staff or team pool in 10 seconds via your venue\'s secure payment link or direct bank transfer.'}
                 </p>
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
@@ -2699,6 +2699,31 @@ export const HomePage: React.FC = () => {
               <div style={{ marginTop: '0.5rem' }}>
                 <LanguageSelector variant="compact" direction="up" />
               </div>
+            </div>
+          </div>
+
+          {/* Global Regulatory & Legal Disclosure Banner */}
+          <div
+            style={{
+              marginTop: '2.5rem',
+              marginBottom: '1.75rem',
+              padding: '1.25rem 1.5rem',
+              borderRadius: '14px',
+              background: 'rgba(15, 23, 42, 0.65)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '1rem',
+            }}
+          >
+            <ShieldCheck size={22} style={{ color: '#38bdf8', flexShrink: 0, marginTop: '2px' }} />
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.6 }}>
+              <strong style={{ color: '#f1f5f9', display: 'block', marginBottom: '0.3rem', fontSize: '0.82rem' }}>
+                {language === 'tr' ? '⚖️ Yasal ve Finansal Regülasyon Bilgilendirmesi' : '⚖️ Regulatory & Legal Disclosure'}
+              </strong>
+              {language === 'tr'
+                ? 'Naponi bir banka, 6493 sayılı Kanun kapsamında bir ödeme veya elektronik para kuruluşu, POS cihazı sağlayıcısı ya da para transfer aracısı değildir. Naponi, işletmeler için akıllı QR etkileşim ve bahşiş yönetim yazılımıdır. Platform üzerinde kart bilgisi tutulmaz, fon toplanmaz veya işletmeler adına tahsilat/emanet bakiyesi oluşturulmaz. Tüm ödemeler ve bahşişler, müşteriler tarafından doğrudan işletmenin kendi anlaşmalı olduğu lisanslı ödeme sağlayıcıları veya banka hesapları üzerinden gerçekleştirilir.'
+                : 'Naponi is a table interaction and tipping workflow software platform, not a bank, payment service provider (PSP), money services business (MSB), or point-of-sale hardware provider. Naponi does not store cardholder credentials, hold merchant balances, or process financial settlements. All transactions and tips are executed directly through the venue’s own verified third-party payment gateways or direct bank transfer accounts.'}
             </div>
           </div>
 
