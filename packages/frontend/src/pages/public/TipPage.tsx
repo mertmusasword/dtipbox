@@ -2141,7 +2141,7 @@ export const TipPage: React.FC = () => {
 
 
         <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
-          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.9 }} />
+          <img src="/naponi-brand-dark.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.95 }} />
           <span style={{ fontSize: '0.75rem', color: '#78716C' }}>{t('home.footerTagline')}</span>
         </div>
       </div>

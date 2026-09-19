@@ -758,7 +758,7 @@ export const MenuPage: React.FC = () => {
 
         {/* Naponi Brand Footer */}
         <div style={{ textAlign: 'center', marginTop: '1rem', paddingBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
-          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '24px', width: 'auto', opacity: 0.85 }} />
+          <img src="/naponi-brand-dark.svg" alt="Naponi" style={{ height: '26px', width: 'auto', opacity: 0.95 }} />
           <span style={{ fontSize: '0.72rem', color: '#78716C' }}>{isTr ? 'Dijital Akıllı Menü & Bahşiş Deneyimi' : 'Digital Smart Menu & Tipping Experience'}</span>
         </div>
       </main>
