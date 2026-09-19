@@ -357,7 +357,7 @@ export const TipPage: React.FC = () => {
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!leadEmail && !leadPhone) || !publicToken) {
-      alert(language === 'tr' ? 'Lütfen e-posta veya telefon giriniz.' : 'Please enter an email or phone number.');
+      alert(t('tip.enterEmailOrPhone'));
       return;
     }
     setLeadSubmitting(true);
@@ -424,7 +424,7 @@ export const TipPage: React.FC = () => {
             className="btn btn-primary"
             style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.85rem' }}
           >
-            {language === 'tr' ? 'Ödemeye Devam Et' : 'Proceed to Payment'} <ArrowRight size={16} />
+            {t('tip.proceedToPaymentBtn')} <ArrowRight size={16} />
           </a>
         </div>
       </div>
@@ -501,10 +501,10 @@ export const TipPage: React.FC = () => {
               : isSuccess
               ? t('tip.successTitle')
               : isFailed
-              ? 'Ödeme Tamamlanamadı'
+              ? t('tip.paymentFailed')
               : isCancelled
-              ? 'Ödeme İptal Edildi'
-              : 'Ödeme Bekleniyor'}
+              ? t('tip.paymentCancelled')
+              : t('tip.paymentPending')}
           </h2>
           <p style={{ color: '#78716C', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
             {isUnverified
@@ -512,12 +512,12 @@ export const TipPage: React.FC = () => {
               : isSuccess
               ? t('tip.successSubtitle')
               : isFailed
-              ? 'Ödeme işlemi onaylanamadı. Lütfen bilgilerinizi kontrol edip tekrar deneyiniz.'
+              ? t('tip.paymentFailedNotice')
               : isCancelled
-              ? 'Ödeme işlemi iptal edildi.'
+              ? t('tip.paymentCancelledNotice')
               : paymentUrl
-              ? 'Lütfen güvenli ödeme bağlantısını kullanarak ödemenizi tamamlayınız.'
-              : 'Ödeme provizyonu bekleniyor.'}
+              ? t('tip.completeExternalNotice')
+              : t('tip.paymentPendingNotice')}
           </p>
 
           <div style={{
@@ -548,14 +548,14 @@ export const TipPage: React.FC = () => {
                   : 'badge-danger'
               }`} style={{ whiteSpace: 'normal', textAlign: 'right', maxWidth: '75%', lineHeight: 1.25 }}>
                 {isUnverified
-                  ? (language === 'tr' ? 'Havale Bekleniyor' : 'Transfer Pending')
+                  ? t('tip.transferPending')
                   : isSuccess
                   ? t('common.success')
                   : isPending
-                  ? (language === 'tr' ? 'İşlem Bekleniyor' : 'Pending')
+                  ? t('tip.statusPending')
                   : isCancelled
-                  ? (language === 'tr' ? 'İptal Edildi' : 'Cancelled')
-                  : (language === 'tr' ? 'Başarısız' : 'Failed')}
+                  ? t('tip.statusCancelled')
+                  : t('tip.statusFailed')}
               </span>
             </div>
 
@@ -597,7 +597,7 @@ export const TipPage: React.FC = () => {
               className="btn btn-primary"
               style={{ width: '100%', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
-              {language === 'tr' ? 'Ödemeyi Tamamla' : 'Complete Payment'} <ArrowRight size={16} />
+              {t('tip.completePaymentBtn')} <ArrowRight size={16} />
             </a>
           )}
 
@@ -813,7 +813,7 @@ export const TipPage: React.FC = () => {
               setFeedbackSkipped(false);
             }}
           >
-            {isSuccess || isUnverified ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}
+            {isSuccess || isUnverified ? t('tip.sendAnotherTip') : t('common.retry')}
           </button>
 
         </div>
