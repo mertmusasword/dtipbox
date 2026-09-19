@@ -306,49 +306,6 @@ export const MenuPage: React.FC = () => {
 
       {/* MAIN CONTAINER */}
       <main style={{ maxWidth: '680px', margin: '0 auto', padding: '1rem' }}>
-        {/* ALLERGEN DISCLAIMER NOTICE BANNER */}
-        <div
-          style={{
-            background: '#FFFBEB',
-            border: '1px solid #FDE68A',
-            borderRadius: '14px',
-            padding: '0.85rem 1.1rem',
-            marginBottom: '1rem',
-            boxShadow: '0 2px 6px rgba(245, 158, 11, 0.05)',
-          }}
-        >
-          <div
-            onClick={() => setIsDisclaimerExpanded(!isDisclaimerExpanded)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              cursor: 'pointer',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: '#B45309', fontWeight: 700, fontSize: '0.88rem' }}>
-              <AlertTriangle size={18} style={{ flexShrink: 0, color: '#D97706' }} />
-              <span>{t('menu.allergenNoticeTitle') || 'Alerjen Bilgisi'}</span>
-            </div>
-            <button
-              type="button"
-              style={{ background: 'none', border: 'none', color: '#B45309', cursor: 'pointer', padding: 0 }}
-            >
-              {isDisclaimerExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
-          </div>
-
-          {isDisclaimerExpanded ? (
-            <div style={{ marginTop: '0.65rem', fontSize: '0.8rem', color: '#78350F', lineHeight: 1.5, borderTop: '1px solid #FDE68A', paddingTop: '0.5rem' }}>
-              {disclaimerText}
-            </div>
-          ) : (
-            <div style={{ marginTop: '0.35rem', fontSize: '0.76rem', color: '#92400E', opacity: 0.9 }}>
-              Menüdeki alerjen bilgileri işletme beyanına dayanmaktadır. Detay için tıklayın.
-            </div>
-          )}
-        </div>
-
         {/* SEARCH & FILTER ROW */}
         <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.25rem' }}>
           {/* Live Search Input */}
@@ -748,12 +705,56 @@ export const MenuPage: React.FC = () => {
           </div>
         )}
 
+        {/* ALLERGEN DISCLAIMER NOTICE BANNER (Placed neatly at the bottom of the menu) */}
+        <div
+          style={{
+            background: '#FFFBEB',
+            border: '1px solid #FDE68A',
+            borderRadius: '14px',
+            padding: '0.85rem 1.1rem',
+            marginTop: '2rem',
+            marginBottom: '0.5rem',
+            boxShadow: '0 2px 6px rgba(245, 158, 11, 0.05)',
+          }}
+        >
+          <div
+            onClick={() => setIsDisclaimerExpanded(!isDisclaimerExpanded)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: '#B45309', fontWeight: 700, fontSize: '0.88rem' }}>
+              <AlertTriangle size={18} style={{ flexShrink: 0, color: '#D97706' }} />
+              <span>{t('menu.allergenNoticeTitle') || 'Alerjen Bilgisi'}</span>
+            </div>
+            <button
+              type="button"
+              style={{ background: 'none', border: 'none', color: '#B45309', cursor: 'pointer', padding: 0 }}
+            >
+              {isDisclaimerExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+          </div>
+
+          {isDisclaimerExpanded ? (
+            <div style={{ marginTop: '0.65rem', fontSize: '0.8rem', color: '#78350F', lineHeight: 1.5, borderTop: '1px solid #FDE68A', paddingTop: '0.5rem' }}>
+              {disclaimerText}
+            </div>
+          ) : (
+            <div style={{ marginTop: '0.35rem', fontSize: '0.76rem', color: '#92400E', opacity: 0.9 }}>
+              Menüdeki alerjen bilgileri işletme beyanına dayanmaktadır. Detay için tıklayın.
+            </div>
+          )}
+        </div>
+
         {/* Social Media & Contact Links ("Bizi Takip Edin" - directly at the bottom of the digital menu) */}
         <SocialLinksSection
           smartQr={smartQr}
           publicToken={publicToken}
           language={language}
-          style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}
+          style={{ marginTop: '1.75rem', marginBottom: '1.5rem' }}
         />
 
         {/* Naponi Brand Footer */}
