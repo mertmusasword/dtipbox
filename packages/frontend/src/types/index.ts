@@ -199,6 +199,18 @@ export interface TipPageDetails {
   }>;
   presetAmounts: number[];
   hasAvailablePaymentMethod: boolean;
+  paymentOptions?: {
+    hasExternalPayment: boolean;
+    externalPaymentUrl?: string | null;
+    hasIbanPayment: boolean;
+    ibanDetails?: {
+      accountHolderName: string;
+      bankName?: string | null;
+      iban?: string | null;
+      country?: string;
+    } | null;
+    hasAnyPaymentMethod: boolean;
+  };
   smartQr?: {
     isSmartEnabled: boolean;
     enableTips: boolean;

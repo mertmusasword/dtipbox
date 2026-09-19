@@ -13,6 +13,7 @@ import * as auditService from '../services/audit.service';
 import * as tipPoolService from '../services/tipPool.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType, TipDistributionMode, PosFeePayer } from '@prisma/client';
 import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
+import { AppError } from '../middleware/errorHandler';
 import prisma from '../utils/prisma';
 
 const router = Router();
@@ -264,6 +265,100 @@ router.delete('/qr/:id', async (req: AuthRequest, res, next) => {
   try {
     await qrService.deleteQrCode(req.params.id as string, req.user!.businessId!, req.user!.id);
     res.json({ success: true, message: 'QR code deleted' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Unified Payment Settings (External Payment Link & Direct Bank Transfer) ---
+router.get('/payment-settings', async (req: AuthRequest, res, next) => {
+  try {
+    const business = await prisma.business.findUnique({
+      where: { id: req.user!.businessId! },
+      select: {
+        external_payment_url: true,
+        payment_account: {
+          select: {
+            account_holder_name: true,
+            bank_name: true,
+            iban: true,
+            swift_bic: true,
+            country: true,
+          },
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        externalPaymentUrl: business?.external_payment_url || null,
+        paymentAccount: business?.payment_account || null,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+const updatePaymentSettingsSchema = {
+  body: z.object({
+    externalPaymentUrl: z
+      .string()
+      .trim()
+      .max(1000, 'URL en fazla 1000 karakter olabilir')
+      .nullable()
+      .optional(),
+  }),
+};
+
+router.put('/payment-settings', validate(updatePaymentSettingsSchema), async (req: AuthRequest, res, next) => {
+  try {
+    let cleanUrl: string | null = null;
+    if (req.body.externalPaymentUrl && req.body.externalPaymentUrl.trim().length > 0) {
+      const raw = req.body.externalPaymentUrl.trim();
+      let parsed: URL;
+      try {
+        parsed = new URL(raw);
+      } catch {
+        throw new AppError('Geçersiz URL formatı. Lütfen geçerli bir https:// bağlantısı giriniz.', 400);
+      }
+
+      if (parsed.protocol !== 'https:') {
+        throw new AppError('Ödeme bağlantısı güvenlik nedeniyle zorunlu olarak "https://" ile başlamalıdır.', 400);
+      }
+
+      cleanUrl = parsed.toString();
+    }
+
+    const updated = await prisma.business.update({
+      where: { id: req.user!.businessId! },
+      data: {
+        external_payment_url: cleanUrl,
+      },
+      select: {
+        external_payment_url: true,
+        payment_account: true,
+      },
+    });
+
+    await auditService.createAuditLog({
+      actorUserId: req.user!.id,
+      businessId: req.user!.businessId!,
+      action: 'PAYMENT_SETTINGS_UPDATED',
+      entityType: 'business_payment_settings',
+      entityId: req.user!.businessId!,
+      metadata: { hasExternalUrl: Boolean(cleanUrl) },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        externalPaymentUrl: updated.external_payment_url,
+        paymentAccount: updated.payment_account,
+      },
+      message: 'Ödeme ayarları başarıyla güncellendi.',
+    });
   } catch (error) {
     next(error);
   }

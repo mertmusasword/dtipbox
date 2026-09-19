@@ -64,9 +64,32 @@ export async function getTipPageDetails(publicToken: string) {
     orderBy: { first_name: 'asc' },
   });
 
-  // Fetch active and connected payment methods
-  const activeMethods = await getActivePaymentMethods(qr.business_id);
-  const paymentMethodsCatalog = await getCustomerPaymentMethodsCatalog(qr.business_id);
+  // Determine available payment methods dynamically based on business configuration
+  const hasExternalPayment = Boolean(
+    qr.business.external_payment_url &&
+    qr.business.external_payment_url.trim().startsWith('https://')
+  );
+  const hasIbanPayment = Boolean(
+    qr.business.payment_account?.iban &&
+    qr.business.payment_account.iban.trim().length > 0
+  );
+
+  const availableMethods: { type: PaymentMethodType; provider?: string | null; label: string }[] = [];
+  if (hasExternalPayment) {
+    availableMethods.push({
+      type: PaymentMethodType.CARD,
+      provider: 'external_link',
+      label: 'Güvenli Ödeme Sayfası',
+    });
+  }
+  if (hasIbanPayment) {
+    availableMethods.push({
+      type: PaymentMethodType.IBAN_TRANSFER,
+      provider: 'iban',
+      label: 'Doğrudan Banka Transferi',
+    });
+  }
+  const hasAnyPaymentMethod = availableMethods.length > 0;
 
   // Suggested preset tip amounts depending on currency
   const currencyPresets: Record<string, number[]> = {
@@ -105,13 +128,22 @@ export async function getTipPageDetails(publicToken: string) {
     },
     table: qr.table ? { id: qr.table.id, name: qr.table.name } : null,
     employees,
-    activePaymentMethods: activeMethods.map((m) => ({
-      type: m.type,
-      provider: m.provider,
-    })),
-    paymentMethodsCatalog,
+    activePaymentMethods: availableMethods,
+    paymentOptions: {
+      hasExternalPayment,
+      externalPaymentUrl: hasExternalPayment ? qr.business.external_payment_url : null,
+      hasIbanPayment,
+      ibanDetails: hasIbanPayment ? {
+        accountHolderName: qr.business.payment_account!.account_holder_name,
+        bankName: qr.business.payment_account!.bank_name,
+        iban: qr.business.payment_account!.iban,
+        country: qr.business.payment_account!.country,
+      } : null,
+      hasAnyPaymentMethod,
+    },
+    paymentMethodsCatalog: availableMethods,
     presetAmounts: presets,
-    hasAvailablePaymentMethod: activeMethods.length > 0,
+    hasAvailablePaymentMethod: hasAnyPaymentMethod,
     smartQr: smartConfig
       ? {
           isSmartEnabled: smartConfig.is_smart_enabled,
@@ -245,6 +277,26 @@ export async function createTip(data: CreateTipRequest) {
 
   // Determine effective table ID (either from QR or from customer selection)
   const effectiveTableId = qr.table_id || data.tableId || null;
+
+  // Check payment method availability dynamically based on business configuration
+  const hasExternalPayment = Boolean(
+    qr.business.external_payment_url &&
+    qr.business.external_payment_url.trim().startsWith('https://')
+  );
+  const paymentAccount = await prisma.businessPaymentAccount.findUnique({
+    where: { business_id: qr.business_id },
+  });
+  const hasIbanPayment = Boolean(paymentAccount?.iban && paymentAccount.iban.trim().length > 0);
+
+  if (data.paymentMethod === PaymentMethodType.IBAN_TRANSFER) {
+    if (!hasIbanPayment) {
+      throw new AppError('Doğrudan banka transferi (IBAN) bu işletme için henüz yapılandırılmamış.', 400);
+    }
+  } else {
+    if (!hasExternalPayment) {
+      throw new AppError('Güvenli harici ödeme bağlantısı bu işletme için henüz yapılandırılmamış.', 400);
+    }
+  }
 
   // Anti-duplicate protection: prevent duplicate tip creation if submitted multiple times within 5 seconds
   const fiveSecondsAgo = new Date(Date.now() - 5000);

@@ -177,6 +177,9 @@ model Business {
   description   String?
   is_active     Boolean @default(true)
 
+  // Payment Settings
+  external_payment_url    String?
+
   // Tip Distribution & Pool Settings
   tip_distribution_mode   TipDistributionMode   @default(INDIVIDUAL)
   pos_fee_payer           PosFeePayer           @default(STAFF)

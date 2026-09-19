@@ -88,9 +88,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/tables" icon={<UtensilsCrossed size={18} />} label={t('nav.tables')} onClick={closeMobile} />
               <NavItem to="/business/menu" icon={<BookOpen size={18} />} label={t('nav.menu') || 'QR Menü'} onClick={closeMobile} />
               <NavItem to="/business/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
-              <NavItem to="/business/payment-methods" icon={<CreditCard size={18} />} label={t('nav.paymentMethods')} onClick={closeMobile} />
-              <NavItem to="/business/pos-integrations" icon={<Cpu size={18} />} label={t('nav.posIntegrations') || 'POS Entegrasyonları'} onClick={closeMobile} />
-              <NavItem to="/business/payment-account" icon={<Building2 size={18} />} label={t('nav.bankAccount')} onClick={closeMobile} />
+              <NavItem to="/business/payment-settings" icon={<CreditCard size={18} />} label={t('nav.paymentSettings') || 'Ödeme Ayarları'} onClick={closeMobile} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
               <NavItem to="/business/loyalty" icon={<Award size={18} />} label={t('nav.loyalty')} onClick={closeMobile} />

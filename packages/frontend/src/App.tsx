@@ -44,8 +44,8 @@ const TablesPage = React.lazy(() => import('./pages/business/TablesPage').then((
 const MenuManagementPage = React.lazy(() => import('./pages/business/MenuManagementPage').then((m) => ({ default: m.MenuManagementPage })));
 const QrCodesPage = React.lazy(() => import('./pages/business/QrCodesPage').then((m) => ({ default: m.QrCodesPage })));
 const PaymentMethodsPage = React.lazy(() => import('./pages/business/PaymentMethodsPage').then((m) => ({ default: m.PaymentMethodsPage })));
-const PosIntegrationsPage = React.lazy(() => import('./pages/business/PosIntegrationsPage').then((m) => ({ default: m.PosIntegrationsPage })));
 const PaymentAccountPage = React.lazy(() => import('./pages/business/PaymentAccountPage').then((m) => ({ default: m.PaymentAccountPage })));
+const PaymentSettingsPage = React.lazy(() => import('./pages/business/PaymentSettingsPage').then((m) => ({ default: m.PaymentSettingsPage })));
 const AnalyticsPage = React.lazy(() => import('./pages/business/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage })));
 const FeedbacksPage = React.lazy(() => import('./pages/business/FeedbacksPage').then((m) => ({ default: m.FeedbacksPage })));
 const ProfileSettingsPage = React.lazy(() => import('./pages/business/ProfileSettingsPage').then((m) => ({ default: m.ProfileSettingsPage })));
@@ -186,9 +186,10 @@ export const App: React.FC = () => {
                   <Route path="/business/tables" element={<TablesPage />} />
                   <Route path="/business/menu" element={<MenuManagementPage />} />
                   <Route path="/business/qr" element={<QrCodesPage />} />
-                  <Route path="/business/payment-methods" element={<PaymentMethodsPage />} />
-                  <Route path="/business/pos-integrations" element={<PosIntegrationsPage />} />
-                  <Route path="/business/payment-account" element={<PaymentAccountPage />} />
+                  <Route path="/business/payment-settings" element={<PaymentSettingsPage />} />
+                  <Route path="/business/payment-methods" element={<Navigate to="/business/payment-settings" replace />} />
+                  <Route path="/business/pos-integrations" element={<Navigate to="/business/payment-settings" replace />} />
+                  <Route path="/business/payment-account" element={<Navigate to="/business/payment-settings" replace />} />
                   <Route path="/business/analytics" element={<AnalyticsPage />} />
                   <Route path="/business/feedbacks" element={<FeedbacksPage />} />
                   <Route path="/business/loyalty" element={<BusinessLoyaltyPage />} />

@@ -92,6 +92,7 @@ export const TipPage: React.FC = () => {
   // Processing & Confirmation State
   const [submitting, setSubmitting] = useState(false);
   const [paymentResult, setPaymentResult] = useState<any | null>(null);
+  const [redirectingUrl, setRedirectingUrl] = useState<string | null>(null);
   const [copiedIban, setCopiedIban] = useState(false);
 
   // Post-tip Feedback State
@@ -129,8 +130,14 @@ export const TipPage: React.FC = () => {
         if (d.presetAmounts?.length > 0) {
           setSelectedAmount(d.presetAmounts[1] || d.presetAmounts[0]);
         }
-        if (d.activePaymentMethods?.length > 0) {
-          setSelectedPaymentMethod(d.activePaymentMethods[0].type);
+        const extAvail = Boolean(d.paymentOptions?.hasExternalPayment ?? d.activePaymentMethods?.some((m) => m.type === 'CARD'));
+        const ibanAvail = Boolean(d.paymentOptions?.hasIbanPayment ?? d.activePaymentMethods?.some((m) => m.type === 'IBAN_TRANSFER'));
+        if (extAvail) {
+          setSelectedPaymentMethod('CARD');
+        } else if (ibanAvail) {
+          setSelectedPaymentMethod('IBAN_TRANSFER');
+        } else {
+          setSelectedPaymentMethod(null);
         }
 
         // Smart QR primary routing & auto-selection
@@ -213,6 +220,14 @@ export const TipPage: React.FC = () => {
         effectiveAmount,
         details?.business?.currency || 'USD'
       );
+
+      const paymentUrl = res.data.data?.payment?.paymentUrl;
+      if (selectedPaymentMethod === 'CARD' && paymentUrl) {
+        setRedirectingUrl(paymentUrl);
+        window.location.href = paymentUrl;
+        return;
+      }
+
       setPaymentResult(res.data.data);
     } catch (err: any) {
       trackPaymentFailed(selectedPaymentMethod, err.response?.data?.error || 'Payment failed');
@@ -390,6 +405,31 @@ export const TipPage: React.FC = () => {
     );
   }
 
+  // --- External Payment Redirection Screen ---
+  if (redirectingUrl) {
+    return (
+      <div className="theme-warm-light" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', background: '#FAF9F6', color: '#1C1917' }}>
+        <div className="glass-card" style={{ maxWidth: '440px', width: '100%', textAlign: 'center', padding: '2.5rem', background: '#FFFFFF', border: '1px solid rgba(0, 0, 0, 0.06)', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04)' }}>
+          <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(5, 150, 105, 0.12)', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
+            <ExternalLink size={28} />
+          </div>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.5rem', color: '#1C1917' }}>
+            {t('tip.externalRedirecting')}
+          </h2>
+          <p style={{ color: '#78716C', fontSize: '0.88rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+            {t('tip.externalRedirectNotice')}
+          </p>
+          <a
+            href={redirectingUrl}
+            className="btn btn-primary"
+            style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.85rem' }}
+          >
+            {language === 'tr' ? 'Ödemeye Devam Et' : 'Proceed to Payment'} <ArrowRight size={16} />
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   // --- Payment Confirmation Screen ---
   if (paymentResult) {
@@ -554,12 +594,10 @@ export const TipPage: React.FC = () => {
           {paymentUrl && isPending && (
             <a
               href={paymentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
               className="btn btn-primary"
               style={{ width: '100%', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
-              Ödemeyi Tamamla <ArrowRight size={16} />
+              {language === 'tr' ? 'Ödemeyi Tamamla' : 'Complete Payment'} <ArrowRight size={16} />
             </a>
           )}
 
@@ -1953,111 +1991,135 @@ export const TipPage: React.FC = () => {
 
 
             {/* Step 3: Payment Method */}
-            <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C', display: 'block', marginBottom: '0.75rem' }}>
-                3. {t('tip.paymentMethodTitle')}
-              </span>
+            {(() => {
+              const hasExternalPayment = Boolean(
+                details.paymentOptions?.hasExternalPayment ??
+                details.activePaymentMethods?.some((m) => m.type === 'CARD')
+              );
+              const hasIbanPayment = Boolean(
+                details.paymentOptions?.hasIbanPayment ??
+                details.activePaymentMethods?.some((m) => m.type === 'IBAN_TRANSFER')
+              );
+              const hasAnyPayment = hasExternalPayment || hasIbanPayment;
 
-              {!details.hasAvailablePaymentMethod ? (
-                <div style={{ textAlign: 'center', padding: '1rem', color: '#D97706' }}>
-                  <AlertCircle size={24} style={{ margin: '0 auto 0.5rem' }} />
-                  <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{t('tip.noPaymentMethods')}</div>
-                  <div style={{ fontSize: '0.8rem', color: '#78716C', marginTop: '0.25rem' }}>
-                    {t('tip.noPaymentMethodsHelp')}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                  {['CARD', 'IBAN_TRANSFER', 'APPLE_PAY', 'GOOGLE_PAY'].map((methodKey) => {
-                    const catalogItem = details.paymentMethodsCatalog?.find((c) => c.type === methodKey);
-                    const isAvailable = catalogItem ? catalogItem.isUsable : details.activePaymentMethods.some((m) => m.type === methodKey);
-                    const reason = catalogItem?.reason;
-                    const isSelected = selectedPaymentMethod === methodKey;
+              return (
+                <>
+                  <div className="glass-card" style={{ padding: '1.25rem' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C', display: 'block', marginBottom: '0.75rem' }}>
+                      3. {t('tip.paymentMethodTitle')}
+                    </span>
 
-                    let label = t('tip.creditCard');
-                    let icon = <CreditCard size={18} />;
-                    if (methodKey === 'IBAN_TRANSFER') {
-                      label = t('tip.bankTransfer');
-                      icon = <Building2 size={18} />;
-                    } else if (methodKey === 'APPLE_PAY') {
-                      label = t('tip.applePay');
-                      icon = <Smartphone size={18} />;
-                    } else if (methodKey === 'GOOGLE_PAY') {
-                      label = t('tip.googlePay');
-                      icon = <Smartphone size={18} />;
-                    }
-
-                    return (
-                      <div
-                        key={methodKey}
-                        onClick={() => isAvailable && setSelectedPaymentMethod(methodKey as PaymentMethodType)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '0.85rem 1rem',
-                          borderRadius: '12px',
-                          background: isSelected ? 'rgba(5, 150, 105, 0.08)' : '#F5F5F4',
-                          border: isSelected
-                            ? '2px solid #059669'
-                            : isAvailable
-                            ? '1px solid #E7E5E4'
-                            : '1px solid #E7E5E4',
-                          opacity: isAvailable ? 1 : 0.5,
-                          cursor: isAvailable ? 'pointer' : 'not-allowed',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <span style={{ color: isSelected || isAvailable ? '#059669' : '#78716C' }}>
-                            {icon}
-                          </span>
-                          <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1C1917' }}>{label}</div>
-                            {!isAvailable && reason && (
-                              <div style={{ fontSize: '0.72rem', color: '#78716C' }}>{reason}</div>
-                            )}
-                          </div>
-                        </div>
-                        <div>
-                          {isAvailable ? (
-                            <span style={{ color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>🟢 {t('common.active')}</span>
-                          ) : (
-                            <span style={{ color: '#78716C', fontSize: '0.78rem', background: '#E7E5E4', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-                              {t('common.inactive')}
-                            </span>
-                          )}
+                    {!hasAnyPayment ? (
+                      <div style={{ textAlign: 'center', padding: '1.25rem 1rem', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '12px', color: '#92400E' }}>
+                        <AlertCircle size={28} style={{ margin: '0 auto 0.5rem', color: '#D97706' }} />
+                        <div style={{ fontSize: '0.95rem', fontWeight: 700 }}>{t('tip.paymentNotConfigured')}</div>
+                        <div style={{ fontSize: '0.82rem', color: '#B45309', marginTop: '0.25rem' }}>
+                          {t('tip.paymentNotConfiguredHelp')}
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {hasExternalPayment && (
+                          <div
+                            onClick={() => setSelectedPaymentMethod('CARD')}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '1rem 1.1rem',
+                              borderRadius: '12px',
+                              background: selectedPaymentMethod === 'CARD' ? 'rgba(5, 150, 105, 0.08)' : '#F5F5F4',
+                              border: selectedPaymentMethod === 'CARD' ? '2px solid #059669' : '1px solid #E7E5E4',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                              <span style={{ color: selectedPaymentMethod === 'CARD' ? '#059669' : '#78716C' }}>
+                                <ExternalLink size={20} />
+                              </span>
+                              <div>
+                                <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#1C1917' }}>
+                                  {t('tip.externalPayment')}
+                                </div>
+                                <div style={{ fontSize: '0.76rem', color: '#78716C', marginTop: '0.1rem' }}>
+                                  {t('tip.externalPaymentDesc')}
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>
+                                🟢 {t('common.active')}
+                              </span>
+                            </div>
+                          </div>
+                        )}
 
-            {/* Step 4: Submit Button */}
-            <button
-              type="submit"
-              disabled={submitting || !details.hasAvailablePaymentMethod || effectiveAmount <= 0}
-              className="btn btn-primary"
-              style={{
-                padding: '1.1rem',
-                fontSize: '1.1rem',
-                fontWeight: 800,
-                width: '100%',
-                borderRadius: '14px',
-                opacity: submitting || !details.hasAvailablePaymentMethod || effectiveAmount <= 0 ? 0.6 : 1,
-              }}
-            >
-              {submitting ? (
-                t('common.loading')
-              ) : (
-                <>
-                  {t('tip.payBtn')} {formatCurrency(effectiveAmount || 0, details.business.currency)}
-                  <ArrowRight size={20} />
+                        {hasIbanPayment && (
+                          <div
+                            onClick={() => setSelectedPaymentMethod('IBAN_TRANSFER')}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '1rem 1.1rem',
+                              borderRadius: '12px',
+                              background: selectedPaymentMethod === 'IBAN_TRANSFER' ? 'rgba(5, 150, 105, 0.08)' : '#F5F5F4',
+                              border: selectedPaymentMethod === 'IBAN_TRANSFER' ? '2px solid #059669' : '1px solid #E7E5E4',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                              <span style={{ color: selectedPaymentMethod === 'IBAN_TRANSFER' ? '#059669' : '#78716C' }}>
+                                <Building2 size={20} />
+                              </span>
+                              <div>
+                                <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#1C1917' }}>
+                                  {t('tip.directTransfer')}
+                                </div>
+                                <div style={{ fontSize: '0.76rem', color: '#78716C', marginTop: '0.1rem' }}>
+                                  {t('tip.directTransferDesc')}
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>
+                                🟢 {t('common.active')}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Step 4: Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={submitting || !hasAnyPayment || effectiveAmount <= 0}
+                    className="btn btn-primary"
+                    style={{
+                      padding: '1.1rem',
+                      fontSize: '1.1rem',
+                      fontWeight: 800,
+                      width: '100%',
+                      borderRadius: '14px',
+                      opacity: submitting || !hasAnyPayment || effectiveAmount <= 0 ? 0.6 : 1,
+                    }}
+                  >
+                    {submitting ? (
+                      t('common.loading')
+                    ) : (
+                      <>
+                        {t('tip.payBtn')} {formatCurrency(effectiveAmount || 0, details.business.currency)}
+                        <ArrowRight size={20} />
+                      </>
+                    )}
+                  </button>
                 </>
-              )}
-            </button>
+              );
+            })()}
           </form>
         )}
 
