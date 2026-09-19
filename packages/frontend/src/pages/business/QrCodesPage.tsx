@@ -1135,8 +1135,8 @@ export const QrCodesPage: React.FC = () => {
               </div>
               <p style={{ fontSize: '0.83rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: 1.45 }}>
                 {isTr
-                  ? 'Müşterilerinizin sizi sosyal medyada takip etmesi ve doğrudan iletişime geçmesi için hesap linklerinizi ekleyin. Sadece doldurduğunuz platformlar Smart QR sayfasında gösterilir.'
-                  : 'Add your social handles and website to connect with guests. Only filled platforms will appear on the public Smart QR page.'}
+                  ? 'İster sadece kullanıcı adınızı (örn: @naponi veya naponi), ister tam profil bağlantısını yapıştırın. Sistem otomatik olarak doğru bağlantıya dönüştürür. Sadece doldurduğunuz platformlar Smart QR sayfasında gösterilir.'
+                  : 'Enter your handle (e.g. @naponi or naponi) or full profile link. The system normalizes it automatically. Only filled platforms will appear on the public Smart QR page.'}
               </p>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.85rem' }}>
@@ -1148,7 +1148,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="https://instagram.com/hesabiniz veya @kullaniciadi"
+                    placeholder="Örn: @naponicom veya naponicom"
                     value={smartConfig.social_instagram || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_instagram: e.target.value })}
                   />
@@ -1162,7 +1162,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="https://tiktok.com/@hesabiniz veya @kullaniciadi"
+                    placeholder="Örn: @naponicom veya naponicom"
                     value={smartConfig.social_tiktok || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_tiktok: e.target.value })}
                   />
@@ -1176,7 +1176,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="https://facebook.com/sayfaniz"
+                    placeholder="Örn: naponikafe veya facebook.com/naponikafe"
                     value={smartConfig.social_facebook || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_facebook: e.target.value })}
                   />
@@ -1190,7 +1190,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="https://x.com/hesabiniz veya @kullaniciadi"
+                    placeholder="Örn: @naponicom veya naponicom"
                     value={smartConfig.social_twitter || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_twitter: e.target.value })}
                   />
@@ -1204,7 +1204,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="https://youtube.com/@kanaliniz"
+                    placeholder="Örn: @naponicom veya youtube.com/@naponicom"
                     value={smartConfig.social_youtube || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_youtube: e.target.value })}
                   />
@@ -1219,7 +1219,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="+90 5XX XXX XX XX veya https://wa.me/905XXXXXX"
+                    placeholder="Örn: 0555 123 45 67 veya +90 555 123 45 67"
                     value={smartConfig.social_whatsapp || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_whatsapp: e.target.value })}
                   />
@@ -1234,7 +1234,7 @@ export const QrCodesPage: React.FC = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="https://www.isletmeniz.com veya isletmeniz.com"
+                    placeholder="Örn: naponi.com veya https://naponi.com"
                     value={smartConfig.social_website || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_website: e.target.value })}
                   />

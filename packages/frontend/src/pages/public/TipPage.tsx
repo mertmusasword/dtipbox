@@ -519,9 +519,26 @@ export const TipPage: React.FC = () => {
         >
           {platforms.map((p) => {
             let finalUrl = p.url.trim();
-            if (p.id === 'whatsapp' && !/^https?:\/\//i.test(finalUrl)) {
-              const cleanDigits = finalUrl.replace(/\D/g, '');
-              finalUrl = `https://wa.me/${cleanDigits}`;
+            if (p.id === 'instagram') {
+              const handle = finalUrl.replace(/^(?:https?:\/\/)?(?:www\.)?instagram\.com\/?/i, '').replace(/^[@\/]+/, '').replace(/\/+$/, '').trim();
+              finalUrl = `https://instagram.com/${handle}`;
+            } else if (p.id === 'tiktok') {
+              const handle = finalUrl.replace(/^(?:https?:\/\/)?(?:www\.)?tiktok\.com\/?/i, '').replace(/^[@\/]+/, '').replace(/\/+$/, '').trim();
+              finalUrl = `https://tiktok.com/@${handle}`;
+            } else if (p.id === 'facebook') {
+              const handle = finalUrl.replace(/^(?:https?:\/\/)?(?:www\.)?facebook\.com\/?/i, '').replace(/^[@\/]+/, '').replace(/\/+$/, '').trim();
+              finalUrl = `https://facebook.com/${handle}`;
+            } else if (p.id === 'twitter') {
+              const handle = finalUrl.replace(/^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/?/i, '').replace(/^[@\/]+/, '').replace(/\/+$/, '').trim();
+              finalUrl = `https://x.com/${handle}`;
+            } else if (p.id === 'youtube') {
+              const handle = finalUrl.replace(/^(?:https?:\/\/)?(?:www\.)?youtube\.com\/?/i, '').replace(/^[@\/]+/, '').replace(/\/+$/, '').trim();
+              finalUrl = (handle.startsWith('channel/') || handle.startsWith('c/') || handle.startsWith('user/'))
+                ? `https://youtube.com/${handle}`
+                : `https://youtube.com/@${handle}`;
+            } else if (p.id === 'whatsapp') {
+              const digits = finalUrl.replace(/[\s\-\(\)\+]/g, '').replace(/^(?:https?:\/\/)?(?:www\.)?wa\.me\/?/i, '');
+              finalUrl = `https://wa.me/${digits}`;
             } else if (!/^https?:\/\//i.test(finalUrl)) {
               finalUrl = `https://${finalUrl}`;
             }

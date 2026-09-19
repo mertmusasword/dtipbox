@@ -53,52 +53,85 @@ export function sanitizeSocialUrl(
     throw new AppError(`Geçersiz veya tehlikeli ${platform} bağlantısı`, 400);
   }
 
-  // Handle WhatsApp special formats (phone number or wa.me)
+  // 1. WhatsApp: phone number or wa.me link
   if (platform === 'whatsapp') {
-    if (lower.startsWith('https://wa.me/') || lower.startsWith('http://wa.me/')) {
-      return trimmed;
-    }
-    if (lower.startsWith('https://api.whatsapp.com/') || lower.startsWith('http://api.whatsapp.com/')) {
-      return trimmed;
-    }
-    // Clean numeric phone number: strip spaces, dashes, parentheses
-    const digitsOnly = trimmed.replace(/[\s\-\(\)\+]/g, '');
+    const digitsOnly = trimmed.replace(/[\s\-\(\)\+]/g, '').replace(/^(?:https?:\/\/)?(?:www\.)?wa\.me\/?/i, '');
     if (/^\d{7,16}$/.test(digitsOnly)) {
       return `https://wa.me/${digitsOnly}`;
     }
+    if (lower.startsWith('https://') || lower.startsWith('http://')) {
+      return trimmed;
+    }
+    throw new AppError('Geçersiz WhatsApp telefon numarası veya bağlantısı', 400);
   }
 
-  // Normalize platform handles if user entered only username (e.g. "@username" or "username")
-  let targetUrl = trimmed;
-  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-    const handle = trimmed.replace(/^@/, '').trim();
-    if (platform === 'instagram') {
-      targetUrl = `https://instagram.com/${handle}`;
-    } else if (platform === 'tiktok') {
-      targetUrl = `https://tiktok.com/@${handle}`;
-    } else if (platform === 'twitter') {
-      targetUrl = `https://x.com/${handle}`;
-    } else if (platform === 'facebook') {
-      targetUrl = `https://facebook.com/${handle}`;
-    } else if (platform === 'youtube') {
-      targetUrl = `https://youtube.com/@${handle}`;
-    } else if (platform === 'website') {
-      targetUrl = `https://${trimmed}`;
+  // 2. Website: support domain.com or https://domain.com
+  if (platform === 'website') {
+    let target = trimmed;
+    if (!/^https?:\/\//i.test(target)) {
+      target = `https://${target}`;
+    }
+    try {
+      const parsed = new URL(target);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        throw new AppError('Geçersiz web sitesi protokolü', 400);
+      }
+      return (parsed.pathname === '/' && !parsed.search && !parsed.hash)
+        ? parsed.origin
+        : parsed.toString();
+    } catch {
+      throw new AppError('Geçersiz web sitesi URL adresi', 400);
     }
   }
 
-  // Verify protocol is http or https
-  try {
-    const parsed = new URL(targetUrl);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      throw new AppError(`Geçersiz bağlantı protokolü: ${parsed.protocol}`, 400);
-    }
-    const cleanUrl = (parsed.pathname === '/' && !parsed.search && !parsed.hash) ? parsed.origin : parsed.toString();
-    return cleanUrl;
-  } catch (err: any) {
-    if (err instanceof AppError) throw err;
-    throw new AppError(`Geçersiz ${platform} URL adresi`, 400);
+  // Helper to extract clean handle for social platforms
+  const extractHandle = (domainRegex: RegExp) => {
+    return trimmed
+      .replace(domainRegex, '')
+      .replace(/^[@\/]+/, '')
+      .replace(/\/+$/, '')
+      .trim();
+  };
+
+  // 3. Instagram
+  if (platform === 'instagram') {
+    const handle = extractHandle(/^(?:https?:\/\/)?(?:www\.)?instagram\.com\/?/i);
+    if (!handle) return null;
+    return `https://instagram.com/${handle}`;
   }
+
+  // 4. TikTok
+  if (platform === 'tiktok') {
+    const handle = extractHandle(/^(?:https?:\/\/)?(?:www\.)?tiktok\.com\/?/i);
+    if (!handle) return null;
+    return `https://tiktok.com/@${handle}`;
+  }
+
+  // 5. Facebook
+  if (platform === 'facebook') {
+    const handle = extractHandle(/^(?:https?:\/\/)?(?:www\.)?facebook\.com\/?/i);
+    if (!handle) return null;
+    return `https://facebook.com/${handle}`;
+  }
+
+  // 6. X / Twitter
+  if (platform === 'twitter') {
+    const handle = extractHandle(/^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/?/i);
+    if (!handle) return null;
+    return `https://x.com/${handle}`;
+  }
+
+  // 7. YouTube
+  if (platform === 'youtube') {
+    const handle = extractHandle(/^(?:https?:\/\/)?(?:www\.)?youtube\.com\/?/i);
+    if (!handle) return null;
+    if (handle.startsWith('channel/') || handle.startsWith('c/') || handle.startsWith('user/')) {
+      return `https://youtube.com/${handle}`;
+    }
+    return `https://youtube.com/@${handle}`;
+  }
+
+  return trimmed;
 }
 
 export interface CreateCampaignInput {
