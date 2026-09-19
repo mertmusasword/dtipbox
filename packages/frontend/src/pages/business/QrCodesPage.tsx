@@ -1305,19 +1305,19 @@ export const QrCodesPage: React.FC = () => {
                 </div>
 
                 {/* Custom / Additional Links Section */}
-                <div style={{ gridColumn: '1 / -1', marginTop: '1rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color, rgba(255,255,255,0.08))' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <LinkIcon size={15} style={{ color: '#38bdf8' }} />
-                        <h5 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700 }}>
+                <div style={{ gridColumn: '1 / -1', marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color, rgba(255,255,255,0.08))' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div style={{ flex: '1 1 260px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <LinkIcon size={16} style={{ color: '#38bdf8' }} />
+                        <h5 style={{ margin: 0, fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                           {isTr ? 'Özel / Diğer Bağlantılar (WeChat, Telegram, TripAdvisor vb.)' : 'Custom / Other Links (WeChat, Telegram, etc.)'}
                         </h5>
-                        <span style={{ fontSize: '0.72rem', background: 'rgba(255,255,255,0.06)', padding: '0.15rem 0.45rem', borderRadius: '4px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.72rem', background: 'rgba(56, 189, 248, 0.12)', border: '1px solid rgba(56, 189, 248, 0.25)', padding: '0.15rem 0.5rem', borderRadius: '6px', color: '#38bdf8', fontWeight: 700 }}>
                           {(Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links.length : 0)} / 6
                         </span>
                       </div>
-                      <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                      <p style={{ margin: '0.3rem 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
                         {isTr
                           ? 'WeChat ID, Telegram kullanıcı adı, TripAdvisor profil linki veya rezervasyon sayfanızı ekleyin.'
                           : 'Add your WeChat ID, Telegram, TripAdvisor, or custom reservation link.'}
@@ -1326,21 +1326,70 @@ export const QrCodesPage: React.FC = () => {
 
                     <button
                       type="button"
-                      className="btn btn-outline btn-sm"
                       disabled={(Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links.length : 0) >= 6}
                       onClick={handleAddCustomLink}
-                      style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                      style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        padding: '0.45rem 0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        color: '#38bdf8',
+                        background: 'rgba(56, 189, 248, 0.12)',
+                        border: '1px solid rgba(56, 189, 248, 0.35)',
+                        borderRadius: '8px',
+                        cursor: (Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links.length : 0) >= 6 ? 'not-allowed' : 'pointer',
+                        opacity: (Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links.length : 0) >= 6 ? 0.5 : 1,
+                        whiteSpace: 'nowrap',
+                        transition: 'all 0.15s ease',
+                      }}
                     >
-                      <Plus size={14} />
+                      <Plus size={15} />
                       <span>{isTr ? 'Bağlantı Ekle' : 'Add Link'}</span>
                     </button>
                   </div>
 
                   {(!Array.isArray(smartConfig.custom_links) || smartConfig.custom_links.length === 0) ? (
-                    <div style={{ padding: '0.9rem', background: 'rgba(255,255,255,0.02)', border: '1px dashed var(--border-color, rgba(255,255,255,0.1))', borderRadius: '8px', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      {isTr
-                        ? 'Henüz özel bir bağlantı eklenmedi. WeChat, Telegram, TripAdvisor vb. eklemek için "+ Bağlantı Ekle" butonunu kullanabilirsiniz.'
-                        : 'No custom links added yet. Click "+ Add Link" to add WeChat, Telegram, TripAdvisor, etc.'}
+                    <div
+                      style={{
+                        padding: '1.25rem 1rem',
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px dashed var(--border-color, rgba(255,255,255,0.12))',
+                        borderRadius: '10px',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '0.65rem',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                        {isTr
+                          ? 'Henüz özel bir bağlantı eklenmedi. WeChat ID, Telegram, TripAdvisor vb. eklemek için aşağıdaki butonu kullanabilirsiniz.'
+                          : 'No custom links added yet. Click the button below to add WeChat, Telegram, TripAdvisor, etc.'}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleAddCustomLink}
+                        style={{
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          padding: '0.45rem 1rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          color: '#38bdf8',
+                          background: 'rgba(56, 189, 248, 0.12)',
+                          border: '1px solid rgba(56, 189, 248, 0.35)',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Plus size={15} />
+                        <span>{isTr ? '+ İlk Özel Bağlantıyı Ekle' : '+ Add First Custom Link'}</span>
+                      </button>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -1402,7 +1451,6 @@ export const QrCodesPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleRemoveCustomLink(idx)}
-                            className="btn btn-outline"
                             style={{
                               height: '38px',
                               width: '38px',
@@ -1410,8 +1458,12 @@ export const QrCodesPage: React.FC = () => {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              color: '#ef4444',
-                              borderColor: 'rgba(239, 68, 68, 0.3)',
+                              color: '#f87171',
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
                             }}
                             title={isTr ? 'Sil' : 'Delete'}
                           >
