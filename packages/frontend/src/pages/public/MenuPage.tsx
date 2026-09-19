@@ -167,7 +167,7 @@ export const MenuPage: React.FC = () => {
           {error}
         </p>
         {publicToken && (
-          <Link to={`/tip/${publicToken}`} className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', background: '#059669', borderColor: '#059669' }}>
+          <Link to={`/tip/${publicToken}?view=tip`} className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', background: '#059669', borderColor: '#059669' }}>
             Bahşiş Ekranına Git
           </Link>
         )}
@@ -777,7 +777,7 @@ export const MenuPage: React.FC = () => {
           }}
         >
           <Link
-            to={`/tip/${publicToken}`}
+            to={`/tip/${publicToken}?view=tip`}
             style={{
               display: 'flex',
               alignItems: 'center',
