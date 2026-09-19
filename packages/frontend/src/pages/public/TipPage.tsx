@@ -37,7 +37,6 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../i18n';
-import { SocialLinksSection } from '../../components/SocialLinksSection';
 import {
   trackQrScanned,
   trackTipFlowStarted,
@@ -779,14 +778,6 @@ export const TipPage: React.FC = () => {
             {isSuccess || isUnverified ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}
           </button>
 
-          {/* Social Media & Contact Links */}
-          <SocialLinksSection
-            smartQr={details?.smartQr}
-            publicToken={publicToken}
-            language={language}
-            onToast={showToast}
-            style={{ marginTop: '1.5rem', marginBottom: '0.5rem' }}
-          />
         </div>
       </div>
     );
@@ -1818,15 +1809,6 @@ export const TipPage: React.FC = () => {
             </div>
           );
         })()}
-
-        {/* Social Media & Contact Links ("Bizi Takip Edin" - directly under Menu & Quick Actions bar) */}
-        <SocialLinksSection
-          smartQr={details?.smartQr}
-          publicToken={publicToken}
-          language={language}
-          onToast={showToast}
-          style={{ marginTop: '0.25rem', marginBottom: '1.25rem' }}
-        />
 
         {/* TAB 1: TIPPING (PRESERVED COMPLETE ENGINE) */}
         {(details.smartQr?.enableTips !== false || activeSmartTab === 'tip') && (
