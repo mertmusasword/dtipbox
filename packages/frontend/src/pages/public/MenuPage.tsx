@@ -23,6 +23,7 @@ import {
   ArrowRight,
   ShieldCheck,
 } from 'lucide-react';
+import { SocialLinksSection } from '../../components/SocialLinksSection';
 
 export const MenuPage: React.FC = () => {
   const { publicToken } = useParams<{ publicToken: string }>();
@@ -746,6 +747,20 @@ export const MenuPage: React.FC = () => {
             ))}
           </div>
         )}
+
+        {/* Social Media & Contact Links ("Bizi Takip Edin" - directly at the bottom of the digital menu) */}
+        <SocialLinksSection
+          smartQr={smartQr}
+          publicToken={publicToken}
+          language={language}
+          style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}
+        />
+
+        {/* Naponi Brand Footer */}
+        <div style={{ textAlign: 'center', marginTop: '1rem', paddingBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '24px', width: 'auto', opacity: 0.85 }} />
+          <span style={{ fontSize: '0.72rem', color: '#78716C' }}>{isTr ? 'Dijital Akıllı Menü & Bahşiş Deneyimi' : 'Digital Smart Menu & Tipping Experience'}</span>
+        </div>
       </main>
 
       {/* FLOATING PERSISTENT BOTTOM BAR: SUPPORT STAFF / LEAVE TIP */}

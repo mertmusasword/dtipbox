@@ -609,6 +609,23 @@ export interface PublicMenuDetails {
     wifiPassword?: string | null;
     wifiEncryption?: string;
     googleReviewUrl?: string | null;
+    socialInstagram?: string | null;
+    socialFacebook?: string | null;
+    socialTiktok?: string | null;
+    socialTwitter?: string | null;
+    socialYoutube?: string | null;
+    socialWhatsapp?: string | null;
+    socialWebsite?: string | null;
+    socialLinks?: {
+      instagram?: string | null;
+      facebook?: string | null;
+      tiktok?: string | null;
+      twitter?: string | null;
+      youtube?: string | null;
+      whatsapp?: string | null;
+      website?: string | null;
+    };
+    customLinks?: any[];
   };
 }
 

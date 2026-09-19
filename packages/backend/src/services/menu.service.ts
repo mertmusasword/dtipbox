@@ -456,6 +456,30 @@ export async function getPublicMenu(publicToken: string) {
       wifiPassword: smartConfig?.wifi_password || null,
       wifiEncryption: smartConfig?.wifi_encryption || 'WPA',
       googleReviewUrl: smartConfig?.google_review_url || null,
+      socialInstagram: smartConfig?.social_instagram || null,
+      socialFacebook: smartConfig?.social_facebook || null,
+      socialTiktok: smartConfig?.social_tiktok || null,
+      socialTwitter: smartConfig?.social_twitter || null,
+      socialYoutube: smartConfig?.social_youtube || null,
+      socialWhatsapp: smartConfig?.social_whatsapp || null,
+      socialWebsite: smartConfig?.social_website || null,
+      socialLinks: {
+        instagram: smartConfig?.social_instagram || null,
+        facebook: smartConfig?.social_facebook || null,
+        tiktok: smartConfig?.social_tiktok || null,
+        twitter: smartConfig?.social_twitter || null,
+        youtube: smartConfig?.social_youtube || null,
+        whatsapp: smartConfig?.social_whatsapp || null,
+        website: smartConfig?.social_website || null,
+      },
+      customLinks: (() => {
+        if (!smartConfig?.custom_links) return [];
+        try {
+          return JSON.parse(smartConfig.custom_links);
+        } catch {
+          return [];
+        }
+      })(),
     },
   };
 }
