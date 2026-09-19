@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
-import { QrCode, Table, Business } from '../../types';
+import { QrCode, Table, Business, CustomSocialLink } from '../../types';
 import { Modal } from '../../components/Modal';
 import { QrModal } from '../../components/QrModal';
 import { LoadingState } from '../../components/LoadingState';
@@ -36,6 +36,9 @@ import {
   Share2,
   Globe,
   MessageCircle,
+  Link as LinkIcon,
+  Send,
+  Music,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 
@@ -45,7 +48,7 @@ interface SmartQrConfig {
   is_smart_enabled: boolean;
   enable_tips: boolean;
   enable_menu?: boolean;
-  menu_mode?: 'EXTERNAL_URL' | 'NATIVE' | 'DISABLED';
+  menu_mode?: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
   primary_action?: 'TIP' | 'MENU';
   menu_url?: string | null;
   menu_title?: string | null;
@@ -63,6 +66,7 @@ interface SmartQrConfig {
   social_youtube?: string | null;
   social_whatsapp?: string | null;
   social_website?: string | null;
+  custom_links?: CustomSocialLink[] | string | null;
   enable_signup: boolean;
   signup_title?: string | null;
   signup_reward?: string | null;
@@ -164,7 +168,13 @@ export const QrCodesPage: React.FC = () => {
       setTables(tblRes.data.data || []);
       setBusiness(bizRes.data.data || null);
       if (configRes.data.data) {
-        setSmartConfig(configRes.data.data);
+        const cfg = configRes.data.data;
+        let links: CustomSocialLink[] = [];
+        if (Array.isArray(cfg.custom_links)) links = cfg.custom_links;
+        else if (typeof cfg.custom_links === 'string') {
+          try { links = JSON.parse(cfg.custom_links); } catch {}
+        }
+        setSmartConfig({ ...cfg, custom_links: links });
       }
     } catch {
       setError(t('common.error'));
@@ -198,6 +208,54 @@ export const QrCodesPage: React.FC = () => {
     }
   }, [activeTab]);
 
+  // Custom Links Handlers
+  const handleAddCustomLink = () => {
+    if (!smartConfig) return;
+    const current = Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links : [];
+    if (current.length >= 6) return;
+    const newLink: CustomSocialLink = {
+      id: `cl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      title: 'WeChat',
+      platform: 'wechat',
+      value: '',
+    };
+    setSmartConfig({
+      ...smartConfig,
+      custom_links: [...current, newLink],
+    });
+  };
+
+  const handleUpdateCustomLink = (index: number, field: keyof CustomSocialLink, val: string) => {
+    if (!smartConfig) return;
+    const current = [...(Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links : [])];
+    if (!current[index]) return;
+    const item = { ...current[index], [field]: val };
+
+    if (field === 'platform') {
+      if (val === 'wechat' && (!item.title || item.title === 'Telegram' || item.title === 'TripAdvisor' || item.title === 'Spotify' || item.title === 'Özel Link')) {
+        item.title = 'WeChat';
+      } else if (val === 'telegram' && (!item.title || item.title === 'WeChat' || item.title === 'TripAdvisor' || item.title === 'Spotify' || item.title === 'Özel Link')) {
+        item.title = 'Telegram';
+      } else if (val === 'tripadvisor' && (!item.title || item.title === 'WeChat' || item.title === 'Telegram' || item.title === 'Spotify' || item.title === 'Özel Link')) {
+        item.title = 'TripAdvisor';
+      } else if (val === 'spotify' && (!item.title || item.title === 'WeChat' || item.title === 'Telegram' || item.title === 'TripAdvisor' || item.title === 'Özel Link')) {
+        item.title = 'Spotify';
+      } else if (val === 'custom' && (!item.title || item.title === 'WeChat')) {
+        item.title = isTr ? 'Özel Link' : 'Custom Link';
+      }
+    }
+
+    current[index] = item;
+    setSmartConfig({ ...smartConfig, custom_links: current });
+  };
+
+  const handleRemoveCustomLink = (index: number) => {
+    if (!smartConfig) return;
+    const current = [...(Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links : [])];
+    current.splice(index, 1);
+    setSmartConfig({ ...smartConfig, custom_links: current });
+  };
+
   // Handle Save Smart QR Config
   const handleSaveConfig = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -205,7 +263,13 @@ export const QrCodesPage: React.FC = () => {
     setSavingConfig(true);
     try {
       const res = await api.put('/smart-qr/config', smartConfig);
-      setSmartConfig(res.data.data);
+      const cfg = res.data.data;
+      let links: CustomSocialLink[] = [];
+      if (Array.isArray(cfg.custom_links)) links = cfg.custom_links;
+      else if (typeof cfg.custom_links === 'string') {
+        try { links = JSON.parse(cfg.custom_links); } catch {}
+      }
+      setSmartConfig({ ...cfg, custom_links: links });
       showToast(isTr ? 'Smart QR ayarları kaydedildi' : 'Smart QR settings saved successfully');
     } catch (err: any) {
       showToast(err.response?.data?.error || t('common.error'), 'error');
@@ -1238,6 +1302,125 @@ export const QrCodesPage: React.FC = () => {
                     value={smartConfig.social_website || ''}
                     onChange={(e) => setSmartConfig({ ...smartConfig, social_website: e.target.value })}
                   />
+                </div>
+
+                {/* Custom / Additional Links Section */}
+                <div style={{ gridColumn: '1 / -1', marginTop: '1rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color, rgba(255,255,255,0.08))' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <LinkIcon size={15} style={{ color: '#38bdf8' }} />
+                        <h5 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700 }}>
+                          {isTr ? 'Özel / Diğer Bağlantılar (WeChat, Telegram, TripAdvisor vb.)' : 'Custom / Other Links (WeChat, Telegram, etc.)'}
+                        </h5>
+                        <span style={{ fontSize: '0.72rem', background: 'rgba(255,255,255,0.06)', padding: '0.15rem 0.45rem', borderRadius: '4px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                          {(Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links.length : 0)} / 6
+                        </span>
+                      </div>
+                      <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                        {isTr
+                          ? 'WeChat ID, Telegram kullanıcı adı, TripAdvisor profil linki veya rezervasyon sayfanızı ekleyin.'
+                          : 'Add your WeChat ID, Telegram, TripAdvisor, or custom reservation link.'}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      disabled={(Array.isArray(smartConfig.custom_links) ? smartConfig.custom_links.length : 0) >= 6}
+                      onClick={handleAddCustomLink}
+                      style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                    >
+                      <Plus size={14} />
+                      <span>{isTr ? 'Bağlantı Ekle' : 'Add Link'}</span>
+                    </button>
+                  </div>
+
+                  {(!Array.isArray(smartConfig.custom_links) || smartConfig.custom_links.length === 0) ? (
+                    <div style={{ padding: '0.9rem', background: 'rgba(255,255,255,0.02)', border: '1px dashed var(--border-color, rgba(255,255,255,0.1))', borderRadius: '8px', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      {isTr
+                        ? 'Henüz özel bir bağlantı eklenmedi. WeChat, Telegram, TripAdvisor vb. eklemek için "+ Bağlantı Ekle" butonunu kullanabilirsiniz.'
+                        : 'No custom links added yet. Click "+ Add Link" to add WeChat, Telegram, TripAdvisor, etc.'}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      {smartConfig.custom_links.map((link, idx) => (
+                        <div
+                          key={link.id || idx}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '130px 150px 1fr 40px',
+                            gap: '0.5rem',
+                            alignItems: 'center',
+                            background: 'rgba(255,255,255,0.025)',
+                            padding: '0.5rem 0.6rem',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border-color, rgba(255,255,255,0.07))',
+                          }}
+                        >
+                          <select
+                            className="input"
+                            style={{ height: '38px', fontSize: '0.8rem', padding: '0 0.4rem' }}
+                            value={link.platform || 'custom'}
+                            onChange={(e) => handleUpdateCustomLink(idx, 'platform', e.target.value)}
+                          >
+                            <option value="wechat">WeChat (ID)</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="tripadvisor">TripAdvisor</option>
+                            <option value="spotify">Spotify</option>
+                            <option value="custom">{isTr ? 'Özel Link' : 'Custom Link'}</option>
+                          </select>
+
+                          <input
+                            type="text"
+                            className="input"
+                            style={{ height: '38px', fontSize: '0.8rem' }}
+                            placeholder={isTr ? 'Buton Başlığı' : 'Button Title'}
+                            value={link.title}
+                            onChange={(e) => handleUpdateCustomLink(idx, 'title', e.target.value)}
+                          />
+
+                          <input
+                            type="text"
+                            className="input"
+                            style={{ height: '38px', fontSize: '0.8rem' }}
+                            placeholder={
+                              link.platform === 'wechat'
+                                ? (isTr ? 'WeChat ID (Örn: naponi_kafe)' : 'WeChat ID (e.g. naponi_cafe)')
+                                : link.platform === 'telegram'
+                                ? (isTr ? 'Örn: @naponi veya naponikafe' : 'e.g. @naponi')
+                                : link.platform === 'tripadvisor'
+                                ? (isTr ? 'TripAdvisor Mekan URL adresi' : 'TripAdvisor venue URL')
+                                : link.platform === 'spotify'
+                                ? (isTr ? 'Spotify Çalma Listesi URL' : 'Spotify playlist URL')
+                                : (isTr ? 'Örn: https://... veya site.com' : 'e.g. https://... or site.com')
+                            }
+                            value={link.value}
+                            onChange={(e) => handleUpdateCustomLink(idx, 'value', e.target.value)}
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomLink(idx)}
+                            className="btn btn-outline"
+                            style={{
+                              height: '38px',
+                              width: '38px',
+                              padding: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#ef4444',
+                              borderColor: 'rgba(239, 68, 68, 0.3)',
+                            }}
+                            title={isTr ? 'Sil' : 'Delete'}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

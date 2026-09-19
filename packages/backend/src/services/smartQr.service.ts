@@ -24,9 +24,17 @@ export interface UpdateSmartQrConfigInput {
   social_youtube?: string | null;
   social_whatsapp?: string | null;
   social_website?: string | null;
+  custom_links?: CustomSocialLink[] | string | null;
   welcome_message?: string | null;
   signup_title?: string | null;
   signup_reward?: string | null;
+}
+
+export interface CustomSocialLink {
+  id: string;
+  title: string;
+  platform?: 'wechat' | 'telegram' | 'tripadvisor' | 'spotify' | 'custom' | string;
+  value: string;
 }
 
 /**
@@ -134,6 +142,73 @@ export function sanitizeSocialUrl(
   return trimmed;
 }
 
+/**
+ * Validate and sanitize custom links (WeChat, Telegram, TripAdvisor, Spotify, etc.)
+ * Limits to max 6 links and guards against malicious schemes.
+ */
+export function sanitizeCustomLinks(input: any): string | null {
+  if (!input) return null;
+  let list: any[] = [];
+  if (typeof input === 'string') {
+    try {
+      list = JSON.parse(input);
+    } catch {
+      return null;
+    }
+  } else if (Array.isArray(input)) {
+    list = input;
+  } else {
+    return null;
+  }
+
+  if (!Array.isArray(list)) return null;
+
+  const slice = list.slice(0, 6);
+  const clean: CustomSocialLink[] = [];
+
+  for (let i = 0; i < slice.length; i++) {
+    const item = slice[i];
+    if (!item || typeof item !== 'object') continue;
+    const rawTitle = String(item.title || '').trim();
+    const rawVal = String(item.value || '').trim();
+    const platform = String(item.platform || 'custom').trim().toLowerCase();
+    const id = String(item.id || `cl_${Date.now()}_${i}`);
+
+    if (!rawTitle || !rawVal) continue;
+
+    const lowerVal = rawVal.toLowerCase();
+    if (
+      lowerVal.startsWith('javascript:') ||
+      lowerVal.startsWith('data:') ||
+      lowerVal.startsWith('vbscript:') ||
+      lowerVal.includes('\0')
+    ) {
+      throw new AppError(`Geçersiz veya tehlikeli bağlantı: ${rawTitle}`, 400);
+    }
+
+    let cleanVal = rawVal;
+    if (platform === 'wechat') {
+      cleanVal = rawVal.replace(/^@+/, '').trim();
+    } else if (platform === 'telegram') {
+      const handle = rawVal.replace(/^(?:https?:\/\/)?(?:www\.)?t\.me\/?/i, '').replace(/^@+/, '').trim();
+      cleanVal = `https://t.me/${handle}`;
+    } else if (platform === 'tripadvisor' || platform === 'spotify' || platform === 'custom') {
+      if (!/^https?:\/\//i.test(rawVal)) {
+        cleanVal = `https://${rawVal}`;
+      }
+    }
+
+    clean.push({
+      id,
+      title: rawTitle.slice(0, 60),
+      platform,
+      value: cleanVal,
+    });
+  }
+
+  return clean.length > 0 ? JSON.stringify(clean) : null;
+}
+
 export interface CreateCampaignInput {
   title: string;
   description?: string;
@@ -221,6 +296,9 @@ export async function updateSmartQrConfig(
       }),
       ...(input.social_website !== undefined && {
         social_website: sanitizeSocialUrl(input.social_website, 'website'),
+      }),
+      ...(input.custom_links !== undefined && {
+        custom_links: sanitizeCustomLinks(input.custom_links),
       }),
       ...(input.welcome_message !== undefined && { welcome_message: input.welcome_message?.trim() || null }),
       ...(input.signup_title !== undefined && { signup_title: input.signup_title?.trim() || null }),

@@ -144,6 +144,14 @@ export async function getTipPageDetails(publicToken: string) {
             whatsapp: smartConfig.social_whatsapp || null,
             website: smartConfig.social_website || null,
           },
+          customLinks: (() => {
+            if (!smartConfig.custom_links) return [];
+            try {
+              return JSON.parse(smartConfig.custom_links);
+            } catch {
+              return [];
+            }
+          })(),
           enableSignup: smartConfig.enable_signup,
           signupTitle: smartConfig.signup_title,
           signupReward: smartConfig.signup_reward,
@@ -185,6 +193,7 @@ export async function getTipPageDetails(publicToken: string) {
             whatsapp: null,
             website: null,
           },
+          customLinks: [],
           enableSignup: false,
           campaigns: [],
         },

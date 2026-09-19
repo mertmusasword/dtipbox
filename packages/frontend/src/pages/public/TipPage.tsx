@@ -33,7 +33,9 @@ import {
   Youtube,
   Globe,
   MessageCircle,
+  Music,
 } from 'lucide-react';
+import { useToast } from '../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import {
   trackQrScanned,
@@ -51,6 +53,7 @@ export const TipPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, formatCurrency, dir, language } = useLanguage();
+  const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -400,11 +403,18 @@ export const TipPage: React.FC = () => {
       website: sq?.socialWebsite,
     };
 
-    const platforms = [
+    const wechatIcon = (
+      <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8.691 2.188C3.891 2.188 0 5.478 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.294.295a.34.34 0 0 0 .17-.05l1.925-1.107a.89.89 0 0 1 .68-.09c.89.243 1.83.376 2.845.376.339 0 .674-.015 1.004-.044a7.89 7.89 0 0 1-.303-2.158c0-4.053 3.891-7.343 8.69-7.343.34 0 .672.016 1.002.045C17.97 5.485 13.66 2.188 8.691 2.188zm-2.58 4.292c.627 0 1.135.508 1.135 1.136 0 .627-.508 1.135-1.135 1.135-.628 0-1.136-.508-1.136-1.135 0-.628.508-1.136 1.136-1.136zm5.16 0c.628 0 1.136.508 1.136 1.136 0 .627-.508 1.135-1.136 1.135-.627 0-1.135-.508-1.135-1.135 0-.628.508-1.136 1.135-1.136zM16.5 10.375c-4.088 0-7.402 2.766-7.402 6.177 0 1.884 1.007 3.58 2.583 4.717a.5.5 0 0 1 .182.567l-.333 1.26c-.016.06-.04.12-.04.182 0 .14.11.25.25.25a.3.3 0 0 0 .145-.042l1.644-.943a.75.75 0 0 1 .58-.077c.76.208 1.564.321 2.39.321 4.088 0 7.402-2.765 7.402-6.176 0-3.411-3.314-6.176-7.402-6.176zm-2.203 3.662c.535 0 .968.434.968.97 0 .535-.433.968-.968.968-.536 0-.97-.433-.97-.969 0-.535.434-.969.97-.969zm4.406 0c.535 0 .97.434.97.97 0 .535-.435.968-.97.968-.535 0-.968-.433-.968-.969 0-.535.433-.969.968-.969z" />
+      </svg>
+    );
+
+    const standardPlatforms = [
       {
         id: 'instagram',
         name: 'Instagram',
         url: sl?.instagram,
+        isWechat: false,
         color: '#E1306C',
         bg: 'rgba(225, 48, 108, 0.08)',
         border: 'rgba(225, 48, 108, 0.22)',
@@ -414,6 +424,7 @@ export const TipPage: React.FC = () => {
         id: 'facebook',
         name: 'Facebook',
         url: sl?.facebook,
+        isWechat: false,
         color: '#1877F2',
         bg: 'rgba(24, 119, 242, 0.08)',
         border: 'rgba(24, 119, 242, 0.22)',
@@ -423,6 +434,7 @@ export const TipPage: React.FC = () => {
         id: 'tiktok',
         name: 'TikTok',
         url: sl?.tiktok,
+        isWechat: false,
         color: '#000000',
         bg: 'rgba(0, 0, 0, 0.06)',
         border: 'rgba(0, 0, 0, 0.16)',
@@ -436,6 +448,7 @@ export const TipPage: React.FC = () => {
         id: 'twitter',
         name: 'X',
         url: sl?.twitter,
+        isWechat: false,
         color: '#0f1419',
         bg: 'rgba(15, 20, 25, 0.06)',
         border: 'rgba(15, 20, 25, 0.18)',
@@ -445,6 +458,7 @@ export const TipPage: React.FC = () => {
         id: 'youtube',
         name: 'YouTube',
         url: sl?.youtube,
+        isWechat: false,
         color: '#FF0000',
         bg: 'rgba(255, 0, 0, 0.07)',
         border: 'rgba(255, 0, 0, 0.22)',
@@ -454,6 +468,7 @@ export const TipPage: React.FC = () => {
         id: 'whatsapp',
         name: 'WhatsApp',
         url: sl?.whatsapp,
+        isWechat: false,
         color: '#25D366',
         bg: 'rgba(37, 211, 102, 0.09)',
         border: 'rgba(37, 211, 102, 0.26)',
@@ -463,6 +478,7 @@ export const TipPage: React.FC = () => {
         id: 'website',
         name: language === 'tr' ? 'Web Sitesi' : 'Website',
         url: sl?.website,
+        isWechat: false,
         color: '#059669',
         bg: 'rgba(5, 150, 105, 0.08)',
         border: 'rgba(5, 150, 105, 0.22)',
@@ -470,7 +486,87 @@ export const TipPage: React.FC = () => {
       },
     ].filter((p): p is typeof p & { url: string } => Boolean(p.url && p.url.trim()));
 
-    if (platforms.length === 0) return null;
+    // Custom links from Smart QR config
+    const rawCustomLinks = sq?.customLinks || [];
+    const customItems = (Array.isArray(rawCustomLinks) ? rawCustomLinks : [])
+      .filter((cl) => cl && cl.value && cl.value.trim())
+      .map((cl) => {
+        const platform = (cl.platform || 'custom').toLowerCase();
+        const rawVal = cl.value.trim();
+        const title = cl.title?.trim() || (platform === 'wechat' ? 'WeChat' : platform === 'telegram' ? 'Telegram' : platform === 'tripadvisor' ? 'TripAdvisor' : platform === 'spotify' ? 'Spotify' : (language === 'tr' ? 'Bağlantı' : 'Link'));
+
+        if (platform === 'wechat') {
+          const handle = rawVal.replace(/^@+/, '').trim();
+          return {
+            id: cl.id || `cl_${handle}`,
+            name: title,
+            isWechat: true,
+            wechatId: handle,
+            url: '',
+            color: '#07C160',
+            bg: 'rgba(7, 193, 96, 0.09)',
+            border: 'rgba(7, 193, 96, 0.26)',
+            icon: wechatIcon,
+          };
+        }
+
+        if (platform === 'telegram') {
+          const handle = rawVal.replace(/^(?:https?:\/\/)?(?:www\.)?t\.me\/?/i, '').replace(/^@+/, '').trim();
+          return {
+            id: cl.id || `cl_tg_${handle}`,
+            name: title,
+            isWechat: false,
+            url: `https://t.me/${handle}`,
+            color: '#229ED9',
+            bg: 'rgba(34, 158, 217, 0.09)',
+            border: 'rgba(34, 158, 217, 0.26)',
+            icon: <Send size={18} />,
+          };
+        }
+
+        if (platform === 'tripadvisor') {
+          const targetUrl = /^https?:\/\//i.test(rawVal) ? rawVal : `https://${rawVal}`;
+          return {
+            id: cl.id || `cl_ta_${title}`,
+            name: title,
+            isWechat: false,
+            url: targetUrl,
+            color: '#00AA6C',
+            bg: 'rgba(0, 170, 108, 0.09)',
+            border: 'rgba(0, 170, 108, 0.26)',
+            icon: <Star size={18} />,
+          };
+        }
+
+        if (platform === 'spotify') {
+          const targetUrl = /^https?:\/\//i.test(rawVal) ? rawVal : `https://${rawVal}`;
+          return {
+            id: cl.id || `cl_sp_${title}`,
+            name: title,
+            isWechat: false,
+            url: targetUrl,
+            color: '#1DB954',
+            bg: 'rgba(29, 185, 84, 0.09)',
+            border: 'rgba(29, 185, 84, 0.26)',
+            icon: <Music size={18} />,
+          };
+        }
+
+        const targetUrl = /^https?:\/\//i.test(rawVal) ? rawVal : `https://${rawVal}`;
+        return {
+          id: cl.id || `cl_custom_${title}`,
+          name: title,
+          isWechat: false,
+          url: targetUrl,
+          color: '#8B5CF6',
+          bg: 'rgba(139, 92, 246, 0.09)',
+          border: 'rgba(139, 92, 246, 0.26)',
+          icon: <ExternalLink size={18} />,
+        };
+      });
+
+    const allItems = [...standardPlatforms, ...customItems];
+    if (allItems.length === 0) return null;
 
     return (
       <div
@@ -517,7 +613,57 @@ export const TipPage: React.FC = () => {
             padding: '0.25rem 0',
           }}
         >
-          {platforms.map((p) => {
+          {allItems.map((p) => {
+            if (p.isWechat) {
+              const wechatId = (p as any).wechatId || '';
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(wechatId);
+                      }
+                      showToast(
+                        language === 'tr'
+                          ? `WeChat ID panoya kopyalandı: ${wechatId}`
+                          : `WeChat ID copied: ${wechatId}`,
+                        'success'
+                      );
+                    } catch {
+                      showToast(`WeChat ID: ${wechatId}`, 'info');
+                    }
+                    if (publicToken) {
+                      api.post(`/smart-qr/public/${publicToken}/event`, {
+                        event_type: 'SOCIAL_CLICK',
+                        metadata: { platform: 'wechat', value: wechatId },
+                      }).catch(() => {});
+                    }
+                  }}
+                  title={`WeChat: ${wechatId}`}
+                  aria-label={`WeChat: ${wechatId}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: p.bg,
+                    border: `1px solid ${p.border}`,
+                    color: p.color,
+                    cursor: 'pointer',
+                    padding: 0,
+                    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                    boxShadow: '0 2px 5px rgba(0,0,0,0.03)',
+                  }}
+                >
+                  {p.icon}
+                </button>
+              );
+            }
+
             let finalUrl = p.url.trim();
             if (p.id === 'instagram') {
               const handle = finalUrl.replace(/^(?:https?:\/\/)?(?:www\.)?instagram\.com\/?/i, '').replace(/^[@\/]+/, '').replace(/\/+$/, '').trim();

@@ -206,4 +206,54 @@ describe('Naponi Smart QR Integration Service', () => {
       await prisma.user.delete({ where: { id: user2.id } });
     }
   });
+
+  it('should save and validate custom links (WeChat, Telegram, TripAdvisor) and serve to public QR', async () => {
+    const customLinks = [
+      { id: '1', title: 'WeChat', platform: 'wechat', value: '@naponi_kafe' },
+      { id: '2', title: 'Telegram Kanalımız', platform: 'telegram', value: '@naponichat' },
+      { id: '3', title: 'TripAdvisor', platform: 'tripadvisor', value: 'tripadvisor.com/Restaurant_Review-naponi' },
+      { id: '4', title: 'Spotify Listemiz', platform: 'spotify', value: 'https://open.spotify.com/playlist/naponi' },
+    ];
+
+    const updated = await smartQrService.updateSmartQrConfig(testBusiness.id, {
+      custom_links: customLinks,
+    });
+
+    expect(updated.custom_links).toBeDefined();
+    const parsed = JSON.parse(updated.custom_links!);
+    expect(parsed).toHaveLength(4);
+    expect(parsed[0].value).toBe('naponi_kafe'); // @ stripped
+    expect(parsed[1].value).toBe('https://t.me/naponichat');
+    expect(parsed[2].value).toBe('https://tripadvisor.com/Restaurant_Review-naponi');
+    expect(parsed[3].value).toBe('https://open.spotify.com/playlist/naponi');
+
+    // Public QR verification
+    const publicDetails = await tipService.getTipPageDetails(testQr.public_token);
+    expect(publicDetails.smartQr?.customLinks).toHaveLength(4);
+    expect(publicDetails.smartQr?.customLinks?.[0].platform).toBe('wechat');
+    expect(publicDetails.smartQr?.customLinks?.[0].value).toBe('naponi_kafe');
+  });
+
+  it('should block dangerous schemes in custom links and enforce max 6 limit', async () => {
+    await expect(
+      smartQrService.updateSmartQrConfig(testBusiness.id, {
+        custom_links: [
+          { id: '1', title: 'Zararlı', platform: 'custom', value: 'javascript:alert("pwned")' },
+        ],
+      })
+    ).rejects.toThrow('Geçersiz veya tehlikeli');
+
+    // Test max 6 limit
+    const eightLinks = Array.from({ length: 8 }, (_, i) => ({
+      id: `${i}`,
+      title: `Link ${i}`,
+      platform: 'custom',
+      value: `https://site${i}.com`,
+    }));
+    const updated = await smartQrService.updateSmartQrConfig(testBusiness.id, {
+      custom_links: eightLinks,
+    });
+    const parsed = JSON.parse(updated.custom_links!);
+    expect(parsed).toHaveLength(6);
+  });
 });

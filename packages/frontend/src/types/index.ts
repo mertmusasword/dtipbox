@@ -231,6 +231,7 @@ export interface TipPageDetails {
       whatsapp?: string | null;
       website?: string | null;
     };
+    customLinks?: CustomSocialLink[];
     enableSignup: boolean;
     signupTitle?: string | null;
     signupReward?: string | null;
@@ -244,6 +245,13 @@ export interface TipPageDetails {
       expiresAt?: string | null;
     }>;
   };
+}
+
+export interface CustomSocialLink {
+  id: string;
+  title: string;
+  platform?: 'wechat' | 'telegram' | 'tripadvisor' | 'spotify' | 'custom' | string;
+  value: string;
 }
 
 export interface SmartQrConfig {
@@ -267,6 +275,7 @@ export interface SmartQrConfig {
   social_youtube?: string | null;
   social_whatsapp?: string | null;
   social_website?: string | null;
+  custom_links?: CustomSocialLink[] | string | null;
   enable_signup: boolean;
   wifi_ssid?: string | null;
   wifi_password?: string | null;

@@ -915,6 +915,7 @@ model SmartQrConfig {
   social_youtube    String?
   social_whatsapp   String?
   social_website    String?
+  custom_links      String?  @db.Text
 
   // Content Customizations
   welcome_message   String?
