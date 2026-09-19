@@ -9,6 +9,8 @@ import { createAuditLog } from '../../audit.service';
 import { decryptJson } from '../../../utils/crypto.util';
 import { providerRegistry } from './providerRegistry';
 
+import { env } from '../../../config/env';
+
 export class PaymentService {
   private providers: Map<string, IPaymentProvider> = new Map();
 
@@ -64,6 +66,13 @@ export class PaymentService {
         },
       });
 
+      if (env.isProd && !integration && !env.STRIPE_SECRET_KEY) {
+        throw new AppError(
+          'Online payment is not configured for this venue. Please use IBAN transfer or contact the staff.',
+          400
+        );
+      }
+
       let credentials: Record<string, any> | undefined;
       if (integration?.credentials_encrypted) {
         credentials = decryptJson(integration.credentials_encrypted) || undefined;
@@ -72,6 +81,11 @@ export class PaymentService {
       const providerName = integration?.provider || 'stripe';
       const provider = this.getProvider(providerName);
       result = await provider.createPayment(params, credentials);
+
+      // In production, an initial payment creation intent must NEVER be prematurely marked SUCCESS
+      if (env.isProd && result.status === PaymentStatus.SUCCESS) {
+        result.status = PaymentStatus.PENDING;
+      }
     }
 
     // 2. Update tip with transaction details and status
@@ -127,6 +141,17 @@ export class PaymentService {
         provider_transaction_id: eventResult.transactionId,
       },
     });
+
+    if (eventResult.status === PaymentStatus.SUCCESS) {
+      prisma.smartQrEvent.create({
+        data: {
+          business_id: tip.business_id,
+          table_id: tip.table_id,
+          event_type: 'TIP_SUCCESS',
+          metadata: { amount: Number(tip.amount), paymentMethod: tip.payment_method, provider: providerName },
+        },
+      }).catch(() => {});
+    }
 
     await createAuditLog({
       businessId: tip.business_id,

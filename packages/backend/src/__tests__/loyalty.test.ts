@@ -199,11 +199,12 @@ describe('V1 Loyalty / Sadakat System Suite', () => {
     });
 
     // Card currently has 2 stamps, target is 5. Add 3 more stamps.
-    await loyaltyService.addStampViaCode({ cardCode: card!.card_code, businessId: businessA.id });
-    await loyaltyService.addStampViaCode({ cardCode: card!.card_code, businessId: businessA.id });
+    await loyaltyService.addStampViaCode({ cardCode: card!.card_code, businessId: businessA.id, cooldownSeconds: 0 });
+    await loyaltyService.addStampViaCode({ cardCode: card!.card_code, businessId: businessA.id, cooldownSeconds: 0 });
     const finalStamp = await loyaltyService.addStampViaCode({
       cardCode: card!.card_code,
       businessId: businessA.id,
+      cooldownSeconds: 0,
     });
 
     expect(finalStamp.currentStamps).toBe(5);
@@ -256,5 +257,113 @@ describe('V1 Loyalty / Sadakat System Suite', () => {
     expect(txs.items.length).toBeGreaterThan(0);
     expect(txs.items[0].card_code).toBeDefined();
     expect(txs.items[0].customer_masked_email).toContain('***@');
+  });
+
+  describe('Manual Code 5-Minute Cooldown & Anti-Abuse Protection', () => {
+    it('should enforce 5-minute cooldown on manual code stamps, allow after expiry, and isolate between cards and businesses', async () => {
+      // 1. Enroll Customer A and Customer B in Business A
+      const enrollA = await loyaltyService.enrollCustomer({
+        businessId: businessA.id,
+        email: 'customer.cd.a@example.com',
+        name: 'Müşteri CD A',
+      });
+      const cardA = enrollA.card;
+
+      const enrollB = await loyaltyService.enrollCustomer({
+        businessId: businessA.id,
+        email: 'customer.cd.b@example.com',
+        name: 'Müşteri CD B',
+      });
+      const cardB = enrollB.card;
+
+      // 2. Enroll Customer C in Business B
+      const enrollC = await loyaltyService.enrollCustomer({
+        businessId: businessB.id,
+        email: 'customer.cd.c@example.com',
+        name: 'Müşteri CD C',
+      });
+      const cardC = enrollC.card;
+
+      // Step A: Manuel kod → 1. stamp → PASS
+      const firstStampA = await loyaltyService.addStampViaCode({
+        cardCode: cardA.card_code,
+        businessId: businessA.id,
+        employeeId: employeeA.id,
+        userId: userA.id,
+      });
+      expect(firstStampA.success).toBe(true);
+      expect(firstStampA.currentStamps).toBe(1);
+
+      // Step B: Aynı kod → hemen tekrar → BLOCK
+      await expect(
+        loyaltyService.addStampViaCode({
+          cardCode: cardA.card_code,
+          businessId: businessA.id,
+          employeeId: employeeA.id,
+          userId: userA.id,
+        })
+      ).rejects.toThrow(/çok yakın zamanda manuel damga eklenmiş/i);
+
+      // Step C: Aynı kod → 5 dakika dolmadan (simüle 2.5 dakika) → BLOCK
+      const dbCardA = await prisma.loyaltyCard.findUnique({
+        where: { card_code: cardA.card_code },
+      });
+      const txA = await prisma.loyaltyStampTransaction.findFirst({
+        where: { card_id: dbCardA!.id, action_type: 'STAMP_ADDED', method: 'CODE' },
+        orderBy: { created_at: 'desc' },
+      });
+      expect(txA).toBeDefined();
+
+      // Simulate 150 seconds (2.5 mins) ago
+      await prisma.loyaltyStampTransaction.update({
+        where: { id: txA!.id },
+        data: { created_at: new Date(Date.now() - 150 * 1000) },
+      });
+
+      await expect(
+        loyaltyService.addStampViaCode({
+          cardCode: cardA.card_code,
+          businessId: businessA.id,
+        })
+      ).rejects.toThrow(/kalan süre/i);
+
+      // Step D: Cooldown süresi dolduktan sonra (simüle 6 dakika) → PASS
+      await prisma.loyaltyStampTransaction.update({
+        where: { id: txA!.id },
+        data: { created_at: new Date(Date.now() - 360 * 1000) },
+      });
+
+      const secondStampA = await loyaltyService.addStampViaCode({
+        cardCode: cardA.card_code,
+        businessId: businessA.id,
+        employeeId: employeeA.id,
+      });
+      expect(secondStampA.success).toBe(true);
+      expect(secondStampA.currentStamps).toBe(2);
+
+      // Step E: Yanlış kod → cooldown oluşmamalı
+      await expect(
+        loyaltyService.addStampViaCode({
+          cardCode: 'INVALID-CODE-999',
+          businessId: businessA.id,
+        })
+      ).rejects.toThrow(/bulunamadı/i);
+
+      // Step F: Müşteri A kodu → Müşteri B'yi etkilememeli (Customer B gets stamp without cooldown)
+      const firstStampB = await loyaltyService.addStampViaCode({
+        cardCode: cardB.card_code,
+        businessId: businessA.id,
+      });
+      expect(firstStampB.success).toBe(true);
+      expect(firstStampB.currentStamps).toBe(1);
+
+      // Step G: Business A → Business B'yi etkilememeli (Customer C gets stamp in Business B)
+      const firstStampC = await loyaltyService.addStampViaCode({
+        cardCode: cardC.card_code,
+        businessId: businessB.id,
+      });
+      expect(firstStampC.success).toBe(true);
+      expect(firstStampC.currentStamps).toBe(1);
+    });
   });
 });

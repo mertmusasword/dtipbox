@@ -133,11 +133,20 @@ export class StripeProvider implements IPaymentProvider {
         };
       } catch (err: any) {
         if (err instanceof AppError) throw err;
-        console.warn('[StripeProvider] Stripe API call failed, falling back to mock payment session:', err.message);
+        console.warn('[StripeProvider] Stripe API call failed:', err.message);
+        if (env.isProd) {
+          throw new AppError(`Stripe payment initialization failed: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('Stripe credentials not configured for this business', 400);
     }
 
-    // Default simulation fallback for development/sandbox testing
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
+    }
+
+    // Default simulation fallback for development/sandbox testing ONLY
     return {
       transactionId: txId,
       status: PaymentStatus.PENDING,
@@ -163,6 +172,13 @@ export class StripeProvider implements IPaymentProvider {
         transactionId,
         status,
         tipId: data.metadata?.tipId,
+      };
+    }
+
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
       };
     }
 

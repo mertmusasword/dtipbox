@@ -33,6 +33,9 @@ import {
   Mail,
   ShieldCheck,
   BookOpen,
+  Share2,
+  Globe,
+  MessageCircle,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 
@@ -53,6 +56,13 @@ interface SmartQrConfig {
   enable_campaigns: boolean;
   enable_feedback: boolean;
   google_review_url?: string | null;
+  social_instagram?: string | null;
+  social_facebook?: string | null;
+  social_tiktok?: string | null;
+  social_twitter?: string | null;
+  social_youtube?: string | null;
+  social_whatsapp?: string | null;
+  social_website?: string | null;
   enable_signup: boolean;
   signup_title?: string | null;
   signup_reward?: string | null;
@@ -90,6 +100,7 @@ interface SmartAnalytics {
   feedbackSubmissions: number;
   averageRating: number;
   totalLeads: number;
+  socialClicks?: number;
 }
 
 export const QrCodesPage: React.FC = () => {
@@ -1113,6 +1124,123 @@ export const QrCodesPage: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Module 6: Social Media & Contact Links */}
+            <div className="glass-card" style={{ padding: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <Share2 size={18} style={{ color: '#a855f7' }} />
+                <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
+                  {isTr ? 'Sosyal Medya / Sosyal Bağlantılar' : 'Social Media & Contact Links'}
+                </h4>
+              </div>
+              <p style={{ fontSize: '0.83rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: 1.45 }}>
+                {isTr
+                  ? 'Müşterilerinizin sizi sosyal medyada takip etmesi ve doğrudan iletişime geçmesi için hesap linklerinizi ekleyin. Sadece doldurduğunuz platformlar Smart QR sayfasında gösterilir.'
+                  : 'Add your social handles and website to connect with guests. Only filled platforms will appear on the public Smart QR page.'}
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.85rem' }}>
+                {/* Instagram */}
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: '#E1306C', fontWeight: 700 }}>Instagram</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="https://instagram.com/hesabiniz veya @kullaniciadi"
+                    value={smartConfig.social_instagram || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_instagram: e.target.value })}
+                  />
+                </div>
+
+                {/* TikTok */}
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: '#25F4EE', fontWeight: 700 }}>TikTok</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="https://tiktok.com/@hesabiniz veya @kullaniciadi"
+                    value={smartConfig.social_tiktok || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_tiktok: e.target.value })}
+                  />
+                </div>
+
+                {/* Facebook */}
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: '#1877F2', fontWeight: 700 }}>Facebook</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="https://facebook.com/sayfaniz"
+                    value={smartConfig.social_facebook || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_facebook: e.target.value })}
+                  />
+                </div>
+
+                {/* X / Twitter */}
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: '#94a3b8', fontWeight: 700 }}>X / Twitter</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="https://x.com/hesabiniz veya @kullaniciadi"
+                    value={smartConfig.social_twitter || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_twitter: e.target.value })}
+                  />
+                </div>
+
+                {/* YouTube */}
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: '#FF0000', fontWeight: 700 }}>YouTube</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="https://youtube.com/@kanaliniz"
+                    value={smartConfig.social_youtube || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_youtube: e.target.value })}
+                  />
+                </div>
+
+                {/* WhatsApp */}
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <MessageCircle size={13} style={{ color: '#25D366' }} />
+                    <span style={{ color: '#25D366', fontWeight: 700 }}>WhatsApp</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="+90 5XX XXX XX XX veya https://wa.me/905XXXXXX"
+                    value={smartConfig.social_whatsapp || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_whatsapp: e.target.value })}
+                  />
+                </div>
+
+                {/* Website */}
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                    <Globe size={13} style={{ color: '#38bdf8' }} />
+                    <span style={{ color: '#38bdf8', fontWeight: 700 }}>Website</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="https://www.isletmeniz.com veya isletmeniz.com"
+                    value={smartConfig.social_website || ''}
+                    onChange={(e) => setSmartConfig({ ...smartConfig, social_website: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Save Button */}
@@ -1376,6 +1504,15 @@ export const QrCodesPage: React.FC = () => {
                 </span>
                 <div style={{ fontSize: '2rem', fontWeight: 800, color: '#fbbf24', marginTop: '0.25rem' }}>
                   {analytics.averageRating} ★
+                </div>
+              </div>
+
+              <div className="glass-card" style={{ padding: '1.25rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                  {isTr ? 'Sosyal Medya Tıklamaları' : 'Social Link Clicks'}
+                </span>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: '#a855f7', marginTop: '0.25rem' }}>
+                  {analytics.socialClicks || 0}
                 </div>
               </div>
             </div>

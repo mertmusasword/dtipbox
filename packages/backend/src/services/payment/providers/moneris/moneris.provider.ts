@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 export class MonerisProvider implements IPaymentProvider {
   readonly name = 'moneris';
@@ -75,10 +76,22 @@ export class MonerisProvider implements IPaymentProvider {
             paymentUrl: `https://gatewayt.moneris.com/chkt/index.php?ticket=${data.response.ticket}`,
             clientSecret: data.response.ticket,
           };
+        } else if (env.isProd) {
+          throw new AppError('Moneris checkout preload ticket was not returned by gateway.', 400);
         }
       } catch (err: any) {
-        console.warn('[MonerisProvider] Moneris preload call failed, using simulated checkout:', err.message);
+        if (err instanceof AppError) throw err;
+        console.warn('[MonerisProvider] Moneris preload call failed:', err.message);
+        if (env.isProd) {
+          throw new AppError(`Moneris payment gateway unavailable: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('Moneris credentials not configured for this business', 400);
+    }
+
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
     }
 
     return {
@@ -90,6 +103,13 @@ export class MonerisProvider implements IPaymentProvider {
   }
 
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,

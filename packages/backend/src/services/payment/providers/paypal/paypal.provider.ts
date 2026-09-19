@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 export class PayPalProvider implements IPaymentProvider {
   readonly name = 'paypal';
@@ -127,11 +128,23 @@ export class PayPalProvider implements IPaymentProvider {
               paymentUrl: approveLink,
               clientSecret: orderData.id,
             };
+          } else if (env.isProd) {
+            throw new AppError('PayPal order approval link not found in gateway response', 400);
           }
         }
       } catch (err: any) {
-        console.warn('[PayPalProvider] Live order creation failed, using simulated fallback:', err.message);
+        if (err instanceof AppError) throw err;
+        console.warn('[PayPalProvider] Live order creation failed:', err.message);
+        if (env.isProd) {
+          throw new AppError(`PayPal payment initialization failed: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('PayPal credentials not configured for this business', 400);
+    }
+
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
     }
 
     return {
@@ -143,6 +156,13 @@ export class PayPalProvider implements IPaymentProvider {
   }
 
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,

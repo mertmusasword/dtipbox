@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 export class WeChatPayProvider implements IPaymentProvider {
   readonly name = 'wechatpay';
@@ -45,6 +46,10 @@ export class WeChatPayProvider implements IPaymentProvider {
     params: CreatePaymentIntentParams,
     _credentials?: Record<string, any>
   ): Promise<PaymentIntentResult> {
+    if (env.isProd && (!_credentials?.mchId || !_credentials?.apiV3Key)) {
+      throw new AppError('WeChat Pay credentials not configured for this business', 400);
+    }
+
     const txId = `wx_${crypto.randomBytes(12).toString('hex')}`;
 
     return {
@@ -56,6 +61,13 @@ export class WeChatPayProvider implements IPaymentProvider {
   }
 
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,

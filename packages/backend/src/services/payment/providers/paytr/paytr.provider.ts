@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 /**
  * PayTR Sanal POS Payment Provider.
@@ -35,12 +36,14 @@ export class PayTrProvider implements IPaymentProvider {
       };
     }
 
-    // Sandbox / Test / Mock validation
+    // Sandbox / Test / Mock validation (development/test only)
     if (
-      merchantId.startsWith('sandbox-') ||
-      merchantId.startsWith('mock-') ||
-      merchantId.toLowerCase().includes('test') ||
-      (env.isDev && merchantKey.includes('test'))
+      !env.isProd && (
+        merchantId.startsWith('sandbox-') ||
+        merchantId.startsWith('mock-') ||
+        merchantId.toLowerCase().includes('test') ||
+        (env.isDev && merchantKey.includes('test'))
+      )
     ) {
       return {
         success: true,
@@ -207,13 +210,25 @@ export class PayTrProvider implements IPaymentProvider {
             paymentUrl: `https://www.paytr.com/odeme/guvenli/${data.token}`,
             clientSecret: data.token,
           };
+        } else if (env.isProd) {
+          throw new AppError(`PayTR token generation rejected: ${data.reason || 'Invalid credentials or store parameters'}`, 400);
         }
       } catch (err: any) {
-        console.warn('[PayTrProvider] PayTR token generation network error, falling back to simulated checkout:', err.message);
+        if (err instanceof AppError) throw err;
+        console.warn('[PayTrProvider] PayTR token generation network error:', err.message);
+        if (env.isProd) {
+          throw new AppError(`PayTR gateway communication failed: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('PayTR credentials not configured for this business', 400);
     }
 
-    // Mock / Sandbox fallback for seamless development & testing
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
+    }
+
+    // Mock / Sandbox fallback for seamless development & testing ONLY
     return {
       transactionId: txId,
       status: PaymentStatus.PENDING,
@@ -226,6 +241,13 @@ export class PayTrProvider implements IPaymentProvider {
    * Check payment status with PayTR.
    */
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,

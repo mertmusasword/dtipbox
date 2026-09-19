@@ -34,8 +34,8 @@ export class IyzicoProvider implements IPaymentProvider {
     const trimmedApiKey = apiKey.trim();
     const trimmedSecretKey = secretKey.trim();
 
-    // Sandbox / Mock dev keys:
-    if (trimmedApiKey.startsWith('sandbox-') || trimmedApiKey.startsWith('mock-') || (env.isDev && trimmedApiKey.includes('test'))) {
+    // Sandbox / Mock dev keys (development/test only):
+    if (!env.isProd && (trimmedApiKey.startsWith('sandbox-') || trimmedApiKey.startsWith('mock-') || (env.isDev && trimmedApiKey.includes('test')))) {
       return {
         success: true,
         message: 'iyzico Sandbox API credentials verified successfully. Test Sanal POS ready.',
@@ -170,16 +170,28 @@ export class IyzicoProvider implements IPaymentProvider {
           return {
             transactionId: data.token || txId,
             status: PaymentStatus.PENDING,
-            paymentUrl: data.paymentPageUrl || `${env.APP_URL}/tip/checkout-simulate?tx=${txId}&tipId=${params.tipId}&provider=iyzico`,
+            paymentUrl: data.paymentPageUrl || (!env.isProd ? `${env.APP_URL}/tip/checkout-simulate?tx=${txId}&tipId=${params.tipId}&provider=iyzico` : undefined),
             clientSecret: data.token,
           };
+        } else if (env.isProd) {
+          throw new AppError(`iyzico checkout initialization rejected: ${data.errorMessage || 'Gateway error'}`, 400);
         }
       } catch (err: any) {
-        console.warn('[IyzicoProvider] Live iyzico call failed, falling back to simulated checkout:', err.message);
+        if (err instanceof AppError) throw err;
+        console.warn('[IyzicoProvider] Live iyzico call failed:', err.message);
+        if (env.isProd) {
+          throw new AppError(`iyzico payment initialization failed: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('iyzico credentials not configured for this business', 400);
     }
 
-    // Default simulated checkout session for development and sandbox testing
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
+    }
+
+    // Default simulated checkout session for development and sandbox testing ONLY
     return {
       transactionId: txId,
       status: PaymentStatus.PENDING,
@@ -228,6 +240,13 @@ export class IyzicoProvider implements IPaymentProvider {
       } catch (err: any) {
         console.warn('[IyzicoProvider] Failed to fetch live payment detail:', err.message);
       }
+    }
+
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
     }
 
     return {

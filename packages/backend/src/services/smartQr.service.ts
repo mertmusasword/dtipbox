@@ -17,9 +17,88 @@ export interface UpdateSmartQrConfigInput {
   wifi_password?: string | null;
   wifi_encryption?: string;
   google_review_url?: string | null;
+  social_instagram?: string | null;
+  social_facebook?: string | null;
+  social_tiktok?: string | null;
+  social_twitter?: string | null;
+  social_youtube?: string | null;
+  social_whatsapp?: string | null;
+  social_website?: string | null;
   welcome_message?: string | null;
   signup_title?: string | null;
   signup_reward?: string | null;
+}
+
+/**
+ * Validate and sanitize social media / contact links.
+ * Enforces http/https protocols, prevents javascript:/data: injection,
+ * and auto-normalizes platform handles/phone numbers.
+ */
+export function sanitizeSocialUrl(
+  url: string | null | undefined,
+  platform: 'instagram' | 'facebook' | 'tiktok' | 'twitter' | 'youtube' | 'whatsapp' | 'website'
+): string | null {
+  if (url === null || url === undefined) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  // Strict check against dangerous URI schemes
+  const lower = trimmed.toLowerCase();
+  if (
+    lower.startsWith('javascript:') ||
+    lower.startsWith('data:') ||
+    lower.startsWith('vbscript:') ||
+    lower.includes('\0')
+  ) {
+    throw new AppError(`Geçersiz veya tehlikeli ${platform} bağlantısı`, 400);
+  }
+
+  // Handle WhatsApp special formats (phone number or wa.me)
+  if (platform === 'whatsapp') {
+    if (lower.startsWith('https://wa.me/') || lower.startsWith('http://wa.me/')) {
+      return trimmed;
+    }
+    if (lower.startsWith('https://api.whatsapp.com/') || lower.startsWith('http://api.whatsapp.com/')) {
+      return trimmed;
+    }
+    // Clean numeric phone number: strip spaces, dashes, parentheses
+    const digitsOnly = trimmed.replace(/[\s\-\(\)\+]/g, '');
+    if (/^\d{7,16}$/.test(digitsOnly)) {
+      return `https://wa.me/${digitsOnly}`;
+    }
+  }
+
+  // Normalize platform handles if user entered only username (e.g. "@username" or "username")
+  let targetUrl = trimmed;
+  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+    const handle = trimmed.replace(/^@/, '').trim();
+    if (platform === 'instagram') {
+      targetUrl = `https://instagram.com/${handle}`;
+    } else if (platform === 'tiktok') {
+      targetUrl = `https://tiktok.com/@${handle}`;
+    } else if (platform === 'twitter') {
+      targetUrl = `https://x.com/${handle}`;
+    } else if (platform === 'facebook') {
+      targetUrl = `https://facebook.com/${handle}`;
+    } else if (platform === 'youtube') {
+      targetUrl = `https://youtube.com/@${handle}`;
+    } else if (platform === 'website') {
+      targetUrl = `https://${trimmed}`;
+    }
+  }
+
+  // Verify protocol is http or https
+  try {
+    const parsed = new URL(targetUrl);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      throw new AppError(`Geçersiz bağlantı protokolü: ${parsed.protocol}`, 400);
+    }
+    const cleanUrl = (parsed.pathname === '/' && !parsed.search && !parsed.hash) ? parsed.origin : parsed.toString();
+    return cleanUrl;
+  } catch (err: any) {
+    if (err instanceof AppError) throw err;
+    throw new AppError(`Geçersiz ${platform} URL adresi`, 400);
+  }
 }
 
 export interface CreateCampaignInput {
@@ -89,6 +168,27 @@ export async function updateSmartQrConfig(
       ...(input.wifi_password !== undefined && { wifi_password: input.wifi_password?.trim() || null }),
       ...(input.wifi_encryption !== undefined && { wifi_encryption: input.wifi_encryption }),
       ...(input.google_review_url !== undefined && { google_review_url: input.google_review_url?.trim() || null }),
+      ...(input.social_instagram !== undefined && {
+        social_instagram: sanitizeSocialUrl(input.social_instagram, 'instagram'),
+      }),
+      ...(input.social_facebook !== undefined && {
+        social_facebook: sanitizeSocialUrl(input.social_facebook, 'facebook'),
+      }),
+      ...(input.social_tiktok !== undefined && {
+        social_tiktok: sanitizeSocialUrl(input.social_tiktok, 'tiktok'),
+      }),
+      ...(input.social_twitter !== undefined && {
+        social_twitter: sanitizeSocialUrl(input.social_twitter, 'twitter'),
+      }),
+      ...(input.social_youtube !== undefined && {
+        social_youtube: sanitizeSocialUrl(input.social_youtube, 'youtube'),
+      }),
+      ...(input.social_whatsapp !== undefined && {
+        social_whatsapp: sanitizeSocialUrl(input.social_whatsapp, 'whatsapp'),
+      }),
+      ...(input.social_website !== undefined && {
+        social_website: sanitizeSocialUrl(input.social_website, 'website'),
+      }),
       ...(input.welcome_message !== undefined && { welcome_message: input.welcome_message?.trim() || null }),
       ...(input.signup_title !== undefined && { signup_title: input.signup_title?.trim() || null }),
       ...(input.signup_reward !== undefined && { signup_reward: input.signup_reward?.trim() || null }),
@@ -313,6 +413,8 @@ export async function getSmartQrAnalytics(businessId: string) {
     CAMPAIGN_CLICK: 0,
     FEEDBACK_SUBMIT: 0,
     LEAD_SUBMIT: 0,
+    SOCIAL_CLICK: 0,
+    SOCIAL_LINK_CLICK: 0,
   };
 
   events.forEach((e) => {
@@ -340,6 +442,7 @@ export async function getSmartQrAnalytics(businessId: string) {
       feedbackSubmissions: feedbackAggregate._count.id || 0,
       averageRating: feedbackAggregate._avg.rating ? Number(feedbackAggregate._avg.rating.toFixed(1)) : 5.0,
       totalLeads,
+      socialClicks: (eventCounts.SOCIAL_CLICK || 0) + (eventCounts.SOCIAL_LINK_CLICK || 0),
     },
   };
 }

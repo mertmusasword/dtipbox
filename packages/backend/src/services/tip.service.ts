@@ -128,6 +128,22 @@ export async function getTipPageDetails(publicToken: string) {
           enableCampaigns: smartConfig.enable_campaigns,
           enableFeedback: smartConfig.enable_feedback,
           googleReviewUrl: smartConfig.google_review_url,
+          socialInstagram: smartConfig.social_instagram,
+          socialFacebook: smartConfig.social_facebook,
+          socialTiktok: smartConfig.social_tiktok,
+          socialTwitter: smartConfig.social_twitter,
+          socialYoutube: smartConfig.social_youtube,
+          socialWhatsapp: smartConfig.social_whatsapp,
+          socialWebsite: smartConfig.social_website,
+          socialLinks: {
+            instagram: smartConfig.social_instagram || null,
+            facebook: smartConfig.social_facebook || null,
+            tiktok: smartConfig.social_tiktok || null,
+            twitter: smartConfig.social_twitter || null,
+            youtube: smartConfig.social_youtube || null,
+            whatsapp: smartConfig.social_whatsapp || null,
+            website: smartConfig.social_website || null,
+          },
           enableSignup: smartConfig.enable_signup,
           signupTitle: smartConfig.signup_title,
           signupReward: smartConfig.signup_reward,
@@ -153,6 +169,22 @@ export async function getTipPageDetails(publicToken: string) {
           enableCampaigns: false,
           enableFeedback: false,
           googleReviewUrl: null,
+          socialInstagram: null,
+          socialFacebook: null,
+          socialTiktok: null,
+          socialTwitter: null,
+          socialYoutube: null,
+          socialWhatsapp: null,
+          socialWebsite: null,
+          socialLinks: {
+            instagram: null,
+            facebook: null,
+            tiktok: null,
+            twitter: null,
+            youtube: null,
+            whatsapp: null,
+            website: null,
+          },
           enableSignup: false,
           campaigns: [],
         },
@@ -287,13 +319,14 @@ export async function createTip(data: CreateTipRequest) {
     },
   });
 
-  // Record TIP_SUCCESS event
+  // Record initial tip initiation event (TIP_SUCCESS is recorded upon confirmed webhook/payout)
+  const initialEventType = paymentResult.status === PaymentStatus.SUCCESS ? 'TIP_SUCCESS' : 'TIP_INITIATED';
   prisma.smartQrEvent.create({
     data: {
       business_id: qr.business_id,
       qr_id: qr.id,
       table_id: effectiveTableId || null,
-      event_type: 'TIP_SUCCESS',
+      event_type: initialEventType,
       metadata: { amount: data.amount, paymentMethod: data.paymentMethod },
     },
   }).catch(() => {});

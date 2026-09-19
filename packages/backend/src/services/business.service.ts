@@ -94,7 +94,13 @@ export async function upsertPaymentAccount(
     update: input,
   });
 
-  // When a payment account exists, auto-create IBAN_TRANSFER payment method if not exists
+  const hasBankDetails = Boolean(
+    (account.iban && account.iban.trim()) ||
+    (account.account_number && account.account_number.trim())
+  );
+  const methodStatus = hasBankDetails ? 'ACTIVE' : 'INACTIVE';
+
+  // When a payment account exists with bank details, automatically enable IBAN_TRANSFER payment method
   await prisma.paymentMethod.upsert({
     where: {
       business_id_type: {
@@ -105,9 +111,11 @@ export async function upsertPaymentAccount(
     create: {
       business_id: businessId,
       type: 'IBAN_TRANSFER',
-      status: 'INACTIVE', // Business must manually activate
+      status: methodStatus,
     },
-    update: {}, // Don't change status if it already exists
+    update: {
+      status: methodStatus,
+    },
   });
 
   await createAuditLog({

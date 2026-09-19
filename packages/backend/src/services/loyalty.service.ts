@@ -714,13 +714,19 @@ export class LoyaltyService {
     businessId: string;
     employeeId?: string | null;
     userId?: string | null;
+    cooldownSeconds?: number;
   }) {
     const cleanCode = params.cardCode.toUpperCase().trim();
     if (!cleanCode || cleanCode.length < 4) {
       throw new AppError('Lütfen geçerli bir müşteri kart kodu giriniz', 400);
     }
 
+    const cooldownSeconds = params.cooldownSeconds !== undefined ? params.cooldownSeconds : 300;
+
     return prisma.$transaction(async (tx) => {
+      // Row lock card to prevent race conditions on concurrent manual stamp requests
+      await tx.$queryRaw`SELECT id FROM loyalty_cards WHERE card_code = ${cleanCode} FOR UPDATE`;
+
       const card = await tx.loyaltyCard.findUnique({
         where: { card_code: cleanCode },
         include: { program: true },
@@ -737,6 +743,34 @@ export class LoyaltyService {
 
       if (!card.program.is_active) {
         throw new AppError('İşletmenin sadakat programı şu anda pasif durumda', 400);
+      }
+
+      // 5-minute cooldown check for manual code stamps on this loyalty card
+      if (cooldownSeconds > 0) {
+        const lastManualStamp = await tx.loyaltyStampTransaction.findFirst({
+          where: {
+            card_id: card.id,
+            business_id: params.businessId,
+            action_type: 'STAMP_ADDED',
+            method: 'CODE',
+          },
+          orderBy: { created_at: 'desc' },
+        });
+
+        if (lastManualStamp) {
+          const nowMs = Date.now();
+          const lastStampMs = new Date(lastManualStamp.created_at).getTime();
+          const elapsedSeconds = Math.max(0, Math.floor((nowMs - lastStampMs) / 1000));
+
+          if (elapsedSeconds < cooldownSeconds) {
+            const remainingSeconds = cooldownSeconds - elapsedSeconds;
+            const remainingMinutes = Math.ceil(remainingSeconds / 60);
+            throw new AppError(
+              `Bu kart için çok yakın zamanda manuel damga eklenmiş. Lütfen ${remainingMinutes} dakika sonra tekrar deneyiniz. (Kalan süre: ${remainingSeconds} sn)`,
+              400
+            );
+          }
+        }
       }
 
       // Increment stamp

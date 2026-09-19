@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import prisma from '../utils/prisma';
 import * as smartQrService from '../services/smartQr.service';
+import * as tipService from '../services/tip.service';
 
 describe('Naponi Smart QR Integration Service', () => {
   let testBusiness: any;
@@ -124,5 +125,85 @@ describe('Naponi Smart QR Integration Service', () => {
     expect(analytics.metrics.wifiClicks).toBeGreaterThanOrEqual(1);
     expect(analytics.metrics.tipClicks).toBeGreaterThanOrEqual(1);
     expect(analytics.metrics.totalLeads).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should update Smart QR config with social media links, normalize handles and phone numbers, and reject dangerous URLs', async () => {
+    const updated = await smartQrService.updateSmartQrConfig(testBusiness.id, {
+      social_instagram: '@naponicoffee',
+      social_facebook: 'https://facebook.com/naponicoffee',
+      social_tiktok: '@naponitok',
+      social_twitter: 'naponix',
+      social_youtube: 'https://youtube.com/@naponichannel',
+      social_whatsapp: '+90 555 123 4567',
+      social_website: 'naponicafe.com',
+    });
+
+    expect(updated.social_instagram).toBe('https://instagram.com/naponicoffee');
+    expect(updated.social_facebook).toBe('https://facebook.com/naponicoffee');
+    expect(updated.social_tiktok).toBe('https://tiktok.com/@naponitok');
+    expect(updated.social_twitter).toBe('https://x.com/naponix');
+    expect(updated.social_youtube).toBe('https://youtube.com/@naponichannel');
+    expect(updated.social_whatsapp).toBe('https://wa.me/905551234567');
+    expect(updated.social_website).toBe('https://naponicafe.com');
+
+    // Reject dangerous protocol
+    await expect(
+      smartQrService.updateSmartQrConfig(testBusiness.id, {
+        social_website: 'javascript:alert("XSS")',
+      })
+    ).rejects.toThrow('Geçersiz veya tehlikeli');
+  });
+
+  it('should serve social links to public customer TipPageDetails and track SOCIAL_CLICK events', async () => {
+    const publicDetails = await tipService.getTipPageDetails(testQr.public_token);
+
+    expect(publicDetails).toBeDefined();
+    expect(publicDetails.smartQr).toBeDefined();
+    expect(publicDetails.smartQr?.socialLinks).toBeDefined();
+    expect(publicDetails.smartQr?.socialLinks?.instagram).toBe('https://instagram.com/naponicoffee');
+    expect(publicDetails.smartQr?.socialLinks?.whatsapp).toBe('https://wa.me/905551234567');
+
+    // Customer clicks Instagram link
+    await smartQrService.recordSmartQrEvent(testQr.public_token, 'SOCIAL_CLICK', {
+      platform: 'instagram',
+      url: 'https://instagram.com/naponicoffee',
+    });
+
+    const analytics = await smartQrService.getSmartQrAnalytics(testBusiness.id);
+    expect(analytics.metrics.socialClicks).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should enforce strict cross-business isolation for social links', async () => {
+    // Create second business
+    const user2 = await prisma.user.create({
+      data: {
+        email: `smartqr-biz2-${Date.now()}@naponi.com`,
+        password_hash: 'hashedpassword',
+        role: 'BUSINESS',
+      },
+    });
+    const business2 = await prisma.business.create({
+      data: {
+        owner_user_id: user2.id,
+        name: 'Another Cafe',
+        country: 'TR',
+        currency: 'TRY',
+        timezone: 'Europe/Istanbul',
+      },
+    });
+
+    try {
+      const config2 = await smartQrService.getOrCreateSmartQrConfig(business2.id);
+      expect(config2.social_instagram).toBeNull();
+      expect(config2.social_website).toBeNull();
+
+      // Ensure business 1 config remains unaffected
+      const config1 = await smartQrService.getOrCreateSmartQrConfig(testBusiness.id);
+      expect(config1.social_instagram).toBe('https://instagram.com/naponicoffee');
+    } finally {
+      await prisma.smartQrConfig.deleteMany({ where: { business_id: business2.id } });
+      await prisma.business.delete({ where: { id: business2.id } });
+      await prisma.user.delete({ where: { id: user2.id } });
+    }
   });
 });

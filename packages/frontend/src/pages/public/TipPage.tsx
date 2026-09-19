@@ -27,6 +27,12 @@ import {
   X,
   UtensilsCrossed,
   ExternalLink,
+  Instagram,
+  Facebook,
+  Twitter,
+  Youtube,
+  Globe,
+  MessageCircle,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import {
@@ -147,7 +153,14 @@ export const TipPage: React.FC = () => {
         }
       })
       .catch((err) => {
-        setError(err.response?.data?.error || t('tip.invalidQr'));
+        const rawError = err.response?.data?.error;
+        const errorMessage =
+          typeof rawError === 'string'
+            ? rawError
+          : typeof rawError?.message === 'string'
+            ? rawError.message
+            : t('tip.invalidQr');
+        setError(errorMessage);
       })
       .finally(() => setLoading(false));
   }, [publicToken, t]);
@@ -373,6 +386,185 @@ export const TipPage: React.FC = () => {
       </div>
     );
   }
+
+  // --- Social Media & Contact Links Renderer ---
+  const renderSocialLinks = () => {
+    const sq = details?.smartQr;
+    const sl = sq?.socialLinks || {
+      instagram: sq?.socialInstagram,
+      facebook: sq?.socialFacebook,
+      tiktok: sq?.socialTiktok,
+      twitter: sq?.socialTwitter,
+      youtube: sq?.socialYoutube,
+      whatsapp: sq?.socialWhatsapp,
+      website: sq?.socialWebsite,
+    };
+
+    const platforms = [
+      {
+        id: 'instagram',
+        name: 'Instagram',
+        url: sl?.instagram,
+        color: '#E1306C',
+        bg: 'rgba(225, 48, 108, 0.08)',
+        border: 'rgba(225, 48, 108, 0.22)',
+        icon: <Instagram size={19} />,
+      },
+      {
+        id: 'facebook',
+        name: 'Facebook',
+        url: sl?.facebook,
+        color: '#1877F2',
+        bg: 'rgba(24, 119, 242, 0.08)',
+        border: 'rgba(24, 119, 242, 0.22)',
+        icon: <Facebook size={19} />,
+      },
+      {
+        id: 'tiktok',
+        name: 'TikTok',
+        url: sl?.tiktok,
+        color: '#000000',
+        bg: 'rgba(0, 0, 0, 0.06)',
+        border: 'rgba(0, 0, 0, 0.16)',
+        icon: (
+          <svg width={18} height={18} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.85.12V9.32a6.34 6.34 0 0 0-6.61 6.35 6.34 6.34 0 0 0 6.35 6.33c3.5 0 6.34-2.84 6.34-6.33V9a8.28 8.28 0 0 0 4.78 1.5v-3.45a4.85 4.85 0 0 1-1.6-.36z" />
+          </svg>
+        ),
+      },
+      {
+        id: 'twitter',
+        name: 'X',
+        url: sl?.twitter,
+        color: '#0f1419',
+        bg: 'rgba(15, 20, 25, 0.06)',
+        border: 'rgba(15, 20, 25, 0.18)',
+        icon: <Twitter size={18} />,
+      },
+      {
+        id: 'youtube',
+        name: 'YouTube',
+        url: sl?.youtube,
+        color: '#FF0000',
+        bg: 'rgba(255, 0, 0, 0.07)',
+        border: 'rgba(255, 0, 0, 0.22)',
+        icon: <Youtube size={19} />,
+      },
+      {
+        id: 'whatsapp',
+        name: 'WhatsApp',
+        url: sl?.whatsapp,
+        color: '#25D366',
+        bg: 'rgba(37, 211, 102, 0.09)',
+        border: 'rgba(37, 211, 102, 0.26)',
+        icon: <MessageCircle size={19} />,
+      },
+      {
+        id: 'website',
+        name: language === 'tr' ? 'Web Sitesi' : 'Website',
+        url: sl?.website,
+        color: '#059669',
+        bg: 'rgba(5, 150, 105, 0.08)',
+        border: 'rgba(5, 150, 105, 0.22)',
+        icon: <Globe size={18} />,
+      },
+    ].filter((p): p is typeof p & { url: string } => Boolean(p.url && p.url.trim()));
+
+    if (platforms.length === 0) return null;
+
+    return (
+      <div
+        style={{
+          marginTop: '1.75rem',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.65rem',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            width: '100%',
+            maxWidth: '300px',
+          }}
+        >
+          <div style={{ flex: 1, height: '1px', background: '#E7E5E4' }} />
+          <span
+            style={{
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              color: '#78716C',
+            }}
+          >
+            {language === 'tr' ? 'Bizi Takip Edin' : 'Connect With Us'}
+          </span>
+          <div style={{ flex: 1, height: '1px', background: '#E7E5E4' }} />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            gap: '0.65rem',
+            padding: '0.25rem 0',
+          }}
+        >
+          {platforms.map((p) => {
+            let finalUrl = p.url.trim();
+            if (p.id === 'whatsapp' && !/^https?:\/\//i.test(finalUrl)) {
+              const cleanDigits = finalUrl.replace(/\D/g, '');
+              finalUrl = `https://wa.me/${cleanDigits}`;
+            } else if (!/^https?:\/\//i.test(finalUrl)) {
+              finalUrl = `https://${finalUrl}`;
+            }
+
+            return (
+              <a
+                key={p.id}
+                href={finalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  if (publicToken) {
+                    api.post(`/smart-qr/public/${publicToken}/event`, {
+                      event_type: 'SOCIAL_CLICK',
+                      metadata: { platform: p.id, url: finalUrl },
+                    }).catch(() => {});
+                  }
+                }}
+                title={p.name}
+                aria-label={p.name}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: p.bg,
+                  border: `1px solid ${p.border}`,
+                  color: p.color,
+                  textDecoration: 'none',
+                  transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.03)',
+                }}
+              >
+                {p.icon}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   // --- Payment Confirmation Screen ---
   if (paymentResult) {
@@ -760,6 +952,9 @@ export const TipPage: React.FC = () => {
           >
             {isSuccess || isUnverified ? 'Yeni Bir Bahşiş Gönder' : t('common.retry')}
           </button>
+
+          {/* Social Media & Contact Links */}
+          {renderSocialLinks()}
         </div>
       </div>
     );
@@ -2146,6 +2341,9 @@ export const TipPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Social Media & Contact Links ("Bizi Takip Edin") */}
+        {renderSocialLinks()}
 
         <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.9 }} />

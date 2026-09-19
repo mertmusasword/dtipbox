@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 export class AlipayProvider implements IPaymentProvider {
   readonly name = 'alipay';
@@ -45,6 +46,10 @@ export class AlipayProvider implements IPaymentProvider {
     params: CreatePaymentIntentParams,
     _credentials?: Record<string, any>
   ): Promise<PaymentIntentResult> {
+    if (env.isProd && (!_credentials?.appId || !_credentials?.privateKey)) {
+      throw new AppError('Alipay credentials not configured for this business', 400);
+    }
+
     const txId = `alipay_${crypto.randomBytes(12).toString('hex')}`;
 
     return {
@@ -56,6 +61,13 @@ export class AlipayProvider implements IPaymentProvider {
   }
 
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,

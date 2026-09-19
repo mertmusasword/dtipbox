@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 export class SquareProvider implements IPaymentProvider {
   readonly name = 'square';
@@ -126,10 +127,22 @@ export class SquareProvider implements IPaymentProvider {
             paymentUrl: data.payment_link.url,
             clientSecret: data.payment_link.id,
           };
+        } else if (env.isProd) {
+          throw new AppError('Square payment link creation was not confirmed by gateway.', 400);
         }
       } catch (err: any) {
-        console.warn('[SquareProvider] Network call failed, falling back to simulated link:', err.message);
+        if (err instanceof AppError) throw err;
+        console.warn('[SquareProvider] Network call failed:', err.message);
+        if (env.isProd) {
+          throw new AppError(`Square payment gateway unavailable: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('Square credentials not configured for this business', 400);
+    }
+
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
     }
 
     return {
@@ -141,6 +154,13 @@ export class SquareProvider implements IPaymentProvider {
   }
 
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,

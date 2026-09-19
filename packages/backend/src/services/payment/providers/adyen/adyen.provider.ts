@@ -11,6 +11,7 @@ import {
   WebhookEventResult,
 } from '../../core/payment.types';
 import { env } from '../../../../config/env';
+import { AppError } from '../../../../middleware/errorHandler';
 
 export class AdyenProvider implements IPaymentProvider {
   readonly name = 'adyen';
@@ -102,13 +103,25 @@ export class AdyenProvider implements IPaymentProvider {
           return {
             transactionId: data.id || txId,
             status: PaymentStatus.PENDING,
-            paymentUrl: data.url || `${env.APP_URL}/tip/checkout-simulate?tx=${txId}&tipId=${params.tipId}&provider=adyen`,
+            paymentUrl: data.url || (!env.isProd ? `${env.APP_URL}/tip/checkout-simulate?tx=${txId}&tipId=${params.tipId}&provider=adyen` : undefined),
             clientSecret: data.sessionData || data.id,
           };
+        } else if (env.isProd) {
+          throw new AppError('Adyen payment session was not confirmed by gateway.', 400);
         }
       } catch (err: any) {
-        console.warn('[AdyenProvider] Live session creation failed, using simulated fallback:', err.message);
+        if (err instanceof AppError) throw err;
+        console.warn('[AdyenProvider] Live session creation failed:', err.message);
+        if (env.isProd) {
+          throw new AppError(`Adyen payment gateway unavailable: ${err.message}`, 502);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('Adyen credentials not configured for this business', 400);
+    }
+
+    if (env.isProd) {
+      throw new AppError('Mock payment simulation is strictly disabled in production.', 400);
     }
 
     return {
@@ -120,6 +133,13 @@ export class AdyenProvider implements IPaymentProvider {
   }
 
   async getPaymentStatus(transactionId: string, _credentials?: Record<string, any>): Promise<WebhookEventResult> {
+    if (env.isProd) {
+      return {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      };
+    }
+
     return {
       transactionId,
       status: PaymentStatus.SUCCESS,
