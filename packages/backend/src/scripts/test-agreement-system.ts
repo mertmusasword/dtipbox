@@ -188,10 +188,10 @@ async function runAgreementTestSuite() {
 
     // Check old acceptance still exists in history
     const history = await getAgreementHistory(testBusiness.id);
-    const oldAcceptancePreserved = history.some((h) => h.version === '1.0.0');
+    const oldAcceptancePreserved = history.some((h) => h.version === initialStatus.version.version);
 
     if (publishedNewVersion.status === AgreementStatus.PUBLISHED && oldAcceptancePreserved) {
-      console.log(`✅ [TEST 6 BAŞARILI] Yeni versiyon (v${newVersionNum}) yayınlandı; eski v1.0.0 kabul kaydı eksiksiz korundu.`);
+      console.log(`✅ [TEST 6 BAŞARILI] Yeni versiyon (v${newVersionNum}) yayınlandı; eski v${initialStatus.version.version} kabul kaydı eksiksiz korundu.`);
       console.log(`   İşletme Geçmişi: ${history.length} kabul kaydı mevcut.`);
       passedTests++;
     } else {
