@@ -59,4 +59,42 @@ describe('Crypto & Security Utilities', () => {
     expect(shortToken).toBeDefined();
     expect(shortToken.length).toBeGreaterThan(10);
   });
+
+  it('should seamlessly decrypt legacy data encrypted with JWT_SECRET-derived key (backward compatibility)', async () => {
+    const cryptoModule = await import('crypto');
+    const { env } = await import('../config/env');
+    const { isLegacyEncrypted, migrateEncryptedPayload } = await import('../utils/crypto.util');
+
+    const legacyPayload = {
+      provider: 'iyzico',
+      legacyApiKey: 'legacy_key_12345',
+      legacySecret: 'legacy_secret_abcde',
+    };
+
+    // Manually create legacy ciphertext using the old derivation method (scryptSync with env.JWT_SECRET)
+    const legacySalt = 'naponi-credential-enc-salt-v1';
+    const legacyKey = cryptoModule.default.scryptSync(env.JWT_SECRET, legacySalt, 32);
+    const iv = cryptoModule.default.randomBytes(16);
+    const cipher = cryptoModule.default.createCipheriv('aes-256-gcm', legacyKey, iv);
+    let enc = cipher.update(JSON.stringify(legacyPayload), 'utf8', 'hex');
+    enc += cipher.final('hex');
+    const authTag = cipher.getAuthTag();
+    const legacyCiphertext = `${iv.toString('hex')}:${authTag.toString('hex')}:${enc}`;
+
+    // 1. Verify decryptJson can decrypt legacy ciphertext without errors
+    const decrypted = decryptJson<typeof legacyPayload>(legacyCiphertext);
+    expect(decrypted).toEqual(legacyPayload);
+
+    // 2. Verify isLegacyEncrypted detects legacy ciphertext
+    expect(isLegacyEncrypted(legacyCiphertext)).toBe(true);
+
+    // 3. Verify migrateEncryptedPayload re-encrypts with primary ENCRYPTION_KEY
+    const migrated = migrateEncryptedPayload(legacyCiphertext);
+    expect(migrated).not.toBeNull();
+    expect(isLegacyEncrypted(migrated!)).toBe(false);
+
+    // 4. Verify migrated ciphertext decrypts to exact original payload
+    const decryptedMigrated = decryptJson<typeof legacyPayload>(migrated!);
+    expect(decryptedMigrated).toEqual(legacyPayload);
+  });
 });

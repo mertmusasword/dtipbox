@@ -24,6 +24,9 @@ export const env = {
   JWT_EXPIRY: process.env.JWT_EXPIRY || '15m',
   JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '7d',
 
+  // Encryption (Dedicated AES-256 Key separated from JWT auth)
+  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || 'dev-encryption-key-32-chars-min!',
+
   // Admin
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'info@naponi.com',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',
@@ -58,10 +61,13 @@ export const env = {
 
 // Production security guard: fail fast if insecure placeholder secrets are used in production
 if (env.isProd) {
-  if (!env.JWT_SECRET || env.JWT_SECRET === 'dev-secret') {
-    throw new Error('[FATAL SECURITY CONFIG] In production, JWT_SECRET must be configured with a strong cryptographic secret.');
+  if (!env.JWT_SECRET || env.JWT_SECRET === 'dev-secret' || env.JWT_SECRET === 'dev-jwt-secret-change-in-production' || env.JWT_SECRET.length < 32) {
+    throw new Error('[FATAL SECURITY CONFIG] In production, JWT_SECRET must be configured with a strong cryptographic secret (min 32 chars).');
   }
-  if (!env.JWT_REFRESH_SECRET || env.JWT_REFRESH_SECRET === 'dev-refresh-secret') {
-    throw new Error('[FATAL SECURITY CONFIG] In production, JWT_REFRESH_SECRET must be configured with a strong cryptographic secret.');
+  if (!env.JWT_REFRESH_SECRET || env.JWT_REFRESH_SECRET === 'dev-refresh-secret' || env.JWT_REFRESH_SECRET === 'dev-jwt-refresh-secret-change-in-production' || env.JWT_REFRESH_SECRET.length < 32) {
+    throw new Error('[FATAL SECURITY CONFIG] In production, JWT_REFRESH_SECRET must be configured with a strong cryptographic secret (min 32 chars).');
+  }
+  if (!env.ENCRYPTION_KEY || env.ENCRYPTION_KEY === 'dev-encryption-key-32-chars-min!' || env.ENCRYPTION_KEY.length < 32) {
+    throw new Error('[FATAL SECURITY CONFIG] In production, ENCRYPTION_KEY must be configured with a dedicated strong cryptographic secret (min 32 chars).');
   }
 }

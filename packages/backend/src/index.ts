@@ -80,24 +80,68 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS
-const allowedOrigins = env.CORS_ORIGIN.includes(',')
-  ? env.CORS_ORIGIN.split(',').map((o) => o.trim())
-  : [env.CORS_ORIGIN];
+// CORS - Strict Production Whitelist
+const configuredOrigins = (env.CORS_ORIGIN || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter((o) => o.length > 0 && o !== '*');
+
+const officialAllowedOrigins = new Set<string>([
+  'https://naponi.com',
+  'https://www.naponi.com',
+]);
+
+// Include normalized APP_URL if specified (e.g. Railway public domain)
+if (env.APP_URL && env.APP_URL.startsWith('http')) {
+  try {
+    officialAllowedOrigins.add(new URL(env.APP_URL).origin);
+  } catch {
+    officialAllowedOrigins.add(env.APP_URL);
+  }
+}
+
+// Include explicitly configured CORS_ORIGIN entries
+configuredOrigins.forEach((orig) => {
+  try {
+    officialAllowedOrigins.add(new URL(orig).origin);
+  } catch {
+    officialAllowedOrigins.add(orig);
+  }
+});
+
+export function isOriginAllowed(origin: string): boolean {
+  // 1. Exact match against whitelist
+  if (officialAllowedOrigins.has(origin)) {
+    return true;
+  }
+
+  // 2. Strict HTTPS subdomain check for naponi.com (e.g. https://api.naponi.com)
+  // Rejects attacker-naponi.com, naponi.com.evil.com, and insecure http://
+  try {
+    const parsed = new URL(origin);
+    if (parsed.protocol === 'https:' && (parsed.hostname === 'naponi.com' || parsed.hostname.endsWith('.naponi.com'))) {
+      return true;
+    }
+  } catch {
+    return false;
+  }
+
+  // 3. In development mode only: allow localhost / 127.0.0.1
+  if (env.isDev) {
+    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
       if (!origin) return callback(null, true);
-      if (
-        env.isDev ||
-        allowedOrigins.includes(origin) ||
-        allowedOrigins.includes('*') ||
-        origin.endsWith('.railway.app') ||
-        origin.includes('naponi.com') ||
-        origin === env.APP_URL
-      ) {
+      if (isOriginAllowed(origin)) {
         return callback(null, true);
       }
       callback(null, false);

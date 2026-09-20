@@ -52,6 +52,7 @@ In your Railway web service (the service connected to your GitHub repo), navigat
 | `API_URL` | Public API URL | `https://${{RAILWAY_PUBLIC_DOMAIN}}` (or custom domain) |
 | `JWT_SECRET` | 256-bit cryptographic secret | `openssl rand -hex 32` |
 | `JWT_REFRESH_SECRET`| 256-bit cryptographic secret | `openssl rand -hex 32` |
+| `ENCRYPTION_KEY` | Dedicated 256-bit AES encryption secret | `openssl rand -hex 32` |
 | `JWT_EXPIRY` | Access token lifespan | `15m` |
 | `JWT_REFRESH_EXPIRY`| Refresh token lifespan | `7d` |
 | `ADMIN_EMAIL` | Superadmin bootstrap email | `admin@dtipbox.com` (or your email) |

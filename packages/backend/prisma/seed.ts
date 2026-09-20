@@ -7,22 +7,39 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seed...');
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@dtipbox.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'Admin123!';
-  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  const isProd = process.env.NODE_ENV === 'production';
+  const adminEmail = (process.env.ADMIN_EMAIL || 'info@naponi.com').toLowerCase().trim();
+  const adminPassword = process.env.ADMIN_PASSWORD;
 
-  // 1. Create or update ADMIN user
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {},
-    create: {
-      email: adminEmail,
-      password_hash: passwordHash,
-      role: Role.ADMIN,
-      is_active: true,
-    },
-  });
-  console.log(`✅ Admin user seeded: ${admin.email}`);
+  // 1. Create or update ADMIN user (strictly require ADMIN_PASSWORD in production)
+  if (isProd) {
+    if (!adminPassword || adminPassword.length < 12) {
+      throw new Error('[FATAL SECURITY CONFIG] In production, ADMIN_PASSWORD environment variable is required (min 12 chars) to run database seeding.');
+    }
+  }
+
+  if (adminPassword) {
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
+    const admin = await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: {},
+      create: {
+        email: adminEmail,
+        password_hash: passwordHash,
+        role: Role.ADMIN,
+        is_active: true,
+      },
+    });
+    console.log(`✅ Admin user seeded: ${admin.email}`);
+  } else {
+    console.warn('⚠️ [SEED] ADMIN_PASSWORD environment variable not set. Admin user seed skipped.');
+  }
+
+  // In production, never seed mock demo businesses or dummy employees
+  if (isProd) {
+    console.log('🛡️ [SEED] Production mode active: Skipping dummy demo businesses and employee data.');
+    return;
+  }
 
   // 2. Create Demo Business User
   const demoEmail = 'business@dtipbox.com';
