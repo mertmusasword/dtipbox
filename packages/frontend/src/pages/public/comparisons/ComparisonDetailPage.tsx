@@ -10,7 +10,8 @@ import {
   Award,
   Sparkles,
   Menu,
-  X
+  X,
+  LogIn
 } from 'lucide-react';
 import { SeoHead } from '../../../components/SeoHead';
 import { COMPARISONS } from '../../../content/comparisons/comparisons';
@@ -97,19 +98,38 @@ export const ComparisonDetailPage: React.FC = () => {
 
         {mobileMenuOpen && (
           <div className="home-mobile-menu">
-            <Link to="/" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Home' : 'Ana Sayfa'}</Link>
-            <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link>
-            <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link>
-            <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'QR Generator' : 'QR Üretici'}</Link>
-            <Link to="/compare/card-machine-vs-qr-tipping" onClick={() => setMobileMenuOpen(false)} style={{ color: '#10b981', fontWeight: 600 }}>{isEn ? 'Comparisons' : 'Karşılaştırmalar'}</Link>
-            <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tech Partners' : 'Teknoloji Partnerleri'}</Link>
-            <div className="home-mobile-menu-actions">
-              <Link to="/login" className="home-btn-ghost" onClick={() => setMobileMenuOpen(false)}>
-                {isEn ? 'Login' : 'Giriş Yap'}
+            <div className="home-mobile-menu-top-actions">
+              <Link to="/login" className="home-btn-ghost home-mobile-action-btn" onClick={() => setMobileMenuOpen(false)}>
+                <LogIn size={15} />
+                <span>{isEn ? 'Login' : 'Giriş Yap'}</span>
               </Link>
-              <Link to="/register" className="home-btn-primary" onClick={() => setMobileMenuOpen(false)}>
-                {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
+              <Link to="/register" className="home-btn-primary home-mobile-action-btn" onClick={() => setMobileMenuOpen(false)}>
+                <span>{isEn ? 'Get Started' : 'Hemen Başla'}</span>
+                <ArrowRight size={15} />
               </Link>
+            </div>
+
+            <div className="home-mobile-menu-links">
+              <Link to="/" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Home' : 'Ana Sayfa'}</Link>
+              <Link to="/technology-partners" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tech Partners' : 'Teknoloji Partnerleri'}</Link>
+              <Link to="/compare/card-machine-vs-qr-tipping" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#10b981', fontWeight: 600 }}>{isEn ? 'Comparisons' : 'Karşılaştırmalar'}</Link>
+            </div>
+
+            <div>
+              <div className="home-mobile-menu-section-label">
+                {isEn ? 'FREE TOOLS & GUIDES' : 'ÜCRETSİZ ARAÇLAR & REHBERLER'}
+              </div>
+              <div className="home-mobile-tools-grid">
+                <Link to="/tools/free-hospitality-qr-generator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                  <span>📱 {isEn ? 'QR Maker' : 'QR Üretici'}</span>
+                </Link>
+                <Link to="/tools/restaurant-tip-pool-calculator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                  <span>📊 {isEn ? 'Tip Pool' : 'Vardiya Havuzu'}</span>
+                </Link>
+                <Link to="/guides" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                  <span>🌍 {isEn ? 'Guides' : 'Rehberler'}</span>
+                </Link>
+              </div>
             </div>
           </div>
         )}

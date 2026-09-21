@@ -53,6 +53,7 @@ import {
   Play,
   Youtube,
   Instagram,
+  LogIn,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -403,19 +404,70 @@ export const HomePage: React.FC = () => {
       {/* Mobile Dropdown Menu (Mounted outside header to guarantee full viewport height without backdrop-filter clipping) */}
       {mobileMenuOpen && (
         <div className="home-mobile-menu">
-          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
-          <a href="#naponi-farki" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
-            {language === 'tr' ? '✨ Naponi Farkı' : '✨ Why Naponi'}
-          </a>
-          <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
-          <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
-            {language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}
-          </Link>
-          <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Bahşiş Rehberleri' : 'Tipping Guides'}</Link>
-          <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Tip Pool Calculator'}</Link>
-          <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'QR Generator'}</Link>
-          <Link to="/compare/card-machine-vs-qr-tipping" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'POS vs QR Karşılaştırma' : 'POS vs QR Comparison'}</Link>
-          <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
+          {/* 1. TOP QUICK ACTIONS: Instant 1-tap access to Login & Register */}
+          <div className="home-mobile-menu-top-actions">
+            <Link
+              to="/login"
+              className="home-btn-ghost home-mobile-action-btn"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <LogIn size={15} />
+              <span>{t('nav.login')}</span>
+            </Link>
+            <Link
+              to="/register"
+              className="home-btn-primary home-mobile-action-btn"
+              onClick={() => {
+                trackBusinessRegisterStarted('mobile_drawer_cta');
+                setMobileMenuOpen(false);
+              }}
+            >
+              <span>{t('nav.getStarted')}</span>
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+
+          {/* 2. MAIN NAVIGATION */}
+          <div className="home-mobile-menu-links">
+            <a href="#how-it-works" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <span>{t('nav.features')}</span>
+            </a>
+            <a href="#naponi-farki" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
+              <span>{language === 'tr' ? '✨ Naponi Farkı' : '✨ Why Naponi'}</span>
+            </a>
+            <a href="#experience" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <span>{t('nav.solutions')}</span>
+            </a>
+            <Link to="/technology-partners" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
+              <span>{language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}</span>
+            </Link>
+            <a href="#faq" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <span>{t('nav.faq')}</span>
+            </a>
+          </div>
+
+          {/* 3. FREE TOOLS & GUIDES (COMPACT 2x2 GRID) */}
+          <div>
+            <div className="home-mobile-menu-section-label">
+              {language === 'tr' ? 'Ücretsiz Araçlar & Rehberler' : 'Free Tools & Guides'}
+            </div>
+            <div className="home-mobile-tools-grid">
+              <Link to="/tools/free-hospitality-qr-generator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                <span>📱 {language === 'tr' ? 'QR Üretici' : 'QR Maker'}</span>
+              </Link>
+              <Link to="/tools/restaurant-tip-pool-calculator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                <span>📊 {language === 'tr' ? 'Vardiya Havuzu' : 'Tip Pool'}</span>
+              </Link>
+              <Link to="/compare/card-machine-vs-qr-tipping" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                <span>⚖️ {language === 'tr' ? 'POS vs QR' : 'POS vs QR'}</span>
+              </Link>
+              <Link to="/guides" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
+                <span>🌍 {language === 'tr' ? 'Rehberler' : 'Guides'}</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* 4. LIVE SUPPORT */}
           <button
             type="button"
             className="home-btn-ghost"
@@ -423,32 +475,11 @@ export const HomePage: React.FC = () => {
               setMobileMenuOpen(false);
               setSupportModalOpen(true);
             }}
-            style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.5rem 0' }}
+            style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.45rem', padding: '0.65rem 1rem', fontSize: '0.88rem', marginTop: '0.2rem' }}
           >
-            <Headphones size={16} />
+            <Headphones size={15} />
             <span>{t('support.widgetBtn')}</span>
           </button>
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', paddingBottom: '3.5rem' }}>
-            <Link
-              to="/login"
-              className="home-btn-ghost"
-              style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {t('nav.login')}
-            </Link>
-            <Link
-              to="/register"
-              className="home-btn-primary"
-              style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
-              onClick={() => {
-                trackBusinessRegisterStarted('mobile_drawer_cta');
-                setMobileMenuOpen(false);
-              }}
-            >
-              {t('nav.getStarted')}
-            </Link>
-          </div>
         </div>
       )}
 
