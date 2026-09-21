@@ -1001,7 +1001,12 @@ export const MenuManagementPage: React.FC = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setCoverImageInputMode('url')}
+                    onClick={() => {
+                      setCoverImageInputMode('url');
+                      if (!coverUrlInput && menuConfig.menu_cover_image && !menuConfig.menu_cover_image.startsWith('data:')) {
+                        setCoverUrlInput(menuConfig.menu_cover_image);
+                      }
+                    }}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
