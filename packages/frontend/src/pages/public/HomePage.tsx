@@ -398,59 +398,59 @@ export const HomePage: React.FC = () => {
             </button>
           </div>
         </nav>
-
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className="home-mobile-menu">
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
-            <a href="#naponi-farki" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
-              {language === 'tr' ? '✨ Naponi Farkı' : '✨ Why Naponi'}
-            </a>
-            <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
-            <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
-              {language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}
-            </Link>
-            <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Bahşiş Rehberleri' : 'Tipping Guides'}</Link>
-            <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Tip Pool Calculator'}</Link>
-            <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'QR Generator'}</Link>
-            <Link to="/compare/card-machine-vs-qr-tipping" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'POS vs QR Karşılaştırma' : 'POS vs QR Comparison'}</Link>
-            <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
-            <button
-              type="button"
-              className="home-btn-ghost"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setSupportModalOpen(true);
-              }}
-              style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.5rem 0' }}
-            >
-              <Headphones size={16} />
-              <span>{t('support.widgetBtn')}</span>
-            </button>
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', paddingBottom: '2.5rem' }}>
-              <Link
-                to="/login"
-                className="home-btn-ghost"
-                style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t('nav.login')}
-              </Link>
-              <Link
-                to="/register"
-                className="home-btn-primary"
-                style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
-                onClick={() => {
-                  trackBusinessRegisterStarted('mobile_drawer_cta');
-                  setMobileMenuOpen(false);
-                }}
-              >
-                {t('nav.getStarted')}
-              </Link>
-            </div>
-          </div>
-        )}
       </header>
+
+      {/* Mobile Dropdown Menu (Mounted outside header to guarantee full viewport height without backdrop-filter clipping) */}
+      {mobileMenuOpen && (
+        <div className="home-mobile-menu">
+          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
+          <a href="#naponi-farki" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
+            {language === 'tr' ? '✨ Naponi Farkı' : '✨ Why Naponi'}
+          </a>
+          <a href="#experience" onClick={() => setMobileMenuOpen(false)}>{t('nav.solutions')}</a>
+          <Link to="/technology-partners" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
+            {language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}
+          </Link>
+          <Link to="/guides" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Bahşiş Rehberleri' : 'Tipping Guides'}</Link>
+          <Link to="/tools/restaurant-tip-pool-calculator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Tip Pool Calculator'}</Link>
+          <Link to="/tools/free-hospitality-qr-generator" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'QR Generator'}</Link>
+          <Link to="/compare/card-machine-vs-qr-tipping" onClick={() => setMobileMenuOpen(false)}>{language === 'tr' ? 'POS vs QR Karşılaştırma' : 'POS vs QR Comparison'}</Link>
+          <a href="#faq" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
+          <button
+            type="button"
+            className="home-btn-ghost"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setSupportModalOpen(true);
+            }}
+            style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.5rem 0' }}
+          >
+            <Headphones size={16} />
+            <span>{t('support.widgetBtn')}</span>
+          </button>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', paddingBottom: '3.5rem' }}>
+            <Link
+              to="/login"
+              className="home-btn-ghost"
+              style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t('nav.login')}
+            </Link>
+            <Link
+              to="/register"
+              className="home-btn-primary"
+              style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
+              onClick={() => {
+                trackBusinessRegisterStarted('mobile_drawer_cta');
+                setMobileMenuOpen(false);
+              }}
+            >
+              {t('nav.getStarted')}
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* ====================================================================
           2. HERO SECTION WITH INTERACTIVE SMARTPHONE SIMULATOR
@@ -2113,19 +2113,23 @@ export const HomePage: React.FC = () => {
 
               <Link
                 to="/register"
-                className="home-btn-primary"
                 style={{
-                  padding: '0.9rem 2rem',
-                  fontSize: '0.95rem',
-                  fontWeight: 700,
-                  background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
-                  color: '#090d16',
+                  padding: '0.85rem 2.2rem',
+                  fontSize: '0.96rem',
+                  fontWeight: 800,
+                  background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)',
+                  color: '#0f172a',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
+                  justifyContent: 'center',
+                  gap: '0.55rem',
                   textDecoration: 'none',
-                  borderRadius: '12px',
+                  borderRadius: '9999px',
                   whiteSpace: 'nowrap',
+                  boxShadow: '0 8px 24px rgba(245, 158, 11, 0.42)',
+                  border: '1px solid rgba(254, 240, 138, 0.5)',
+                  transition: 'all 0.25s ease',
+                  cursor: 'pointer',
                 }}
                 onClick={() => {
                   trackFounderCtaClicked('home_founder_section');
@@ -2133,7 +2137,7 @@ export const HomePage: React.FC = () => {
                 }}
               >
                 <span>{t('founder.ctaBottom')}</span>
-                <ArrowRight size={16} />
+                <ArrowRight size={17} />
               </Link>
             </div>
           </div>
