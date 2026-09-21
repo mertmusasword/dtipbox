@@ -369,6 +369,7 @@ export const MenuPage: React.FC = () => {
 
   const { venue, table, smartQr, allergenCatalog, allergenDisclaimer } = details;
   const disclaimerText = allergenDisclaimer[language] || allergenDisclaimer.tr || allergenDisclaimer.en;
+  const coverImageUrl = (smartQr?.menuCoverImage || (smartQr as any)?.menu_cover_image || '').trim();
 
   return (
     <div
@@ -384,24 +385,39 @@ export const MenuPage: React.FC = () => {
       }}
     >
       {/* CINEMATIC HERO COVER BANNER */}
-      {smartQr.menuCoverImage ? (
+      {coverImageUrl ? (
         <div
           style={{
             position: 'relative',
             width: '100%',
             height: '210px',
-            backgroundImage: `url(${smartQr.menuCoverImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             overflow: 'hidden',
+            backgroundColor: theme.surface,
           }}
         >
+          {/* Banner Image with referrerPolicy for hotlink support */}
+          <img
+            src={coverImageUrl}
+            alt={venue.name}
+            referrerPolicy="no-referrer"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              display: 'block',
+            }}
+          />
+
           {/* Ambient Gradient Overlays */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
               background: `linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.45) 50%, ${theme.bg} 100%)`,
+              pointerEvents: 'none',
             }}
           />
 
@@ -558,7 +574,7 @@ export const MenuPage: React.FC = () => {
           {/* Right Header Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
             {/* Wi-Fi Trigger if enabled and no cover image */}
-            {!smartQr.menuCoverImage && smartQr.enableWifi && smartQr.wifiSsid && (
+            {!coverImageUrl && smartQr.enableWifi && smartQr.wifiSsid && (
               <button
                 type="button"
                 onClick={() => setIsWifiModalOpen(true)}
@@ -592,8 +608,8 @@ export const MenuPage: React.FC = () => {
       </header>
 
       {/* VENUE BRAND INTRO (Shown below cover image or at top of body) */}
-      <div style={{ maxWidth: '680px', margin: '0 auto', padding: smartQr.menuCoverImage ? '0.75rem 1rem 0' : '1rem 1rem 0' }}>
-        {smartQr.menuCoverImage && (
+      <div style={{ maxWidth: '680px', margin: '0 auto', padding: coverImageUrl ? '0.75rem 1rem 0' : '1rem 1rem 0' }}>
+        {coverImageUrl && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
             <div>
               <h1 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 900, color: theme.textPrimary, letterSpacing: '-0.02em' }}>
