@@ -317,8 +317,8 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
         en: 'What is the difference between this static QR and Naponi Dynamic QR?'
       },
       a: {
-        tr: 'Bu araçla ürettiğiniz statik QR tek bir adrese yönlendirir. Naponi’nin işletme paketindeki Dinamik QR kodlar ise masaya ve vardiyadaki personele göre otomatik değişir, 35+ dilde çeviri yapar ve bahşiş veren misafirleri Google Haritalar 5 yıldız yorumuna yönlendirir.',
-        en: 'Static QR codes point to a single fixed URL. Naponi Dynamic QR codes automatically detect tourist languages (35+), route gratuities to the exact server on shift, and trigger verified Google Reviews after payment.'
+        tr: 'Bu araçla ürettiğiniz statik QR tek bir adrese yönlendirir. Naponi’nin işletme paketindeki Dinamik QR kodlar ise masaya ve vardiyadaki personele göre otomatik değişir, 11 dilde otomatik çeviri yapar ve bahşiş veren misafirleri Google Haritalar 5 yıldız yorumuna yönlendirir.',
+        en: 'Static QR codes point to a single fixed URL. Naponi Dynamic QR codes automatically detect tourist languages (11 languages), route gratuities to the exact server on shift, and trigger verified Google Reviews after payment.'
       }
     },
     {
@@ -561,17 +561,22 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <Sparkles size={24} color="#10b981" />
               <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#fff' }}>
-                {isEn ? 'Upgrade to Naponi Smart NFC & Dynamic QR Suite' : 'Naponi Akıllı NFC & Dinamik QR Paketine Geçin'}
+                {isEn ? 'Upgrade to Naponi Smart & Dynamic QR Suite' : 'Naponi Akıllı & Dinamik QR Sistemine Geçin'}
               </h3>
             </div>
             <p style={{ marginBottom: '1.5rem' }}>
               {isEn
-                ? 'Free static QR codes are great for menus, but Naponi gives you smart dynamic QR stands that boost server earnings by 35%, translate into 35+ tourist languages automatically, and direct happy tippers straight to 5-star Google Reviews.'
-                : 'Ücretsiz QR kodlar statik menüler için harikadır; ancak Naponi’nin akıllı masa stantları yabancı turistleri 35+ dilde karşılar, garson bahşişini %35 artırır ve müşterileri Google Harita yorumuna yönlendirerek mekanınızı öne çıkarır.'}
+                ? 'Free static QR codes are great for basic links, but Naponi gives you smart dynamic QR codes that translate into 11 tourist languages automatically, boost direct server tips, and route happy guests straight to 5-star Google Reviews.'
+                : 'Ücretsiz statik QR kodlar basit yönlendirmeler için uygundur; ancak Naponi’nin dinamik QR sistemi yabancı turistleri 11 dilde otomatik karşılar, personelinize doğrudan dijital bahşiş kazandırır ve memnun misafirleri anında Google Haritalar 5 yıldızlı yorumuna yönlendirir.'}
             </p>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Discover Naponi Touchpoints' : 'Naponi Stantlarını İnceleyin'} <ArrowRight size={16} />
-            </Link>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <Link to="/register" className="home-btn-primary">
+                {isEn ? 'Get Started Free' : 'Hemen Ücretsiz Başlayın'} <ArrowRight size={16} />
+              </Link>
+              <Link to="/catalog" className="home-btn-secondary" style={{ padding: '0.75rem 1.25rem' }}>
+                {isEn ? 'Browse Product Catalog' : 'Ürün Kataloğunu İnceleyin'}
+              </Link>
+            </div>
           </div>
 
           {/* FAQs */}
