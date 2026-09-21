@@ -1,13 +1,4 @@
 import { IPaymentProvider } from './provider.interface';
-import { stripeProvider } from '../providers/stripe/stripe.provider';
-import { iyzicoProvider } from '../providers/iyzico/iyzico.provider';
-import { paytrProvider } from '../providers/paytr/paytr.provider';
-import { squareProvider } from '../providers/square/square.provider';
-import { payPalProvider } from '../providers/paypal/paypal.provider';
-import { adyenProvider } from '../providers/adyen/adyen.provider';
-import { monerisProvider } from '../providers/moneris/moneris.provider';
-import { alipayProvider } from '../providers/alipay/alipay.provider';
-import { weChatPayProvider } from '../providers/wechatpay/wechatpay.provider';
 import prisma from '../../../utils/prisma';
 import { ProviderCatalogStatus, ProviderType } from '@prisma/client';
 
@@ -226,20 +217,26 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
   },
 ];
 
+/**
+ * Lazy adapter loaders. Modules are imported on demand only when getAdapter() is invoked.
+ */
+const ADAPTER_LOADERS: Record<string, () => IPaymentProvider> = {
+  stripe: () => require('../providers/stripe/stripe.provider').stripeProvider,
+  iyzico: () => require('../providers/iyzico/iyzico.provider').iyzicoProvider,
+  paytr: () => require('../providers/paytr/paytr.provider').paytrProvider,
+  square: () => require('../providers/square/square.provider').squareProvider,
+  paypal: () => require('../providers/paypal/paypal.provider').payPalProvider,
+  adyen: () => require('../providers/adyen/adyen.provider').adyenProvider,
+  moneris: () => require('../providers/moneris/moneris.provider').monerisProvider,
+  alipay: () => require('../providers/alipay/alipay.provider').alipayProvider,
+  wechatpay: () => require('../providers/wechatpay/wechatpay.provider').weChatPayProvider,
+};
+
 export class ProviderRegistry {
   private adapters: Map<string, IPaymentProvider> = new Map();
 
   constructor() {
-    // Register active backend code adapters
-    this.registerAdapter('stripe', stripeProvider);
-    this.registerAdapter('iyzico', iyzicoProvider);
-    this.registerAdapter('paytr', paytrProvider);
-    this.registerAdapter('square', squareProvider);
-    this.registerAdapter('paypal', payPalProvider);
-    this.registerAdapter('adyen', adyenProvider);
-    this.registerAdapter('moneris', monerisProvider);
-    this.registerAdapter('alipay', alipayProvider);
-    this.registerAdapter('wechatpay', weChatPayProvider);
+    // Adapters are lazy-loaded on demand to optimize startup latency and memory usage.
   }
 
   registerAdapter(name: string, adapter: IPaymentProvider) {
@@ -247,11 +244,29 @@ export class ProviderRegistry {
   }
 
   getAdapter(name: string): IPaymentProvider | undefined {
-    return this.adapters.get(name.toLowerCase());
+    const key = name.toLowerCase();
+    if (this.adapters.has(key)) {
+      return this.adapters.get(key);
+    }
+
+    const loader = ADAPTER_LOADERS[key];
+    if (loader) {
+      try {
+        const adapter = loader();
+        this.adapters.set(key, adapter);
+        return adapter;
+      } catch (err: any) {
+        console.error(`[ProviderRegistry] Failed to lazy-load payment adapter for '${key}':`, err?.message || err);
+        return undefined;
+      }
+    }
+
+    return undefined;
   }
 
   hasAdapter(name: string): boolean {
-    return this.adapters.has(name.toLowerCase());
+    const key = name.toLowerCase();
+    return this.adapters.has(key) || Object.prototype.hasOwnProperty.call(ADAPTER_LOADERS, key);
   }
 
   /**
