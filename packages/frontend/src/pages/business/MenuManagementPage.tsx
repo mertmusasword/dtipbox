@@ -94,6 +94,7 @@ export const MenuManagementPage: React.FC = () => {
     menu_title: '',
     menu_theme: 'DARK_LUXURY',
     menu_cover_image: '',
+    menu_cover_position: 50,
     enable_item_stories: true,
     enable_menu: true,
   });
@@ -218,6 +219,7 @@ export const MenuManagementPage: React.FC = () => {
       setMenuConfig({
         ...data.config,
         menu_theme: data.config?.menu_theme || 'DARK_LUXURY',
+        menu_cover_position: data.config?.menu_cover_position ?? 50,
         enable_item_stories: data.config?.enable_item_stories ?? true,
       });
       if (data.config?.menu_cover_image && !data.config.menu_cover_image.startsWith('data:')) {
@@ -257,6 +259,7 @@ export const MenuManagementPage: React.FC = () => {
       menu_title: newConfig?.menu_title !== undefined ? newConfig.menu_title : menuConfig.menu_title,
       menu_theme: newConfig?.menu_theme !== undefined ? newConfig.menu_theme : (menuConfig.menu_theme || 'DARK_LUXURY'),
       menu_cover_image: newConfig?.menu_cover_image !== undefined ? newConfig.menu_cover_image : (menuConfig.menu_cover_image || null),
+      menu_cover_position: newConfig?.menu_cover_position !== undefined ? newConfig.menu_cover_position : (menuConfig.menu_cover_position ?? 50),
       enable_item_stories: newConfig?.enable_item_stories !== undefined ? newConfig.enable_item_stories : (menuConfig.enable_item_stories ?? true),
     };
 
@@ -1056,7 +1059,13 @@ export const MenuManagementPage: React.FC = () => {
                     src={menuConfig.menu_cover_image}
                     alt="Cover preview"
                     referrerPolicy="no-referrer"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: `center ${menuConfig.menu_cover_position ?? 50}%`,
+                      transition: 'object-position 0.15s ease',
+                    }}
                   />
                   <div
                     style={{
@@ -1203,7 +1212,13 @@ export const MenuManagementPage: React.FC = () => {
                         src={coverUrlInput.trim() || menuConfig.menu_cover_image || ''}
                         alt="URL Preview"
                         referrerPolicy="no-referrer"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: `center ${menuConfig.menu_cover_position ?? 50}%`,
+                          transition: 'object-position 0.15s ease',
+                        }}
                         onError={(e) => {
                           (e.currentTarget as HTMLElement).style.display = 'none';
                         }}
@@ -1241,6 +1256,99 @@ export const MenuManagementPage: React.FC = () => {
                       </div>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Interactive Vertical Alignment / Reposition Bar */}
+              {(menuConfig.menu_cover_image || (coverImageInputMode === 'url' && coverUrlInput.trim())) && (
+                <div
+                  style={{
+                    marginTop: '0.65rem',
+                    padding: '0.6rem 0.85rem',
+                    borderRadius: '8px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.09)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.45rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.76rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      <ArrowUpDown size={13} style={{ color: 'var(--accent-primary)' }} />
+                      <span>{language === 'tr' ? 'Görsel Dikey Hizalama / Odak Noktası' : 'Vertical Focus & Alignment'}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+                      {[
+                        { label: language === 'tr' ? '⬆️ Üst' : '⬆️ Top', val: 20 },
+                        { label: language === 'tr' ? '⏺️ Orta' : '⏺️ Center', val: 50 },
+                        { label: language === 'tr' ? '⬇️ Alt' : '⬇️ Bottom', val: 80 },
+                      ].map((preset) => {
+                        const isActive = (menuConfig.menu_cover_position ?? 50) === preset.val;
+                        return (
+                          <button
+                            key={preset.val}
+                            type="button"
+                            onClick={() => {
+                              setMenuConfig((prev) => ({ ...prev, menu_cover_position: preset.val }));
+                              handleSaveConfig({ menu_cover_position: preset.val });
+                            }}
+                            style={{
+                              padding: '0.15rem 0.5rem',
+                              fontSize: '0.68rem',
+                              borderRadius: '4px',
+                              border: isActive ? '1px solid var(--accent-primary)' : '1px solid rgba(255, 255, 255, 0.15)',
+                              background: isActive ? 'rgba(99, 102, 241, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                              color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                              cursor: 'pointer',
+                              fontWeight: isActive ? 700 : 500,
+                            }}
+                          >
+                            {preset.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                      {language === 'tr' ? 'Üst (%0)' : 'Top (0%)'}
+                    </span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={1}
+                      value={menuConfig.menu_cover_position ?? 50}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setMenuConfig((prev) => ({ ...prev, menu_cover_position: val }));
+                      }}
+                      onMouseUp={() => handleSaveConfig({ menu_cover_position: menuConfig.menu_cover_position ?? 50 })}
+                      onTouchEnd={() => handleSaveConfig({ menu_cover_position: menuConfig.menu_cover_position ?? 50 })}
+                      style={{
+                        flex: 1,
+                        accentColor: 'var(--accent-primary)',
+                        cursor: 'pointer',
+                        height: '4px',
+                      }}
+                    />
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                      {language === 'tr' ? 'Alt (%100)' : 'Bottom (100%)'}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        color: 'var(--accent-primary)',
+                        minWidth: '2.4rem',
+                        textAlign: 'right',
+                      }}
+                    >
+                      %{menuConfig.menu_cover_position ?? 50}
+                    </span>
+                  </div>
                 </div>
               )}
 

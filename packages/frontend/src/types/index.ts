@@ -573,6 +573,7 @@ export interface MenuConfig {
   menu_title?: string | null;
   menu_theme?: MenuThemeKey;
   menu_cover_image?: string | null;
+  menu_cover_position?: number;
   enable_item_stories?: boolean;
   enable_menu?: boolean;
 }

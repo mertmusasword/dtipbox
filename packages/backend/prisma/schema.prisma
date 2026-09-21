@@ -903,6 +903,7 @@ model SmartQrConfig {
   menu_title          String?  // e.g. "Dijital Menü", "Menüyü Gör"
   menu_theme          String   @default("DARK_LUXURY") // DARK_LUXURY, WARM_ARTISAN, MODERN_EMERALD, MIDNIGHT_ROSE
   menu_cover_image    String?
+  menu_cover_position Int      @default(50)
   enable_item_stories Boolean  @default(true)
 
   // Wi-Fi Settings

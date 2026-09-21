@@ -160,6 +160,8 @@ export async function getTipPageDetails(publicToken: string) {
           menu_theme: (smartConfig.menu_theme as any) || 'DARK_LUXURY',
           menuCoverImage: smartConfig.menu_cover_image || null,
           menu_cover_image: smartConfig.menu_cover_image || null,
+          menuCoverPosition: (smartConfig as any).menu_cover_position ?? 50,
+          menu_cover_position: (smartConfig as any).menu_cover_position ?? 50,
           enableItemStories: smartConfig.enable_item_stories ?? true,
           enable_item_stories: smartConfig.enable_item_stories ?? true,
           enableWifi: smartConfig.enable_wifi,

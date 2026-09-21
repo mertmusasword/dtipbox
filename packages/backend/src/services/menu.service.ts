@@ -10,6 +10,7 @@ export interface UpdateMenuConfigInput {
   menu_title?: string | null;
   menu_theme?: 'DARK_LUXURY' | 'WARM_ARTISAN' | 'MODERN_EMERALD' | 'MIDNIGHT_ROSE';
   menu_cover_image?: string | null;
+  menu_cover_position?: number | null;
   enable_item_stories?: boolean;
 }
 
@@ -84,6 +85,7 @@ export async function getBusinessMenu(businessId: string) {
       menu_title: smartConfig.menu_title,
       menu_theme: (smartConfig.menu_theme as 'DARK_LUXURY' | 'WARM_ARTISAN' | 'MODERN_EMERALD' | 'MIDNIGHT_ROSE') || 'DARK_LUXURY',
       menu_cover_image: smartConfig.menu_cover_image || null,
+      menu_cover_position: (smartConfig as any).menu_cover_position ?? 50,
       enable_item_stories: smartConfig.enable_item_stories ?? true,
       enable_menu: smartConfig.enable_menu,
     },
@@ -111,6 +113,7 @@ export async function updateMenuConfig(businessId: string, input: UpdateMenuConf
       ...(input.menu_title !== undefined && { menu_title: input.menu_title?.trim() || null }),
       ...(input.menu_theme !== undefined && { menu_theme: input.menu_theme }),
       ...(input.menu_cover_image !== undefined && { menu_cover_image: input.menu_cover_image?.trim() || null }),
+      ...(input.menu_cover_position !== undefined && { menu_cover_position: input.menu_cover_position ?? 50 }),
       ...(input.enable_item_stories !== undefined && { enable_item_stories: input.enable_item_stories }),
       enable_menu: enableMenu,
     },
@@ -123,6 +126,7 @@ export async function updateMenuConfig(businessId: string, input: UpdateMenuConf
     menu_title: updated.menu_title,
     menu_theme: updated.menu_theme,
     menu_cover_image: updated.menu_cover_image,
+    menu_cover_position: (updated as any).menu_cover_position ?? 50,
     enable_item_stories: updated.enable_item_stories,
     enable_menu: updated.enable_menu,
   };
@@ -470,6 +474,8 @@ export async function getPublicMenu(publicToken: string) {
       menu_theme: (smartConfig?.menu_theme as any) || 'DARK_LUXURY',
       menuCoverImage: smartConfig?.menu_cover_image || null,
       menu_cover_image: smartConfig?.menu_cover_image || null,
+      menuCoverPosition: (smartConfig as any)?.menu_cover_position ?? 50,
+      menu_cover_position: (smartConfig as any)?.menu_cover_position ?? 50,
       enableItemStories: smartConfig?.enable_item_stories ?? true,
       enable_item_stories: smartConfig?.enable_item_stories ?? true,
       primaryAction: (smartConfig?.primary_action as string) || 'TIP',

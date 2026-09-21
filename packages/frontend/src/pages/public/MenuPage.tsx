@@ -370,6 +370,7 @@ export const MenuPage: React.FC = () => {
   const { venue, table, smartQr, allergenCatalog, allergenDisclaimer } = details;
   const disclaimerText = allergenDisclaimer[language] || allergenDisclaimer.tr || allergenDisclaimer.en;
   const coverImageUrl = (smartQr?.menuCoverImage || (smartQr as any)?.menu_cover_image || '').trim();
+  const coverImagePosition = (smartQr as any)?.menuCoverPosition ?? (smartQr as any)?.menu_cover_position ?? 50;
 
   return (
     <div
@@ -406,7 +407,7 @@ export const MenuPage: React.FC = () => {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center',
+              objectPosition: `center ${coverImagePosition}%`,
               display: 'block',
             }}
           />

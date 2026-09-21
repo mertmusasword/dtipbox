@@ -58,6 +58,7 @@ const updateMenuConfigSchema = {
     menu_title: z.string().trim().max(100).optional().nullable(),
     menu_theme: z.enum(['DARK_LUXURY', 'WARM_ARTISAN', 'MODERN_EMERALD', 'MIDNIGHT_ROSE']).optional(),
     menu_cover_image: z.string().nullable().optional(),
+    menu_cover_position: z.number().int().min(0).max(100).optional().nullable(),
     enable_item_stories: z.boolean().optional(),
   }),
 };
