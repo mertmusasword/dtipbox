@@ -243,8 +243,8 @@ export const HomePage: React.FC = () => {
         topic: isTr ? 'Turistler' : 'Foreign Guests & Tourists',
         ordinary: isTr ? 'Sınırlı dil ve müşteri deneyimi.' : 'Limited language support and confusing checkout.',
         naponi: isTr
-          ? '35+ dil desteği ve telefon diline göre otomatik deneyim.'
-          : '35+ languages auto-detected instantly based on guest phone language.',
+          ? '11 dilde otomatik algılama ve telefon diline göre akıcı deneyim.'
+          : '11 languages auto-detected instantly based on guest phone language.',
       },
       {
         topic: isTr ? 'Ödeme ve Tahsilat' : 'Payment & Settlements',
@@ -956,7 +956,7 @@ export const HomePage: React.FC = () => {
                           <BadgeCheck size={18} />
                         </div>
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{language === 'tr' ? 'Personel Yaka Kartı & NFC' : 'Server Badges & NFC Pins'}</div>
+                          <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{language === 'tr' ? 'Personel Yaka Kartı & QR Rozet' : 'Server Badges & QR Cards'}</div>
                           <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{language === 'tr' ? 'Garson & Barmen özel kodlar' : 'Individual staff badges'}</div>
                         </div>
                       </div>
@@ -970,7 +970,7 @@ export const HomePage: React.FC = () => {
                           <CheckCheck size={12} /> {language === 'tr' ? 'Yaka Kartı Şablonu' : 'Badge Template'}
                         </span>
                         <span className="badge badge-info" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <Radio size={12} /> {language === 'tr' ? 'NFC Desteği' : 'NFC Tag Support'}
+                          <Download size={12} /> {language === 'tr' ? 'Baskıya Hazır PDF/PNG' : 'Print-Ready PDF/PNG'}
                         </span>
                       </div>
                     </div>

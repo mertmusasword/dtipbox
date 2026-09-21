@@ -68,7 +68,7 @@ export const COMPARISONS: ComparisonItem[] = [
         {
           feature: { tr: 'Donanım & Kurulum Maliyeti', en: 'Hardware & Setup Cost' },
           optionA: { tr: 'Aylık POS kira bedeli, rulo kağıt ve cihaz bakım ücretleri.', highlight: 'bad', en: 'Monthly terminal rental fees, thermal paper rolls, maintenance.' },
-          optionB: { tr: '0 TL donanım maliyeti. QR stant ve etiketleri hemen üretilir.', highlight: 'good', en: '$0 hardware investment. Instant table QR badges & NFC stickers.' },
+          optionB: { tr: '0 TL donanım maliyeti. QR stant ve masa etiketleri panelden hemen üretilir.', highlight: 'good', en: '$0 hardware investment. Instant high-res table QR badges & print templates.' },
           verdict: { tr: 'QR sistemlerde ekstra donanım arızası veya POS kira masrafı yoktur.', en: 'Eliminates hardware breakdowns, charging docks, and terminal rental bills.' }
         },
         {
@@ -173,8 +173,8 @@ export const COMPARISONS: ComparisonItem[] = [
       en: 'Hotel general managers, restaurant franchise operators, and hospitality HR directors.'
     },
     quickVerdict: {
-      tr: 'Naponi, 35+ dili destekleyen turist dostu arayüzü, hibrit havuz (nakit + doğrudan transfer + QR) desteği ve dahili Google Harita yorum motoruyla hem Türkiye hem de global pazarda en bütüncül çözümü sunmaktadır.',
-      en: 'Naponi stands out with built-in support for 35+ tourist languages, hybrid pooling (combining cash tipboxes + direct bank wire + QR), and automated Google Reviews acceleration.'
+      tr: 'Naponi, 11 dilde otomatik çeviri yapan turist dostu arayüzü, hibrit havuz (nakit + doğrudan transfer + QR) desteği ve dahili Google Haritalar yorum motoruyla hem Türkiye hem de global pazarda en bütüncül çözümü sunmaktadır.',
+      en: 'Naponi stands out with built-in support for 11 global tourist languages, hybrid pooling (combining cash tipboxes + direct bank wire + QR), and automated Google Reviews acceleration.'
     },
     comparisonTable: {
       headers: {
@@ -187,7 +187,7 @@ export const COMPARISONS: ComparisonItem[] = [
         {
           feature: { tr: 'Turist & Çok Dilli Destek', en: 'Multilingual Tourist Support' },
           optionA: { tr: 'Genellikle tek dil (yerel dil) veya sınırlı İngilizce.', highlight: 'bad', en: 'Single local language or basic English only.' },
-          optionB: { tr: '35+ dilde otomatik algılama ve uluslararası kartlar (Apple/Google Pay).', highlight: 'good', en: 'Auto-detects 35+ languages and accepts international payment methods.' },
+          optionB: { tr: '11 dünya dilinde otomatik algılama ve uluslararası kartlar (Apple/Google Pay).', highlight: 'good', en: 'Auto-detects 11 global languages and accepts international payment methods.' },
           verdict: { tr: 'Yabancı turistler kendi ana dillerinde güvenle bahşiş bırakır.', en: 'Eliminates language barriers for international travelers in tourist hotspots.' }
         },
         {
@@ -203,10 +203,10 @@ export const COMPARISONS: ComparisonItem[] = [
           verdict: { tr: 'İşletmenin yerel SEO sıralamasını ve organik müşteri trafiğini artırır.', en: 'Turns high-tipping dining tables into verified Google ranking power.' }
         },
         {
-          feature: { tr: 'Fiziksel Dokunma Noktaları', en: 'Physical Hardware & Touchpoints' },
-          optionA: { tr: 'Sadece yazdırılabilir kağıt PDF çıktısı.', highlight: 'neutral', en: 'Generic black-and-white printable paper sheets.' },
-          optionB: { tr: 'Özel tasarım ahşap/akrilik NFC stantlar, metal rozetler ve masa aparatları.', highlight: 'good', en: 'Custom branded wooden/acrylic stands, NFC tap disks, and server lapel pins.' },
-          verdict: { tr: 'Mekanınıza prestij katar, silinmez ve aşınmaz.', en: 'Luxury table presence that matches high-end dining ambiance.' }
+          feature: { tr: 'Masa ve Personel Baskı Şablonları', en: 'Table & Server Print Studio' },
+          optionA: { tr: 'Standart ve özelleştirilemeyen siyah-beyaz QR çıktısı.', highlight: 'neutral', en: 'Generic black-and-white fixed printouts.' },
+          optionB: { tr: 'Panelden mekana özel logolu, renkli masa stantları, adisyon fişleri ve personel yaka kartı şablonları.', highlight: 'good', en: 'Custom branded, high-resolution table stand, guest bill, and server badge print templates.' },
+          verdict: { tr: 'Mekanınıza prestij katar, ekstra grafik tasarım veya donanım maliyeti çıkarmaz.', en: 'Elevates venue presentation with zero additional hardware or graphic design fees.' }
         }
       ]
     },

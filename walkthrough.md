@@ -106,3 +106,28 @@ Test komutu: `npx tsx packages/backend/src/scripts/test-agreement-system.ts`
 
 > [!NOTE]
 > **Kullanıcı Hatırlatma Kuralı:** 2. ve 3. maddeler (sınır ötesi tahsilat/kambiyo ve KVKK m. 9 yurt dışı veri aktarım bildirimleri), platformdaki yurt dışı kayıtlı işletme sayısı **50'ye ulaştığında** otomatik olarak hatırlatılmak üzere kayıt altına alınmıştır.
+
+---
+
+## 10. Platform İddiaları ve Metin Doğruluk Denetimi (Yanıltıcı İçerik Temizliği)
+
+Ücretsiz Misafirperverlik & Menü QR Üretici aracı ve site genelindeki pazarlama iddiaları taranmış, platformun fiili altyapısında bulunmayan ve müşterilerde gerçek dışı beklenti oluşturabilecek ifadeler tamamen düzeltilmiştir:
+
+1. **Dil Desteği Tutarlılığı:**
+   * **Eski İddia:** "35+ dil", "35+ dilde çeviri".
+   * **Düzeltme:** Gerçek altyapıda desteklenen ve menü/katalogda yer alan **11 dil** (`tr`, `en`, `de`, `fr`, `es`, `ar`, `ja`, `zh`, `id`, `pt`, `ru`) olarak güncellendi.
+
+2. **Fiziksel Donanım ve Kargolama Vaatleri:**
+   * **Eski İddia:** "Mekana özel ahşap ve pleksi NFC masa stantları, metal garson yaka kartları adrese kargolanır", "NFC çip / pin desteği".
+   * **Düzeltme:** Naponi bir fiziksel donanım üreticisi veya kargo şirketi değildir. SaaS modeliyle panelden yüksek çözünürlüklü, vektörel/PDF/PNG baskıya hazır masa stantları, adisyon fişleri ve personel yaka kartı şablonları sunduğu dürüst ve net bir dille belirtildi.
+
+3. **CTA Butonları Netliği:**
+   * Ücretsiz QR üretici altındaki "NFC & QR Siparişi Verin" ifadesi iki net aksiyona bölündü:
+     * **Hemen Ücretsiz Başlayın** (`/register`) -> Anında işletme hesabı ve dijital QR/menü paneli.
+     * **Ürün Kataloğunu İnceleyin** (`/catalog`) -> Örnek tasarımlar, baskı şablonları ve özellikler.
+
+4. **Doğrulanan Gerçek Altyapı Özellikleri:**
+   * Google Haritalar / Yorum yönlendirmesi (`google_review_url`),
+   * Hibrit havuzlama (nakit + IBAN/FAST + sanal POS),
+   * Çok dilli turist arayüzü,
+   * Komisyonsuz doğrudan işletme/personel hesabına FAST bahşiş akışı doğrulanmış ve korunmuştur.
