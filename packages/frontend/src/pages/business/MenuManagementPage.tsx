@@ -23,6 +23,8 @@ import {
   Layers,
   ChevronRight,
   ChevronLeft,
+  ChevronUp,
+  ChevronDown,
   Search,
   Check,
   AlertTriangle,
@@ -40,42 +42,78 @@ import {
 const MENU_THEMES: Array<{
   id: MenuThemeKey;
   title: string;
-  subtitle: string;
-  badge: string;
+  subtitle: { tr: string; en: string };
+  badge: { tr: string; en: string };
   colors: [string, string, string];
-  desc: string;
+  desc: { tr: string; en: string };
 }> = [
   {
     id: 'DARK_LUXURY',
     title: 'Dark Luxury & Gold',
-    subtitle: 'Fine Dining, Steakhouse, Lounge & Bar',
-    badge: 'Popüler & Lüks',
+    subtitle: {
+      tr: 'Fine Dining, Steakhouse, Lounge & Bar',
+      en: 'Fine Dining, Steakhouse, Lounge & Bar',
+    },
+    badge: {
+      tr: 'Popüler & Lüks',
+      en: 'Popular & Luxury',
+    },
     colors: ['#0D0D11', '#D4AF37', '#1E1E24'],
-    desc: 'Koyu antrasit ve füme cam zemin üzerinde altın/bronz detaylar, gece mekanları için büyüleyici atmosfer.',
+    desc: {
+      tr: 'Koyu antrasit ve füme cam zemin üzerinde altın/bronz detaylar, gece mekanları için büyüleyici atmosfer.',
+      en: 'Deep charcoal and smoked glass base with gold/bronze accents, captivating atmosphere for evening venues.',
+    },
   },
   {
     id: 'WARM_ARTISAN',
     title: 'Warm Artisan & Bakery',
-    subtitle: 'Butik Kafe, Fırın, Kahvaltı & Brunch',
-    badge: 'Sıcak & Doğal',
+    subtitle: {
+      tr: 'Butik Kafe, Fırın, Kahvaltı & Brunch',
+      en: 'Boutique Cafe, Bakery, Breakfast & Brunch',
+    },
+    badge: {
+      tr: 'Sıcak & Doğal',
+      en: 'Warm & Natural',
+    },
     colors: ['#FBF8F3', '#C27803', '#FFFFFF'],
-    desc: 'Sıcak krem, kum ve pişmiş toprak tonları. Butik kahveciler ve fırınlar için organik, editoryal şıklık.',
+    desc: {
+      tr: 'Sıcak krem, kum ve pişmiş toprak tonları. Butik kahveciler ve fırınlar için organik, editoryal şıklık.',
+      en: 'Warm cream, sand, and terracotta tones. Organic, editorial elegance for boutique cafes and bakeries.',
+    },
   },
   {
     id: 'MODERN_EMERALD',
     title: 'Modern Emerald & Fresh',
-    subtitle: 'Bistro, Vegan, Sağlıklı Yaşam & Bahçe',
-    badge: 'Ferah & Taze',
+    subtitle: {
+      tr: 'Bistro, Vegan, Sağlıklı Yaşam & Bahçe',
+      en: 'Bistro, Vegan, Healthy Living & Garden',
+    },
+    badge: {
+      tr: 'Ferah & Taze',
+      en: 'Fresh & Vibrant',
+    },
     colors: ['#F8FAFC', '#059669', '#FFFFFF'],
-    desc: 'Canlı zümrüt yeşili ve temiz zemin. Taze, sağlıklı lezzetler sunan modern mutfaklar için birebir.',
+    desc: {
+      tr: 'Canlı zümrüt yeşili ve temiz zemin. Taze, sağlıklı lezzetler sunan modern mutfaklar için birebir.',
+      en: 'Vibrant emerald green and crisp backgrounds. Perfect for modern kitchens offering fresh, healthy dishes.',
+    },
   },
   {
     id: 'MIDNIGHT_ROSE',
     title: 'Midnight Velvet & Rose',
-    subtitle: 'Kokteyl Bar, Şarap Evi, Romantik Restoran',
-    badge: 'Zarif & Romantik',
+    subtitle: {
+      tr: 'Kokteyl Bar, Şarap Evi, Romantik Restoran',
+      en: 'Cocktail Bar, Wine Bar, Romantic Dining',
+    },
+    badge: {
+      tr: 'Zarif & Romantik',
+      en: 'Elegant & Romantic',
+    },
     colors: ['#140D14', '#FB7185', '#281726'],
-    desc: 'Derin kadife mürdüm ve gül kurusu vurgular. Özel akşamlar ve şık kokteyl barlar için büyüleyici bir aura.',
+    desc: {
+      tr: 'Derin kadife mürdüm ve gül kurusu vurgular. Özel akşamlar ve şık kokteyl barlar için büyüleyici bir aura.',
+      en: 'Deep velvet plum and dusty rose accents. Enchanting aura for special evenings and upscale cocktail bars.',
+    },
   },
 ];
 
@@ -321,13 +359,13 @@ export const MenuManagementPage: React.FC = () => {
   };
 
   const handleDeleteCategory = async (cat: MenuCategory) => {
-    if (!confirm(t('menu.deleteCategoryConfirm') || `Delete category "${cat.name}" and all its items?`)) return;
+    if (!confirm(t('menu.deleteCategoryConfirm') || (language === 'tr' ? `"${cat.name}" kategorisini ve içerisindeki tüm ürünleri silmek istediğinize emin misiniz?` : `Delete category "${cat.name}" and all its items?`))) return;
     try {
       await api.delete(`/business/menu/categories/${cat.id}`);
-      showToast(`Category "${cat.name}" deleted`);
+      showToast(language === 'tr' ? `"${cat.name}" kategorisi silindi` : `Category "${cat.name}" deleted`);
       await loadMenu();
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Failed to delete category', 'error');
+      showToast(err.response?.data?.error || (language === 'tr' ? 'Kategori silinemedi' : 'Failed to delete category'), 'error');
     }
   };
 
@@ -343,6 +381,29 @@ export const MenuManagementPage: React.FC = () => {
     try {
       await api.put('/business/menu/categories/reorder', {
         categoryIds: reordered.map((c) => c.id),
+      });
+    } catch {
+      loadMenu();
+    }
+  };
+
+  const handleMoveItem = async (index: number, direction: 'up' | 'down') => {
+    if (!activeCategory) return;
+    const items = activeCategory.items || [];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= items.length) return;
+
+    const reorderedItems = [...items];
+    const [moved] = reorderedItems.splice(index, 1);
+    reorderedItems.splice(targetIndex, 0, moved);
+
+    setCategories((prev) =>
+      prev.map((c) => (c.id === activeCategory.id ? { ...c, items: reorderedItems } : c))
+    );
+
+    try {
+      await api.put('/business/menu/items/reorder', {
+        itemIds: reorderedItems.map((i) => i.id),
       });
     } catch {
       loadMenu();
@@ -500,28 +561,28 @@ export const MenuManagementPage: React.FC = () => {
     try {
       if (editingProduct) {
         await api.put(`/business/menu/items/${editingProduct.id}`, payload);
-        showToast(`Product "${productName}" updated`);
+        showToast(language === 'tr' ? `"${productName}" ürünü güncellendi` : `Product "${productName}" updated`);
       } else {
         await api.post('/business/menu/items', payload);
-        showToast(`Product "${productName}" created`);
+        showToast(language === 'tr' ? `"${productName}" ürünü eklendi` : `Product "${productName}" created`);
       }
       setIsProductModalOpen(false);
       await loadMenu();
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Operation failed', 'error');
+      showToast(err.response?.data?.error || (language === 'tr' ? 'İşlem başarısız oldu' : 'Operation failed'), 'error');
     } finally {
       setSubmittingProduct(false);
     }
   };
 
   const handleDeleteProduct = async (item: MenuItem) => {
-    if (!confirm(t('menu.deleteProductConfirm') || `Delete product "${item.name}"?`)) return;
+    if (!confirm(t('menu.deleteProductConfirm') || (language === 'tr' ? `"${item.name}" ürününü silmek istediğinize emin misiniz?` : `Delete product "${item.name}"?`))) return;
     try {
       await api.delete(`/business/menu/items/${item.id}`);
-      showToast(`Product "${item.name}" deleted`);
+      showToast(language === 'tr' ? `"${item.name}" ürünü silindi` : `Product "${item.name}" deleted`);
       await loadMenu();
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Failed to delete product', 'error');
+      showToast(err.response?.data?.error || (language === 'tr' ? 'Ürün silinemedi' : 'Failed to delete product'), 'error');
     }
   };
 
@@ -608,7 +669,9 @@ export const MenuManagementPage: React.FC = () => {
           {t('menu.menuUsageMode')}
         </h3>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 1.25rem 0' }}>
-          İşletmenizin ihtiyacına uygun menü seçeneğini belirleyin. Tüm ayarlar anında Smart QR'ınıza yansır.
+          {language === 'tr'
+            ? "İşletmenizin ihtiyacına uygun menü seçeneğini belirleyin. Tüm ayarlar anında Smart QR'ınıza yansır."
+            : 'Select the menu option that fits your business needs. All changes reflect instantly on your Smart QR.'}
         </p>
 
         <div
@@ -651,7 +714,7 @@ export const MenuManagementPage: React.FC = () => {
                   border: '1px solid rgba(16, 185, 129, 0.4)',
                 }}
               >
-                ÖNERİLEN
+                {language === 'tr' ? 'ÖNERİLEN' : 'RECOMMENDED'}
               </span>
             </div>
             <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
@@ -721,7 +784,7 @@ export const MenuManagementPage: React.FC = () => {
               border: '1px solid rgba(255, 255, 255, 0.07)',
             }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>
                   {t('menu.externalUrlLabel')}
@@ -741,7 +804,7 @@ export const MenuManagementPage: React.FC = () => {
                 <input
                   type="text"
                   className="input"
-                  placeholder={t('menu.buttonTitlePlaceholder') || 'Örn: Menüyü Gör'}
+                  placeholder={t('menu.buttonTitlePlaceholder') || (language === 'tr' ? 'Örn: Menüyü Gör' : 'e.g. View Menu')}
                   value={menuConfig.menu_title || ''}
                   onChange={(e) => setMenuConfig({ ...menuConfig, menu_title: e.target.value })}
                 />
@@ -754,7 +817,7 @@ export const MenuManagementPage: React.FC = () => {
                 onClick={() => handleSaveConfig()}
                 disabled={savingConfig}
               >
-                {savingConfig ? 'Kaydediliyor...' : t('menu.saveChanges')}
+                {savingConfig ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...') : t('menu.saveChanges')}
               </button>
               {menuConfig.menu_url && (
                 <a
@@ -765,7 +828,7 @@ export const MenuManagementPage: React.FC = () => {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
                   <ExternalLink size={14} />
-                  <span>Linki Test Et</span>
+                  <span>{language === 'tr' ? 'Linki Test Et' : 'Test Link'}</span>
                 </a>
               )}
             </div>
@@ -840,7 +903,9 @@ export const MenuManagementPage: React.FC = () => {
               </label>
             </div>
             <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              💡 Not: Her iki modda da misafir tek dokunuşla menü ve bahşiş ekranları arasında sorunsuzca geçiş yapabilir.
+              {language === 'tr'
+                ? '💡 Not: Her iki modda da misafir tek dokunuşla menü ve bahşiş ekranları arasında sorunsuzca geçiş yapabilir.'
+                : '💡 Note: In both modes, guests can switch seamlessly between the menu and tipping screen with a single tap.'}
             </p>
           </div>
         )}
@@ -954,7 +1019,7 @@ export const MenuManagementPage: React.FC = () => {
                         color: isSelected ? '#ffffff' : 'var(--text-muted)',
                       }}
                     >
-                      {theme.badge}
+                      {language === 'tr' ? theme.badge.tr : theme.badge.en}
                     </span>
                   </div>
 
@@ -962,10 +1027,10 @@ export const MenuManagementPage: React.FC = () => {
                     {theme.title}
                   </div>
                   <div style={{ fontSize: '0.76rem', fontWeight: 600, color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                    {theme.subtitle}
+                    {language === 'tr' ? theme.subtitle.tr : theme.subtitle.en}
                   </div>
                   <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
-                    {theme.desc}
+                    {language === 'tr' ? theme.desc.tr : theme.desc.en}
                   </p>
                 </div>
               );
@@ -1000,7 +1065,7 @@ export const MenuManagementPage: React.FC = () => {
                     }}
                   >
                     <Upload size={11} />
-                    <span>Yükle</span>
+                    <span>{language === 'tr' ? 'Yükle' : 'Upload'}</span>
                   </button>
                   <button
                     type="button"
@@ -1153,7 +1218,7 @@ export const MenuManagementPage: React.FC = () => {
                     }}
                   >
                     <span>📐</span>
-                    <span>1200 × 500 px (16:9 veya 21:9)</span>
+                    <span>1200 × 500 px ({language === 'tr' ? '16:9 veya 21:9' : '16:9 or 21:9'})</span>
                   </div>
                 </div>
               ) : (
@@ -1163,7 +1228,7 @@ export const MenuManagementPage: React.FC = () => {
                     <input
                       type="url"
                       className="input"
-                      placeholder="https://... görsel bağlantısı yapıştırın"
+                      placeholder={language === 'tr' ? 'https://... görsel bağlantısı yapıştırın' : 'https://... paste image URL'}
                       value={coverUrlInput}
                       onChange={(e) => setCoverUrlInput(e.target.value)}
                       onKeyDown={(e) => {
@@ -1429,7 +1494,7 @@ export const MenuManagementPage: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={menuConfig.enable_item_stories ?? true}
-                  onChange={() => {}}
+                  readOnly
                   style={{ width: '18px', height: '18px', accentColor: '#10b981', cursor: 'pointer' }}
                 />
               </div>
@@ -1543,7 +1608,7 @@ export const MenuManagementPage: React.FC = () => {
                               type="button"
                               onClick={() => handleMoveCategory(idx, 'left')}
                               style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 2 }}
-                              title="Sola Taşı"
+                              title={language === 'tr' ? 'Sola Taşı' : 'Move Left'}
                             >
                               <ChevronLeft size={14} />
                             </button>
@@ -1553,7 +1618,7 @@ export const MenuManagementPage: React.FC = () => {
                               type="button"
                               onClick={() => handleMoveCategory(idx, 'right')}
                               style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 2 }}
-                              title="Sağa Taşı"
+                              title={language === 'tr' ? 'Sağa Taşı' : 'Move Right'}
                             >
                               <ChevronRight size={14} />
                             </button>
@@ -1562,7 +1627,7 @@ export const MenuManagementPage: React.FC = () => {
                             type="button"
                             onClick={() => openEditCategory(cat)}
                             style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 2 }}
-                            title="Kategoriyi Düzenle"
+                            title={t('menu.editCategory') || (language === 'tr' ? 'Kategoriyi Düzenle' : 'Edit Category')}
                           >
                             <Edit2 size={13} />
                           </button>
@@ -1570,7 +1635,7 @@ export const MenuManagementPage: React.FC = () => {
                             type="button"
                             onClick={() => handleDeleteCategory(cat)}
                             style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 2 }}
-                            title="Kategoriyi Sil"
+                            title={t('menu.deleteCategory') || (language === 'tr' ? 'Kategoriyi Sil' : 'Delete Category')}
                           >
                             <Trash2 size={13} />
                           </button>
@@ -1623,7 +1688,7 @@ export const MenuManagementPage: React.FC = () => {
                     <input
                       type="text"
                       className="input"
-                      placeholder="Ürün ara..."
+                      placeholder={t('menu.searchPlaceholder') || (language === 'tr' ? 'Ürün ara...' : 'Search items...')}
                       value={productSearch}
                       onChange={(e) => setProductSearch(e.target.value)}
                       style={{ paddingLeft: '2.2rem', fontSize: '0.82rem' }}
@@ -1654,10 +1719,14 @@ export const MenuManagementPage: React.FC = () => {
                 <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
                   <UtensilsCrossed size={42} style={{ margin: '0 auto 0.75rem', opacity: 0.3 }} />
                   <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
-                    {productSearch ? 'Aramaya uygun ürün bulunamadı' : 'Bu kategoride henüz ürün yok'}
+                    {productSearch
+                      ? (language === 'tr' ? 'Aramaya uygun ürün bulunamadı' : 'No items match your search')
+                      : (language === 'tr' ? 'Bu kategoride henüz ürün yok' : 'No products in this category yet')}
                   </div>
                   <p style={{ fontSize: '0.82rem', marginTop: '0.35rem' }}>
-                    Yukarıdaki "+ Yeni Ürün Ekle" butonunu kullanarak ilk ürününüzü ekleyin.
+                    {language === 'tr'
+                      ? 'Yukarıdaki "+ Yeni Ürün Ekle" butonunu kullanarak ilk ürününüzü ekleyin.'
+                      : 'Use the "+ Add Product" button above to add your first item.'}
                   </p>
                 </div>
               ) : (
@@ -1668,7 +1737,7 @@ export const MenuManagementPage: React.FC = () => {
                     gap: '1rem',
                   }}
                 >
-                  {filteredItems.map((item) => (
+                  {filteredItems.map((item, itemIdx) => (
                     <div
                       key={item.id}
                       style={{
@@ -1698,7 +1767,8 @@ export const MenuManagementPage: React.FC = () => {
                                 flexShrink: 0,
                               }}
                               onError={(e) => {
-                                (e.target as HTMLElement).style.display = 'none';
+                                (e.currentTarget as HTMLImageElement).src =
+                                  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="%2327272a"><rect width="64" height="64"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2371717a" font-size="9">Photo</text></svg>';
                               }}
                             />
                           ) : (
@@ -1741,7 +1811,7 @@ export const MenuManagementPage: React.FC = () => {
                                     }}
                                   >
                                     <Sparkles size={10} />
-                                    <span>Şefin Seçimi</span>
+                                    <span>{language === 'tr' ? 'Şefin Seçimi' : "Chef's Choice"}</span>
                                   </span>
                                 )}
                               </div>
@@ -1854,17 +1924,51 @@ export const MenuManagementPage: React.FC = () => {
                             onChange={() => handleToggleProductStatus(item)}
                             style={{ accentColor: '#10b981', cursor: 'pointer' }}
                           />
-                          <span>{item.is_active ? 'Stokta Var' : 'Tükendi'}</span>
+                          <span>{item.is_active ? (language === 'tr' ? 'Stokta Var' : 'In Stock') : (language === 'tr' ? 'Tükendi' : 'Sold Out')}</span>
                         </label>
 
-                        {/* Edit & Delete Buttons */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        {/* Actions (Reorder Up/Down + Edit + Delete) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          {filteredItems.length === (activeCategory.items?.length || 0) && (
+                            <>
+                              <button
+                                type="button"
+                                className="btn btn-secondary"
+                                disabled={itemIdx === 0}
+                                onClick={() => handleMoveItem(itemIdx, 'up')}
+                                style={{
+                                  padding: '0.3rem 0.45rem',
+                                  fontSize: '0.75rem',
+                                  opacity: itemIdx === 0 ? 0.35 : 1,
+                                  cursor: itemIdx === 0 ? 'not-allowed' : 'pointer',
+                                }}
+                                title={language === 'tr' ? 'Yukarı Taşı' : 'Move Up'}
+                              >
+                                <ChevronUp size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-secondary"
+                                disabled={itemIdx === (activeCategory.items?.length || 0) - 1}
+                                onClick={() => handleMoveItem(itemIdx, 'down')}
+                                style={{
+                                  padding: '0.3rem 0.45rem',
+                                  fontSize: '0.75rem',
+                                  opacity: itemIdx === (activeCategory.items?.length || 0) - 1 ? 0.35 : 1,
+                                  cursor: itemIdx === (activeCategory.items?.length || 0) - 1 ? 'not-allowed' : 'pointer',
+                                }}
+                                title={language === 'tr' ? 'Aşağı Taşı' : 'Move Down'}
+                              >
+                                <ChevronDown size={13} />
+                              </button>
+                            </>
+                          )}
                           <button
                             type="button"
                             className="btn btn-secondary"
                             onClick={() => openEditProduct(item)}
                             style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem' }}
-                            title="Düzenle"
+                            title={t('common.edit') || (language === 'tr' ? 'Düzenle' : 'Edit')}
                           >
                             <Edit2 size={13} />
                           </button>
@@ -1873,7 +1977,7 @@ export const MenuManagementPage: React.FC = () => {
                             className="btn btn-secondary"
                             onClick={() => handleDeleteProduct(item)}
                             style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem', color: '#f87171' }}
-                            title="Sil"
+                            title={t('common.delete') || (language === 'tr' ? 'Sil' : 'Delete')}
                           >
                             <Trash2 size={13} />
                           </button>
@@ -1949,10 +2053,10 @@ export const MenuManagementPage: React.FC = () => {
       >
         <form onSubmit={handleProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', maxHeight: '80vh', overflowY: 'auto', paddingRight: '0.25rem' }}>
           {/* Category selection */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
-                Kategori *
+                {language === 'tr' ? 'Kategori *' : 'Category *'}
               </label>
               <select
                 className="input"
@@ -1983,9 +2087,9 @@ export const MenuManagementPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Name and Price */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
-            <div>
+          {/* Name, Price, and Currency */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ flex: '2 1 200px' }}>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
                 {t('menu.productName')} *
               </label>
@@ -1993,12 +2097,12 @@ export const MenuManagementPage: React.FC = () => {
                 type="text"
                 className="input"
                 required
-                placeholder={t('menu.productNamePlaceholder') || 'Örn: Latte'}
+                placeholder={t('menu.productNamePlaceholder') || (language === 'tr' ? 'Örn: Latte' : 'e.g. Latte')}
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
               />
             </div>
-            <div>
+            <div style={{ flex: '1 1 110px' }}>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
                 {t('menu.price')} *
               </label>
@@ -2013,17 +2117,23 @@ export const MenuManagementPage: React.FC = () => {
                 onChange={(e) => setProductPrice(e.target.value)}
               />
             </div>
-            <div>
+            <div style={{ flex: '1 1 90px' }}>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
                 {t('menu.currency')}
               </label>
-              <input
-                type="text"
+              <select
                 className="input"
-                maxLength={3}
                 value={productCurrency}
-                onChange={(e) => setProductCurrency(e.target.value.toUpperCase())}
-              />
+                onChange={(e) => setProductCurrency(e.target.value)}
+              >
+                {[businessCurrency, 'TRY', 'USD', 'EUR', 'GBP', 'AED', 'SAR', 'IDR', 'RUB']
+                  .filter((v, idx, arr) => arr.indexOf(v) === idx && Boolean(v))
+                  .map((curr) => (
+                    <option key={curr} value={curr}>
+                      {curr}
+                    </option>
+                  ))}
+              </select>
             </div>
           </div>
 
@@ -2138,7 +2248,7 @@ export const MenuManagementPage: React.FC = () => {
                     alt={productName || 'Preview'}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23334155"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="10">Hatalı Görsel</text></svg>';
+                      (e.target as HTMLImageElement).src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23334155"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="10">${language === 'tr' ? 'Hatalı Görsel' : 'Invalid Image'}</text></svg>`;
                     }}
                   />
                 </div>
@@ -2354,17 +2464,19 @@ export const MenuManagementPage: React.FC = () => {
               </div>
               <div>
                 <div style={{ fontSize: '0.86rem', fontWeight: 700, color: productIsFeatured ? '#fbbf24' : 'var(--text-primary)' }}>
-                  ⭐ Şefin Seçimi & Hikaye Vitrini
+                  {language === 'tr' ? '⭐ Şefin Seçimi & Hikaye Vitrini' : "⭐ Chef's Highlight & Stories"}
                 </div>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                  Bu ürünü menünün en üstündeki yuvarlak "Şefin Seçtikleri" hikayelerinde göster.
+                  {language === 'tr'
+                    ? 'Bu ürünü menünün en üstündeki yuvarlak "Şefin Seçtikleri" hikayelerinde göster.'
+                    : 'Display this item in the circular stories showcase at the top of your menu.'}
                 </div>
               </div>
             </div>
             <input
               type="checkbox"
               checked={productIsFeatured}
-              onChange={() => {}}
+              readOnly
               style={{ width: '18px', height: '18px', accentColor: '#f59e0b', cursor: 'pointer' }}
             />
           </div>
@@ -2372,7 +2484,7 @@ export const MenuManagementPage: React.FC = () => {
           {/* Tags */}
           <div>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>
-              {t('menu.tags')} (Virgülle ayırarak yazın)
+              {t('menu.tags')} ({language === 'tr' ? 'Virgülle ayırarak yazın' : 'Comma-separated'})
             </label>
             <input
               type="text"
