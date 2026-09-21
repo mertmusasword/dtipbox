@@ -12,10 +12,11 @@ export const FloatingSupportWidget: React.FC = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Hide on tipping / checkout / auth screens AND all admin screens or for ADMIN role
+  // Hide on tipping / checkout / menu / auth screens AND all admin screens or for ADMIN role
   if (
     location.pathname.startsWith('/tip/') ||
     location.pathname.startsWith('/pay/') ||
+    location.pathname.startsWith('/menu/') ||
     location.pathname === '/login' ||
     location.pathname === '/register' ||
     location.pathname.startsWith('/admin') ||

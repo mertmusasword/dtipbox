@@ -185,7 +185,7 @@ export const MenuPage: React.FC = () => {
         minHeight: '100vh',
         background: '#FAF9F6',
         color: '#1C1917',
-        paddingBottom: smartQr.enableTips ? '6.5rem' : '3rem',
+        paddingBottom: smartQr.enableTips ? '4.8rem' : '2.5rem',
       }}
     >
       {/* TOP COMPACT BRAND & ACTION BAR */}
@@ -272,14 +272,14 @@ export const MenuPage: React.FC = () => {
           </div>
 
           {/* Right Header Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
             {/* Wi-Fi Trigger if enabled */}
             {smartQr.enableWifi && smartQr.wifiSsid && (
               <button
                 type="button"
                 onClick={() => setIsWifiModalOpen(true)}
                 style={{
-                  padding: '0.45rem 0.8rem',
+                  padding: '0.4rem 0.75rem',
                   borderRadius: '999px',
                   background: 'rgba(14, 165, 233, 0.08)',
                   border: '1px solid rgba(14, 165, 233, 0.25)',
@@ -291,10 +291,13 @@ export const MenuPage: React.FC = () => {
                   gap: '0.35rem',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  height: '34px',
                 }}
               >
-                <Wifi size={13} />
-                <span>Wi-Fi</span>
+                <Wifi size={13} style={{ flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>Wi-Fi</span>
               </button>
             )}
 
@@ -769,11 +772,11 @@ export const MenuPage: React.FC = () => {
         <div
           style={{
             position: 'fixed',
-            bottom: '1rem',
+            bottom: '0.85rem',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 'calc(100% - 2rem)',
-            maxWidth: '540px',
+            width: 'calc(100% - 1.75rem)',
+            maxWidth: '480px',
             zIndex: 50,
           }}
         >
@@ -783,15 +786,13 @@ export const MenuPage: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0.9rem 1.35rem',
-              borderRadius: '18px',
-              background: 'linear-gradient(135deg, #059669, #047857)',
+              padding: '0.55rem 0.85rem 0.55rem 0.75rem',
+              borderRadius: '999px',
+              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
               color: '#ffffff',
-              boxShadow: '0 10px 28px rgba(5, 150, 105, 0.38)',
+              boxShadow: '0 8px 24px rgba(5, 150, 105, 0.35)',
               border: '1px solid rgba(255, 255, 255, 0.25)',
               textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: '0.94rem',
               transition: 'transform 0.15s, box-shadow 0.15s',
             }}
             onMouseEnter={(e) => {
@@ -801,31 +802,50 @@ export const MenuPage: React.FC = () => {
               e.currentTarget.style.transform = 'scale(1)';
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0 }}>
               <div
                 style={{
-                  width: '34px',
-                  height: '34px',
+                  width: '28px',
+                  height: '28px',
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  flexShrink: 0,
                 }}
               >
-                <Heart size={18} fill="#ffffff" />
+                <Heart size={14} fill="#ffffff" />
               </div>
-              <div>
-                <div style={{ fontWeight: 800 }}>{t('menu.tipStaffMobile') || 'Garsona Bahşiş Bırak'}</div>
-                <div style={{ fontSize: '0.74rem', opacity: 0.92, fontWeight: 500 }}>
-                  {table ? `Masa: ${table.name}` : 'Dijital bahşiş ile ekibi destekleyin'}
-                </div>
+              <div style={{ minWidth: 0, display: 'flex', alignItems: 'baseline', gap: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <span style={{ fontWeight: 800, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                  {t('menu.tipStaffMobile') || 'Bahşiş Bırak'}
+                </span>
+                {table && (
+                  <span style={{ fontSize: '0.72rem', opacity: 0.85, fontWeight: 500, whiteSpace: 'nowrap' }}>
+                    ({table.name})
+                  </span>
+                )}
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.86rem' }}>
-              <span>Bahşiş Ver</span>
-              <ArrowRight size={16} />
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                background: 'rgba(255, 255, 255, 0.22)',
+                padding: '0.35rem 0.7rem',
+                borderRadius: '999px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                marginLeft: '0.5rem',
+              }}
+            >
+              <span>{isTr ? 'Bahşiş Ver' : 'Leave Tip'}</span>
+              <ArrowRight size={13} />
             </div>
           </Link>
         </div>
