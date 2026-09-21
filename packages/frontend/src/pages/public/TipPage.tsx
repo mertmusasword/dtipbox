@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import QRCode from 'qrcode';
 import { api } from '../../api/client';
@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import { getSmartQrText } from './tip/smartQrI18n';
 import {
   trackQrScanned,
   trackTipFlowStarted,
@@ -53,6 +54,7 @@ export const TipPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, formatCurrency, dir, language } = useLanguage();
+  const sqt = useMemo(() => getSmartQrText(language), [language]);
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -649,12 +651,10 @@ export const TipPage: React.FC = () => {
                         ))}
                       </div>
                       <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#1C1917', marginBottom: '0.35rem' }}>
-                        {language === 'tr' ? 'Bizi Çok Mutlu Ettiniz! 🎉' : 'You Made Our Day! 🎉'}
+                        {sqt.googleReviewTitle}
                       </h4>
                       <p style={{ fontSize: '0.82rem', color: '#57534E', lineHeight: 1.45, marginBottom: '0.9rem' }}>
-                        {language === 'tr'
-                          ? `${details?.business?.name || 'Ekibimize'} destek olmak için 5 yıldızlı değerlendirmenizi Google Haritalar'da da paylaşmak ister misiniz?`
-                          : `Would you like to support ${details?.business?.name || 'our team'} by posting your 5-star review on Google Maps?`}
+                        {sqt.googleReviewSubtitle(details?.business?.name || (language === 'tr' ? 'Ekibimize' : 'our team'))}
                       </p>
 
                       <button
@@ -681,15 +681,13 @@ export const TipPage: React.FC = () => {
                           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                         </svg>
                         <span>
-                          {feedbackComment.trim()
-                            ? (language === 'tr' ? 'Yorumu Kopyala & Google\'da Paylaş' : 'Copy Review & Post on Google')
-                            : (language === 'tr' ? 'Google\'da 5 Yıldız Ver' : 'Post 5 Stars on Google')}
+                          {feedbackComment.trim() ? sqt.copyReviewAndPost : sqt.post5Stars}
                         </span>
                         <ExternalLink size={14} />
                       </button>
                       {copiedReviewText && (
                         <div style={{ fontSize: '0.74rem', color: '#059669', marginTop: '0.45rem', fontWeight: 600 }}>
-                          {language === 'tr' ? '✓ Yorumunuz panoya kopyalandı! Google sayfasına yapıştırabilirsiniz.' : '✓ Review copied to clipboard! Paste it on Google.'}
+                          {sqt.reviewCopiedNotice}
                         </div>
                       )}
                     </div>
@@ -842,12 +840,10 @@ export const TipPage: React.FC = () => {
         </div>
 
         <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
-          {language === 'tr' ? 'Misafir Wi-Fi Ağı' : 'Guest Wi-Fi Network'}
+          {sqt.wifiTitle}
         </h3>
         <p style={{ color: '#78716C', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-          {language === 'tr'
-            ? 'İşletmemize özel yüksek hızlı kablosuz internete bağlanın.'
-            : 'Connect to our high-speed guest Wi-Fi network.'}
+          {sqt.wifiSubtitle}
         </p>
 
         <div style={{
@@ -859,7 +855,7 @@ export const TipPage: React.FC = () => {
           textAlign: 'left',
         }}>
           <div style={{ fontSize: '0.72rem', color: '#78716C', marginBottom: '0.2rem', fontWeight: 600 }}>
-            {language === 'tr' ? 'AĞ ADI (SSID)' : 'NETWORK NAME (SSID)'}
+            {sqt.networkName}
           </div>
           <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span>{details.smartQr.wifiSsid}</span>
@@ -880,7 +876,7 @@ export const TipPage: React.FC = () => {
           }}>
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontSize: '0.72rem', color: '#78716C', marginBottom: '0.2rem', fontWeight: 600 }}>
-                {language === 'tr' ? 'Wİ-Fİ ŞİFRESİ' : 'WI-FI PASSWORD'}
+                {sqt.wifiPassword}
               </div>
               <div style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.05em', color: '#0284C7' }}>
                 {details.smartQr.wifiPassword}
@@ -901,7 +897,7 @@ export const TipPage: React.FC = () => {
               }}
             >
               {copiedWifi ? <Check size={15} /> : <Copy size={15} />}
-              {copiedWifi ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Şifreyi Kopyala' : 'Copy Password')}
+              {copiedWifi ? sqt.copied : sqt.copyPassword}
             </button>
           </div>
         )}
@@ -1013,7 +1009,7 @@ export const TipPage: React.FC = () => {
               }}>
                 <div>
                   <div style={{ fontSize: '0.68rem', color: '#9D174D', fontWeight: 600 }}>
-                    {language === 'tr' ? 'KAMPANYA KODU' : 'PROMO CODE'}
+                    {sqt.promoCode}
                   </div>
                   <div style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '0.08em', color: '#DB2777' }}>
                     {camp.discountCode}
@@ -1034,14 +1030,14 @@ export const TipPage: React.FC = () => {
                   }}
                 >
                   {copiedCoupon === camp.discountCode ? <Check size={14} style={{ color: '#059669' }} /> : <Copy size={14} />}
-                  {copiedCoupon === camp.discountCode ? (language === 'tr' ? 'Kopyalandı' : 'Copied') : (language === 'tr' ? 'Kodu Al' : 'Copy')}
+                  {copiedCoupon === camp.discountCode ? sqt.codeCopied : sqt.copyCode}
                 </button>
               </div>
             )}
 
             {camp.expiresAt && (
               <div style={{ fontSize: '0.72rem', color: '#78716C', marginTop: '0.6rem' }}>
-                ⏳ {language === 'tr' ? 'Son geçerlilik:' : 'Valid until:'} {new Date(camp.expiresAt).toLocaleDateString()}
+                ⏳ {sqt.validUntil} {new Date(camp.expiresAt).toLocaleDateString()}
               </div>
             )}
           </div>
@@ -1069,12 +1065,10 @@ export const TipPage: React.FC = () => {
               <CheckCircle2 size={30} />
             </div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669', marginBottom: '0.4rem' }}>
-              {language === 'tr' ? 'Geri Bildiriminiz Alındı!' : 'Feedback Received!'}
+              {sqt.feedbackReceivedTitle}
             </h3>
             <p style={{ color: '#78716C', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
-              {language === 'tr'
-                ? 'Değerli görüşleriniz doğrudan işletme yönetimine iletilmiştir. Teşekkür ederiz.'
-                : 'Your valuable feedback has been submitted to management. Thank you!'}
+              {sqt.feedbackReceivedDesc}
             </p>
 
             {/* Google Review Gating Card (5 Stars Only) */}
@@ -1093,12 +1087,10 @@ export const TipPage: React.FC = () => {
                   ))}
                 </div>
                 <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#1C1917', marginBottom: '0.35rem' }}>
-                  {language === 'tr' ? 'Bizi Çok Mutlu Ettiniz! 🎉' : 'You Made Our Day! 🎉'}
+                  {sqt.googleReviewTitle}
                 </h4>
                 <p style={{ fontSize: '0.82rem', color: '#57534E', lineHeight: 1.45, marginBottom: '0.9rem' }}>
-                  {language === 'tr'
-                    ? `${details?.business?.name || 'Ekibimize'} destek olmak için 5 yıldızlı değerlendirmenizi Google Haritalar'da da paylaşmak ister misiniz?`
-                    : `Would you like to support ${details?.business?.name || 'our team'} by posting your 5-star review on Google Maps?`}
+                  {sqt.googleReviewSubtitle(details?.business?.name || (language === 'tr' ? 'Ekibimize' : 'our team'))}
                 </p>
 
                 <button
@@ -1125,9 +1117,7 @@ export const TipPage: React.FC = () => {
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                   </svg>
                   <span>
-                    {standaloneComment.trim()
-                      ? (language === 'tr' ? 'Yorumu Kopyala & Google\'da Paylaş' : 'Copy Review & Post on Google')
-                      : (language === 'tr' ? 'Google\'da 5 Yıldız Ver' : 'Post 5 Stars on Google')}
+                    {standaloneComment.trim() ? sqt.copyReviewAndPost : sqt.post5Stars}
                   </span>
                   <ExternalLink size={14} />
                 </button>
@@ -1146,7 +1136,7 @@ export const TipPage: React.FC = () => {
                 className="btn btn-secondary"
                 style={{ marginTop: '1.25rem', width: '100%' }}
               >
-                {language === 'tr' ? 'Kapat' : 'Close'}
+                {sqt.close}
               </button>
             )}
           </div>
@@ -1168,12 +1158,10 @@ export const TipPage: React.FC = () => {
             </div>
 
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
-              {language === 'tr' ? 'Deneyiminizi Nasıl Buldunuz?' : 'How was your experience?'}
+              {sqt.howWasExperience}
             </h3>
             <p style={{ color: '#78716C', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-              {language === 'tr'
-                ? 'Görüşleriniz hizmet kalitemizi artırmamız için çok değerlidir.'
-                : 'Your review helps us maintain and improve our quality of service.'}
+              {sqt.feedbackSubtitle}
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
@@ -1206,7 +1194,7 @@ export const TipPage: React.FC = () => {
               rows={3}
               value={standaloneComment}
               onChange={(e) => setStandaloneComment(e.target.value)}
-              placeholder={language === 'tr' ? 'Görüş veya önerinizi yazabilirsiniz (isteğe bağlı)...' : 'Write your comment or suggestion (optional)...'}
+              placeholder={sqt.feedbackPlaceholder}
               maxLength={500}
               className="input"
               style={{ marginBottom: '1.25rem', resize: 'vertical', background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
@@ -1223,9 +1211,7 @@ export const TipPage: React.FC = () => {
                 opacity: standaloneRating < 1 || standaloneSubmitting ? 0.5 : 1,
               }}
             >
-              {standaloneSubmitting
-                ? (language === 'tr' ? 'Gönderiliyor...' : 'Submitting...')
-                : (language === 'tr' ? 'Geri Bildirimi Gönder' : 'Submit Feedback')}
+              {standaloneSubmitting ? sqt.submitting : sqt.submitFeedback}
             </button>
           </form>
         )}
@@ -1253,12 +1239,10 @@ export const TipPage: React.FC = () => {
               <CheckCircle2 size={30} />
             </div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669', marginBottom: '0.4rem' }}>
-              {language === 'tr' ? 'Aramıza Hoş Geldiniz!' : 'Welcome to the Club!'}
+              {sqt.welcomeToClub}
             </h3>
             <p style={{ color: '#78716C', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
-              {language === 'tr'
-                ? 'Kaydınız başarıyla tamamlandı. Özel ikram ve fırsatlar ilk size ulaşacak!'
-                : 'You are now enrolled. Look out for VIP perks and invitations!'}
+              {sqt.welcomeToClubDesc(details?.business?.name || '')}
             </p>
             {activeModal && (
               <button
@@ -1267,7 +1251,7 @@ export const TipPage: React.FC = () => {
                 className="btn btn-secondary"
                 style={{ marginTop: '1.25rem', width: '100%' }}
               >
-                {language === 'tr' ? 'Kapat' : 'Close'}
+                {sqt.close}
               </button>
             )}
           </div>
@@ -1277,7 +1261,7 @@ export const TipPage: React.FC = () => {
             {!activeModal && (
               <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.35rem', color: '#1C1917' }}>
-                  {details.smartQr.signupTitle || (language === 'tr' ? 'VIP Ayrıcalık Kulübü' : 'VIP Member Club')}
+                  {details.smartQr.signupTitle || sqt.vipClubDefaultTitle}
                 </h3>
               </div>
             )}
@@ -1312,12 +1296,10 @@ export const TipPage: React.FC = () => {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.1rem' }}>
-                  {language === 'tr' ? 'Üyelik Avantajı' : 'Membership Perk'}
+                  {sqt.vipPerk}
                 </div>
                 <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1C1917', lineHeight: 1.3 }}>
-                  {details.smartQr.signupReward || (language === 'tr'
-                    ? 'Özel ikramlar ve indirim fırsatları'
-                    : 'Exclusive perks and special invitations')}
+                  {details.smartQr.signupReward || sqt.vipPerkDefault}
                 </div>
               </div>
             </div>
@@ -1325,13 +1307,13 @@ export const TipPage: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.25rem' }}>
               <div>
                 <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#57534E', display: 'block', marginBottom: '0.3rem' }}>
-                  {language === 'tr' ? 'Adınız Soyadınız' : 'Full Name'}
+                  {sqt.fullName}
                 </label>
                 <input
                   type="text"
                   value={leadName}
                   onChange={(e) => setLeadName(e.target.value)}
-                  placeholder={language === 'tr' ? 'Örn: Ahmet Yılmaz' : 'e.g. John Doe'}
+                  placeholder={sqt.fullNamePlaceholder}
                   className="input"
                   style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
                 />
@@ -1339,13 +1321,13 @@ export const TipPage: React.FC = () => {
 
               <div>
                 <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#57534E', display: 'block', marginBottom: '0.3rem' }}>
-                  {language === 'tr' ? 'E-posta Adresiniz' : 'Email Address'}
+                  {sqt.emailAddress}
                 </label>
                 <input
                   type="email"
                   value={leadEmail}
                   onChange={(e) => setLeadEmail(e.target.value)}
-                  placeholder="adiniz@ornek.com"
+                  placeholder={sqt.emailPlaceholder}
                   className="input"
                   style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
                 />
@@ -1353,13 +1335,13 @@ export const TipPage: React.FC = () => {
 
               <div>
                 <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#57534E', display: 'block', marginBottom: '0.3rem' }}>
-                  {language === 'tr' ? 'Telefon Numaranız (İsteğe Bağlı)' : 'Phone Number (Optional)'}
+                  {sqt.phoneOptional}
                 </label>
                 <input
                   type="tel"
                   value={leadPhone}
                   onChange={(e) => setLeadPhone(e.target.value)}
-                  placeholder="+90 5XX XXX XX XX"
+                  placeholder={sqt.phonePlaceholder}
                   className="input"
                   style={{ background: '#F5F5F4', border: '1.5px solid #E7E5E4', color: '#1C1917' }}
                 />
@@ -1382,9 +1364,7 @@ export const TipPage: React.FC = () => {
                   style={{ marginTop: '0.15rem', accentColor: '#059669', width: '16px', height: '16px' }}
                 />
                 <span>
-                  {language === 'tr'
-                    ? 'İşletmenin özel teklif, duyuru ve promosyon bildirimlerini almayı (KVKK kapsamında) onaylıyorum.'
-                    : 'I agree to receive special offers and updates in accordance with privacy laws.'}
+                  {sqt.kvkkConsent}
                 </span>
               </label>
             </div>
@@ -1400,9 +1380,7 @@ export const TipPage: React.FC = () => {
                 opacity: (!leadEmail && !leadPhone) || leadSubmitting ? 0.5 : 1,
               }}
             >
-              {leadSubmitting
-                ? (language === 'tr' ? 'Kaydediliyor...' : 'Enrolling...')
-                : (language === 'tr' ? 'Ayrıcalıklara Katıl' : 'Join VIP Club')}
+              {leadSubmitting ? sqt.enrolling : sqt.joinVipClub}
             </button>
           </form>
         )}
@@ -1571,7 +1549,7 @@ export const TipPage: React.FC = () => {
                     }}
                   >
                     <UtensilsCrossed size={14} />
-                    <span>{sq?.menuTitle || (language === 'tr' ? 'Menü' : 'Menu')}</span>
+                    <span>{sq?.menuTitle || sqt.menuChip}</span>
                     {isNativeMenu ? <ArrowRight size={12} style={{ opacity: 0.85 }} /> : <ExternalLink size={12} style={{ opacity: 0.75 }} />}
                   </button>
                 )}
@@ -1621,7 +1599,7 @@ export const TipPage: React.FC = () => {
                     }}
                   >
                     <Gift size={14} />
-                    <span>{language === 'tr' ? 'Fırsatlar' : 'Offers'}</span>
+                    <span>{sqt.offersChip}</span>
                     {Boolean(sq?.campaigns?.length) && (
                       <span style={{
                         fontSize: '0.7rem',
@@ -1658,7 +1636,7 @@ export const TipPage: React.FC = () => {
                     }}
                   >
                     <MessageSquareText size={14} />
-                    <span>{language === 'tr' ? 'Görüş Bildir' : 'Feedback'}</span>
+                    <span>{sqt.feedbackChip}</span>
                   </button>
                 )}
 

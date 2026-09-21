@@ -34,12 +34,12 @@ export const TipCalculatorPage: React.FC = () => {
   const meta = isEn ? SEO_TOOLS_EN['tip-calculator'] : SEO_TOOLS['tip-calculator'];
 
   // Currency State
-  const defaultCurrency = language === 'tr' ? '₺' : language === 'ja' ? '¥' : ['de', 'es', 'fr', 'pt'].includes(language) ? '€' : '$';
+  const defaultCurrency = language === 'tr' ? '₺' : language === 'ru' ? '₽' : language === 'ja' ? '¥' : ['de', 'es', 'fr', 'pt'].includes(language) ? '€' : '$';
   const [currency, setCurrency] = useState<string>(defaultCurrency);
 
   // Calculator State
-  const [billAmount, setBillAmount] = useState<number>(language === 'tr' ? 500 : 50);
-  const [tipPercent, setTipPercent] = useState<number>(language === 'tr' ? 10 : 18);
+  const [billAmount, setBillAmount] = useState<number>(language === 'tr' ? 500 : language === 'ru' ? 1500 : language === 'ja' ? 5000 : 50);
+  const [tipPercent, setTipPercent] = useState<number>(language === 'tr' ? 10 : language === 'ru' ? 10 : 18);
   const [guestCount, setGuestCount] = useState<number>(1);
   const [roundUp, setRoundUp] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
@@ -207,7 +207,7 @@ export const TipCalculatorPage: React.FC = () => {
                   step="5"
                   value={billAmount || ''}
                   onChange={(e) => setBillAmount(Math.max(0, parseFloat(e.target.value) || 0))}
-                  placeholder={language === 'tr' ? '500' : '50'}
+                  placeholder={language === 'tr' ? '500' : language === 'ru' ? '1500' : language === 'ja' ? '5000' : '50'}
                   className="tool-input"
                 />
               </div>

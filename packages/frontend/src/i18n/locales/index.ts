@@ -8,6 +8,7 @@ import fr from './fr';
 import pt from './pt';
 import id from './id';
 import ja from './ja';
+import ru from './ru';
 import { SupportedLanguage, TranslationDictionary } from '../types';
 
 export const translations: Record<SupportedLanguage, TranslationDictionary> = {
@@ -21,8 +22,9 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
   pt,
   id,
   ja,
+  ru,
 };
 
 export const locales = translations;
 
-export { en, tr, es, zh, ar, de, fr, pt, id, ja };
+export { en, tr, es, zh, ar, de, fr, pt, id, ja, ru };

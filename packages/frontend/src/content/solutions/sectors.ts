@@ -287,7 +287,7 @@ export const SECTOR_SOLUTIONS: Record<string, SectorSolution> = {
     faqs: [
       {
         question: 'Turistlerin Türkçe bilmesi gerekir mi?',
-        answer: 'Hayır. Naponi 10 farklı dili (İngilizce, Almanca, Rusça, Arapça, Fransızca vb.) otomatik olarak misafirin tarayıcı diline göre açar.',
+        answer: 'Hayır. Naponi 11 farklı dili (İngilizce, Almanca, Rusça, Arapça, Fransızca vb.) otomatik olarak misafirin tarayıcı diline göre açar.',
       },
       {
         question: 'Otel muhasebesine ek iş yükü getirir mi?',

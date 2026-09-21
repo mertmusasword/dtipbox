@@ -9,16 +9,16 @@ function assert(condition: boolean, message: string) {
 
 console.log('🌐 Starting Comprehensive i18n & RTL Verification Suite...\n');
 
-// 1. Verify 10 Supported Languages Metadata
+// 1. Verify 11 Supported Languages Metadata
 console.log('--- 1. Testing Supported Languages Count & Metadata ---');
-assert(SUPPORTED_LANGUAGES.length === 10, `Expected 10 languages, found ${SUPPORTED_LANGUAGES.length}`);
-const expectedCodes: SupportedLanguage[] = ['en', 'tr', 'es', 'zh', 'ar', 'de', 'fr', 'pt', 'id', 'ja'];
+assert(SUPPORTED_LANGUAGES.length === 11, `Expected 11 languages, found ${SUPPORTED_LANGUAGES.length}`);
+const expectedCodes: SupportedLanguage[] = ['en', 'tr', 'es', 'zh', 'ar', 'de', 'fr', 'pt', 'id', 'ja', 'ru'];
 for (const code of expectedCodes) {
   const meta = SUPPORTED_LANGUAGES.find((l) => l.code === code);
   assert(!!meta, `Language meta missing for ${code}`);
   assert(!!meta?.name && !!meta?.nativeName && !!meta?.flag, `Metadata incomplete for ${code}`);
 }
-console.log('✅ All 10 language metadata definitions verified.');
+console.log('✅ All 11 language metadata definitions verified.');
 
 // 2. Verify RTL for Arabic and LTR for others
 console.log('\n--- 2. Testing RTL/LTR Direction Configurations ---');
@@ -31,9 +31,9 @@ for (const meta of SUPPORTED_LANGUAGES) {
     assert(meta.dir === 'ltr', `${meta.code} should have dir="ltr"`);
   }
 }
-console.log('✅ All other 9 languages correctly set to "ltr".');
+console.log('✅ All other 10 languages correctly set to "ltr".');
 
-// 3. Verify Dictionary Completeness for All 10 Locales
+// 3. Verify Dictionary Completeness for All 11 Locales
 console.log('\n--- 3. Testing Translation Dictionaries Structure & Coverage ---');
 const enDict = locales.en;
 assert(!!enDict, 'English dictionary missing');
@@ -115,6 +115,7 @@ function formatCurrencyMock(amount: number, currency: string, lang: SupportedLan
     pt: 'pt-BR',
     id: 'id-ID',
     ja: 'ja-JP',
+    ru: 'ru-RU',
   };
   return new Intl.NumberFormat(localeMap[lang] || 'en-US', {
     style: 'currency',
@@ -147,7 +148,7 @@ for (const lang of expectedCodes) {
   const formattedTime = new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(testDate);
   assert(!!formattedDate && !!formattedTime, `Formatting failed for ${lang}`);
 }
-console.log('✅ Date and time formatting works seamlessly across all 10 locales.');
+console.log('✅ Date and time formatting works seamlessly across all 11 locales.');
 
 console.log('\n======================================================');
 console.log('🎉 ALL i18n & RTL VERIFICATION CHECKS PASSED (6/6)');

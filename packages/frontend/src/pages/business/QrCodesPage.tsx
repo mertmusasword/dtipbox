@@ -324,12 +324,18 @@ export const QrCodesPage: React.FC = () => {
   // Download Leads CSV
   const handleDownloadLeadsCsv = () => {
     if (!leads.length) return;
-    const headers = ['Ad Soyad', 'E-posta', 'Telefon', 'KVKK İzni', 'Kayıt Tarihi'];
+    const headers = [
+      t('common.name'),
+      t('common.email'),
+      t('common.phone'),
+      t('common.status'),
+      t('common.date'),
+    ];
     const rows = leads.map((l) => [
       `"${l.name || ''}"`,
       `"${l.email || ''}"`,
       `"${l.phone || ''}"`,
-      l.consent_marketing ? 'EVET' : 'HAYIR',
+      `"${l.consent_marketing ? t('common.yes') : t('common.no')}"`,
       `"${new Date(l.created_at).toLocaleString()}"`,
     ]);
 

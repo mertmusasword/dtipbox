@@ -1612,52 +1612,97 @@ input, select, textarea {
 }
 
 /* ===================== Internationalization (i18n) & RTL ===================== */
-[dir="rtl"] {
+[dir="rtl"],
+.rtl-active {
   text-align: right;
   direction: rtl;
 }
 
-[dir="rtl"] .app-container {
+[dir="rtl"] .app-container,
+.rtl-active .app-container {
   flex-direction: row-reverse;
 }
 
-[dir="rtl"] .sidebar {
+[dir="rtl"] .sidebar,
+.rtl-active .sidebar {
   border-right: none;
   border-left: 1px solid var(--border-color);
 }
 
-[dir="rtl"] .nav-item {
+[dir="rtl"] .nav-item,
+.rtl-active .nav-item {
   flex-direction: row-reverse;
 }
 
 [dir="rtl"] .form-label,
-[dir="rtl"] .form-group label {
+[dir="rtl"] .form-group label,
+.rtl-active .form-label,
+.rtl-active .form-group label {
   text-align: right;
 }
 
-[dir="rtl"] .input-icon-wrapper svg {
+[dir="rtl"] .input-icon-wrapper svg,
+.rtl-active .input-icon-wrapper svg {
   left: auto;
   right: 14px;
 }
 
-[dir="rtl"] .input-icon-wrapper input {
+[dir="rtl"] .input-icon-wrapper input,
+.rtl-active .input-icon-wrapper input {
   padding-left: 1rem;
   padding-right: 2.75rem;
 }
 
 [dir="rtl"] th,
-[dir="rtl"] td {
+[dir="rtl"] td,
+.rtl-active th,
+.rtl-active td {
   text-align: right;
 }
 
 [dir="rtl"] .card-header,
 [dir="rtl"] .modal-header,
-[dir="rtl"] .page-header-actions {
+[dir="rtl"] .page-header-actions,
+.rtl-active .card-header,
+.rtl-active .modal-header,
+.rtl-active .page-header-actions {
   flex-direction: row-reverse;
 }
 
-[dir="rtl"] .btn {
-  flex-direction: row-reverse;
+/* Mirror direction arrows for Arabic RTL navigation */
+[dir="rtl"] .lucide-arrow-right,
+.rtl-active .lucide-arrow-right,
+[dir="rtl"] .lucide-chevron-right,
+.rtl-active .lucide-chevron-right,
+[dir="rtl"] .lucide-arrow-left,
+.rtl-active .lucide-arrow-left,
+[dir="rtl"] .lucide-chevron-left,
+.rtl-active .lucide-chevron-left {
+  transform: scaleX(-1);
+}
+
+/* Numeric & currency inputs remain LTR for clear digital input */
+[dir="rtl"] input[type="number"],
+.rtl-active input[type="number"],
+[dir="rtl"] input[type="tel"],
+.rtl-active input[type="tel"] {
+  direction: ltr;
+  text-align: right;
+}
+
+/* Floating support button mirror */
+[dir="rtl"] .support-floating-btn,
+.rtl-active .support-floating-btn {
+  right: auto !important;
+  left: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+  [dir="rtl"] .support-floating-btn,
+  .rtl-active .support-floating-btn {
+    right: auto !important;
+    left: 1rem !important;
+  }
 }
 
 /* Responsive overflow protection for all languages (German, French, Spanish, Arabic, etc.) */

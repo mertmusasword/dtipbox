@@ -68,7 +68,7 @@ export const BusinessDashboard: React.FC = () => {
       await api.put(`/business/tips/${tipId}/verify`);
       loadData();
     } catch {
-      alert('Bahşiş onaylanırken bir hata oluştu.');
+      alert(t('common.error'));
     } finally {
       setVerifyingId(null);
     }

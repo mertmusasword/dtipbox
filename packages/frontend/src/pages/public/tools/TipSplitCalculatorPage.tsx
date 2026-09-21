@@ -32,11 +32,11 @@ export const TipSplitCalculatorPage: React.FC = () => {
   const meta = isEn ? SEO_TOOLS_EN['tip-split-calculator'] : SEO_TOOLS['tip-split-calculator'];
 
   // Currency State
-  const defaultCurrency = language === 'tr' ? '₺' : language === 'ja' ? '¥' : ['de', 'es', 'fr', 'pt'].includes(language) ? '€' : '$';
+  const defaultCurrency = language === 'tr' ? '₺' : language === 'ru' ? '₽' : language === 'ja' ? '¥' : ['de', 'es', 'fr', 'pt'].includes(language) ? '€' : '$';
   const [currency, setCurrency] = useState<string>(defaultCurrency);
 
   // State
-  const [totalTip, setTotalTip] = useState<number>(language === 'tr' ? 3000 : 300);
+  const [totalTip, setTotalTip] = useState<number>(language === 'tr' ? 3000 : language === 'ru' ? 10000 : language === 'ja' ? 30000 : 300);
   const [mode, setMode] = useState<'roles' | 'equal'>('roles');
   const [copied, setCopied] = useState<boolean>(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -268,7 +268,7 @@ export const TipSplitCalculatorPage: React.FC = () => {
                   step="50"
                   value={totalTip || ''}
                   onChange={(e) => setTotalTip(Math.max(0, parseFloat(e.target.value) || 0))}
-                  placeholder={language === 'tr' ? '3000' : '300'}
+                  placeholder={language === 'tr' ? '3000' : language === 'ru' ? '10000' : language === 'ja' ? '30000' : '300'}
                   className="tool-input"
                 />
               </div>

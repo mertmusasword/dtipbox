@@ -54,6 +54,8 @@ import {
   Youtube,
   Instagram,
   LogIn,
+  Truck,
+  Tent,
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
@@ -1792,6 +1794,24 @@ export const HomePage: React.FC = () => {
               <h3 className="home-touch-title">{t('home.touchCard3Title')}</h3>
               <p className="home-touch-desc">{t('home.touchCard3Desc')}</p>
             </div>
+
+            {/* 4. Waterproof Stickers & Phone Display */}
+            <div className="home-touch-card">
+              <div className="home-touch-preview-wrap">
+                <div style={{ textAlign: 'center', padding: '1rem' }}>
+                  <div style={{ width: 100, height: 96, margin: '0 auto', background: 'rgba(255, 255, 255, 0.05)', border: '2px dashed rgba(56, 189, 248, 0.4)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                    <div style={{ fontSize: '0.5rem', fontWeight: 700, color: '#38bdf8', letterSpacing: '0.04em' }}>STICKER / MOBILE</div>
+                    <QrCode size={34} style={{ color: '#38bdf8' }} />
+                    <div style={{ fontSize: '0.5rem', color: '#94a3b8' }}>SCAN & TIP</div>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
+                    Waterproof Vinyl Sticker & Phone Screen
+                  </span>
+                </div>
+              </div>
+              <h3 className="home-touch-title">{t('home.touchCard4Title')}</h3>
+              <p className="home-touch-desc">{t('home.touchCard4Desc')}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -2260,6 +2280,26 @@ export const HomePage: React.FC = () => {
                 {t('home.indValetDesc')}
               </p>
             </div>
+
+            <div className="home-industry-card">
+              <div className="home-industry-icon">
+                <Truck size={22} />
+              </div>
+              <h3 className="home-industry-title">{t('home.indFoodTruckTitle')}</h3>
+              <p className="home-industry-desc">
+                {t('home.indFoodTruckDesc')}
+              </p>
+            </div>
+
+            <div className="home-industry-card">
+              <div className="home-industry-icon">
+                <Tent size={22} />
+              </div>
+              <h3 className="home-industry-title">{t('home.indPopupTitle')}</h3>
+              <p className="home-industry-desc">
+                {t('home.indPopupDesc')}
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -2599,6 +2639,10 @@ export const HomePage: React.FC = () => {
               {
                 q: t('home.faqQ4'),
                 a: t('home.faqA4')
+              },
+              {
+                q: t('home.faqQ5'),
+                a: t('home.faqA5')
               }
             ].map((faq, idx) => (
               <div
