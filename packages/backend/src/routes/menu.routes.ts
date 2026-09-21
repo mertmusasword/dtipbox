@@ -56,6 +56,9 @@ const updateMenuConfigSchema = {
     primary_action: z.enum(['TIP', 'MENU']).optional(),
     menu_url: z.string().trim().max(1000).optional().nullable(),
     menu_title: z.string().trim().max(100).optional().nullable(),
+    menu_theme: z.enum(['DARK_LUXURY', 'WARM_ARTISAN', 'MODERN_EMERALD', 'MIDNIGHT_ROSE']).optional(),
+    menu_cover_image: z.string().nullable().optional(),
+    enable_item_stories: z.boolean().optional(),
   }),
 };
 
@@ -177,6 +180,7 @@ const createMenuItemSchema = {
     sort_order: z.number().int().optional(),
     allergens: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
+    is_featured: z.boolean().optional(),
   }),
 };
 
@@ -246,6 +250,7 @@ const updateMenuItemSchema = {
     sort_order: z.number().int().optional(),
     allergens: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
+    is_featured: z.boolean().optional(),
   }),
 };
 

@@ -897,10 +897,13 @@ model SmartQrConfig {
   enable_signup     Boolean  @default(false)
 
   // Digital Menu Settings
-  menu_mode         String   @default("DISABLED") // DISABLED, EXTERNAL_URL, NATIVE
-  primary_action    String   @default("TIP")      // TIP, MENU
-  menu_url          String?
-  menu_title        String?  // e.g. "Dijital Menü", "Menüyü Gör"
+  menu_mode           String   @default("DISABLED") // DISABLED, EXTERNAL_URL, NATIVE
+  primary_action      String   @default("TIP")      // TIP, MENU
+  menu_url            String?
+  menu_title          String?  // e.g. "Dijital Menü", "Menüyü Gör"
+  menu_theme          String   @default("DARK_LUXURY") // DARK_LUXURY, WARM_ARTISAN, MODERN_EMERALD, MIDNIGHT_ROSE
+  menu_cover_image    String?
+  enable_item_stories Boolean  @default(true)
 
   // Wi-Fi Settings
   wifi_ssid         String?
@@ -1032,6 +1035,7 @@ model MenuItem {
   sort_order  Int          @default(0)
   allergens   String[]     @default([])
   tags        String[]     @default([])
+  is_featured Boolean      @default(false)
 
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt

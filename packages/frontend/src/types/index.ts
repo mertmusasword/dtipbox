@@ -547,9 +547,12 @@ export interface MenuItem {
   sort_order: number;
   allergens: string[];
   tags: string[];
+  is_featured?: boolean;
   created_at?: string;
   updated_at?: string;
 }
+
+export type MenuThemeKey = 'DARK_LUXURY' | 'WARM_ARTISAN' | 'MODERN_EMERALD' | 'MIDNIGHT_ROSE';
 
 export interface MenuCategory {
   id: string;
@@ -568,6 +571,9 @@ export interface MenuConfig {
   primary_action: 'TIP' | 'MENU';
   menu_url?: string | null;
   menu_title?: string | null;
+  menu_theme?: MenuThemeKey;
+  menu_cover_image?: string | null;
+  enable_item_stories?: boolean;
   enable_menu?: boolean;
 }
 
@@ -615,6 +621,9 @@ export interface PublicMenuDetails {
     enableTips: boolean;
     menuMode: string;
     menuTitle?: string | null;
+    menuTheme?: MenuThemeKey;
+    menuCoverImage?: string | null;
+    enableItemStories?: boolean;
     primaryAction: string;
     enableWifi: boolean;
     wifiSsid?: string | null;

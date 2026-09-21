@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../../api/client';
-import { MenuCategory, MenuItem, MenuConfig, BusinessMenuResponse } from '../../types';
+import { MenuCategory, MenuItem, MenuConfig, BusinessMenuResponse, MenuThemeKey } from '../../types';
 import { Modal } from '../../components/Modal';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
@@ -32,7 +32,52 @@ import {
   Upload,
   Image as ImageIcon,
   X,
+  Palette,
+  Eye,
+  Star,
 } from 'lucide-react';
+
+const MENU_THEMES: Array<{
+  id: MenuThemeKey;
+  title: string;
+  subtitle: string;
+  badge: string;
+  colors: [string, string, string];
+  desc: string;
+}> = [
+  {
+    id: 'DARK_LUXURY',
+    title: 'Dark Luxury & Gold',
+    subtitle: 'Fine Dining, Steakhouse, Lounge & Bar',
+    badge: 'Popüler & Lüks',
+    colors: ['#0D0D11', '#D4AF37', '#1E1E24'],
+    desc: 'Koyu antrasit ve füme cam zemin üzerinde altın/bronz detaylar, gece mekanları için büyüleyici atmosfer.',
+  },
+  {
+    id: 'WARM_ARTISAN',
+    title: 'Warm Artisan & Bakery',
+    subtitle: 'Butik Kafe, Fırın, Kahvaltı & Brunch',
+    badge: 'Sıcak & Doğal',
+    colors: ['#FBF8F3', '#C27803', '#FFFFFF'],
+    desc: 'Sıcak krem, kum ve pişmiş toprak tonları. Butik kahveciler ve fırınlar için organik, editoryal şıklık.',
+  },
+  {
+    id: 'MODERN_EMERALD',
+    title: 'Modern Emerald & Fresh',
+    subtitle: 'Bistro, Vegan, Sağlıklı Yaşam & Bahçe',
+    badge: 'Ferah & Taze',
+    colors: ['#F8FAFC', '#059669', '#FFFFFF'],
+    desc: 'Canlı zümrüt yeşili ve temiz zemin. Taze, sağlıklı lezzetler sunan modern mutfaklar için birebir.',
+  },
+  {
+    id: 'MIDNIGHT_ROSE',
+    title: 'Midnight Velvet & Rose',
+    subtitle: 'Kokteyl Bar, Şarap Evi, Romantik Restoran',
+    badge: 'Zarif & Romantik',
+    colors: ['#140D14', '#FB7185', '#281726'],
+    desc: 'Derin kadife mürdüm ve gül kurusu vurgular. Özel akşamlar ve şık kokteyl barlar için büyüleyici bir aura.',
+  },
+];
 
 export const MenuManagementPage: React.FC = () => {
   const { showToast } = useToast();
@@ -47,6 +92,9 @@ export const MenuManagementPage: React.FC = () => {
     primary_action: 'TIP',
     menu_url: '',
     menu_title: '',
+    menu_theme: 'DARK_LUXURY',
+    menu_cover_image: '',
+    enable_item_stories: true,
     enable_menu: true,
   });
   const [businessCurrency, setBusinessCurrency] = useState('TRY');
@@ -74,6 +122,7 @@ export const MenuManagementPage: React.FC = () => {
   const [productImageUrl, setProductImageUrl] = useState('');
   const [productCategoryId, setProductCategoryId] = useState('');
   const [productIsActive, setProductIsActive] = useState(true);
+  const [productIsFeatured, setProductIsFeatured] = useState(false);
   const [productAllergens, setProductAllergens] = useState<string[]>([]);
   const [productTags, setProductTags] = useState('');
   const [submittingProduct, setSubmittingProduct] = useState(false);
@@ -84,8 +133,75 @@ export const MenuManagementPage: React.FC = () => {
   const [dragOverPhoto, setDragOverPhoto] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
+  // Cover Image State
+  const [coverImageInputMode, setCoverImageInputMode] = useState<'upload' | 'url'>('upload');
+  const [isProcessingCover, setIsProcessingCover] = useState(false);
+  const coverFileInputRef = React.useRef<HTMLInputElement | null>(null);
+
   // Product Search within category
   const [productSearch, setProductSearch] = useState('');
+
+  // Cover Photo Upload Handler (Canvas compression up to 1200x500)
+  const handleCoverImageUpload = (file: File) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      showToast(language === 'tr' ? 'Lütfen geçerli bir görsel formatı seçiniz (PNG, JPG veya WebP).' : 'Please select a valid image format.', 'error');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast(language === 'tr' ? 'Görsel boyutu en fazla 10 MB olabilir.' : 'Image size must be under 10 MB.', 'error');
+      return;
+    }
+
+    setIsProcessingCover(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          setIsProcessingCover(false);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let optimized = '';
+        try {
+          optimized = canvas.toDataURL('image/webp', 0.85);
+        } catch {
+          optimized = canvas.toDataURL('image/jpeg', 0.85);
+        }
+        setMenuConfig((prev) => ({ ...prev, menu_cover_image: optimized }));
+        setIsProcessingCover(false);
+        handleSaveConfig({ menu_cover_image: optimized });
+        showToast(language === 'tr' ? 'Mekan kapak görseli başarıyla yüklendi' : 'Cover image uploaded successfully');
+      };
+      img.onerror = () => {
+        setIsProcessingCover(false);
+        showToast(language === 'tr' ? 'Görsel işlenirken hata oluştu' : 'Failed to process cover image', 'error');
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Load Menu and QR Token
   const loadMenu = useCallback(async () => {
@@ -98,7 +214,11 @@ export const MenuManagementPage: React.FC = () => {
       ]);
 
       const data: BusinessMenuResponse = menuRes.data.data;
-      setMenuConfig(data.config);
+      setMenuConfig({
+        ...data.config,
+        menu_theme: data.config?.menu_theme || 'DARK_LUXURY',
+        enable_item_stories: data.config?.enable_item_stories ?? true,
+      });
       setBusinessCurrency(data.businessCurrency || 'TRY');
       setCategories(data.categories || []);
 
@@ -131,6 +251,9 @@ export const MenuManagementPage: React.FC = () => {
       primary_action: newConfig?.primary_action ?? menuConfig.primary_action,
       menu_url: newConfig?.menu_url !== undefined ? newConfig.menu_url : menuConfig.menu_url,
       menu_title: newConfig?.menu_title !== undefined ? newConfig.menu_title : menuConfig.menu_title,
+      menu_theme: newConfig?.menu_theme !== undefined ? newConfig.menu_theme : (menuConfig.menu_theme || 'DARK_LUXURY'),
+      menu_cover_image: newConfig?.menu_cover_image !== undefined ? newConfig.menu_cover_image : (menuConfig.menu_cover_image || null),
+      enable_item_stories: newConfig?.enable_item_stories !== undefined ? newConfig.enable_item_stories : (menuConfig.enable_item_stories ?? true),
     };
 
     try {
@@ -295,6 +418,7 @@ export const MenuManagementPage: React.FC = () => {
     setImageInputMode('upload');
     setProductCategoryId(activeCategoryId || (categories[0]?.id ?? ''));
     setProductIsActive(true);
+    setProductIsFeatured(false);
     setProductAllergens([]);
     setProductTags('');
     setIsProductModalOpen(true);
@@ -310,6 +434,7 @@ export const MenuManagementPage: React.FC = () => {
     setImageInputMode(item.image_url?.startsWith('data:') ? 'upload' : (item.image_url ? 'url' : 'upload'));
     setProductCategoryId(item.category_id);
     setProductIsActive(item.is_active);
+    setProductIsFeatured(Boolean(item.is_featured));
     setProductAllergens(item.allergens || []);
     setProductTags(Array.isArray(item.tags) ? item.tags.join(', ') : '');
     setIsProductModalOpen(true);
@@ -360,6 +485,7 @@ export const MenuManagementPage: React.FC = () => {
       currency: productCurrency,
       image_url: productImageUrl.trim() || null,
       is_active: productIsActive,
+      is_featured: productIsFeatured,
       allergens: productAllergens,
       tags: tagsArray,
     };
@@ -713,6 +839,351 @@ export const MenuManagementPage: React.FC = () => {
         )}
       </div>
 
+      {/* SECTION 1.5: Menu Themes & Appearance Customization */}
+      {menuConfig.menu_mode === 'NATIVE' && (
+        <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: 'rgba(212, 175, 55, 0.15)',
+                  color: '#fbbf24',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Palette size={20} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800 }}>
+                  {language === 'tr' ? 'Menü Tasarımı & Görünüm Temaları' : 'Menu Design & Themes'}
+                </h3>
+                <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                  {language === 'tr' ? 'Mekanınızın tarzına en uygun lüks temayı seçin, kapak görselinizi ve vitrin ayarlarınızı belirleyin.' : 'Select the theme that matches your venue aesthetic and customize your cover banner.'}
+                </p>
+              </div>
+            </div>
+
+            {masterQrToken && (
+              <a
+                href={`/menu/${masterQrToken}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontSize: '0.84rem',
+                  fontWeight: 700,
+                  borderColor: 'rgba(212, 175, 55, 0.35)',
+                  color: '#fbbf24',
+                }}
+              >
+                <Eye size={15} />
+                <span>{language === 'tr' ? 'Canlı Menüyü Gör' : 'View Live Menu'}</span>
+                <ExternalLink size={13} />
+              </a>
+            )}
+          </div>
+
+          {/* THEME PRESET CARDS (4 PRESETS) */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            {MENU_THEMES.map((theme) => {
+              const isSelected = (menuConfig.menu_theme || 'DARK_LUXURY') === theme.id;
+              return (
+                <div
+                  key={theme.id}
+                  onClick={() => handleSaveConfig({ menu_theme: theme.id })}
+                  style={{
+                    padding: '1.15rem',
+                    borderRadius: '14px',
+                    border: '2px solid',
+                    borderColor: isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)',
+                    background: isSelected
+                      ? 'linear-gradient(145deg, rgba(99, 102, 241, 0.15), rgba(212, 175, 55, 0.08))'
+                      : 'rgba(255, 255, 255, 0.02)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    position: 'relative',
+                    boxShadow: isSelected ? '0 0 20px rgba(99, 102, 241, 0.2)' : 'none',
+                  }}
+                >
+                  {/* Swatches preview & badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      {theme.colors.map((c, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            width: '18px',
+                            height: '18px',
+                            borderRadius: '50%',
+                            background: c,
+                            border: '1.5px solid rgba(255,255,255,0.2)',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        padding: '2px 7px',
+                        borderRadius: '999px',
+                        background: isSelected ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.08)',
+                        color: isSelected ? '#ffffff' : 'var(--text-muted)',
+                      }}
+                    >
+                      {theme.badge}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
+                    {theme.title}
+                  </div>
+                  <div style={{ fontSize: '0.76rem', fontWeight: 600, color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                    {theme.subtitle}
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
+                    {theme.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* COVER BANNER & STORIES ROW */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            {/* Left: Cover Banner Image */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <label style={{ fontSize: '0.84rem', fontWeight: 700, margin: 0 }}>
+                  🖼️ {language === 'tr' ? 'Mekan Kapak Fotoğrafı (Hero Banner)' : 'Venue Cover Banner'}
+                </label>
+                {/* Upload or URL mode */}
+                <div style={{ display: 'flex', background: 'rgba(255, 255, 255, 0.06)', borderRadius: '6px', padding: '2px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setCoverImageInputMode('upload')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      padding: '0.2rem 0.5rem',
+                      fontSize: '0.72rem',
+                      fontWeight: 600,
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: coverImageInputMode === 'upload' ? 'var(--accent-primary)' : 'transparent',
+                      color: coverImageInputMode === 'upload' ? '#fff' : 'var(--text-muted)',
+                    }}
+                  >
+                    <Upload size={11} />
+                    <span>Yükle</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCoverImageInputMode('url')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      padding: '0.2rem 0.5rem',
+                      fontSize: '0.72rem',
+                      fontWeight: 600,
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: coverImageInputMode === 'url' ? 'var(--accent-primary)' : 'transparent',
+                      color: coverImageInputMode === 'url' ? '#fff' : 'var(--text-muted)',
+                    }}
+                  >
+                    <ExternalLink size={11} />
+                    <span>URL</span>
+                  </button>
+                </div>
+              </div>
+
+              <input
+                ref={coverFileInputRef}
+                type="file"
+                accept="image/png, image/jpeg, image/webp, image/jpg"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    handleCoverImageUpload(file);
+                    e.target.value = '';
+                  }
+                }}
+              />
+
+              {menuConfig.menu_cover_image ? (
+                <div
+                  style={{
+                    position: 'relative',
+                    height: '110px',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                  }}
+                >
+                  <img
+                    src={menuConfig.menu_cover_image}
+                    alt="Cover preview"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'space-between',
+                      padding: '0.5rem 0.75rem',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.75rem', color: '#fff', fontWeight: 600 }}>Kapak Önizlemesi</span>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => coverFileInputRef.current?.click()}
+                        className="btn btn-secondary"
+                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                      >
+                        Değiştir
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMenuConfig({ ...menuConfig, menu_cover_image: null });
+                          handleSaveConfig({ menu_cover_image: null });
+                        }}
+                        className="btn btn-secondary"
+                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem', color: '#f87171' }}
+                      >
+                        Kaldır
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : coverImageInputMode === 'upload' ? (
+                <div
+                  onClick={() => coverFileInputRef.current?.click()}
+                  style={{
+                    padding: '1.25rem 1rem',
+                    borderRadius: '10px',
+                    border: '1px dashed rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {isProcessingCover ? (
+                    <div className="spinner-small" style={{ margin: '0 auto 0.5rem' }} />
+                  ) : (
+                    <Camera size={20} style={{ margin: '0 auto 0.4rem', color: 'var(--text-muted)' }} />
+                  )}
+                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {isProcessingCover ? 'Kapak görseli işleniyor...' : 'Kapak Fotoğrafı Yükle'}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    Menünün en tepesinde sinematik karşılama görseli olarak gösterilir.
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    type="url"
+                    className="input"
+                    placeholder="https://images.unsplash.com/... kapak görsel URL'i"
+                    value={menuConfig.menu_cover_image || ''}
+                    onChange={(e) => setMenuConfig({ ...menuConfig, menu_cover_image: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => handleSaveConfig({ menu_cover_image: menuConfig.menu_cover_image })}
+                    style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', padding: '0 0.85rem' }}
+                  >
+                    Kaydet
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Right: Stories (Chef's Highlights) Switch */}
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div
+                onClick={() => {
+                  const newVal = !(menuConfig.enable_item_stories ?? true);
+                  setMenuConfig({ ...menuConfig, enable_item_stories: newVal });
+                  handleSaveConfig({ enable_item_stories: newVal });
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '1.1rem',
+                  borderRadius: '12px',
+                  border: '1px solid',
+                  borderColor: (menuConfig.enable_item_stories ?? true) ? '#10b981' : 'rgba(255, 255, 255, 0.08)',
+                  background: (menuConfig.enable_item_stories ?? true) ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: (menuConfig.enable_item_stories ?? true) ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.06)',
+                      color: (menuConfig.enable_item_stories ?? true) ? '#34d399' : 'var(--text-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Sparkles size={18} />
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>
+                      {language === 'tr' ? 'Şefin Seçtikleri (Stories) Vitrini' : "Chef's Highlights Stories"}
+                    </strong>
+                    <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                      {language === 'tr' ? 'Üstte Instagram hikayeleri formatında popüler lezzetleri öne çıkarır.' : 'Displays circular highlighted dishes at top like Instagram stories.'}
+                    </span>
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={menuConfig.enable_item_stories ?? true}
+                  onChange={() => {}}
+                  style={{ width: '18px', height: '18px', accentColor: '#10b981', cursor: 'pointer' }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SECTION 2: Native Menu Builder (Categories & Products) */}
       {menuConfig.menu_mode === 'NATIVE' && (
         <div className="native-menu-builder">
@@ -996,9 +1467,30 @@ export const MenuManagementPage: React.FC = () => {
 
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                              <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700 }}>
-                                {item.name}
-                              </h4>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                                <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700 }}>
+                                  {item.name}
+                                </h4>
+                                {item.is_featured && (
+                                  <span
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '3px',
+                                      fontSize: '0.66rem',
+                                      fontWeight: 800,
+                                      padding: '1px 6px',
+                                      borderRadius: '999px',
+                                      background: 'rgba(245, 158, 11, 0.15)',
+                                      color: '#fbbf24',
+                                      border: '1px solid rgba(245, 158, 11, 0.35)',
+                                    }}
+                                  >
+                                    <Sparkles size={10} />
+                                    <span>Şefin Seçimi</span>
+                                  </span>
+                                )}
+                              </div>
                               <div
                                 style={{
                                   fontSize: '0.95rem',
@@ -1573,6 +2065,54 @@ export const MenuManagementPage: React.FC = () => {
                 );
               })}
             </div>
+          </div>
+
+          {/* Chef's Highlight / Featured Toggle */}
+          <div
+            onClick={() => setProductIsFeatured(!productIsFeatured)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0.9rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid',
+              borderColor: productIsFeatured ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)',
+              background: productIsFeatured ? 'rgba(245, 158, 11, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: productIsFeatured ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                  color: productIsFeatured ? '#fbbf24' : 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Sparkles size={16} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.86rem', fontWeight: 700, color: productIsFeatured ? '#fbbf24' : 'var(--text-primary)' }}>
+                  ⭐ Şefin Seçimi & Hikaye Vitrini
+                </div>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                  Bu ürünü menünün en üstündeki yuvarlak "Şefin Seçtikleri" hikayelerinde göster.
+                </div>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={productIsFeatured}
+              onChange={() => {}}
+              style={{ width: '18px', height: '18px', accentColor: '#f59e0b', cursor: 'pointer' }}
+            />
           </div>
 
           {/* Tags */}

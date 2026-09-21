@@ -8,6 +8,9 @@ export interface UpdateMenuConfigInput {
   primary_action?: 'TIP' | 'MENU';
   menu_url?: string | null;
   menu_title?: string | null;
+  menu_theme?: 'DARK_LUXURY' | 'WARM_ARTISAN' | 'MODERN_EMERALD' | 'MIDNIGHT_ROSE';
+  menu_cover_image?: string | null;
+  enable_item_stories?: boolean;
 }
 
 export interface CreateCategoryInput {
@@ -34,6 +37,7 @@ export interface CreateMenuItemInput {
   sort_order?: number;
   allergens?: string[];
   tags?: string[];
+  is_featured?: boolean;
 }
 
 export interface UpdateMenuItemInput {
@@ -47,6 +51,7 @@ export interface UpdateMenuItemInput {
   sort_order?: number;
   allergens?: string[];
   tags?: string[];
+  is_featured?: boolean;
 }
 
 /**
@@ -77,6 +82,9 @@ export async function getBusinessMenu(businessId: string) {
       primary_action: (smartConfig.primary_action as 'TIP' | 'MENU') || 'TIP',
       menu_url: smartConfig.menu_url,
       menu_title: smartConfig.menu_title,
+      menu_theme: (smartConfig.menu_theme as 'DARK_LUXURY' | 'WARM_ARTISAN' | 'MODERN_EMERALD' | 'MIDNIGHT_ROSE') || 'DARK_LUXURY',
+      menu_cover_image: smartConfig.menu_cover_image || null,
+      enable_item_stories: smartConfig.enable_item_stories ?? true,
       enable_menu: smartConfig.enable_menu,
     },
     businessCurrency: business?.currency || 'TRY',
@@ -101,6 +109,9 @@ export async function updateMenuConfig(businessId: string, input: UpdateMenuConf
       ...(input.primary_action !== undefined && { primary_action: input.primary_action }),
       ...(input.menu_url !== undefined && { menu_url: input.menu_url?.trim() || null }),
       ...(input.menu_title !== undefined && { menu_title: input.menu_title?.trim() || null }),
+      ...(input.menu_theme !== undefined && { menu_theme: input.menu_theme }),
+      ...(input.menu_cover_image !== undefined && { menu_cover_image: input.menu_cover_image?.trim() || null }),
+      ...(input.enable_item_stories !== undefined && { enable_item_stories: input.enable_item_stories }),
       enable_menu: enableMenu,
     },
   });
@@ -110,6 +121,9 @@ export async function updateMenuConfig(businessId: string, input: UpdateMenuConf
     primary_action: updated.primary_action,
     menu_url: updated.menu_url,
     menu_title: updated.menu_title,
+    menu_theme: updated.menu_theme,
+    menu_cover_image: updated.menu_cover_image,
+    enable_item_stories: updated.enable_item_stories,
     enable_menu: updated.enable_menu,
   };
 }
@@ -264,6 +278,7 @@ export async function createMenuItem(businessId: string, input: CreateMenuItemIn
       sort_order: sortOrder,
       allergens,
       tags: Array.isArray(input.tags) ? input.tags.map((t) => t.trim()) : [],
+      is_featured: input.is_featured !== undefined ? input.is_featured : false,
     },
   });
 }
@@ -310,6 +325,7 @@ export async function updateMenuItem(businessId: string, itemId: string, input: 
       ...(input.sort_order !== undefined && { sort_order: input.sort_order }),
       ...(allergens !== undefined && { allergens }),
       ...(input.tags !== undefined && { tags: Array.isArray(input.tags) ? input.tags.map((t) => t.trim()) : [] }),
+      ...(input.is_featured !== undefined && { is_featured: input.is_featured }),
     },
   });
 }
@@ -450,6 +466,9 @@ export async function getPublicMenu(publicToken: string) {
       enableTips: smartConfig?.enable_tips ?? true,
       menuMode: (smartConfig?.menu_mode as string) || (smartConfig?.enable_menu ? 'EXTERNAL_URL' : 'DISABLED'),
       menuTitle: smartConfig?.menu_title || null,
+      menuTheme: smartConfig?.menu_theme || 'DARK_LUXURY',
+      menuCoverImage: smartConfig?.menu_cover_image || null,
+      enableItemStories: smartConfig?.enable_item_stories ?? true,
       primaryAction: (smartConfig?.primary_action as string) || 'TIP',
       enableWifi: smartConfig?.enable_wifi ?? false,
       wifiSsid: smartConfig?.wifi_ssid || null,
