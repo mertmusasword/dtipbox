@@ -213,8 +213,10 @@ export const CustomerFeedbacks: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              flex: '1 1 380px',
+              flex: '1 1 280px',
               maxWidth: '560px',
+              width: '100%',
+              flexWrap: 'wrap',
             }}
           >
             <input
@@ -225,43 +227,47 @@ export const CustomerFeedbacks: React.FC = () => {
               placeholder="https://g.page/r/.../review veya Haritalar linki"
               style={{
                 fontSize: '0.85rem',
-                flex: 1,
+                flex: '1 1 200px',
+                minWidth: 0,
+                width: '100%',
                 background: 'rgba(15, 23, 42, 0.65)',
                 borderColor: 'rgba(255, 255, 255, 0.18)',
               }}
             />
-            <button
-              type="submit"
-              disabled={savingGoogleUrl}
-              className="btn btn-primary"
-              style={{
-                padding: '0.55rem 1.15rem',
-                fontSize: '0.85rem',
-                whiteSpace: 'nowrap',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              {savingGoogleUrl ? (
-                <RefreshCw size={14} className="animate-spin" />
-              ) : (
-                <Check size={14} />
-              )}
-              <span>{isTr ? 'Kaydet' : 'Save'}</span>
-            </button>
-            {googleReviewUrl && (
-              <a
-                href={googleReviewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-secondary"
-                style={{ padding: '0.55rem 0.75rem', display: 'inline-flex', alignItems: 'center' }}
-                title={isTr ? 'Linki Aç' : 'Test URL'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+              <button
+                type="submit"
+                disabled={savingGoogleUrl}
+                className="btn btn-primary"
+                style={{
+                  padding: '0.55rem 1.15rem',
+                  fontSize: '0.85rem',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                }}
               >
-                <ExternalLink size={14} />
-              </a>
-            )}
+                {savingGoogleUrl ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <Check size={14} />
+                )}
+                <span>{isTr ? 'Kaydet' : 'Save'}</span>
+              </button>
+              {googleReviewUrl && (
+                <a
+                  href={googleReviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-secondary"
+                  style={{ padding: '0.55rem 0.75rem', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}
+                  title={isTr ? 'Linki Aç' : 'Test URL'}
+                >
+                  <ExternalLink size={14} />
+                </a>
+              )}
+            </div>
           </form>
         </div>
       </div>
