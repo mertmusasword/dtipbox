@@ -598,7 +598,7 @@ export const NaponiCatalogPage: React.FC = () => {
                   {c.slide8.feat1Desc}
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  {['🇹🇷 Türkçe', '🇺🇸 English', '🇩🇪 Deutsch', '🇷🇺 Русский', '🇫🇷 Français', '🇪🇸 Español', '🇸🇦 العربية', '🇨🇳 中文', '🇯🇵 日本語'].map((lang, idx) => (
+                  {['🇹🇷 Türkçe', '🇺🇸 English', '🇩🇪 Deutsch', '🇷🇺 Русский', '🇫🇷 Français', '🇪🇸 Español', '🇸🇦 العربية', '🇨🇳 中文', '🇯🇵 日本語', '🇮🇩 Bahasa Indonesia', '🇵🇹 Português'].map((lang, idx) => (
                     <span key={idx} style={{ background: 'rgba(255,255,255,0.05)', padding: '0.3rem 0.65rem', borderRadius: '8px', fontSize: '0.78rem', color: '#cbd5e1' }}>
                       {lang}
                     </span>
