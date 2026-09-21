@@ -3,6 +3,7 @@ import { AppError } from '../middleware/errorHandler';
 import { paymentService } from './payment/core/payment.service';
 import { PaymentMethodType, PaymentStatus, Prisma } from '@prisma/client';
 import { getActivePaymentMethods, getCustomerPaymentMethodsCatalog } from './paymentMethod.service';
+import { logger } from '../utils/logger';
 
 interface CreateTipRequest {
   publicToken: string;
@@ -108,7 +109,9 @@ export async function getTipPageDetails(publicToken: string) {
       table_id: qr.table_id,
       event_type: 'SCAN',
     },
-  }).catch(() => {});
+  }).catch((err) => {
+    logger.warn('Failed to record SCAN smartQrEvent', 'TIP_SERVICE', { error: String(err) });
+  });
 
   const smartConfig = qr.business.smart_qr_config;
 
@@ -179,8 +182,12 @@ export async function getTipPageDetails(publicToken: string) {
           customLinks: (() => {
             if (!smartConfig.custom_links) return [];
             try {
-              return JSON.parse(smartConfig.custom_links);
-            } catch {
+              const parsed = typeof smartConfig.custom_links === 'string'
+                ? JSON.parse(smartConfig.custom_links)
+                : smartConfig.custom_links;
+              return Array.isArray(parsed) ? parsed : [];
+            } catch (err) {
+              logger.warn('Failed to parse custom_links JSON', 'TIP_SERVICE', { error: String(err) });
               return [];
             }
           })(),
@@ -390,7 +397,9 @@ export async function createTip(data: CreateTipRequest) {
       event_type: initialEventType,
       metadata: { amount: data.amount, paymentMethod: data.paymentMethod },
     },
-  }).catch(() => {});
+  }).catch((err) => {
+    logger.warn('Failed to record tip initiation event', 'TIP_SERVICE', { error: String(err) });
+  });
 
   return {
     tip: {

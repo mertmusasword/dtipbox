@@ -15,6 +15,28 @@ export interface AuthRequest extends Request {
   };
 }
 
+interface CachedAuthUser {
+  user: {
+    id: string;
+    email: string;
+    role: Role;
+    businessId?: string;
+    employeeId?: string;
+  };
+  cachedAt: number;
+}
+
+const userAuthCache = new Map<string, CachedAuthUser>();
+const AUTH_CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+export function invalidateUserAuthCache(userId?: string) {
+  if (userId) {
+    userAuthCache.delete(userId);
+  } else {
+    userAuthCache.clear();
+  }
+}
+
 /**
  * JWT authentication middleware.
  * Verifies the access token from the Authorization header.
@@ -39,6 +61,15 @@ export async function authenticate(
       role: Role;
     };
 
+    // Check in-memory cache first to avoid DB round-trip on every single API request
+    const cached = userAuthCache.get(decoded.userId);
+    const now = Date.now();
+    if (cached && now - cached.cachedAt < AUTH_CACHE_TTL_MS) {
+      req.user = cached.user;
+      next();
+      return;
+    }
+
     // Fetch user and check is_active
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -49,11 +80,12 @@ export async function authenticate(
     });
 
     if (!user || !user.is_active) {
+      userAuthCache.delete(decoded.userId);
       res.status(401).json({ success: false, error: 'User not found or inactive' });
       return;
     }
 
-    req.user = {
+    const authUser = {
       id: user.id,
       email: user.email,
       role: user.role,
@@ -61,6 +93,13 @@ export async function authenticate(
       employeeId: user.employee?.id,
     };
 
+    // Prevent unbounded memory growth
+    if (userAuthCache.size > 2000) {
+      userAuthCache.clear();
+    }
+    userAuthCache.set(user.id, { user: authUser, cachedAt: now });
+
+    req.user = authUser;
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {

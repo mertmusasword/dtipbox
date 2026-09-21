@@ -30,6 +30,7 @@ const NaponiCatalogPage = React.lazy(() => import('./pages/public/NaponiCatalogP
 const CustomerEnrollPage = React.lazy(() => import('./pages/public/loyalty/CustomerEnrollPage').then((m) => ({ default: m.CustomerEnrollPage })));
 const CustomerCardPage = React.lazy(() => import('./pages/public/loyalty/CustomerCardPage').then((m) => ({ default: m.CustomerCardPage })));
 const CustomerRecoverPage = React.lazy(() => import('./pages/public/loyalty/CustomerRecoverPage').then((m) => ({ default: m.CustomerRecoverPage })));
+const NotFoundPage = React.lazy(() => import('./pages/public/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 
 // Auth Pages
 const LoginPage = React.lazy(() => import('./pages/auth/LoginPage').then((m) => ({ default: m.LoginPage })));
@@ -225,8 +226,8 @@ export const App: React.FC = () => {
                   <Route path="/admin/settings" element={<AdminSettingsPage />} />
                 </Route>
 
-                {/* Catch-all redirect */}
-                <Route path="*" element={<Navigate to="/login" replace />} />
+                {/* Catch-all 404 page */}
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
             <FloatingSupportWidget />

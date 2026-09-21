@@ -555,10 +555,35 @@ router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
       return;
     }
 
+    if (tip.payment_status === 'SUCCESS') {
+      res.status(400).json({ success: false, error: 'Bu bahşiş zaten onaylanmış.' });
+      return;
+    }
+
+    if (tip.payment_status === 'CANCELLED') {
+      res.status(400).json({ success: false, error: 'İptal edilmiş bir bahşiş tekrar onaylanamaz.' });
+      return;
+    }
+
     const updatedTip = await prisma.tip.update({
       where: { id: tip.id },
       data: {
         payment_status: 'SUCCESS',
+      },
+    });
+
+    // Record audit log entry
+    await auditService.createAuditLog({
+      actorUserId: req.user?.id,
+      businessId,
+      action: 'TIP_VERIFIED',
+      entityType: 'TIP',
+      entityId: tip.id,
+      metadata: {
+        amount: tip.amount,
+        currency: tip.currency,
+        previousStatus: tip.payment_status,
+        paymentMethod: tip.payment_method,
       },
     });
 
@@ -587,10 +612,35 @@ router.put('/tips/:id/reject', async (req: AuthRequest, res, next) => {
       return;
     }
 
+    if (tip.payment_status === 'CANCELLED') {
+      res.status(400).json({ success: false, error: 'Bu bahşiş zaten iptal edilmiş.' });
+      return;
+    }
+
+    if (tip.payment_status === 'SUCCESS') {
+      res.status(400).json({ success: false, error: 'Onaylanmış bir bahşiş doğrudan iptal edilemez.' });
+      return;
+    }
+
     const updatedTip = await prisma.tip.update({
       where: { id: tip.id },
       data: {
         payment_status: 'CANCELLED',
+      },
+    });
+
+    // Record audit log entry
+    await auditService.createAuditLog({
+      actorUserId: req.user?.id,
+      businessId,
+      action: 'TIP_REJECTED',
+      entityType: 'TIP',
+      entityId: tip.id,
+      metadata: {
+        amount: tip.amount,
+        currency: tip.currency,
+        previousStatus: tip.payment_status,
+        paymentMethod: tip.payment_method,
       },
     });
 

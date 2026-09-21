@@ -164,12 +164,13 @@ export class LoyaltyService {
       prisma.loyaltyRedemption.count({
         where: { business_id: businessId, status: 'REDEEMED' },
       }),
-      prisma.loyaltyCard.count({
-        where: {
-          business_id: businessId,
-          current_stamps: { gte: prisma.loyaltyCard.fields.target_stamps },
-        },
-      }),
+      prisma.$queryRaw<Array<{ count: bigint | number }>>`
+        SELECT COUNT(*)::bigint as count
+        FROM loyalty_cards
+        WHERE business_id = ${businessId}
+          AND current_stamps >= target_stamps
+          AND is_active = true
+      `.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
       prisma.loyaltyStampTransaction.findMany({
         where: { business_id: businessId },
         orderBy: { created_at: 'desc' },

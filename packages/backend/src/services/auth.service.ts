@@ -4,6 +4,7 @@ import prisma from '../utils/prisma';
 import { env } from '../config/env';
 import { Role } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
+import { invalidateUserAuthCache } from '../middleware/auth';
 
 const SALT_ROUNDS = 12;
 
@@ -61,8 +62,8 @@ export async function register(input: RegisterInput) {
     throw new AppError('Admin registration is not permitted', 403);
   }
 
-  if (!input.password || input.password.length < 6 || input.password.length > 128) {
-    throw new AppError('Şifre en az 6, en fazla 128 karakter olmalıdır', 400);
+  if (!input.password || input.password.length < 8 || input.password.length > 128) {
+    throw new AppError('Şifre en az 8, en fazla 128 karakter olmalıdır', 400);
   }
 
   const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
@@ -289,6 +290,9 @@ export async function updateProfile(
     },
   });
 
+  // Evict stale cached credentials from memory
+  invalidateUserAuthCache(userId);
+
   // Generate fresh token pair with updated email
   const tokens = generateTokens(updatedUser.id, updatedUser.email, updatedUser.role);
 
@@ -402,6 +406,9 @@ export async function resetPassword(rawToken: string, newPassword: string) {
       data: { used_at: new Date() },
     }),
   ]);
+
+  // Evict cached credentials
+  invalidateUserAuthCache(tokenRecord.user_id);
 
   return {
     success: true,

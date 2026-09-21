@@ -323,6 +323,10 @@ export async function getTipPoolSimulation(
       const empCash = Number((empNet * cashRatio).toFixed(2));
       const empDigital = Number((empNet - empCash).toFixed(2));
 
+      const totalFees = posFeeAmount + taxFeeAmount;
+      const posFeeShare = totalFees > 0 ? Number(((empDeduction * (posFeeAmount / totalFees)) || 0).toFixed(2)) : 0;
+      const taxFeeShare = totalFees > 0 ? Number(((empDeduction * (taxFeeAmount / totalFees)) || 0).toFixed(2)) : 0;
+
       return {
         employeeId: emp.id,
         employeeName: `${emp.first_name} ${emp.last_name}`.trim(),
@@ -330,8 +334,8 @@ export async function getTipPoolSimulation(
         roleTitle: emp.role_title,
         shareWeight: Number(emp.share_weight || 1.0),
         grossShare: empGross,
-        posFeeShare: Number(((empDeduction * (posFeeAmount / Math.max(1, posFeeAmount + taxFeeAmount))) || 0).toFixed(2)),
-        taxFeeShare: Number(((empDeduction * (taxFeeAmount / Math.max(1, posFeeAmount + taxFeeAmount))) || 0).toFixed(2)),
+        posFeeShare,
+        taxFeeShare,
         netShare: empNet,
         cashShare: empCash,
         digitalShare: empDigital,

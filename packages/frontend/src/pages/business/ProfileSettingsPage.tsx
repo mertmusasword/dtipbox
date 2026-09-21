@@ -84,8 +84,8 @@ export const ProfileSettingsPage: React.FC = () => {
       showToast('New passwords do not match', 'error');
       return;
     }
-    if (passwordData.new_password.length < 6) {
-      showToast('New password must be at least 6 characters', 'error');
+    if (passwordData.new_password.length < 8) {
+      showToast('New password must be at least 8 characters', 'error');
       return;
     }
     setChangingPassword(true);
