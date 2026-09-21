@@ -103,6 +103,9 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
 
             drawBottomBanner(ctx, size);
           };
+          img.onerror = () => {
+            drawBottomBanner(ctx, size);
+          };
           img.src = logoDataUrl;
         } else {
           drawBottomBanner(ctx, size);
@@ -127,11 +130,164 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
   const handleDownloadPng = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const url = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `table_qr_${tableLabel.replace(/\s+/g, '_').toLowerCase() || 'stand'}.png`;
-    link.href = url;
-    link.click();
+
+    const safeName = (tableLabel || 'stand')
+      .trim()
+      .replace(/[^a-zA-Z0-9_-]/g, '_')
+      .toLowerCase();
+    const fileName = `table_qr_${safeName || 'stand'}.png`;
+
+    const triggerDownload = (uri: string, isBlob = false) => {
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = uri;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        if (isBlob) {
+          URL.revokeObjectURL(uri);
+        }
+      }, 1000);
+    };
+
+    try {
+      if (canvas.toBlob) {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const blobUrl = URL.createObjectURL(blob);
+            triggerDownload(blobUrl, true);
+          } else {
+            const dataUrl = canvas.toDataURL('image/png');
+            triggerDownload(dataUrl, false);
+          }
+        }, 'image/png');
+      } else {
+        const dataUrl = canvas.toDataURL('image/png');
+        triggerDownload(dataUrl, false);
+      }
+    } catch (err) {
+      console.error('Blob download failed, trying dataUrl fallback', err);
+      try {
+        const dataUrl = canvas.toDataURL('image/png');
+        triggerDownload(dataUrl, false);
+      } catch (fallbackErr) {
+        console.error('Download fallback failed:', fallbackErr);
+      }
+    }
+  };
+
+  const handlePrint = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      const title = `${tableLabel ? tableLabel.toUpperCase() : 'Naponi QR Stand'}`;
+
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>${title}</title>
+              <style>
+                @page {
+                  size: A4 portrait;
+                  margin: 15mm;
+                }
+                * {
+                  box-sizing: border-box;
+                  margin: 0;
+                  padding: 0;
+                }
+                body {
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  min-height: 100vh;
+                  background: #f8fafc;
+                  padding: 20px;
+                }
+                .stand-container {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  background: #fff;
+                  padding: 20px;
+                  border-radius: 16px;
+                  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                  max-width: 440px;
+                  width: 100%;
+                  border: 1px solid #e2e8f0;
+                }
+                img.qr-image {
+                  width: 100%;
+                  height: auto;
+                  display: block;
+                  border-radius: 10px;
+                }
+                .cut-line {
+                  margin-top: 16px;
+                  padding-top: 10px;
+                  border-top: 2px dashed #94a3b8;
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: #64748b;
+                  letter-spacing: 0.5px;
+                  text-align: center;
+                  width: 100%;
+                  text-transform: uppercase;
+                }
+                @media print {
+                  body {
+                    background: #fff;
+                    padding: 0;
+                    min-height: auto;
+                  }
+                  .stand-container {
+                    box-shadow: none;
+                    border: none;
+                    padding: 0;
+                    max-width: 90mm;
+                    margin: 0 auto;
+                  }
+                  img.qr-image {
+                    max-height: 85vh;
+                    width: 100%;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="stand-container">
+                <img class="qr-image" src="${dataUrl}" alt="${title}" />
+                <div class="cut-line">✂ ${isEn ? 'Cut along line for acrylic stand or table tent' : 'Masa standı veya akrilik pleksi için kesim çizgisi'}</div>
+              </div>
+              <script>
+                window.onload = function() {
+                  window.focus();
+                  window.print();
+                  setTimeout(function() { window.close(); }, 800);
+                };
+              </script>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      } else {
+        // If popup was blocked by browser, trigger in-page print targeting only the card
+        window.print();
+      }
+    } catch (err) {
+      console.error('Print error:', err);
+      window.print();
+    }
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -343,7 +499,29 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
 
             {/* Right Column: Live High-Res Canvas */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ background: '#fff', padding: '1.25rem', borderRadius: 20, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', maxWidth: 360, width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>
+              <style>{`
+                @media print {
+                  body * {
+                    visibility: hidden !important;
+                  }
+                  #printable-qr-stand, #printable-qr-stand * {
+                    visibility: visible !important;
+                  }
+                  #printable-qr-stand {
+                    position: fixed !important;
+                    left: 50% !important;
+                    top: 50% !important;
+                    transform: translate(-50%, -50%) !important;
+                    box-shadow: none !important;
+                    border: 1px dashed #94a3b8 !important;
+                    max-width: 90mm !important;
+                    width: 100% !important;
+                    padding: 12px !important;
+                    background: #fff !important;
+                  }
+                }
+              `}</style>
+              <div id="printable-qr-stand" style={{ background: '#fff', padding: '1.25rem', borderRadius: 20, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', maxWidth: 360, width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>
                 <canvas
                   ref={canvasRef}
                   style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 12 }}
@@ -364,12 +542,12 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => window.print()}
+                  onClick={handlePrint}
                   className="home-btn-secondary"
                   style={{ justifyContent: 'center', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem' }}
                 >
                   <Printer size={16} />
-                  <span>{isEn ? 'Print' : 'Yazdır'}</span>
+                  <span>{isEn ? 'Print Stand' : 'Stant Yazdır'}</span>
                 </button>
               </div>
               <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.75rem', textAlign: 'center' }}>

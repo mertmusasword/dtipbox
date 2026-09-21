@@ -196,7 +196,12 @@ export const BusinessLoyaltyPage: React.FC = () => {
     const a = document.createElement('a');
     a.href = qrDataUrl;
     a.download = `naponi-loyalty-kayit-qr-${businessName.replace(/\s+/g, '-').toLowerCase()}.png`;
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+    }, 1000);
   };
 
   const printQr = () => {

@@ -254,7 +254,12 @@ export const QrModal: React.FC<QrModalProps> = ({
     a.href = dataUrl;
     const fileName = `naponi-qr-${(tableName || businessName).toLowerCase().replace(/[^a-z0-9]/g, '-')}.png`;
     a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+    }, 1000);
   };
 
   // Printable HTML Document for Table Tent Stand
