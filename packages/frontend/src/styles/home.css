@@ -203,14 +203,24 @@
   top: 72px;
   left: 0;
   right: 0;
+  bottom: 0;
+  max-height: calc(100dvh - 72px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: rgba(13, 18, 30, 0.98);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem 4rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  z-index: 99;
+  gap: 1rem;
+  z-index: 999;
+}
+
+/* Hide floating support button when mobile drawer is open */
+body:has(.home-mobile-menu) .support-floating-btn {
+  display: none !important;
 }
 
 .home-mobile-menu a {

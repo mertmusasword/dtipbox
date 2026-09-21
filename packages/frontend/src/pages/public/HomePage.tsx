@@ -70,6 +70,17 @@ export const HomePage: React.FC = () => {
   // Mobile Nav Drawer State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   // Corporate Application Modal State
   const [corporateModalOpen, setCorporateModalOpen] = useState(false);
 
@@ -416,14 +427,19 @@ export const HomePage: React.FC = () => {
               <Headphones size={16} />
               <span>{t('support.widgetBtn')}</span>
             </button>
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-              <Link to="/login" className="home-btn-ghost" style={{ flex: 1, textAlign: 'center' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', paddingBottom: '2.5rem' }}>
+              <Link
+                to="/login"
+                className="home-btn-ghost"
+                style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 {t('nav.login')}
               </Link>
               <Link
                 to="/register"
                 className="home-btn-primary"
-                style={{ flex: 1, textAlign: 'center' }}
+                style={{ flex: 1, textAlign: 'center', padding: '0.75rem 1rem' }}
                 onClick={() => {
                   trackBusinessRegisterStarted('mobile_drawer_cta');
                   setMobileMenuOpen(false);
