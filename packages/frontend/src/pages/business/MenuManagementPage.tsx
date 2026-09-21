@@ -135,6 +135,7 @@ export const MenuManagementPage: React.FC = () => {
 
   // Cover Image State
   const [coverImageInputMode, setCoverImageInputMode] = useState<'upload' | 'url'>('upload');
+  const [coverUrlInput, setCoverUrlInput] = useState('');
   const [isProcessingCover, setIsProcessingCover] = useState(false);
   const coverFileInputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -219,6 +220,9 @@ export const MenuManagementPage: React.FC = () => {
         menu_theme: data.config?.menu_theme || 'DARK_LUXURY',
         enable_item_stories: data.config?.enable_item_stories ?? true,
       });
+      if (data.config?.menu_cover_image && !data.config.menu_cover_image.startsWith('data:')) {
+        setCoverUrlInput(data.config.menu_cover_image);
+      }
       setBusinessCurrency(data.businessCurrency || 'TRY');
       setCategories(data.categories || []);
 
@@ -1032,11 +1036,12 @@ export const MenuManagementPage: React.FC = () => {
                 }}
               />
 
-              {menuConfig.menu_cover_image ? (
+              {/* If in upload mode and cover exists -> Show preview with Replace & Remove */}
+              {coverImageInputMode === 'upload' && menuConfig.menu_cover_image ? (
                 <div
                   style={{
                     position: 'relative',
-                    height: '110px',
+                    height: '115px',
                     borderRadius: '10px',
                     overflow: 'hidden',
                     border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -1045,20 +1050,23 @@ export const MenuManagementPage: React.FC = () => {
                   <img
                     src={menuConfig.menu_cover_image}
                     alt="Cover preview"
+                    referrerPolicy="no-referrer"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                   <div
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)',
                       display: 'flex',
                       alignItems: 'flex-end',
                       justifyContent: 'space-between',
                       padding: '0.5rem 0.75rem',
                     }}
                   >
-                    <span style={{ fontSize: '0.75rem', color: '#fff', fontWeight: 600 }}>Kapak Önizlemesi</span>
+                    <span style={{ fontSize: '0.75rem', color: '#fff', fontWeight: 600 }}>
+                      ✓ {language === 'tr' ? 'Mevcut Kapak Görseli' : 'Current Cover'}
+                    </span>
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       <button
                         type="button"
@@ -1066,18 +1074,19 @@ export const MenuManagementPage: React.FC = () => {
                         className="btn btn-secondary"
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
                       >
-                        Değiştir
+                        {language === 'tr' ? 'Değiştir' : 'Replace'}
                       </button>
                       <button
                         type="button"
                         onClick={() => {
                           setMenuConfig({ ...menuConfig, menu_cover_image: null });
+                          setCoverUrlInput('');
                           handleSaveConfig({ menu_cover_image: null });
                         }}
                         className="btn btn-secondary"
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem', color: '#f87171' }}
                       >
-                        Kaldır
+                        {language === 'tr' ? 'Kaldır' : 'Remove'}
                       </button>
                     </div>
                   </div>
@@ -1101,10 +1110,18 @@ export const MenuManagementPage: React.FC = () => {
                     <Camera size={20} style={{ margin: '0 auto 0.4rem', color: 'var(--text-muted)' }} />
                   )}
                   <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                    {isProcessingCover ? 'Kapak görseli işleniyor...' : 'Kapak Fotoğrafı Yükle'}
+                    {isProcessingCover
+                      ? language === 'tr'
+                        ? 'Kapak görseli işleniyor...'
+                        : 'Processing cover image...'
+                      : language === 'tr'
+                      ? 'Kapak Fotoğrafı Yükle'
+                      : 'Upload Cover Photo'}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    Menünün en tepesinde sinematik karşılama görseli olarak gösterilir.
+                    {language === 'tr'
+                      ? 'Menünün en tepesinde sinematik karşılama görseli olarak gösterilir.'
+                      : 'Displayed as a hero welcome banner at top of menu.'}
                   </div>
                   <div
                     style={{
@@ -1126,22 +1143,99 @@ export const MenuManagementPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input
-                    type="url"
-                    className="input"
-                    placeholder="https://images.unsplash.com/... kapak görsel URL'i"
-                    value={menuConfig.menu_cover_image || ''}
-                    onChange={(e) => setMenuConfig({ ...menuConfig, menu_cover_image: e.target.value })}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => handleSaveConfig({ menu_cover_image: menuConfig.menu_cover_image })}
-                    style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', padding: '0 0.85rem' }}
-                  >
-                    Kaydet
-                  </button>
+                /* URL MODE */
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      type="url"
+                      className="input"
+                      placeholder="https://... görsel bağlantısı yapıştırın"
+                      value={coverUrlInput}
+                      onChange={(e) => setCoverUrlInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const url = coverUrlInput.trim();
+                          setMenuConfig((prev) => ({ ...prev, menu_cover_image: url || null }));
+                          handleSaveConfig({ menu_cover_image: url || null });
+                        }
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      disabled={savingConfig || !coverUrlInput.trim()}
+                      onClick={() => {
+                        const url = coverUrlInput.trim();
+                        if (!url) {
+                          showToast(language === 'tr' ? 'Lütfen geçerli bir görsel URL adresi giriniz' : 'Please enter a valid URL', 'error');
+                          return;
+                        }
+                        setMenuConfig((prev) => ({ ...prev, menu_cover_image: url }));
+                        handleSaveConfig({ menu_cover_image: url });
+                      }}
+                      style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', padding: '0 0.95rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                    >
+                      <Check size={14} />
+                      <span>{savingConfig ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...') : (language === 'tr' ? 'Kaydet & Uygula' : 'Save & Apply')}</span>
+                    </button>
+                  </div>
+
+                  {/* URL Live Preview Card */}
+                  {(coverUrlInput.trim() || menuConfig.menu_cover_image) && (
+                    <div
+                      style={{
+                        position: 'relative',
+                        height: '100px',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        backgroundColor: '#18181b',
+                      }}
+                    >
+                      <img
+                        src={coverUrlInput.trim() || menuConfig.menu_cover_image || ''}
+                        alt="URL Preview"
+                        referrerPolicy="no-referrer"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                          justifyContent: 'space-between',
+                          padding: '0.45rem 0.75rem',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.72rem', color: '#fff', fontWeight: 600 }}>
+                          {coverUrlInput.trim() === menuConfig.menu_cover_image
+                            ? '✓ ' + (language === 'tr' ? 'Menüde Aktif & Kayıtlı' : 'Saved & Active on Menu')
+                            : '⚠️ ' + (language === 'tr' ? 'Kaydedilmedi - Lütfen "Kaydet & Uygula" butonuna basınız' : 'Not saved yet - click "Save & Apply"')}
+                        </span>
+                        {menuConfig.menu_cover_image && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCoverUrlInput('');
+                              setMenuConfig({ ...menuConfig, menu_cover_image: null });
+                              handleSaveConfig({ menu_cover_image: null });
+                            }}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem', color: '#f87171' }}
+                          >
+                            {language === 'tr' ? 'Kaldır' : 'Remove'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
