@@ -1912,11 +1912,11 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="founder-program" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="home-container">
           <div
+            className="home-founder-card"
             style={{
               background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(15, 23, 42, 0.96) 50%, rgba(99, 102, 241, 0.08) 100%)',
               border: '1px solid rgba(234, 179, 8, 0.3)',
               borderRadius: '24px',
-              padding: '3rem 2rem',
               position: 'relative',
               overflow: 'hidden',
               boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
@@ -2123,19 +2123,14 @@ export const HomePage: React.FC = () => {
 
             {/* CTA & Legal Disclaimer */}
             <div
+              className="home-founder-cta-box"
               style={{
                 background: 'rgba(0, 0, 0, 0.35)',
                 borderRadius: '16px',
-                padding: '1.5rem 2rem',
                 border: '1px solid rgba(255, 255, 255, 0.06)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '1.5rem',
               }}
             >
-              <div style={{ maxWidth: '750px' }}>
+              <div className="home-founder-cta-text" style={{ maxWidth: '750px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#facc15', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.35rem' }}>
                   <Sparkles size={16} />
                   <span>{t('auth.founderTitle')}</span>
@@ -2147,24 +2142,7 @@ export const HomePage: React.FC = () => {
 
               <Link
                 to="/register"
-                style={{
-                  padding: '0.85rem 2.2rem',
-                  fontSize: '0.96rem',
-                  fontWeight: 800,
-                  background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)',
-                  color: '#0f172a',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.55rem',
-                  textDecoration: 'none',
-                  borderRadius: '9999px',
-                  whiteSpace: 'nowrap',
-                  boxShadow: '0 8px 24px rgba(245, 158, 11, 0.42)',
-                  border: '1px solid rgba(254, 240, 138, 0.5)',
-                  transition: 'all 0.25s ease',
-                  cursor: 'pointer',
-                }}
+                className="home-founder-cta-btn"
                 onClick={() => {
                   trackFounderCtaClicked('home_founder_section');
                   trackBusinessRegisterStarted('founder_section_cta');
