@@ -1092,6 +1092,7 @@ export const MenuManagementPage: React.FC = () => {
                     background: 'rgba(255, 255, 255, 0.02)',
                     textAlign: 'center',
                     cursor: 'pointer',
+                    transition: 'border-color 0.2s',
                   }}
                 >
                   {isProcessingCover ? (
@@ -1104,6 +1105,24 @@ export const MenuManagementPage: React.FC = () => {
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                     Menünün en tepesinde sinematik karşılama görseli olarak gösterilir.
+                  </div>
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      marginTop: '0.45rem',
+                      padding: '2px 8px',
+                      borderRadius: '999px',
+                      background: 'rgba(99, 102, 241, 0.12)',
+                      border: '1px solid rgba(99, 102, 241, 0.25)',
+                      color: 'var(--accent-primary)',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <span>📐</span>
+                    <span>1200 × 500 px (16:9 veya 21:9)</span>
                   </div>
                 </div>
               ) : (
@@ -1125,6 +1144,34 @@ export const MenuManagementPage: React.FC = () => {
                   </button>
                 </div>
               )}
+
+              {/* Recommended Dimensions & Format Advice */}
+              <div
+                style={{
+                  marginTop: '0.65rem',
+                  padding: '0.6rem 0.8rem',
+                  borderRadius: '8px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  fontSize: '0.74rem',
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.45,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.25rem' }}>
+                  <span>💡</span>
+                  <span>{language === 'tr' ? 'Tavsiye Edilen Ölçüler & İpuçları' : 'Recommended Dimensions & Tips'}</span>
+                </div>
+                <div>
+                  • <strong>{language === 'tr' ? 'İdeal Çözünürlük' : 'Ideal Resolution'}:</strong> 1200 × 500 px ({language === 'tr' ? 'veya 16:9 yatay geniş açı' : 'or 16:9 widescreen'})
+                </div>
+                <div style={{ marginTop: '0.15rem' }}>
+                  • <strong>{language === 'tr' ? 'Format' : 'Format'}:</strong> JPG, PNG, WebP ({language === 'tr' ? 'Yüklenirken otomatik optimize edilir' : 'Auto-compressed on upload'})
+                </div>
+                <div style={{ marginTop: '0.15rem', opacity: 0.85 }}>
+                  • {language === 'tr' ? 'Mekan tabelası veya ana odağı görselin merkezine yerleştirmeniz en iyi sonucu verir.' : 'Placing your signage/focal point in the upper center gives the best result.'}
+                </div>
+              </div>
             </div>
 
             {/* Right: Stories (Chef's Highlights) Switch */}
