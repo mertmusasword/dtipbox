@@ -988,9 +988,26 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="pos-integrations" style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag" style={{ background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
-              <Globe size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
-              {language === 'tr' ? 'Global Ödeme & Doğrudan Tahsilat Uyumu' : 'Global Payment & Direct Routing'}
+            <span
+              className="home-section-tag"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.45rem',
+                background: 'rgba(99, 102, 241, 0.12)',
+                color: '#a5b4fc',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+                borderRadius: '9999px',
+                padding: '0.35rem 1.1rem',
+                fontSize: '0.78rem',
+                letterSpacing: '0.06em',
+                maxWidth: '100%',
+                boxShadow: '0 2px 12px rgba(99, 102, 241, 0.15)',
+              }}
+            >
+              <Globe size={14} style={{ flexShrink: 0 }} />
+              <span>{language === 'tr' ? 'Global Ödeme & Doğrudan Tahsilat' : 'Global Payment & Direct Routing'}</span>
             </span>
             <h2 className="home-section-title">
               {language === 'tr' ? 'Kendi Ödeme Sağlayıcınızı veya Bankanızı Kullanın. Sıfır Finansal Aracı.' : 'Bring Your Own Payment Gateway. Zero Financial Middleman.'}
@@ -1126,9 +1143,26 @@ export const HomePage: React.FC = () => {
       <section className="home-section" id="smart-qr" style={{ background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.7) 100%)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <div className="home-container">
           <div className="home-section-header">
-            <span className="home-section-tag" style={{ background: 'rgba(236, 72, 153, 0.15)', color: '#f472b6', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
-              <Sparkles size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
-              {language === 'tr' ? 'Masada Yeni Nesil Etkileşim' : 'Next-Gen Table Experience'}
+            <span
+              className="home-section-tag"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.45rem',
+                background: 'rgba(236, 72, 153, 0.12)',
+                color: '#f472b6',
+                border: '1px solid rgba(236, 72, 153, 0.3)',
+                borderRadius: '9999px',
+                padding: '0.35rem 1.1rem',
+                fontSize: '0.78rem',
+                letterSpacing: '0.06em',
+                maxWidth: '100%',
+                boxShadow: '0 2px 12px rgba(236, 72, 153, 0.15)',
+              }}
+            >
+              <Sparkles size={14} style={{ flexShrink: 0 }} />
+              <span>{language === 'tr' ? 'Masada Yeni Nesil Etkileşim' : 'Next-Gen Table Experience'}</span>
             </span>
             <h2 className="home-section-title">
               {language === 'tr' ? 'Naponi Smart QR — Tek QR. Sınırsız Olanak.' : 'Naponi Smart QR — One QR. Endless Hospitality.'}
