@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowRight, Lock, CheckCircle, AlertTriangle } from 'lucide-react';
-import { LanguageSelector } from '../../i18n';
+import { useLanguage, LanguageSelector } from '../../i18n';
 
 export const ResetPasswordPage: React.FC = () => {
+  const { t, dir } = useLanguage();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get('token') || '';
@@ -20,17 +21,17 @@ export const ResetPasswordPage: React.FC = () => {
     setError(null);
 
     if (!token) {
-      setError('Geçersiz veya eksik sıfırlama bağlantısı. Lütfen e-postanızdaki linke tekrar tıklayın.');
+      setError(t('auth.invalidResetTokenError'));
       return;
     }
 
     if (password.length < 8) {
-      setError('Yeni şifreniz en az 8 karakter uzunluğunda olmalıdır.');
+      setError(t('auth.passwordLengthError'));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Girdiğiniz şifreler birbiriyle eşleşmiyor.');
+      setError(t('auth.passwordsMismatchError'));
       return;
     }
 
@@ -46,7 +47,7 @@ export const ResetPasswordPage: React.FC = () => {
         navigate('/login', { replace: true });
       }, 3500);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Şifre sıfırlanırken bir hata oluştu. Bağlantı süresi dolmuş olabilir.');
+      setError(err.response?.data?.error || t('auth.resetPasswordError'));
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,8 @@ export const ResetPasswordPage: React.FC = () => {
       <div style={{
         position: 'fixed',
         top: '1.25rem',
-        right: '1.5rem',
+        right: dir === 'rtl' ? 'auto' : '1.5rem',
+        left: dir === 'rtl' ? '1.5rem' : 'auto',
         zIndex: 99999,
       }}>
         <LanguageSelector variant="compact" />
@@ -89,10 +91,10 @@ export const ResetPasswordPage: React.FC = () => {
             </Link>
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em' }}>
-            Yeni Şifre Belirle
+            {t('auth.resetPasswordTitle')}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
-            Lütfen hesabınız için güçlü ve yeni bir şifre oluşturun.
+            {t('auth.resetPasswordSubtitle')}
           </p>
         </div>
 
@@ -111,7 +113,7 @@ export const ResetPasswordPage: React.FC = () => {
           }}>
             <AlertTriangle size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              Sıfırlama kodu bulunamadı. Lütfen e-postanıza gönderilen bağlantıyı eksiksiz açtığınızdan emin olun.
+              {t('auth.invalidResetTokenError')}
             </div>
           </div>
         )}
@@ -145,49 +147,51 @@ export const ResetPasswordPage: React.FC = () => {
             }}>
               <CheckCircle size={32} />
             </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Şifreniz Güncellendi!</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              {t('auth.resetPasswordSuccessTitle')}
+            </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.75rem' }}>
-              Yeni şifreniz başarıyla kaydedildi. Giriş ekranına yönlendiriliyorsunuz...
+              {t('auth.resetPasswordSuccessDesc')}
             </p>
             <Link
               to="/login"
               className="btn btn-primary"
               style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              Şimdi Giriş Yap
+              {t('auth.signInBtn')}
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-              <label className="form-label">Yeni Şifre</label>
+              <label className="form-label">{t('auth.newPasswordLabel')}</label>
               <div style={{ position: 'relative' }}>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="En az 8 karakter"
+                  placeholder={t('auth.newPasswordPlaceholder')}
                   className="form-input"
-                  style={{ paddingLeft: '2.5rem' }}
+                  style={{ paddingLeft: dir === 'rtl' ? '1rem' : '2.5rem', paddingRight: dir === 'rtl' ? '2.5rem' : '1rem' }}
                 />
-                <Lock size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Lock size={18} style={{ position: 'absolute', [dir === 'rtl' ? 'right' : 'left']: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               </div>
             </div>
 
             <div className="form-group" style={{ marginBottom: '1.75rem' }}>
-              <label className="form-label">Yeni Şifre (Tekrar)</label>
+              <label className="form-label">{t('auth.confirmPasswordLabel')}</label>
               <div style={{ position: 'relative' }}>
                 <input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Şifrenizi tekrar girin"
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
                   className="form-input"
-                  style={{ paddingLeft: '2.5rem' }}
+                  style={{ paddingLeft: dir === 'rtl' ? '1rem' : '2.5rem', paddingRight: dir === 'rtl' ? '2.5rem' : '1rem' }}
                 />
-                <Lock size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Lock size={18} style={{ position: 'absolute', [dir === 'rtl' ? 'right' : 'left']: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               </div>
             </div>
 
@@ -197,9 +201,9 @@ export const ResetPasswordPage: React.FC = () => {
               className="btn btn-primary"
               style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem' }}
             >
-              {loading ? 'Güncelleniyor...' : (
+              {loading ? t('auth.resettingPassword') : (
                 <>
-                  Şifremi Güncelle <ArrowRight size={18} />
+                  {t('auth.resetPasswordBtn')} <ArrowRight size={18} />
                 </>
               )}
             </button>
@@ -208,7 +212,7 @@ export const ResetPasswordPage: React.FC = () => {
 
         <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
-            Giriş Ekranına Dön
+            {t('auth.backToLoginBtn')}
           </Link>
         </div>
       </div>

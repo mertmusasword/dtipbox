@@ -945,10 +945,10 @@ export const TipPage: React.FC = () => {
         }}>
           <div style={{ fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <ShieldCheck size={14} />
-            {language === 'tr' ? 'Hızlı Bağlantı Adımları' : 'Quick Connect Instructions'}
+            {sqt.quickConnectInstructions}
           </div>
-          <div>1. {language === 'tr' ? '"Şifreyi Kopyala" butonuna dokunun.' : 'Tap "Copy Password" above.'}</div>
-          <div>2. {language === 'tr' ? `Ayarlar > Wi-Fi bölümünden "${details.smartQr.wifiSsid}" ağını seçip yapıştırın.` : `Go to Settings > Wi-Fi, select "${details.smartQr.wifiSsid}" and paste.`}</div>
+          <div>1. {sqt.quickConnectStep1}</div>
+          <div>2. {sqt.quickConnectStep2(details.smartQr.wifiSsid || '')}</div>
         </div>
       </div>
     );

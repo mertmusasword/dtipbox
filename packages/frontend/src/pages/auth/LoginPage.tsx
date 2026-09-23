@@ -128,7 +128,7 @@ export const LoginPage: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
               <label className="form-label" style={{ marginBottom: 0 }}>{t('auth.passwordLabel')}</label>
               <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', textDecoration: 'none', fontWeight: 500 }}>
-                Şifremi Unuttum?
+                {t('auth.forgotPasswordLink')}
               </Link>
             </div>
             <div style={{ position: 'relative' }}>

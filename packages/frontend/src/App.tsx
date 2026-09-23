@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/Toast';
 import { Sidebar } from './components/Sidebar';
-import { LanguageProvider } from './i18n';
+import { LanguageProvider, useLanguage } from './i18n';
 import { AnalyticsTracker } from './analytics';
 import { ScrollToTop } from './components/ScrollToTop';
 import { FloatingSupportWidget } from './components/FloatingSupportWidget';
@@ -73,14 +73,33 @@ const AdminSupportTicketsPage = React.lazy(() => import('./pages/admin/AdminSupp
 const TechnologyPartnersPage = React.lazy(() => import('./pages/public/TechnologyPartnersPage').then((m) => ({ default: m.TechnologyPartnersPage })));
 
 // Page Loading Fallback Spinner
-const PageLoader: React.FC = () => (
-  <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <div style={{ textAlign: 'center' }}>
-      <div className="spinner" style={{ margin: '0 auto 1rem' }} />
-      <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Yükleniyor...</div>
+const PageLoader: React.FC = () => {
+  const { language } = useLanguage();
+  const loadingText = React.useMemo(() => {
+    switch (language) {
+      case 'tr': return 'Yükleniyor...';
+      case 'ru': return 'Загрузка...';
+      case 'de': return 'Wird geladen...';
+      case 'fr': return 'Chargement...';
+      case 'es': return 'Cargando...';
+      case 'ar': return 'جاري التحميل...';
+      case 'zh': return '加载中...';
+      case 'ja': return '読み込み中...';
+      case 'pt': return 'Carregando...';
+      case 'id': return 'Memuat...';
+      default: return 'Loading...';
+    }
+  }, [language]);
+
+  return (
+    <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div className="spinner" style={{ margin: '0 auto 1rem' }} />
+        <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{loadingText}</div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Protected Route Guard
 const ProtectedLayout: React.FC<{ allowedRoles?: Role[] }> = ({ allowedRoles }) => {

@@ -213,7 +213,14 @@ export const MenuPage: React.FC = () => {
         setDetails(res.data.data);
       })
       .catch((err) => {
-        setError(err.response?.data?.error || 'Menü yüklenemedi. Lütfen internet bağlantınızı kontrol ediniz.');
+        setError(
+          err.response?.data?.error ||
+          (isTr
+            ? 'Menü yüklenemedi. Lütfen internet bağlantınızı kontrol ediniz.'
+            : language === 'ru'
+            ? 'Не удалось загрузить меню. Проверьте подключение к интернету.'
+            : 'Failed to load menu. Please check your internet connection.')
+        );
       })
       .finally(() => setLoading(false));
   }, [publicToken]);

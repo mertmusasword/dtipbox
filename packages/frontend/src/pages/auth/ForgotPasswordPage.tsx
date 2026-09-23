@@ -20,7 +20,7 @@ export const ForgotPasswordPage: React.FC = () => {
       await axios.post('/api/auth/forgot-password', { email });
       setSuccess(true);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Şifre sıfırlama bağlantısı gönderilirken bir hata oluştu.');
+      setError(err.response?.data?.error || t('auth.resetPasswordError'));
     } finally {
       setLoading(false);
     }
@@ -64,10 +64,10 @@ export const ForgotPasswordPage: React.FC = () => {
             </Link>
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em' }}>
-            Şifremi Unuttum
+            {t('auth.forgotPasswordTitle')}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
-            Kayıtlı e-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.
+            {t('auth.forgotPasswordSubtitle')}
           </p>
         </div>
 
@@ -100,16 +100,18 @@ export const ForgotPasswordPage: React.FC = () => {
             }}>
               <CheckCircle size={32} />
             </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Bağlantı Gönderildi</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              {t('auth.resetLinkSentTitle')}
+            </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.75rem' }}>
-              <strong>{email}</strong> adresine şifre sıfırlama yönergelerini ilettik. Lütfen gelen kutunuzu ve spam klasörünüzü kontrol ediniz.
+              <strong>{email}</strong> {t('auth.resetLinkSentDesc')}
             </p>
             <Link
               to="/login"
               className="btn btn-primary"
               style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
-              <ArrowLeft size={18} /> Giriş Ekranına Dön
+              <ArrowLeft size={18} /> {t('auth.backToLoginBtn')}
             </Link>
           </div>
         ) : (
@@ -136,9 +138,9 @@ export const ForgotPasswordPage: React.FC = () => {
               className="btn btn-primary"
               style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem' }}
             >
-              {loading ? 'Gönderiliyor...' : (
+              {loading ? t('auth.sendingResetLink') : (
                 <>
-                  Sıfırlama Bağlantısı Gönder <ArrowRight size={18} />
+                  {t('auth.sendResetLinkBtn')} <ArrowRight size={18} />
                 </>
               )}
             </button>
@@ -146,7 +148,7 @@ export const ForgotPasswordPage: React.FC = () => {
         )}
 
         <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          Hatırladınız mı?{' '}
+          {t('auth.rememberPasswordPrompt')}{' '}
           <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
             {t('auth.signInBtn')}
           </Link>
