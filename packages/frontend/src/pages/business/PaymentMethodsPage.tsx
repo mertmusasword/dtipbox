@@ -35,6 +35,7 @@ import {
   Check,
   ArrowRight,
   Headphones,
+  Save,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
@@ -85,6 +86,32 @@ export const PaymentMethodsPage: React.FC = () => {
   });
   const [submittingRequest, setSubmittingRequest] = useState(false);
 
+  // External Hosted Payment URL state
+  const [externalPaymentUrl, setExternalPaymentUrl] = useState('');
+  const [savingExternalUrl, setSavingExternalUrl] = useState(false);
+
+  // Save External Payment URL
+  const handleSaveExternalUrl = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = externalPaymentUrl.trim();
+    if (trimmed && !/^https:\/\//i.test(trimmed)) {
+      showToast(language === 'tr' ? 'Güvenlik için link https:// ile başlamalıdır.' : 'Link must begin with https://', 'error');
+      return;
+    }
+    setSavingExternalUrl(true);
+    try {
+      await api.put('/business/payment-settings', {
+        externalPaymentUrl: trimmed || null,
+      });
+      showToast(language === 'tr' ? 'Ödeme linki başarıyla kaydedildi.' : 'Payment link saved successfully.');
+      loadData();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || t('common.error'), 'error');
+    } finally {
+      setSavingExternalUrl(false);
+    }
+  };
+
   // Load business & payments data
   const loadData = useCallback(() => {
     setLoading(true);
@@ -94,12 +121,18 @@ export const PaymentMethodsPage: React.FC = () => {
       api.get('/business/payment-methods'),
       api.get('/business/payment-providers/integrations'),
       api.get('/business/payment-providers/catalog'),
+      api.get('/business/payment-account'),
     ])
-      .then(([bizRes, methodsRes, intRes, catRes]) => {
+      .then(([bizRes, methodsRes, intRes, catRes, accRes]) => {
         if (bizRes.data.data) {
           setBusinessCountry(bizRes.data.data.country || 'US');
           setBusinessCurrency(bizRes.data.data.currency || 'USD');
           setRequestForm((prev) => ({ ...prev, country: bizRes.data.data.country || 'US' }));
+        }
+        if (accRes.data?.data?.externalPaymentUrl) {
+          setExternalPaymentUrl(accRes.data.data.externalPaymentUrl);
+        } else if (bizRes.data?.data?.external_payment_url) {
+          setExternalPaymentUrl(bizRes.data.data.external_payment_url);
         }
         setMethods(methodsRes.data.data || []);
         setIntegrations(intRes.data.data || []);
@@ -107,7 +140,7 @@ export const PaymentMethodsPage: React.FC = () => {
       })
       .catch(() => setError('Failed to load payment channels & providers'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [language, t]);
 
   useEffect(() => {
     loadData();
@@ -342,7 +375,106 @@ export const PaymentMethodsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 1: DIRECT BANK / IBAN SETTLEMENT */}
+      {/* SECTION 1: DIRECT NON-CUSTODIAL CARD & PAYMENT LINK */}
+      <div className="glass-card payments-bank-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="payments-bank-header">
+          <div className="payments-bank-info">
+            <div
+              className="metric-icon"
+              style={{
+                color: externalPaymentUrl ? 'var(--success)' : 'var(--primary)',
+                marginTop: '2px',
+                flexShrink: 0,
+              }}
+            >
+              <CreditCard size={24} />
+            </div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div className="payments-bank-title-row">
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, lineHeight: 1.3 }}>
+                  {language === 'tr'
+                    ? 'Kart & Harici Ödeme Linki (Stripe / PayTR / Shopier / iyzico)'
+                    : 'Card & Hosted Payment Link (Stripe / PayTR / Shopier / iyzico)'}
+                </h3>
+                {externalPaymentUrl ? (
+                  <span className="badge badge-success">
+                    <CheckCircle2 size={12} /> {language === 'tr' ? 'Link Aktif' : 'Link Active'}
+                  </span>
+                ) : (
+                  <span className="badge badge-neutral">
+                    <XCircle size={12} /> {language === 'tr' ? 'Link Tanımlanmadı' : 'No Link Set'}
+                  </span>
+                )}
+              </div>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0', lineHeight: 1.45 }}>
+                {language === 'tr'
+                  ? 'Naponi emanetçi olmayan (non-custodial) bir yapıda çalışır; paranız Naponi havuzunda beklemez ve asla komisyon kesilmez. Stripe Payment Link, PayTR Link, Shopier veya kendi sanal POS linkinizi kaydederek müşterilerinizin kredi kartı, Apple Pay veya Google Pay ile doğrudan kendi hesabınıza bahşiş göndermesini sağlayın.'
+                  : 'Naponi operates non-custodially: your money is never held in an intermediary pool and zero commission is deducted. Connect your Stripe Payment Link, PayTR, Shopier, or hosted POS checkout link so guests can tip directly into your account.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="payments-bank-actions">
+            {cardMethod && (
+              <button
+                className={`btn ${cardMethod.status === 'ACTIVE' ? 'btn-danger' : 'btn-primary'}`}
+                disabled={!externalPaymentUrl && cardMethod.status !== 'ACTIVE'}
+                onClick={() => handleToggleMethodStatus(cardMethod)}
+              >
+                {cardMethod.status === 'ACTIVE'
+                  ? (language === 'tr' ? 'Kart Kanalını Pasife Al' : 'Deactivate Cards')
+                  : (language === 'tr' ? 'Kart Kanalını Aktifleştir' : 'Activate Cards')}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Link Input Form */}
+        <form onSubmit={handleSaveExternalUrl} style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+            <div style={{ flex: 1, minWidth: '260px' }}>
+              <input
+                type="url"
+                placeholder={language === 'tr' ? 'Örn: https://buy.stripe.com/... veya https://paytr.com/link/...' : 'e.g. https://buy.stripe.com/... or your payment link'}
+                value={externalPaymentUrl}
+                onChange={(e) => setExternalPaymentUrl(e.target.value)}
+                className="form-input"
+                style={{ fontSize: '0.875rem' }}
+              />
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+                🔒 {language === 'tr' ? 'Güvenlik için link https:// ile başlamalıdır.' : 'Link must begin with https:// for security.'}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                type="submit"
+                disabled={savingExternalUrl}
+                className="btn btn-primary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap' }}
+              >
+                <Save size={15} />
+                <span>{savingExternalUrl ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...') : (language === 'tr' ? 'Linki Kaydet' : 'Save Link')}</span>
+              </button>
+
+              {externalPaymentUrl && (
+                <button
+                  type="button"
+                  onClick={() => window.open(externalPaymentUrl, '_blank', 'noopener,noreferrer')}
+                  className="btn btn-secondary"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap' }}
+                  title={language === 'tr' ? 'Yeni sekmede test et' : 'Test in new tab'}
+                >
+                  <ExternalLink size={15} />
+                  <span>{language === 'tr' ? 'Test Et' : 'Test'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </form>
+      </div>
+
+      {/* SECTION 2: DIRECT BANK / IBAN SETTLEMENT */}
       <div className="glass-card payments-bank-card">
         <div className="payments-bank-header">
           <div className="payments-bank-info">
@@ -387,13 +519,17 @@ export const PaymentMethodsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 2: CONNECTED PAYMENT PROVIDERS & GATEWAYS */}
+      {/* SECTION 3: ADVANCED / DIRECT POS API GATEWAYS */}
       <div style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>{t('payments.connectedGatewaysTitle')}</h2>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
+              {language === 'tr' ? 'Gelişmiş POS API Ağ Geçitleri' : t('payments.connectedGatewaysTitle')}
+            </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.25rem 0 0' }}>
-              {t('payments.connectedGatewaysDesc')}
+              {language === 'tr'
+                ? 'İşletmenizin kurumsal iyzico, PayTR veya Stripe API anahtarlarıyla doğrudan bağlantı kurmak isterseniz aşağıdaki sağlayıcıları yönetebilirsiniz.'
+                : t('payments.connectedGatewaysDesc')}
             </p>
           </div>
         </div>
@@ -974,10 +1110,10 @@ export const PaymentMethodsPage: React.FC = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--success)' }}>
-                      <Check size={16} /> 1. Aracı Havuz Yok
+                      <Check size={16} /> 1. %100 Non-Custodial (Aracı Havuz Yok)
                     </div>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
-                      Bahşişler doğrudan bağladığınız sanal POS (iyzico, PayTR, Stripe vb.) hesabınıza yatar. Naponi parada günlerce bekleme yapmaz.
+                      Naponi paranızı havuzda bekletmez, komisyon kesmez. Bahşişler doğrudan kendi Stripe, PayTR, Shopier veya Banka (IBAN) hesabınıza yatar.
                     </p>
                   </div>
 
@@ -990,10 +1126,11 @@ export const PaymentMethodsPage: React.FC = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)' }}>
-                      <ShieldCheck size={16} /> 2. Sıfır Kart Riski
+                      <ShieldCheck size={16} /> 2. İki Kolay Entegrasyon Yolu
                     </div>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
-                      Müşterinizin kart bilgileri Naponi sunucularında asla tutulmaz. Tüm ödemeler PCI-DSS Seviye 1 güvenceli ödeme devleri üzerinden akar.
+                      <strong>Kolay Yol:</strong> Ödeme linkinizi (Stripe Payment Link, Shopier vb.) panele yapıştırın.<br/>
+                      <strong>Kurumsal Yol:</strong> Sanal POS API anahtarlarınızı bağlayın.
                     </p>
                   </div>
 
@@ -1006,10 +1143,10 @@ export const PaymentMethodsPage: React.FC = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: '#ec4899' }}>
-                      <Smartphone size={16} /> 3. Otomatik QR Etkileşimi
+                      <Smartphone size={16} /> 3. Anında QR Aktivasyonu
                     </div>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
-                      Sağlayıcınızı test edip kaydettiğiniz anda işletmenizdeki ve masalarınızdaki tüm QR kodlar kartla bahşişe anında açılır.
+                      Ödeme linkinizi girdiğiniz veya IBAN'ınızı kaydettiğiniz anda işletmenizdeki tüm QR kodlar kartlı bahşişe anında açılır.
                     </p>
                   </div>
                 </div>

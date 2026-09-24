@@ -38,11 +38,24 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const fallbackStatements: Record<string, string> = {
+    tr: "Okudum ve Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni kabul ediyorum.",
+    en: "I have read and agree to the Naponi Global Merchant Services and Digital Tipping Agreement.",
+    de: "Ich habe die Naponi Händler-Nutzungsvereinbarung gelesen und stimme ihr zu.",
+    fr: "J'ai lu et j'accepte les Conditions de Service Marchand Naponi.",
+    es: "He leído y acepto el Contrato de Servicios para Comercios de Naponi.",
+    ja: "Naponi加盟店利用規約およびデジタルチップ契約を確認し、同意します。",
+    zh: "我已阅读并同意《Naponi 商户服务与数字小费合作协议》。",
+    ru: "Я прочитал(а) и принимаю соглашение об обслуживании продавцов Naponi.",
+    ar: "لقد قرأت ووافقت على اتفاقية خدمات التجار والإكراميات الرقمية من نابوني.",
+    pt: "Li e aceito os Termos de Serviço para Estabelecimentos Naponi.",
+    id: "Saya telah membaca dan menyetujui Perjanjian Layanan Merchant Naponi.",
+  };
+
   const MANDATORY_STATEMENT =
     agreementData?.mandatory_statement ||
-    (language === 'tr'
-      ? "Okudum ve Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni kabul ediyorum."
-      : "I have read and agree to the Naponi Global Merchant Services and Digital Tipping Agreement.");
+    fallbackStatements[language] ||
+    fallbackStatements.en;
 
   useEffect(() => {
     if (isOpen) {
@@ -204,7 +217,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
               <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary, #94a3b8)', margin: '0.2rem 0 0 0' }}>
                 {language === 'tr'
                   ? 'Dijital Onay, Hukuki Yükümlülükler ve Elektronik İspat Kaydı (HMK m. 193)'
-                  : 'Digital Consent, Legal Obligations & Electronic Proof Record (HMK 193)'}
+                  : 'Digital Consent, Legal Obligations & Enforceability Record (eIDAS / ESIGN Act Compliance)'}
               </p>
             </div>
           </div>
@@ -302,10 +315,10 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))', paddingBottom: '0.4rem', marginBottom: '0.5rem' }}>
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {language === 'tr' ? 'Hukuki Delil Niteliği:' : 'Legal Evidence Status:'}
+                    {language === 'tr' ? 'Hukuki Delil Niteliği:' : 'Legal Enforceability Status:'}
                   </span>
                   <span style={{ fontWeight: 700, color: 'var(--color-primary, #6366f1)' }}>
-                    {language === 'tr' ? 'HMK m. 193 Kesin Delil' : 'Binding Electronic Evidence'}
+                    {language === 'tr' ? 'HMK m. 193 Kesin Delil' : 'eIDAS / ESIGN Binding Electronic Evidence'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -461,7 +474,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, maxWidth: '420px', lineHeight: 1.4 }}>
                       {language === 'tr'
                         ? 'Onayınız ile birlikte IP adresiniz, cihaz bilgisi ve SHA-256 belge özeti HMK m. 193 uyarınca bağlayıcı kayıt altına alınır.'
-                        : 'Upon confirmation, your IP address, device metadata, and SHA-256 document hash are recorded as binding electronic consent.'}
+                        : 'Upon confirmation, your IP address, device metadata, and SHA-256 cryptographic digest are recorded as binding electronic consent under eIDAS and ESIGN Act standards.'}
                     </p>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

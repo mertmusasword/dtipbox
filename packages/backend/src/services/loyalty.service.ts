@@ -220,14 +220,16 @@ export class LoyaltyService {
    * 4. Get paginated loyalty stamp audit transactions
    */
   async getBusinessLoyaltyTransactions(businessId: string, page = 1, limit = 20) {
-    const skip = (page - 1) * limit;
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(100, Math.max(1, limit));
+    const skip = (safePage - 1) * safeLimit;
 
     const [items, total] = await Promise.all([
       prisma.loyaltyStampTransaction.findMany({
         where: { business_id: businessId },
         orderBy: { created_at: 'desc' },
         skip,
-        take: limit,
+        take: safeLimit,
         include: {
           employee: {
             select: { id: true, first_name: true, last_name: true, role_title: true },

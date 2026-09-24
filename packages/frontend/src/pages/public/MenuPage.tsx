@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { PublicMenuDetails, MenuItem, MenuCategory, MenuThemeKey } from '../../types';
 import { useLanguage, LanguageSelector } from '../../i18n';
-import { getAllergenLabel, getAllergenIcon, getAllergenDetail } from '../../constants/allergens';
+import { getAllergenLabel, getAllergenIcon, getAllergenDetail, ALLERGEN_DISCLAIMER } from '../../constants/allergens';
 import {
   UtensilsCrossed,
   Search,
@@ -182,7 +182,7 @@ export const THEME_PALETTES: Record<MenuThemeKey, ThemeTokens> = {
 
 export const MenuPage: React.FC = () => {
   const { publicToken } = useParams<{ publicToken: string }>();
-  const { t, formatCurrency, language } = useLanguage();
+  const { t, formatCurrency, language, dir } = useLanguage();
   const isTr = language === 'tr';
 
   const [loading, setLoading] = useState(true);
@@ -348,28 +348,50 @@ export const MenuPage: React.FC = () => {
           color: theme.textPrimary,
           padding: '2rem',
           textAlign: 'center',
+          position: 'relative',
         }}
       >
-        <AlertTriangle size={48} style={{ color: '#D97706', marginBottom: '1rem' }} />
-        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.5rem', color: theme.textPrimary }}>Menü Açılamadı</h2>
-        <p style={{ color: theme.textSecondary, maxWidth: '380px', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-          {error}
+        <div style={{ position: 'absolute', top: '1.25rem', right: dir === 'rtl' ? 'auto' : '1.25rem', left: dir === 'rtl' ? '1.25rem' : 'auto' }}>
+          <LanguageSelector variant="compact" theme={theme.isDark ? 'dark' : 'light'} />
+        </div>
+        <AlertTriangle size={52} style={{ color: '#D97706', marginBottom: '1rem' }} />
+        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '0.5rem', color: theme.textPrimary }}>
+          {t('tip.invalidQr') || (isTr ? 'Menü Açılamadı' : 'Menu Unavailable')}
+        </h2>
+        <p style={{ color: theme.textSecondary, maxWidth: '400px', fontSize: '0.925rem', marginBottom: '1.75rem', lineHeight: 1.5 }}>
+          {error || t('tip.inactiveBusiness')}
         </p>
-        {publicToken && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: '280px' }}>
+          {publicToken && (
+            <Link
+              to={`/tip/${publicToken}?view=tip`}
+              className="btn btn-primary"
+              style={{
+                padding: '0.75rem 1.5rem',
+                background: theme.accent,
+                color: theme.accentText,
+                borderColor: theme.accent,
+                fontWeight: 700,
+                textAlign: 'center',
+                textDecoration: 'none',
+              }}
+            >
+              {t('tip.title') || (isTr ? 'Bahşiş Bırak' : 'Leave a Tip')}
+            </Link>
+          )}
           <Link
-            to={`/tip/${publicToken}?view=tip`}
-            className="btn btn-primary"
+            to="/"
+            className="btn btn-secondary"
             style={{
               padding: '0.75rem 1.5rem',
-              background: theme.accent,
-              color: theme.accentText,
-              borderColor: theme.accent,
-              fontWeight: 700,
+              fontWeight: 600,
+              textAlign: 'center',
+              textDecoration: 'none',
             }}
           >
-            Bahşiş Ekranına Git
+            {t('tip.backToHome') || (isTr ? 'Ana Sayfaya Dön' : 'Back to Home')}
           </Link>
-        )}
+        </div>
       </div>
     );
   }
@@ -904,7 +926,7 @@ export const MenuPage: React.FC = () => {
               <span style={{ fontWeight: 700, color: theme.accent }}>
                 {excludedAllergens.length} {t('menu.filterActiveNotice')}
               </span>
-              : {excludedAllergens.map((id) => getAllergenLabel(id, language)).join(', ')} (Gizlendi)
+              : {excludedAllergens.map((id) => getAllergenLabel(id, language)).join(', ')} ({isTr ? 'Gizlendi' : 'Hidden'})
             </div>
             <button
               type="button"
@@ -1467,7 +1489,7 @@ export const MenuPage: React.FC = () => {
                 marginBottom: '1.25rem',
               }}
             >
-              ⚠️ <strong>Yasal Sorumluluk Hatırlatması:</strong> {t('menu.filterDisclaimerNote')}
+              {ALLERGEN_DISCLAIMER[language] || ALLERGEN_DISCLAIMER.en || ALLERGEN_DISCLAIMER.tr}
             </div>
 
             {/* Modal Actions */}

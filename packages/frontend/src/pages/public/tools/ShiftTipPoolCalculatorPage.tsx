@@ -16,6 +16,7 @@ import {
 import { SeoHead } from '../../../components/SeoHead';
 import { SEO_TOOLS, SEO_TOOLS_EN } from '../../../content/tools/tools';
 import { useLanguage, LanguageSelector } from '../../../i18n';
+import { downloadCsv } from '../../../utils/csv';
 import '../../../styles/home.css';
 import '../../../styles/blog.css';
 import '../../../styles/seo-features.css';
@@ -125,8 +126,8 @@ export const ShiftTipPoolCalculatorPage: React.FC = () => {
       : ['Personel Adı', 'Rol', 'Puan Katsayısı', 'Çalışma Saati', 'Toplam Puan', 'Ödenecek Bahşiş', 'Saatlik Bahşiş'];
 
     const rows = calculations.distributions.map((d) => [
-      `"${d.name}"`,
-      `"${d.role}"`,
+      d.name,
+      d.role,
       d.weight.toFixed(2),
       d.hours.toString(),
       d.points.toFixed(2),
@@ -134,14 +135,7 @@ export const ShiftTipPoolCalculatorPage: React.FC = () => {
       `${currency}${d.hourlyRate.toFixed(2)}/hr`,
     ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `shift_tip_pool_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    downloadCsv(`shift_tip_pool_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
   };
 
   const handleCopySummary = () => {

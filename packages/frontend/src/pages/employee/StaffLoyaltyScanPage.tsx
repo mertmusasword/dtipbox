@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { api } from '../../api/client';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
+import { getStaffLoyaltyLocale } from '../../i18n/loyaltyLocales';
 import {
   Award,
   QrCode,
@@ -29,7 +30,9 @@ interface StampResult {
 
 export const StaffLoyaltyScanPage: React.FC = () => {
   const { showToast } = useToast();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+  const l = getStaffLoyaltyLocale(language);
+  const isRTL = language === 'ar';
 
   const [activeTab, setActiveTab] = useState<'scan' | 'code' | 'redeem'>('scan');
 
@@ -109,7 +112,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
     setCameraError(null);
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setCameraError('Kamera erişimi bu tarayıcıda desteklenmiyor.');
+        setCameraError(l.cameraNotSupported);
         return;
       }
 
@@ -125,10 +128,10 @@ export const StaffLoyaltyScanPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Camera access error:', err);
-      setCameraError('Kamera izni verilmedi veya kamera bulunamadı. Lütfen kamera iznini onaylayın veya QR kodunu el ile girin.');
+      setCameraError(l.cameraPermissionError);
       setCameraActive(false);
     }
-  }, []);
+  }, [l.cameraNotSupported, l.cameraPermissionError]);
 
   // Handle Tab Switch
   useEffect(() => {
@@ -225,9 +228,9 @@ export const StaffLoyaltyScanPage: React.FC = () => {
         customerEmail: data.card?.customer_email ?? data.customerEmail,
       });
       setManualQrToken('');
-      showToast('Damga başarıyla eklendi!', 'success');
+      showToast(l.stampSuccess, 'success');
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'QR damgalama başarısız oldu.', 'error');
+      showToast(err.response?.data?.error || l.qrStampError, 'error');
       setTimeout(() => {
         isScanningLockedRef.current = false;
         lastScannedTokenRef.current = '';
@@ -242,7 +245,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
     e.preventDefault();
     const code = cardCode.trim().toUpperCase();
     if (!code) {
-      showToast('Lütfen kart kodunu girin', 'warning');
+      showToast(l.enterCodeWarning, 'warning');
       return;
     }
 
@@ -261,9 +264,9 @@ export const StaffLoyaltyScanPage: React.FC = () => {
         customerEmail: data.card?.customer_email ?? data.customerEmail,
       });
       setCardCode('');
-      showToast('Damga başarıyla eklendi!', 'success');
+      showToast(l.stampSuccess, 'success');
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Kod ile damgalama başarısız oldu.', 'error');
+      showToast(err.response?.data?.error || l.codeStampError, 'error');
     } finally {
       setProcessingCode(false);
     }
@@ -275,7 +278,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
     const code = redeemCardCode.trim().toUpperCase();
     const verifCode = redeemVerifCode.trim().toUpperCase();
     if (!code && !verifCode) {
-      showToast('Lütfen kart kodunu veya ödül doğrulama kodunu girin', 'warning');
+      showToast(l.enterCardOrVerifWarning, 'warning');
       return;
     }
 
@@ -290,21 +293,21 @@ export const StaffLoyaltyScanPage: React.FC = () => {
       });
       const data = res.data.data;
       setRedeemSuccess({
-        reward: data.rewardTitle || data.program?.reward_description || 'Ödül',
-        customer: data.customerName || data.customerEmail || data.card?.customer_name || data.card?.customer_email || 'Müşteri',
+        reward: data.rewardTitle || data.program?.reward_description || 'Reward',
+        customer: data.customerName || data.customerEmail || data.card?.customer_name || data.card?.customer_email || 'Customer',
       });
       setRedeemCardCode('');
       setRedeemVerifCode('');
-      showToast('Ödül başarıyla teslim edildi!', 'success');
+      showToast(l.redeemSuccess, 'success');
     } catch (err: any) {
-      showToast(err.response?.data?.error || 'Ödül teslim işlemi başarısız.', 'error');
+      showToast(err.response?.data?.error || l.redeemError, 'error');
     } finally {
       setProcessingRedeem(false);
     }
   };
 
   return (
-    <div className="page-wrapper loyalty-staff-page">
+    <div className="page-wrapper loyalty-staff-page" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div style={{ marginBottom: '1.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
@@ -322,9 +325,9 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             <Award size={22} />
           </div>
           <div>
-            <h1 className="page-title" style={{ margin: 0, fontSize: '1.65rem' }}>Damga Bas & Ödül Teslim</h1>
+            <h1 className="page-title" style={{ margin: 0, fontSize: '1.65rem' }}>{l.title}</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0 0' }}>
-              Müşterinin dinamik QR kodunu tarayın veya 6 haneli kart kodunu girin.
+              {l.subtitle}
             </p>
           </div>
         </div>
@@ -338,7 +341,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
           className={`loyalty-staff-tab-btn ${activeTab === 'scan' ? 'tab--active' : ''}`}
         >
           <QrCode size={18} />
-          <span>QR Kod Tara</span>
+          <span>{l.tabScan}</span>
         </button>
         <button
           type="button"
@@ -346,7 +349,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
           className={`loyalty-staff-tab-btn ${activeTab === 'code' ? 'tab--active' : ''}`}
         >
           <Keyboard size={18} />
-          <span>Kod ile İşlem</span>
+          <span>{l.tabCode}</span>
         </button>
         <button
           type="button"
@@ -354,7 +357,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
           className={`loyalty-staff-tab-btn ${activeTab === 'redeem' ? 'tab--active' : ''}`}
         >
           <Gift size={18} />
-          <span>Ödül Teslim Et</span>
+          <span>{l.tabRedeem}</span>
         </button>
       </div>
 
@@ -395,13 +398,13 @@ export const StaffLoyaltyScanPage: React.FC = () => {
           {/* Manual QR paste or handheld scanner input */}
           <div style={{ marginTop: '1.25rem' }}>
             <label className="loyalty-input-label">
-              El Tipi Barkod Okuyucu veya QR Metni:
+              {l.handheldLabel}
             </label>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input
                 type="text"
                 className="loyalty-text-input"
-                placeholder="QR token kodunu yapıştırın..."
+                placeholder={l.qrPlaceholder}
                 value={manualQrToken}
                 onChange={(e) => setManualQrToken(e.target.value)}
                 onKeyDown={(e) => {
@@ -417,11 +420,11 @@ export const StaffLoyaltyScanPage: React.FC = () => {
                 className="loyalty-primary-btn"
                 style={{ padding: '0 1.25rem', whiteSpace: 'nowrap' }}
               >
-                {processingScan ? 'İşleniyor...' : 'Onayla'}
+                {processingScan ? l.processing : l.confirm}
               </button>
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-              Müşterinin telefonundaki 30 saniyelik dinamik QR kodu okutun.
+              {l.dynamicQrHint}
             </div>
           </div>
         </div>
@@ -444,9 +447,9 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             }}>
               <Keyboard size={24} />
             </div>
-            <h2 style={{ fontSize: '1.25rem', margin: '0 0 0.25rem', fontWeight: 700 }}>6 Haneli Kart Kodu</h2>
+            <h2 style={{ fontSize: '1.25rem', margin: '0 0 0.25rem', fontWeight: 700 }}>{l.cardCodeTitle}</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
-              Müşterinin kartında yazan benzersiz kodu girin.
+              {l.cardCodeSubtitle}
             </p>
           </div>
 
@@ -455,7 +458,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               <input
                 type="text"
                 className="loyalty-code-input"
-                placeholder="Örn: 8F42K7"
+                placeholder={l.codePlaceholder}
                 maxLength={8}
                 value={cardCode}
                 onChange={(e) => setCardCode(e.target.value.toUpperCase())}
@@ -480,7 +483,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               }}
             >
               <Zap size={18} />
-              {processingCode ? 'Damga Basılıyor...' : '+1 Damga Ekle'}
+              {processingCode ? l.stampingBtn : l.addStampBtn}
             </button>
           </form>
         </div>
@@ -503,15 +506,15 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             }}>
               <Gift size={24} />
             </div>
-            <h2 style={{ fontSize: '1.25rem', margin: '0 0 0.25rem', fontWeight: 700 }}>Ödül Teslim Et</h2>
+            <h2 style={{ fontSize: '1.25rem', margin: '0 0 0.25rem', fontWeight: 700 }}>{l.redeemTitle}</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
-              Hedef damgaya ulaşan müşterinin ödülünü onaylayıp kartını sıfırlayın.
+              {l.redeemSubtitle}
             </p>
           </div>
 
           <form onSubmit={handleRedeemReward}>
             <div style={{ marginBottom: '1.25rem' }}>
-              <label className="loyalty-input-label">Müşteri Kart Kodu</label>
+              <label className="loyalty-input-label">{l.customerCodeLabel}</label>
               <input
                 type="text"
                 className="loyalty-code-input"
@@ -524,11 +527,11 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="loyalty-input-label">Ödül Doğrulama Kodu (Varsa)</label>
+              <label className="loyalty-input-label">{l.verifCodeLabel}</label>
               <input
                 type="text"
                 className="loyalty-text-input"
-                placeholder="Örn: 82YR34 veya isteğe bağlı"
+                placeholder={l.verifPlaceholder}
                 value={redeemVerifCode}
                 onChange={(e) => setRedeemVerifCode(e.target.value.toUpperCase())}
               />
@@ -551,7 +554,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               }}
             >
               <Gift size={18} />
-              {processingRedeem ? 'Onaylanıyor...' : 'Ödülü Teslim Et & Sıfırla'}
+              {processingRedeem ? l.redeemingBtn : l.redeemBtn}
             </button>
           </form>
         </div>
@@ -576,7 +579,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             </div>
 
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 0.5rem' }}>
-              {stampResult.rewardEarned ? '🎉 Ödül Kazanıldı!' : 'Damga Eklendi!'}
+              {stampResult.rewardEarned ? l.rewardEarnedTitle : l.stampAddedTitle}
             </h3>
 
             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
@@ -591,7 +594,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               marginBottom: '1.5rem',
             }}>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
-                Damga İlerlemesi
+                {l.stampProgress}
               </div>
               <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#fff', margin: '0.25rem 0' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{stampResult.previousStamps}</span>
@@ -612,7 +615,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
                   fontSize: '0.85rem',
                   fontWeight: 700,
                 }}>
-                  🎁 Hak Edilen: {stampResult.rewardDescription}
+                  {l.earnedRewardLabel(stampResult.rewardDescription)}
                 </div>
               )}
             </div>
@@ -623,7 +626,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               className="loyalty-primary-btn"
               style={{ width: '100%', padding: '0.85rem' }}
             >
-              Tamam
+              {l.done}
             </button>
           </div>
         </div>
@@ -648,11 +651,11 @@ export const StaffLoyaltyScanPage: React.FC = () => {
             </div>
 
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 0.5rem' }}>
-              Ödül Teslim Edildi!
+              {l.rewardRedeemedTitle}
             </h3>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: '0 0 1.25rem' }}>
-              <strong style={{ color: '#fff' }}>{redeemSuccess.reward}</strong> ödülü müşteriye başarıyla teslim edildi ve kartındaki damgalar sıfırlandı.
+              {l.rewardRedeemedDesc(redeemSuccess.reward)}
             </p>
 
             <button
@@ -661,7 +664,7 @@ export const StaffLoyaltyScanPage: React.FC = () => {
               className="loyalty-primary-btn"
               style={{ width: '100%', padding: '0.85rem' }}
             >
-              Kapat
+              {l.close}
             </button>
           </div>
         </div>

@@ -315,9 +315,11 @@ export const BusinessDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td>
-                        {tip.status === 'UNVERIFIED' ? (
+                        {tip.status === 'UNVERIFIED' || tip.status === 'PENDING' ? (
                           <span className="badge badge-warning">
-                            {language === 'tr' ? 'Onay Bekliyor' : 'Pending'}
+                            {tip.status === 'PENDING'
+                              ? (language === 'tr' ? 'Kart/Link Onayı Bekliyor' : 'Card Link Pending')
+                              : (language === 'tr' ? 'Havale Onayı Bekliyor' : 'Wire Pending')}
                           </span>
                         ) : tip.status === 'CANCELLED' ? (
                           <span className="badge badge-danger">
@@ -328,7 +330,7 @@ export const BusinessDashboard: React.FC = () => {
                         )}
                       </td>
                       <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                        {tip.status === 'UNVERIFIED' ? (
+                        {tip.status === 'UNVERIFIED' || tip.status === 'PENDING' ? (
                           <div className="inline-actions" style={{ justifyContent: 'flex-end', gap: '0.4rem' }}>
                             <button
                               type="button"
@@ -380,9 +382,11 @@ export const BusinessDashboard: React.FC = () => {
                       {formatCurrency(Number(tip.amount), tip.currency || business?.currency || 'TRY')}
                     </div>
                     <div>
-                      {tip.status === 'UNVERIFIED' ? (
+                      {tip.status === 'UNVERIFIED' || tip.status === 'PENDING' ? (
                         <span className="badge badge-warning">
-                          {language === 'tr' ? 'Onay Bekliyor' : 'Pending'}
+                          {tip.status === 'PENDING'
+                            ? (language === 'tr' ? 'Kart/Link Onayı Bekliyor' : 'Card Link Pending')
+                            : (language === 'tr' ? 'Havale Onayı Bekliyor' : 'Wire Pending')}
                         </span>
                       ) : tip.status === 'CANCELLED' ? (
                         <span className="badge badge-danger">
@@ -404,7 +408,7 @@ export const BusinessDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  {tip.status === 'UNVERIFIED' && (
+                  {(tip.status === 'UNVERIFIED' || tip.status === 'PENDING') && (
                     <div className="mobile-tip-card-actions">
                       <button
                         type="button"

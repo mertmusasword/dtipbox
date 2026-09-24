@@ -62,6 +62,7 @@ import {
 } from 'lucide-react';
 import '../../styles/home.css';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import { getHomeText } from '../../i18n/homeLocales';
 import { trackBusinessRegisterStarted, trackFounderCtaClicked } from '../../analytics';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 import { SupportTicketModal } from '../../components/SupportTicketModal';
@@ -72,6 +73,7 @@ import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
   const { t, language } = useLanguage();
+  const ht = (key: any, params?: any) => getHomeText(key, language, params);
 
   // Mobile Nav Drawer State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -411,16 +413,8 @@ export const HomePage: React.FC = () => {
   return (
     <div className="home-wrapper">
       <SeoHead
-        title={
-          language === 'tr'
-            ? "Naponi — Smart QR Ağırlama Platformu | Mevcut POS'unuzla Uyumlu"
-            : 'Naponi — Smart QR for Hospitality | One QR. Everything Your Guests Need.'
-        }
-        description={
-          language === 'tr'
-            ? "POS cihazınızı değiştirmeyin, Naponi'yi ekleyin. Tek Smart QR ile bahşiş, dijital menü, 1-tıkla Wi-Fi, VIP sadakat ve Google yorumları. Toast, Square, Clover, Lightspeed ve yerel POS sistemleriyle uyumlu."
-            : 'Keep your POS. Add NAPONI. One Smart QR for digital tipping, dynamic menu, 1-tap Wi-Fi, VIP loyalty, and reviews. Compatible with Toast, Square, Clover, Lightspeed & local POS systems.'
-        }
+        title={t('home.metaTitle')}
+        description={t('home.metaDesc')}
         canonicalUrl={language === 'tr' ? 'https://www.naponi.com/tr' : 'https://www.naponi.com/'}
         keywords={[
           'digital tipping',
@@ -457,10 +451,10 @@ export const HomePage: React.FC = () => {
 
           <ul className="home-nav-links">
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
-            <li><a href="#naponi-farki" className="home-nav-link" style={{ color: '#a5b4fc', fontWeight: 600 }}>{language === 'tr' ? 'Naponi Farkı' : 'Why Naponi'}</a></li>
+            <li><a href="#naponi-farki" className="home-nav-link" style={{ color: '#a5b4fc', fontWeight: 600 }}>{ht('whyNaponi')}</a></li>
             <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
-            <li><Link to="/technology-partners" className="home-nav-link" style={{ color: '#38bdf8' }}>{language === 'tr' ? 'Teknoloji Partnerleri' : 'Tech Partners'}</Link></li>
-            <li><Link to="/guides" className="home-nav-link">{language === 'tr' ? 'Rehberler' : 'Guides'}</Link></li>
+            <li><Link to="/technology-partners" className="home-nav-link" style={{ color: '#38bdf8' }}>{ht('techPartners')}</Link></li>
+            <li><Link to="/guides" className="home-nav-link">{ht('guides')}</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
@@ -531,13 +525,13 @@ export const HomePage: React.FC = () => {
               <span>{t('nav.features')}</span>
             </a>
             <a href="#naponi-farki" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
-              <span>{language === 'tr' ? '✨ Naponi Farkı' : '✨ Why Naponi'}</span>
+              <span>✨ {ht('whyNaponi')}</span>
             </a>
             <a href="#experience" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
               <span>{t('nav.solutions')}</span>
             </a>
             <Link to="/technology-partners" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
-              <span>{language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}</span>
+              <span>{ht('techPartnersNav')}</span>
             </Link>
             <a href="#faq" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
               <span>{t('nav.faq')}</span>
@@ -547,20 +541,20 @@ export const HomePage: React.FC = () => {
           {/* 3. FREE TOOLS & GUIDES (COMPACT 2x2 GRID) */}
           <div>
             <div className="home-mobile-menu-section-label">
-              {language === 'tr' ? 'Ücretsiz Araçlar & Rehberler' : 'Free Tools & Guides'}
+              {ht('freeToolsGuides')}
             </div>
             <div className="home-mobile-tools-grid">
               <Link to="/tools/free-hospitality-qr-generator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>📱 {language === 'tr' ? 'QR Üretici' : 'QR Maker'}</span>
+                <span>📱 {ht('qrMaker')}</span>
               </Link>
               <Link to="/tools/restaurant-tip-pool-calculator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>📊 {language === 'tr' ? 'Vardiya Havuzu' : 'Tip Pool'}</span>
+                <span>📊 {ht('shiftPool')}</span>
               </Link>
               <Link to="/compare/card-machine-vs-qr-tipping" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>⚖️ {language === 'tr' ? 'POS vs QR' : 'POS vs QR'}</span>
+                <span>⚖️ {ht('posVsQr')}</span>
               </Link>
               <Link to="/guides" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>🌍 {language === 'tr' ? 'Rehberler' : 'Guides'}</span>
+                <span>🌍 {ht('guides')}</span>
               </Link>
             </div>
           </div>
@@ -627,12 +621,12 @@ export const HomePage: React.FC = () => {
                   type="button"
                   onClick={() => setVideoModalOpen(true)}
                   className="home-btn-hero-video"
-                  title={language === 'tr' ? 'Tanıtım Videosunu İzle' : 'Watch 60s Demo'}
+                  title={ht('watchDemoTitle')}
                 >
                   <span className="home-btn-video-icon">
                     <Play size={12} fill="currentColor" style={{ marginLeft: 2 }} />
                   </span>
-                  <span>{language === 'tr' ? 'Videoyu İzle' : 'Watch Demo'}</span>
+                  <span>{ht('watchDemo')}</span>
                 </button>
               </div>
 
@@ -682,7 +676,7 @@ export const HomePage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontWeight: 700, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     <Cpu size={14} />
-                    <span>{isTr ? "Mevcut POS'unuzla Uyumlu:" : 'Works with your POS:'}</span>
+                    <span>{isTr ? 'Sıfır Ek Donanım — Kasa Altyapınızla Kusursuz Birlikte:' : 'Zero Hardware — Works Alongside Any Setup:'}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
                     {['Toast', 'Square', 'Clover', 'Lightspeed', 'Simpra', isTr ? '+ Yerel POS' : '+ Local POS'].map((posName, idx) => (
@@ -1113,8 +1107,8 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="home-dash-pill">
                 <span className="pulse-dot" style={{ width: 6, height: 6 }} />
-                <span className="home-dash-pill-full">{language === 'tr' ? 'Canlı Panel' : 'Live Operations'}</span>
-                <span className="home-dash-pill-short">{language === 'tr' ? 'Canlı' : 'Live'}</span>
+                <span className="home-dash-pill-full">{ht('liveOperations')}</span>
+                <span className="home-dash-pill-short">{ht('livePill')}</span>
               </div>
             </div>
 
@@ -1126,7 +1120,7 @@ export const HomePage: React.FC = () => {
                   <div className="home-dash-kpis">
                     <div className="home-dash-kpi-card">
                       <div className="home-dash-kpi-label">
-                        <span>{language === 'tr' ? 'Bugünkü Toplam Bahşiş' : 'Today\'s Total Tips'}</span>
+                        <span>{ht('todayTotalTips')}</span>
                         <TrendingUp size={14} style={{ color: '#10b981' }} />
                       </div>
                       <div className="home-dash-kpi-val">
@@ -1134,40 +1128,40 @@ export const HomePage: React.FC = () => {
                       </div>
                       <div className="home-dash-kpi-sub">
                         <span>↑ 24.8%</span>
-                        <span style={{ color: '#94a3b8' }}>{language === 'tr' ? 'geçen haftaya göre' : 'vs last week'}</span>
+                        <span style={{ color: '#94a3b8' }}>{ht('vsLastWeek')}</span>
                       </div>
                     </div>
 
                     <div className="home-dash-kpi-card">
                       <div className="home-dash-kpi-label">
-                        <span>{language === 'tr' ? 'Ortalama Bahşiş Oranı' : 'Average Tip Rate'}</span>
+                        <span>{ht('avgTipRate')}</span>
                         <Percent size={14} style={{ color: '#6366f1' }} />
                       </div>
                       <div className="home-dash-kpi-val">16.4%</div>
                       <div className="home-dash-kpi-sub" style={{ color: '#6366f1' }}>
-                        <span>★ 48 {language === 'tr' ? 'işlem' : 'transactions'}</span>
+                        <span>★ 48 {ht('transactions')}</span>
                       </div>
                     </div>
 
                     <div className="home-dash-kpi-card">
                       <div className="home-dash-kpi-label">
-                        <span>{language === 'tr' ? 'Vardiyadaki Personel' : 'Active Staff on Shift'}</span>
+                        <span>{ht('activeStaff')}</span>
                         <Users size={14} style={{ color: '#38bdf8' }} />
                       </div>
-                      <div className="home-dash-kpi-val">8 {language === 'tr' ? 'Kişi' : 'Staff'}</div>
+                      <div className="home-dash-kpi-val">8 {ht('staffUnit')}</div>
                       <div className="home-dash-kpi-sub" style={{ color: '#38bdf8' }}>
-                        <span>✓ {language === 'tr' ? 'Tümü aktif' : 'All active'}</span>
+                        <span>✓ {ht('allActive')}</span>
                       </div>
                     </div>
 
                     <div className="home-dash-kpi-card">
                       <div className="home-dash-kpi-label">
-                        <span>{language === 'tr' ? 'Misafir Memnuniyeti' : 'Guest Rating'}</span>
+                        <span>{ht('guestSatisfaction')}</span>
                         <Award size={14} style={{ color: '#fbbf24' }} />
                       </div>
                       <div className="home-dash-kpi-val">4.9 / 5.0</div>
                       <div className="home-dash-kpi-sub" style={{ color: '#fbbf24' }}>
-                        <span>98% {language === 'tr' ? 'olumlu geri bildirim' : 'positive review'}</span>
+                        <span>98% {ht('positiveReview')}</span>
                       </div>
                     </div>
                   </div>
@@ -1177,10 +1171,10 @@ export const HomePage: React.FC = () => {
                     <div className="home-dash-feed-header">
                       <div className="home-dash-feed-title">
                         <Clock size={16} style={{ color: '#818cf8', flexShrink: 0 }} />
-                        <span>{language === 'tr' ? 'Canlı Bahşiş Akışı' : 'Real-Time Tipping Feed'}</span>
+                        <span>{ht('realtimeFeed')}</span>
                       </div>
                       <span className="badge badge-primary home-dash-feed-badge">
-                        {language === 'tr' ? 'Son 10 Dakika' : 'Last 10 mins'}
+                        {ht('last10Mins')}
                       </span>
                     </div>
 
@@ -1188,7 +1182,7 @@ export const HomePage: React.FC = () => {
                       {[
                         { table: language === 'tr' ? 'Masa 14' : 'Table 14', staff: simConfig.staffOptions[0].label, amount: `${simConfig.currency}${language === 'tr' ? '150.00' : '15.00'}`, time: language === 'tr' ? '2 dk önce' : '2m ago', method: ' Apple Pay' },
                         { table: language === 'tr' ? 'Masa 08' : 'Table 08', staff: simConfig.staffOptions[1]?.label || 'Elena M.', amount: `${simConfig.currency}${language === 'tr' ? '100.00' : '10.00'}`, time: language === 'tr' ? '5 dk önce' : '5m ago', method: 'Credit Card' },
-                        { table: language === 'tr' ? 'Bar Stand 02' : 'Bar Counter 02', staff: language === 'tr' ? 'Ortak Havuz' : 'Team Pool', amount: `${simConfig.currency}${language === 'tr' ? '250.00' : '25.00'}`, time: language === 'tr' ? '9 dk önce' : '9m ago', method: 'Google Pay' },
+                        { table: language === 'tr' ? 'Bar Stand 02' : 'Bar Counter 02', staff: ht('teamPool'), amount: `${simConfig.currency}${language === 'tr' ? '250.00' : '25.00'}`, time: language === 'tr' ? '9 dk önce' : '9m ago', method: 'Google Pay' },
                       ].map((item, idx) => (
                         <div key={idx} className="home-dash-feed-item">
                           <div className="home-dash-feed-left">
@@ -1221,58 +1215,58 @@ export const HomePage: React.FC = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
                     <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
                       <div style={{ fontSize: '0.72rem', color: '#a5b4fc', marginBottom: '0.2rem' }}>
-                        💳 {language === 'tr' ? 'Dijital QR Bahşişleri' : 'Digital QR Tips'}
+                        💳 {ht('digitalQrTips')}
                       </div>
                       <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
                         {simConfig.currency}{language === 'tr' ? '9.200' : '920'}.00
                       </div>
-                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Naponi {language === 'tr' ? 'otomatik tahsilat' : 'instant settlement'}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Naponi {ht('instantSettlement')}</div>
                     </div>
 
                     <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
                       <div style={{ fontSize: '0.72rem', color: '#86efac', marginBottom: '0.2rem' }}>
-                        💵 {language === 'tr' ? 'Fiziksel Tip Box (Nakit)' : 'Cash Tip Box'}
+                        💵 {ht('cashTipBox')}
                       </div>
                       <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#4ade80' }}>
                         {simConfig.currency}{language === 'tr' ? '3.800' : '380'}.00
                       </div>
-                      <div style={{ fontSize: '0.68rem', color: '#86efac' }}>%0 {language === 'tr' ? 'komisyonsuz elden dağıtım' : 'fee cash payout'}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#86efac' }}>%0 {ht('feeCashPayout')}</div>
                     </div>
 
                     <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
                       <div style={{ fontSize: '0.72rem', color: '#fde047', marginBottom: '0.2rem' }}>
-                        🏧 {language === 'tr' ? 'Doğrudan Banka / IBAN' : 'Direct Bank / Wire'}
+                        🏧 {ht('directBankWire')}
                       </div>
                       <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#facc15' }}>
                         {simConfig.currency}{language === 'tr' ? '1.800' : '180'}.00
                       </div>
-                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>{language === 'tr' ? 'Doğrudan hesap mutabakatı' : 'Direct account reconciliation'}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>{ht('directAccountReconciliation')}</div>
                     </div>
 
                     <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)', border: '1px solid rgba(34, 197, 94, 0.4)' }}>
                       <div style={{ fontSize: '0.72rem', color: '#4ade80', fontWeight: 700, marginBottom: '0.2rem' }}>
-                        ✨ {language === 'tr' ? 'Dağıtılacak Net Havuz' : 'Net Shift Pool'}
+                        ✨ {ht('netShiftPool')}
                       </div>
                       <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#4ade80' }}>
                         {simConfig.currency}{language === 'tr' ? '14.524' : '1,452'}.40
                       </div>
-                      <div style={{ fontSize: '0.68rem', color: '#a7f3d0' }}>4 {language === 'tr' ? 'personel paylaştırıldı' : 'staff allocated'}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#a7f3d0' }}>4 {ht('staffAllocated')}</div>
                     </div>
                   </div>
 
                   {/* Staff Distribution Table Mockup */}
                   <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '12px', overflow: 'hidden' }}>
                     <div style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>{language === 'tr' ? 'Vardiya Hak Ediş Simülasyonu' : 'Shift Payout Breakdown'}</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>{ht('shiftPayoutBreakdown')}</span>
                       <span style={{ fontSize: '0.72rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <CheckCheck size={14} /> {language === 'tr' ? 'Eşit ve Puan Bazlı Dağıtım' : 'Automated Point-Weighted Split'}
+                        <CheckCheck size={14} /> {ht('pointWeightedSplit')}
                       </span>
                     </div>
                     <div style={{ padding: '0.5rem 1rem' }}>
                       {[
-                        { name: simConfig.staffOptions[0].label, role: language === 'tr' ? 'Salon Garsonu' : 'Senior Server', weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
-                        { name: simConfig.staffOptions[1]?.label || 'Elena M.', role: language === 'tr' ? 'Barmen / Mixologist' : 'Head Bartender', weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
-                        { name: language === 'tr' ? 'Cemil A.' : 'David K.', role: language === 'tr' ? 'Mutfak Destek' : 'Barback / Support', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
+                        { name: simConfig.staffOptions[0].label, role: ht('seniorServer'), weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
+                        { name: simConfig.staffOptions[1]?.label || 'Elena M.', role: ht('headBartender'), weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
+                        { name: language === 'tr' ? 'Cemil A.' : 'David K.', role: ht('barbackSupport'), weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
                         { name: language === 'tr' ? 'Merve S.' : 'Sarah T.', role: language === 'tr' ? 'Hostes / Karşılama' : 'Host / Greeter', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
                       ].map((s, idx) => (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0', borderBottom: idx !== 3 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none', fontSize: '0.82rem', gap: '0.5rem' }}>
@@ -1618,8 +1612,8 @@ export const HomePage: React.FC = () => {
             </h2>
             <p className="home-section-desc">
               {language === 'tr'
-                ? "Bahşiş • Menü • Wi-Fi • Sadakat • Kampanyalar • Yorumlar. Masadaki tek bir Smart QR giriş noktası ile misafirleriniz ihtiyaç duyduğu her şeye anında erişir; mevcut POS'unuz operasyonu yönetirken Naponi misafirlerinizle bağ kurar."
-                : 'Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews. One single QR entry point at the table connects your guests with everything they need, while your existing POS continues running daily operations smoothly.'}
+                ? "Bahşiş • Menü • Wi-Fi • Sadakat • Kampanyalar • Yorumlar. Masadaki tek bir Smart QR giriş noktası ile misafirleriniz ihtiyaç duyduğu her şeye anında erişir; sıfır ek donanım maliyetiyle mevcut kasa düzeninizi değiştirmeden doğrudan misafirlerinizle bağ kurar."
+                : 'Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews. One single QR entry point at the table connects your guests with everything they need, with zero hardware cost and without changing your existing operational setup.'}
             </p>
           </div>
 
@@ -2371,7 +2365,7 @@ export const HomePage: React.FC = () => {
               <div className="home-roi-controls">
                 <div>
                   <label className="home-roi-slider-label" style={{ display: 'block', marginBottom: '0.65rem' }}>
-                    {isTr ? '1. İşletme Türünüzü Seçin' : '1. Select Your Venue Type'}
+                    {ht('selectVenueType')}
                   </label>
                   <div className="home-roi-sector-pills">
                     <button
@@ -2380,7 +2374,7 @@ export const HomePage: React.FC = () => {
                       onClick={() => handleSelectSector('cafe')}
                     >
                       <Coffee size={20} />
-                      <span>{isTr ? 'Kafe' : 'Cafe'}</span>
+                      <span>{ht('cafe')}</span>
                     </button>
                     <button
                       type="button"
@@ -2388,7 +2382,7 @@ export const HomePage: React.FC = () => {
                       onClick={() => handleSelectSector('restaurant')}
                     >
                       <Utensils size={20} />
-                      <span>{isTr ? 'Restoran' : 'Restaurant'}</span>
+                      <span>{ht('restaurant')}</span>
                     </button>
                     <button
                       type="button"
@@ -2396,7 +2390,7 @@ export const HomePage: React.FC = () => {
                       onClick={() => handleSelectSector('bar')}
                     >
                       <Wine size={20} />
-                      <span>{isTr ? 'Bar / Pub' : 'Bar / Pub'}</span>
+                      <span>{ht('barPub')}</span>
                     </button>
                     <button
                       type="button"
@@ -2404,7 +2398,7 @@ export const HomePage: React.FC = () => {
                       onClick={() => handleSelectSector('hotel')}
                     >
                       <Hotel size={20} />
-                      <span>{isTr ? 'Otel' : 'Hotel'}</span>
+                      <span>{ht('hotel')}</span>
                     </button>
                   </div>
                 </div>
@@ -2413,9 +2407,9 @@ export const HomePage: React.FC = () => {
                 <div className="home-roi-slider-group">
                   <div className="home-roi-slider-header">
                     <span className="home-roi-slider-label">
-                      {isTr ? '2. Günlük Ağırlanan Masa / Misafir Grubu' : '2. Daily Tables / Guest Groups'}
+                      {ht('dailyTablesGroups')}
                     </span>
-                    <span className="home-roi-slider-val">{calcDailyTables} {isTr ? 'Masa' : 'Tables'}</span>
+                    <span className="home-roi-slider-val">{calcDailyTables} {ht('tablesUnit')}</span>
                   </div>
                   <input
                     type="range"
@@ -2428,9 +2422,9 @@ export const HomePage: React.FC = () => {
                     aria-label="Daily Tables"
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
-                    <span>10 {isTr ? 'Masa' : 'Tables'}</span>
+                    <span>10 {ht('tablesUnit')}</span>
                     <span>150</span>
-                    <span>300+ {isTr ? 'Masa' : 'Tables'}</span>
+                    <span>300+ {ht('tablesUnit')}</span>
                   </div>
                 </div>
 
@@ -2438,7 +2432,7 @@ export const HomePage: React.FC = () => {
                 <div className="home-roi-slider-group">
                   <div className="home-roi-slider-header">
                     <span className="home-roi-slider-label">
-                      {isTr ? '3. Ortalama Masa Hesabı' : '3. Average Bill / Spend'}
+                      {ht('averageBillSpend')}
                     </span>
                     <span className="home-roi-slider-val">{formatCalcCurrency(calcAverageCheck)}</span>
                   </div>
@@ -2463,9 +2457,7 @@ export const HomePage: React.FC = () => {
                 <div className="home-roi-info-banner">
                   <Sparkles size={18} style={{ flexShrink: 0, color: '#38bdf8' }} />
                   <span>
-                    {isTr
-                      ? 'Araştırmalara göre masada QR bahşiş sunan mekanlarda bahşiş bırakma oranı %38 artar ve hesapların %82’si nakitsiz ödenir.'
-                      : 'Hospitality studies show table QR tipping boosts tip frequency by 38%, with 82% of cashless guests choosing to tip.'}
+                    {ht('roiInfoBanner')}
                   </span>
                 </div>
               </div>
@@ -2475,34 +2467,32 @@ export const HomePage: React.FC = () => {
                 <div>
                   <div className="home-roi-main-stat">
                     <div className="home-roi-main-label">
-                      {isTr ? '⚡ Aylık Kurtarılan Bahşiş Hacmi' : '⚡ Monthly Tips Recovered for Team'}
+                      {ht('monthlyTipsRecovered')}
                     </div>
                     <div className="home-roi-main-num">
                       +{formatCalcCurrency(calcMonthlyRecoveredTips)}
                     </div>
                     <div className="home-roi-main-desc">
-                      {isTr
-                        ? 'Masada nakit olmadığı için her ay havaya uçan ve Naponi ile ekibinize dönecek tahmini tutar.'
-                        : 'Estimated gratuity otherwise lost to the cashless barrier, directly credited to your staff.'}
+                      {ht('roiMainDesc')}
                     </div>
                   </div>
 
                   <div className="home-roi-sub-stats">
                     <div className="home-roi-sub-item">
                       <span className="home-roi-sub-label">
-                        {isTr ? `Personel Başına Ek Gelir (~${calcStaffCount} kişi)` : `Est. Boost / Staff (~${calcStaffCount} team)`}
+                        {ht('perStaffMonthlyBoost', { count: calcStaffCount })}
                       </span>
                       <span className="home-roi-sub-val">
                         +{formatCalcCurrency(calcPerStaffGain)}
-                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>{isTr ? ' /ay' : '/mo'}</span>
+                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>{ht('perMonth')}</span>
                       </span>
                     </div>
                     <div className="home-roi-sub-item">
                       <span className="home-roi-sub-label">
-                        {isTr ? 'Naponi İşletme Maliyeti' : 'Naponi Cost to Venue'}
+                        {ht('costToVenue')}
                       </span>
                       <span className="home-roi-sub-val free">
-                        {isTr ? '0 ₺ (Ömür Boyu)' : '$0 Free Forever'}
+                        {ht('freeForever')}
                       </span>
                     </div>
                   </div>
@@ -2516,7 +2506,7 @@ export const HomePage: React.FC = () => {
                     trackBusinessRegisterStarted('roi_calculator');
                   }}
                 >
-                  <span>{isTr ? 'Ekibinizin Bahşişini Hemen Kurtarın' : 'Start Recovering Tips in 60s'}</span>
+                  <span>{ht('startRecoveringCta')}</span>
                   <ArrowRight size={17} />
                 </Link>
               </div>
@@ -3019,7 +3009,7 @@ export const HomePage: React.FC = () => {
                 }}
               >
                 <Handshake size={14} />
-                <span>{language === 'tr' ? 'B2B Teknoloji Ortaklığı' : 'B2B Technology Partnership'}</span>
+                <span>{ht('b2bPartnership')}</span>
               </div>
 
               <h2
@@ -3031,7 +3021,7 @@ export const HomePage: React.FC = () => {
                   lineHeight: 1.25,
                 }}
               >
-                {language === 'tr' ? 'Platformunuza Naponi\'yi ekleyin.' : 'Integrate Naponi into your platform.'}
+                {ht('integrateNaponi')}
               </h2>
 
               <p
@@ -3044,9 +3034,7 @@ export const HomePage: React.FC = () => {
                   margin: '0 auto 2rem',
                 }}
               >
-                {language === 'tr'
-                  ? 'POS, QR Menü, ödeme veya restoran teknolojileri geliştiriyorsanız Naponi çözümlerini müşterilerinize sunabilirsiniz.'
-                  : 'If you develop POS, QR menu, payment, or restaurant technology platforms, offer Naponi\'s digital tipping, employee tip management, and loyalty solutions directly to your merchants.'}
+                {ht('b2bDescription')}
               </p>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
@@ -3066,7 +3054,7 @@ export const HomePage: React.FC = () => {
                     borderRadius: '12px',
                   }}
                 >
-                  <span>{language === 'tr' ? 'Teknoloji Partneri Olun' : 'Become a Technology Partner'}</span>
+                  <span>{ht('becomePartner')}</span>
                   <ArrowRight size={16} />
                 </Link>
 
@@ -3086,7 +3074,7 @@ export const HomePage: React.FC = () => {
                   }}
                 >
                   <FileText size={15} className="text-emerald-400" />
-                  <span>{language === 'tr' ? 'B2B Kataloğu İncele' : 'View B2B Catalog'}</span>
+                  <span>{ht('viewB2bCatalog')}</span>
                 </Link>
               </div>
             </div>
@@ -3375,22 +3363,22 @@ export const HomePage: React.FC = () => {
                 <li><a href="#experience">{t('nav.solutions')}</a></li>
                 <li><Link to="/solutions/restaurants">{t('nav.restaurants')}</Link></li>
                 <li><Link to="/solutions/hotels">{t('nav.hotels')}</Link></li>
-                <li><Link to="/tools/restaurant-tip-pool-calculator">{language === 'tr' ? 'Vardiya Havuz Hesaplayıcı' : 'Shift Tip Pool'}</Link></li>
-                <li><Link to="/tools/free-hospitality-qr-generator">{language === 'tr' ? 'Ücretsiz QR Oluşturucu' : 'Hospitality QR Maker'}</Link></li>
+                <li><Link to="/tools/restaurant-tip-pool-calculator">{ht('shiftTipPool')}</Link></li>
+                <li><Link to="/tools/free-hospitality-qr-generator">{ht('hospitalityQrMaker')}</Link></li>
                 <li><Link to="/tools/tip-calculator">{t('nav.tipCalculator')}</Link></li>
-                <li><Link to="/compare/card-machine-vs-qr-tipping">{language === 'tr' ? 'POS vs QR Bahşiş' : 'POS vs QR Tipping'}</Link></li>
+                <li><Link to="/compare/card-machine-vs-qr-tipping">{ht('posVsQrTipping')}</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="home-footer-col-title">{language === 'tr' ? 'Rehberler & Platform' : 'Guides & Platform'}</h4>
+              <h4 className="home-footer-col-title">{ht('guidesAndPlatform')}</h4>
               <ul className="home-footer-links">
-                <li><Link to="/catalog" style={{ color: '#34d399', fontWeight: 700 }}>{language === 'tr' ? '📄 B2B Kurumsal Katalog' : '📄 B2B Corporate Deck'}</Link></li>
-                <li><Link to="/technology-partners" style={{ color: '#38bdf8', fontWeight: 700 }}>{language === 'tr' ? '🤝 Teknoloji Partnerleri' : '🤝 Tech Partners'}</Link></li>
-                <li><Link to="/guides">{language === 'tr' ? 'Dünya Bahşiş Rehberleri' : 'Global Tipping Guides'}</Link></li>
-                <li><Link to="/guides/tipping-in-japan">{language === 'tr' ? 'Japonya Bahşiş Rehberi' : 'Tipping in Japan'}</Link></li>
-                <li><Link to="/guides/tipping-in-united-states">{language === 'tr' ? 'ABD Bahşiş Rehberi' : 'Tipping in USA'}</Link></li>
-                <li><Link to="/compare/best-cashless-tipping-systems">{language === 'tr' ? '2026 Bahşiş Sistemleri' : 'Cashless Systems Review'}</Link></li>
+                <li><Link to="/catalog" style={{ color: '#34d399', fontWeight: 700 }}>{ht('b2bCorporateDeck')}</Link></li>
+                <li><Link to="/technology-partners" style={{ color: '#38bdf8', fontWeight: 700 }}>{ht('techPartnersNav')}</Link></li>
+                <li><Link to="/guides">{ht('globalTippingGuides')}</Link></li>
+                <li><Link to="/guides/tipping-in-japan">{ht('tippingInJapan')}</Link></li>
+                <li><Link to="/guides/tipping-in-united-states">{ht('tippingInUsa')}</Link></li>
+                <li><Link to="/compare/best-cashless-tipping-systems">{ht('cashlessReview')}</Link></li>
                 <li><Link to="/blog">{t('nav.blogGuides')}</Link></li>
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
                 <li><Link to="/login">{t('nav.login')}</Link></li>
@@ -3432,11 +3420,9 @@ export const HomePage: React.FC = () => {
             <ShieldCheck size={22} style={{ color: '#38bdf8', flexShrink: 0, marginTop: '2px' }} />
             <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.6 }}>
               <strong style={{ color: '#f1f5f9', display: 'block', marginBottom: '0.3rem', fontSize: '0.82rem' }}>
-                {language === 'tr' ? '⚖️ Yasal ve Finansal Regülasyon Bilgilendirmesi' : '⚖️ Regulatory & Legal Disclosure'}
+                {ht('regulatoryDisclosure')}
               </strong>
-              {language === 'tr'
-                ? 'Naponi bir banka, 6493 sayılı Kanun kapsamında bir ödeme veya elektronik para kuruluşu, POS cihazı sağlayıcısı ya da para transfer aracısı değildir. Naponi, işletmeler için akıllı QR etkileşim ve bahşiş yönetim yazılımıdır. Platform üzerinde kart bilgisi tutulmaz, fon toplanmaz veya işletmeler adına tahsilat/emanet bakiyesi oluşturulmaz. Tüm ödemeler ve bahşişler, müşteriler tarafından doğrudan işletmenin kendi anlaşmalı olduğu lisanslı ödeme sağlayıcıları veya banka hesapları üzerinden gerçekleştirilir.'
-                : 'Naponi is a table interaction and tipping workflow software platform, not a bank, payment service provider (PSP), money services business (MSB), or point-of-sale hardware provider. Naponi does not store cardholder credentials, hold merchant balances, or process financial settlements. All transactions and tips are executed directly through the venue’s own verified third-party payment gateways or direct bank transfer accounts.'}
+              {ht('regulatoryText')}
             </div>
           </div>
 
@@ -3454,7 +3440,7 @@ export const HomePage: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#34d399')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
               >
-                {language === 'tr' ? '📄 KVKK Aydınlatma Metni' : '📄 GDPR & Data Notice'}
+                {ht('kvkkNotice')}
               </button>
 
               <button
@@ -3464,7 +3450,7 @@ export const HomePage: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#38bdf8')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
               >
-                {language === 'tr' ? '🔒 Gizlilik Politikası' : '🔒 Privacy Policy'}
+                {ht('privacyPolicy')}
               </button>
 
               <button
@@ -3474,7 +3460,7 @@ export const HomePage: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#f59e0b')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
               >
-                {language === 'tr' ? '📜 Kullanım Koşulları' : '📜 Terms of Service'}
+                {ht('termsOfService')}
               </button>
 
               <button
@@ -3484,7 +3470,7 @@ export const HomePage: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#a78bfa')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
               >
-                {language === 'tr' ? '🍪 Çerez Politikası' : '🍪 Cookie Policy'}
+                {ht('cookiePolicy')}
               </button>
             </div>
           </div>
@@ -3562,7 +3548,7 @@ export const HomePage: React.FC = () => {
 
             <div className="home-video-modal-footer">
               <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-                {language === 'tr' ? 'Resmi YouTube Kanalımız' : 'Official YouTube Channel'}
+                {ht('youtubeChannel')}
               </div>
               <a
                 href="https://www.youtube.com/@Naponicom"

@@ -36,6 +36,9 @@ const createSupportTicketSchema = {
     ]).optional(),
     subject: z.string().trim().min(2, 'Konu başlığı en az 2 karakter olmalıdır').max(200),
     message: z.string().trim().min(5, 'Mesajınız en az 5 karakter olmalıdır').max(3000),
+    // Bot honeypot traps
+    website_url_hp: z.string().max(0).optional(),
+    _hp: z.string().max(0).optional(),
   }),
 };
 
@@ -55,6 +58,15 @@ router.post(
   validate(createSupportTicketSchema),
   async (req: any, res, next) => {
     try {
+      // Honeypot detection
+      if (req.body.website_url_hp || req.body._hp) {
+        // Silently return success to mislead bots without polluting DB
+        return res.status(201).json({
+          success: true,
+          message: 'Destek talebiniz başarıyla alındı. Ekibimiz en kısa sürede sizinle iletişime geçecektir.',
+        });
+      }
+
       const ipAddress = req.ip || req.headers['x-forwarded-for']?.toString();
       const userId = req.user?.id || undefined;
       const businessId = req.user?.business?.id || undefined;

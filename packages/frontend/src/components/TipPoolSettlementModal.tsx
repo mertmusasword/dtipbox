@@ -14,6 +14,7 @@ import {
   History,
   Info,
   Coins,
+  Check,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useLanguage } from '../i18n';
@@ -48,6 +49,8 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   const [showManualInputs, setShowManualInputs] = useState<boolean>(false);
   const [note, setNote] = useState('');
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<TipPoolDistribution | null>(null);
+  const [markingShareId, setMarkingShareId] = useState<string | null>(null);
+  const [markingAll, setMarkingAll] = useState(false);
 
   // Fetch simulation with optional manual parameters
   const fetchSimulation = useCallback(
@@ -136,6 +139,45 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   const handleDeductFeeChange = (val: boolean) => {
     setDeductPosFeeFromManualPos(val);
     fetchSimulation(excludedEmployeeIds, manualCash, manualPos, val);
+  };
+
+  const handleToggleSharePaid = async (shareId: string, currentPaid: boolean) => {
+    setMarkingShareId(shareId);
+    try {
+      await api.put(`/business/tip-pool/shares/${shareId}/pay`, {
+        is_paid: !currentPaid,
+      });
+      if (selectedHistoryItem) {
+        setSelectedHistoryItem({
+          ...selectedHistoryItem,
+          shares: (selectedHistoryItem.shares || []).map((s: any) =>
+            s.id === shareId ? { ...s, is_paid: !currentPaid, paid_at: !currentPaid ? new Date().toISOString() : null } : s
+          ),
+        });
+      }
+      showToast(!currentPaid ? 'Personel payı ödendi olarak işaretlendi.' : 'Ödeme durumu geri alındı.');
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'İşlem başarısız oldu.', 'error');
+    } finally {
+      setMarkingShareId(null);
+    }
+  };
+
+  const handleMarkAllPaid = async (distributionId: string) => {
+    if (!confirm('Bu kapanıştaki tüm personelin bahşiş paylarını ödendi olarak işaretlemek istediğinize emin misiniz?')) return;
+    setMarkingAll(true);
+    try {
+      const res = await api.put(`/business/tip-pool/distributions/${distributionId}/pay-all`);
+      if (res.data?.data) {
+        setSelectedHistoryItem(res.data.data);
+      }
+      showToast('Tüm personel payları ödendi olarak işaretlendi.');
+      fetchHistory();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'İşlem başarısız oldu.', 'error');
+    } finally {
+      setMarkingAll(false);
+    }
   };
 
   const handleSettle = async () => {
@@ -268,7 +310,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
                     <span>
-                      POS Kesintisi:{' '}
+                      Banka Kart Kesintisi:{' '}
                       <strong style={{ color: 'var(--text-primary)' }}>
                         {simulation.settings.posFeePayer === 'STAFF'
                           ? `%${simulation.settings.posFeeRate} (Personelden)`
@@ -412,7 +454,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                             checked={deductPosFeeFromManualPos}
                             onChange={(e) => handleDeductFeeChange(e.target.checked)}
                           />
-                          <span>POS komisyonu (%{simulation.settings.posFeeRate}) bu tutardan da düşülsün</span>
+                          <span>Banka kart takas maliyeti (%{simulation.settings.posFeeRate}) bu tutardan da düşülsün</span>
                         </label>
                       </div>
                     </div>
@@ -496,13 +538,13 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
 
                   <div className="glass-card" style={{ padding: '1rem', background: 'rgba(255, 255, 255, 0.02)' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                      POS Komisyonu
+                      Banka Kart Kesintisi
                     </div>
                     <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f87171' }}>
                       -{formatCurrency(simulation.summary.posFeeAmount, currency)}
                     </div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                      %{simulation.settings.posFeeRate}
+                      %{simulation.settings.posFeeRate} (Yalnızca kartlı işlemler)
                     </div>
                   </div>
 
@@ -708,7 +750,19 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                     </div>
                   </div>
 
-                  <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Personel Pay Dağılımı</h4>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <h4 style={{ fontSize: '0.875rem', fontWeight: 700, margin: 0 }}>Personel Pay Dağılımı</h4>
+                    <button
+                      type="button"
+                      onClick={() => handleMarkAllPaid(selectedHistoryItem.id)}
+                      disabled={markingAll || selectedHistoryItem.shares?.every((s: any) => s.is_paid)}
+                      className="btn btn-primary btn-sm"
+                      style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                    >
+                      <CheckCircle2 size={13} />
+                      <span>{markingAll ? 'İşleniyor...' : 'Tümünü Ödendi Olarak İşaretle'}</span>
+                    </button>
+                  </div>
                   <div className="table-responsive">
                     <table className="data-table">
                       <thead>
@@ -717,10 +771,11 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                           <th>Katsayı</th>
                           <th className="text-right">Brüt Pay</th>
                           <th className="text-right">Net Hak Ediş</th>
+                          <th style={{ textAlign: 'center' }}>Ödeme Durumu</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {selectedHistoryItem.shares?.map((share) => (
+                        {selectedHistoryItem.shares?.map((share: any) => (
                           <tr key={share.id}>
                             <td>
                               <div style={{ fontWeight: 600 }}>
@@ -747,6 +802,36 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                                     <span style={{ color: '#60a5fa' }}>💳 {formatCurrency(Number(share.digital_share), currency)} Banka</span>
                                   )}
                                 </div>
+                              )}
+                            </td>
+                            <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                              {share.is_paid ? (
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                  <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem' }}>
+                                    ✓ Ödendi
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleSharePaid(share.id, true)}
+                                    disabled={markingShareId === share.id}
+                                    className="btn btn-secondary btn-sm"
+                                    style={{ fontSize: '0.68rem', padding: '0.15rem 0.4rem', color: 'var(--text-muted)' }}
+                                    title="Ödeme durumunu geri al"
+                                  >
+                                    Geri Al
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleSharePaid(share.id, false)}
+                                  disabled={markingShareId === share.id}
+                                  className="btn btn-primary btn-sm"
+                                  style={{ fontSize: '0.72rem', padding: '0.25rem 0.55rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                                >
+                                  <Check size={12} />
+                                  <span>{markingShareId === share.id ? '...' : 'Ödendi Olarak İşaretle'}</span>
+                                </button>
                               )}
                             </td>
                           </tr>

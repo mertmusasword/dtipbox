@@ -22,6 +22,34 @@ interface LegalModalProps {
   initialTab?: LegalTab;
 }
 
+const legalCenterTitles: Record<string, string> = {
+  tr: 'Yasal & Uyumluluk Merkezi',
+  en: 'Legal & Compliance Center',
+  de: 'Rechts- & Compliance-Zentrum',
+  fr: 'Centre Juridique & Conformité',
+  es: 'Centro Legal y de Cumplimiento',
+  ja: '法務・コンプライアンスセンター',
+  zh: '法律与合规中心',
+  ru: 'Юридический центр и комплаенс',
+  ar: 'مركز الشؤون القانونية والامتثال',
+  pt: 'Centro Legal e de Conformidade',
+  id: 'Pusat Hukum & Kepatuhan',
+};
+
+const dataControllerTitles: Record<string, string> = {
+  tr: 'Resmi Şirket & Veri Sorumlusu Bilgileri',
+  en: 'Official Data Controller Credentials',
+  de: 'Offizielle Angaben zum Verantwortlichen',
+  fr: 'Coordonnées Officielles du Responsable de Traitement',
+  es: 'Datos Oficiales del Responsable del Tratamiento',
+  ja: '公式企業情報およびデータ管理者情報',
+  zh: '官方企业及数据控制者资质信息',
+  ru: 'Официальные данные оператора данных',
+  ar: 'بيانات الشركة الرسمية والمتحكم في البيانات',
+  pt: 'Dados Oficiais da Empresa e Responsável pelo Tratamento',
+  id: 'Informasi Resmi Perusahaan & Pengendali Data',
+};
+
 export const LegalModal: React.FC<LegalModalProps> = ({
   isOpen,
   onClose,
@@ -110,7 +138,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
             <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '28px', width: 'auto' }} />
             <div style={{ height: '18px', width: '1px', background: 'rgba(255, 255, 255, 0.2)' }}></div>
             <span style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-              {language === 'tr' ? 'Yasal & Uyumluluk Merkezi' : 'Legal & Compliance Center'}
+              {legalCenterTitles[language] || legalCenterTitles.en}
             </span>
           </div>
 
@@ -322,7 +350,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: '#34d399', fontWeight: 700 }}>
               <CheckCircle2 size={16} />
-              <span>{language === 'tr' ? 'Resmi Şirket & Veri Sorumlusu Bilgileri' : 'Official Data Controller Credentials'}</span>
+              <span>{dataControllerTitles[language] || dataControllerTitles.en}</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>

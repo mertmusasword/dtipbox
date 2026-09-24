@@ -7,18 +7,38 @@ import { trackBusinessRegisterStarted, trackBusinessRegistered, trackFounderSign
 import { AgreementModal } from '../../components/AgreementModal';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
 
+const LANGUAGE_COUNTRY_DEFAULTS: Record<string, { country: string; currency: string; timezone: string }> = {
+  tr: { country: 'TR', currency: 'TRY', timezone: 'Europe/Istanbul' },
+  de: { country: 'DE', currency: 'EUR', timezone: 'Europe/Berlin' },
+  fr: { country: 'FR', currency: 'EUR', timezone: 'Europe/Paris' },
+  es: { country: 'ES', currency: 'EUR', timezone: 'Europe/Madrid' },
+  ja: { country: 'JP', currency: 'JPY', timezone: 'Asia/Tokyo' },
+  ar: { country: 'SA', currency: 'SAR', timezone: 'Asia/Riyadh' },
+  id: { country: 'ID', currency: 'IDR', timezone: 'Asia/Jakarta' },
+  pt: { country: 'BR', currency: 'BRL', timezone: 'America/Sao_Paulo' },
+  en: { country: 'US', currency: 'USD', timezone: 'America/New_York' },
+  ru: { country: 'US', currency: 'USD', timezone: 'America/New_York' },
+  zh: { country: 'US', currency: 'USD', timezone: 'America/New_York' },
+};
+
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const { t, dir, language } = useLanguage();
 
+  const defaultRegion = LANGUAGE_COUNTRY_DEFAULTS[language] || {
+    country: 'US',
+    currency: 'USD',
+    timezone: 'America/New_York',
+  };
+
   const [formData, setFormData] = useState({
     businessName: '',
     email: '',
     password: '',
-    country: 'US',
-    currency: 'USD',
-    timezone: 'America/New_York',
+    country: defaultRegion.country,
+    currency: defaultRegion.currency,
+    timezone: defaultRegion.timezone,
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -65,11 +85,7 @@ export const RegisterPage: React.FC = () => {
     setError(null);
 
     if (!acceptedAgreement) {
-      setError(
-        language === 'tr'
-          ? "Devam etmek için lütfen Naponi İşletme Hizmet ve Kullanım Sözleşmesi'ni okuyup kabul ediniz."
-          : "Please read and accept the Naponi Merchant Service and Terms of Use Agreement to continue."
-      );
+      setError(t('auth.agreementRequired'));
       return;
     }
 
@@ -86,11 +102,7 @@ export const RegisterPage: React.FC = () => {
         const detailMsg = responseData.details.map((d: any) => d.message).join(' • ');
         setError(detailMsg);
       } else if (responseData?.error === 'Email already registered' || err.response?.status === 409) {
-        setError(
-          language === 'tr'
-            ? 'Bu e-posta adresi ile kayıtlı bir işletme hesabı zaten mevcut. Lütfen giriş yapınız veya farklı bir e-posta deneyiniz.'
-            : 'An account with this email address already exists. Please log in or try a different email.'
-        );
+        setError(t('auth.emailAlreadyRegistered'));
       } else if (responseData?.error) {
         setError(responseData.error);
       } else {
@@ -184,7 +196,7 @@ export const RegisterPage: React.FC = () => {
                 borderRadius: '6px',
                 border: '1px solid rgba(245, 158, 11, 0.4)',
               }}>
-                {language === 'tr' ? '31 Aralık 2026\'ya Kadar' : 'Until Dec 31, 2026'}
+                {t('auth.untilDec31')}
               </span>
             </div>
             <p style={{ color: '#e2e8f0', fontSize: '0.82rem', marginTop: '0.35rem', lineHeight: 1.45, marginBottom: 0 }}>
@@ -328,7 +340,7 @@ export const RegisterPage: React.FC = () => {
             <input
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               placeholder={t('auth.passwordPlaceholder')}

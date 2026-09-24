@@ -1,11 +1,20 @@
-import { Router } from 'express';
+import { Router, CookieOptions } from 'express';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as authService from '../services/auth.service';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { authenticate, authorize, AuthRequest } from '../middleware/auth';
+import { env } from '../config/env';
 
 const router = Router();
+
+const REFRESH_COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,
+  secure: env.isProd,
+  sameSite: 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: '/',
+};
 
 // Strict rate limiter for authentication endpoints against brute-force attacks
 const authLimiter = rateLimit({
@@ -22,7 +31,7 @@ const authLimiter = rateLimit({
 const registerSchema = {
   body: z.object({
     email: z.string().email('Geçerli bir e-posta adresi giriniz').max(255),
-    password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır').max(128),
+    password: z.string().min(8, 'Şifre en az 8 karakter olmalıdır').max(128),
     role: z.enum(['BUSINESS', 'CUSTOMER']).optional(),
     businessName: z.string().min(2, 'İşletme adı en az 2 karakter olmalıdır').max(100).optional(),
     country: z.string().length(2, 'Geçerli bir ülke kodu seçiniz').optional(),
@@ -67,12 +76,7 @@ router.post('/register', authLimiter, validate(registerSchema), async (req, res,
     }
 
     // Set HTTP-only refresh cookie
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refreshToken', result.refreshToken, REFRESH_COOKIE_OPTIONS);
     res.status(201).json({ success: true, data: result });
   } catch (error) {
     next(error);
@@ -82,12 +86,7 @@ router.post('/register', authLimiter, validate(registerSchema), async (req, res,
 router.post('/login', authLimiter, validate(loginSchema), async (req, res, next) => {
   try {
     const result = await authService.login(req.body);
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refreshToken', result.refreshToken, REFRESH_COOKIE_OPTIONS);
     res.json({ success: true, data: result });
   } catch (error) {
     next(error);
@@ -102,6 +101,7 @@ router.post('/refresh', async (req, res, next) => {
       return;
     }
     const tokens = await authService.refreshToken(token);
+    res.cookie('refreshToken', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
     res.json({ success: true, data: tokens });
   } catch (error) {
     next(error);
@@ -111,8 +111,9 @@ router.post('/refresh', async (req, res, next) => {
 router.post('/logout', (_req, res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: env.isProd,
     sameSite: 'lax',
+    path: '/',
   });
   res.json({ success: true, message: 'Logged out successfully' });
 });
@@ -129,12 +130,7 @@ router.put('/profile', authenticate, validate(updateProfileSchema), async (req: 
   try {
     const result = await authService.updateProfile(req.user!.id, req.body);
     // Refresh cookie
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refreshToken', result.refreshToken, REFRESH_COOKIE_OPTIONS);
     res.json({ success: true, data: result });
   } catch (error) {
     next(error);
@@ -181,7 +177,7 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), async
   }
 });
 
-router.get('/smtp-status', async (_req, res) => {
+router.get('/smtp-status', authenticate, authorize('ADMIN'), async (_req, res) => {
   try {
     const { emailService } = await import('../services/email.service');
     const result = await emailService.verifyConnection();

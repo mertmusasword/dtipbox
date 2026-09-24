@@ -3294,3 +3294,89 @@ body:has(.home-mobile-menu) .support-floating-btn {
 }
 
 
+
+/* ==========================================================================
+   RTL Layout Mirroring (Arabic - ar)
+   ========================================================================== */
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .home-nav-container,
+[dir="rtl"] .home-hero-cta-group,
+[dir="rtl"] .home-footer-nav,
+[dir="rtl"] .home-roi-stat-box,
+[dir="rtl"] .home-roi-head {
+  direction: rtl;
+}
+
+[dir="rtl"] .home-nav-brand {
+  margin-left: 2rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .home-nav-links {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+[dir="rtl"] .home-hero-badge {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .home-hero-badge-pulse {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .home-hero-actions {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .home-hero-btn-primary svg,
+[dir="rtl"] .home-cta-btn-primary svg {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .home-features-card,
+[dir="rtl"] .home-roi-card,
+[dir="rtl"] .home-step-card,
+[dir="rtl"] .home-testimonial-card,
+[dir="rtl"] .home-faq-item {
+  text-align: right;
+}
+
+[dir="rtl"] .home-roi-range-head {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .home-roi-features-list li {
+  padding-right: 1.75rem;
+  padding-left: 0;
+}
+
+[dir="rtl"] .home-roi-features-list li svg {
+  right: 0;
+  left: auto;
+}
+
+[dir="rtl"] .home-faq-question {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .home-faq-icon {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+[dir="rtl"] .home-footer-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .home-live-pulse-dot {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}

@@ -118,13 +118,13 @@ router.get('/employees', async (req: AuthRequest, res, next) => {
 
 const createEmployeeSchema = {
   body: z.object({
-    first_name: z.string().min(1),
-    last_name: z.string().min(1),
-    position: z.string().optional(),
+    first_name: z.string().trim().min(1, 'Ad zorunludur').max(100),
+    last_name: z.string().trim().min(1, 'Soyad zorunludur').max(100),
+    position: z.string().trim().max(100).optional(),
     avatar: z.string().nullable().optional(),
-    email: z.string().email().optional(),
-    password: z.string().min(6).optional(),
-    role_title: z.string().optional(),
+    email: z.string().trim().email('Geçerli bir e-posta adresi giriniz').max(150).optional(),
+    password: z.string().min(8, 'Şifre en az 8 karakter olmalıdır').max(128).optional(),
+    role_title: z.string().trim().max(100).optional(),
     share_weight: z.number().min(0).max(10).optional(),
   }),
 };
@@ -144,14 +144,14 @@ router.post('/employees', validate(createEmployeeSchema), async (req: AuthReques
 
 const updateEmployeeSchema = {
   body: z.object({
-    first_name: z.string().min(1).optional(),
-    last_name: z.string().min(1).optional(),
-    position: z.string().optional(),
+    first_name: z.string().trim().min(1).max(100).optional(),
+    last_name: z.string().trim().min(1).max(100).optional(),
+    position: z.string().trim().max(100).optional(),
     avatar: z.string().nullable().optional(),
     is_active: z.boolean().optional(),
-    email: z.string().email().optional(),
-    password: z.string().min(6).optional(),
-    role_title: z.string().optional(),
+    email: z.string().trim().email('Geçerli bir e-posta adresi giriniz').max(150).optional(),
+    password: z.string().min(8, 'Şifre en az 8 karakter olmalıdır').max(128).optional(),
+    role_title: z.string().trim().max(100).optional(),
     share_weight: z.number().min(0).max(10).optional(),
   }),
 };
@@ -784,11 +784,39 @@ router.post(
 
 router.get('/tip-pool/history', async (req: AuthRequest, res, next) => {
   try {
-    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+    const rawPage = parseInt(req.query.page as string || '1', 10) || 1;
+    const page = Math.max(1, rawPage);
+    const rawLimit = parseInt(req.query.limit as string || '20', 10) || 20;
+    const limit = Math.min(100, Math.max(1, rawLimit));
 
     const history = await tipPoolService.getTipPoolHistory(req.user!.businessId!, page, limit);
     res.json({ success: true, data: history });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/tip-pool/shares/:id/pay', async (req: AuthRequest, res, next) => {
+  try {
+    const isPaid = req.body.is_paid !== false;
+    const updated = await tipPoolService.markSharePaymentStatus(
+      req.user!.businessId!,
+      req.params.id as string,
+      isPaid
+    );
+    res.json({ success: true, data: updated, message: 'Personel payı ödeme durumu güncellendi.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/tip-pool/distributions/:id/pay-all', async (req: AuthRequest, res, next) => {
+  try {
+    const updated = await tipPoolService.markDistributionAllPaid(
+      req.user!.businessId!,
+      req.params.id as string
+    );
+    res.json({ success: true, data: updated, message: 'Tüm personel payları ödendi olarak işaretlendi.' });
   } catch (error) {
     next(error);
   }

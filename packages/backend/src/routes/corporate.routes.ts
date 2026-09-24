@@ -29,6 +29,9 @@ const createCorporateApplicationSchema = {
     branchCount: z.union([z.string(), z.number()]).optional(),
     branch_count: z.union([z.string(), z.number()]).optional(),
     message: z.string().trim().max(2000).optional(),
+    // Bot honeypot traps
+    website_url_hp: z.string().max(0).optional(),
+    _hp: z.string().max(0).optional(),
   }).refine((data) => !!(data.companyName || data.company_name), {
     message: 'Firma adı zorunludur',
     path: ['company_name'],
@@ -44,6 +47,15 @@ router.post(
   validate(createCorporateApplicationSchema),
   async (req, res, next) => {
     try {
+      // Honeypot detection
+      if (req.body.website_url_hp || req.body._hp) {
+        // Silently return success to mislead bots without writing spam to DB
+        return res.status(201).json({
+          success: true,
+          message: 'Kurumsal başvurunuz başarıyla alındı. Uzman ekibimiz en kısa sürede sizinle iletişime geçecektir.',
+        });
+      }
+
       const ipAddress = req.ip || req.headers['x-forwarded-for']?.toString();
       const application = await corporateService.createCorporateApplication({
         ...req.body,

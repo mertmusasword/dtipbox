@@ -7,7 +7,7 @@ import { createAuditLog } from './audit.service';
  * Get all payment methods for a business (with connection status).
  */
 export async function getPaymentMethods(businessId: string) {
-  const [methods, integrations, paymentAccount] = await Promise.all([
+  const [methods, integrations, paymentAccount, business] = await Promise.all([
     prisma.paymentMethod.findMany({
       where: { business_id: businessId },
       orderBy: { type: 'asc' },
@@ -18,10 +18,19 @@ export async function getPaymentMethods(businessId: string) {
     prisma.businessPaymentAccount.findUnique({
       where: { business_id: businessId },
     }),
+    prisma.business.findUnique({
+      where: { id: businessId },
+      select: { external_payment_url: true },
+    }),
   ]);
 
   // Build a unified view of payment methods with their availability
   const allTypes: PaymentMethodType[] = ['IBAN_TRANSFER', 'CARD', 'APPLE_PAY', 'GOOGLE_PAY'];
+
+  const hasExternalPaymentUrl = Boolean(
+    business?.external_payment_url && business.external_payment_url.startsWith('https://')
+  );
+  const hasConnectedGateway = integrations.some((i) => i.status === 'CONNECTED');
 
   return allTypes.map((type) => {
     const method = methods.find((m) => m.type === type);
@@ -31,13 +40,8 @@ export async function getPaymentMethods(businessId: string) {
     if (isIban) {
       connectionStatus = (paymentAccount?.iban || paymentAccount?.account_number) ? 'CONNECTED' : 'NOT_CONNECTED';
     } else {
-      const integration = integrations.find(
-        (i) =>
-          (i.provider === type ||
-            ((type === 'CARD' || type === 'APPLE_PAY' || type === 'GOOGLE_PAY') && i.provider === 'stripe')) &&
-          i.status === 'CONNECTED'
-      );
-      connectionStatus = integration ? 'CONNECTED' : 'NOT_CONNECTED';
+      // Connectable if business has hosted payment link (Stripe Link, PayTR, Shopier etc.) or active provider integration
+      connectionStatus = (hasExternalPaymentUrl || hasConnectedGateway) ? 'CONNECTED' : 'NOT_CONNECTED';
     }
 
     return {
@@ -120,15 +124,20 @@ async function checkConnection(
     return !!(account?.iban || account?.account_number);
   }
 
+  // Check if business has configured an external payment link (Stripe Link, PayTR Link, Shopier, etc.)
+  const business = await prisma.business.findUnique({
+    where: { id: businessId },
+    select: { external_payment_url: true },
+  });
+  if (business?.external_payment_url && business.external_payment_url.startsWith('https://')) {
+    return true;
+  }
+
   // For provider-based methods, check if any supporting provider is CONNECTED
   const integration = await prisma.paymentIntegration.findFirst({
     where: {
       business_id: businessId,
       status: 'CONNECTED',
-      OR: [
-        { provider: type },
-        { provider: 'stripe' },
-      ],
     },
   });
 

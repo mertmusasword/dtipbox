@@ -20,7 +20,11 @@ export const EmployeeDashboard: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div className="page-wrapper"><div style={{ color: 'var(--text-secondary)' }}>Loading staff dashboard...</div></div>;
+    return (
+      <div className="page-wrapper">
+        <div style={{ color: 'var(--text-secondary)' }}>{t('employeeDashboard.loading')}</div>
+      </div>
+    );
   }
 
   const profile = data?.profile;
@@ -56,25 +60,25 @@ export const EmployeeDashboard: React.FC = () => {
         )}
         <div>
           <h1 className="page-title" style={{ fontSize: '1.65rem' }}>
-            Merhaba, {profile?.first_name} {profile?.last_name}!
+            {t('employeeDashboard.greeting', { name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() })}
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              {profile?.position || profile?.role_title || 'Personel'} • {profile?.business?.name}
+              {profile?.position || profile?.role_title || t('employeeDashboard.defaultPosition')} • {profile?.business?.name}
             </span>
             {distributionMode === 'POINT_POOL' && (
               <span className="badge badge-accent" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
-                🎯 {Number(profile?.share_weight || 1.0).toFixed(2)}x Havuz Payı
+                {t('employeeDashboard.poolShareBadge', { weight: Number(profile?.share_weight || 1.0).toFixed(2) })}
               </span>
             )}
             {distributionMode === 'EQUAL_POOL' && (
               <span className="badge badge-accent" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
-                ⚖️ Eşit Havuz Katılımcısı
+                {t('employeeDashboard.equalPoolParticipant')}
               </span>
             )}
             {distributionMode === 'INDIVIDUAL' && (
               <span className="badge badge-neutral" style={{ fontSize: '0.75rem' }}>
-                👤 Bireysel Bahşiş
+                {t('employeeDashboard.individualTip')}
               </span>
             )}
           </div>
@@ -109,10 +113,10 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>
-              Sadakat Damgası Bas & Ödül Teslim Et
+              {t('employeeDashboard.loyaltyBannerTitle')}
             </div>
             <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-              Müşterinin dinamik QR kodunu tarayın veya 6 haneli kart kodunu girin.
+              {t('employeeDashboard.loyaltyBannerSubtitle')}
             </div>
           </div>
         </div>
@@ -122,35 +126,38 @@ export const EmployeeDashboard: React.FC = () => {
           style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1.25rem', fontWeight: 600 }}
         >
           <Award size={16} />
-          <span>Damga Ekranını Aç</span>
+          <span>{t('employeeDashboard.openStampScreen')}</span>
         </Link>
       </div>
 
       {/* Personal Tips Performance */}
       <div className="metrics-grid">
         <MetricCard
-          label="Today's Tips"
-          value={`${currency} ${stats?.todayTips || 0}`}
+          label={t('employeeDashboard.todaysTips')}
+          value={formatCurrency(stats?.todayTips || 0, currency)}
           icon={<DollarSign size={24} />}
-          subtitle="Tips directed to you today"
+          subtitle={t('employeeDashboard.todaysTipsSubtitle')}
         />
         <MetricCard
-          label="Weekly Tips"
-          value={`${currency} ${stats?.weeklyTips || 0}`}
+          label={t('employeeDashboard.weeklyTips')}
+          value={formatCurrency(stats?.weeklyTips || 0, currency)}
           icon={<TrendingUp size={24} />}
-          subtitle="Your tips over the last 7 days"
+          subtitle={t('employeeDashboard.weeklyTipsSubtitle')}
         />
         <MetricCard
-          label="Monthly Tips"
-          value={`${currency} ${stats?.monthlyTips || 0}`}
+          label={t('employeeDashboard.monthlyTips')}
+          value={formatCurrency(stats?.monthlyTips || 0, currency)}
           icon={<Calendar size={24} />}
-          subtitle="Current calendar month"
+          subtitle={t('employeeDashboard.monthlyTipsSubtitle')}
         />
         <MetricCard
-          label="Total Career Tips"
-          value={`${currency} ${stats?.totalTips || 0}`}
+          label={t('employeeDashboard.careerTips')}
+          value={formatCurrency(stats?.totalTips || 0, currency)}
           icon={<Layers size={24} />}
-          subtitle={`${stats?.tipCount || 0} total tips • avg ${currency} ${stats?.averageTip || 0}`}
+          subtitle={t('employeeDashboard.careerTipsSubtitle', {
+            count: stats?.tipCount || 0,
+            avg: formatCurrency(stats?.averageTip || 0, currency),
+          })}
         />
         <MetricCard
           label={t('feedback.customerSatisfaction')}
@@ -168,10 +175,10 @@ export const EmployeeDashboard: React.FC = () => {
               <Split size={20} style={{ color: 'var(--primary)' }} />
               <div>
                 <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
-                  Havuz Dağıtımları & Kasa Kapanış Hak Edişleriniz
+                  {t('employeeDashboard.poolSettlementsTitle')}
                 </h2>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                  İşletme kasa kapanışlarında havuzdan hesabınıza tahakkuk eden net bahşişler
+                  {t('employeeDashboard.poolSettlementsSubtitle')}
                 </p>
               </div>
             </div>
@@ -195,19 +202,38 @@ export const EmployeeDashboard: React.FC = () => {
                   }}
                 >
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
                       <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#4ade80' }}>
                         {formatCurrency(share.netShare, currency)}
                       </span>
                       <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>
-                        🎯 {Number(share.shareWeight).toFixed(2)}x Pay
+                        🎯 {t('employeeDashboard.poolShare', { weight: Number(share.shareWeight).toFixed(2) })}
                       </span>
-                      <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
-                        Kesinleşti
-                      </span>
+                      {share.isPaid ? (
+                        <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
+                          ✓ {t('employeeDashboard.paid')}
+                        </span>
+                      ) : (
+                        <span
+                          className="badge"
+                          style={{
+                            fontSize: '0.7rem',
+                            background: 'rgba(245, 158, 11, 0.15)',
+                            color: '#f59e0b',
+                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                          }}
+                        >
+                          ⏳ {t('employeeDashboard.pendingPayment')}
+                        </span>
+                      )}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      Brüt Havuz Payınız: {formatCurrency(share.grossShare, currency)} • Kesintiler: -{formatCurrency(Number((share.grossShare - share.netShare).toFixed(2)), currency)}
+                      {t('employeeDashboard.grossPoolShare')}: {formatCurrency(share.grossShare, currency)} • {t('employeeDashboard.deductions')}: -{formatCurrency(Number((share.grossShare - share.netShare).toFixed(2)), currency)}
+                      {(Number(share.cashShare) > 0 || Number(share.digitalShare) > 0) && (
+                        <span>
+                          {' • '}{t('employeeDashboard.cash')}: {formatCurrency(share.cashShare || 0, currency)} • {t('employeeDashboard.digital')}: {formatCurrency(share.digitalShare || 0, currency)}
+                        </span>
+                      )}
                     </div>
                     {share.notes && (
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
@@ -226,7 +252,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-              Henüz kesinleşmiş bir havuz dağıtımı bulunmuyor. İşletme gün sonu kasa kapattığında hak edişiniz burada dökülecektir.
+              {t('employeeDashboard.noPoolSettlements')}
             </div>
           )}
         </div>
@@ -236,7 +262,7 @@ export const EmployeeDashboard: React.FC = () => {
       <div className="glass-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
           <Sparkles size={20} style={{ color: 'var(--accent-primary)' }} />
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Your Direct Tips & Customer Notes</h2>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{t('employeeDashboard.directTipsTitle')}</h2>
         </div>
 
         {stats?.recentTips && stats.recentTips.length > 0 ? (
@@ -258,11 +284,11 @@ export const EmployeeDashboard: React.FC = () => {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>
-                      {tip.currency} {tip.amount}
+                      {formatCurrency(Number(tip.amount), tip.currency || currency)}
                     </span>
                     {tip.customer_name && (
                       <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                        from {tip.customer_name}
+                        {t('employeeDashboard.fromCustomer', { name: tip.customer_name })}
                       </span>
                     )}
                   </div>
@@ -283,10 +309,10 @@ export const EmployeeDashboard: React.FC = () => {
 
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {new Date(tip.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                    {formatTime(tip.created_at)}
                   </div>
                   <span className="badge badge-success" style={{ marginTop: '0.2rem' }}>
-                    Received
+                    {t('employeeDashboard.received')}
                   </span>
                 </div>
               </div>
@@ -294,7 +320,7 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
         ) : (
           <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-muted)' }}>
-            No personal tips logged yet. When guests select you upon tipping, your receipts will appear here!
+            {t('employeeDashboard.noDirectTips')}
           </div>
         )}
       </div>
@@ -347,7 +373,7 @@ export const EmployeeDashboard: React.FC = () => {
                   </p>
                 ) : (
                   <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                    No written comment (rating only).
+                    {t('employeeDashboard.noWrittenComment')}
                   </span>
                 )}
               </div>

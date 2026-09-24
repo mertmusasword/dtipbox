@@ -5,6 +5,166 @@ import { LegalTab } from './LegalModal';
 
 const STORAGE_KEY = 'naponi_cookie_consent';
 
+interface CookieTranslations {
+  ariaLabel: string;
+  title: string;
+  complianceBadge: string;
+  descBefore: string;
+  cookiePolicy: string;
+  descMiddle: string;
+  dataNotice: string;
+  descAfter: string;
+  essentialOnly: string;
+  acceptAll: string;
+  close: string;
+}
+
+const cookieLocales: Record<string, CookieTranslations> = {
+  tr: {
+    ariaLabel: 'Çerez Bilgilendirme ve Onay Bildirimi',
+    title: 'Çerez Tercihleri ve Gizlilik Bildirimi',
+    complianceBadge: 'KVKK & GDPR',
+    descBefore: 'Sitemizde temel fonksiyonlar, güvenli oturum yönetimi ve anonim trafik analitiği için çerezler kullanılmaktadır. Haklarınız ve tercihleriniz için ',
+    cookiePolicy: 'Çerez Politikası',
+    descMiddle: ' ve ',
+    dataNotice: 'KVKK Metnini',
+    descAfter: ' inceleyebilirsiniz.',
+    essentialOnly: 'Sadece Zorunlu Olanlar',
+    acceptAll: 'Tümünü Kabul Et',
+    close: 'Kapat',
+  },
+  en: {
+    ariaLabel: 'Cookie Consent Banner',
+    title: 'Cookie Preferences & Privacy Notice',
+    complianceBadge: 'KVKK & GDPR',
+    descBefore: 'We deploy essential cookies for platform security, session handling, and anonymized performance analytics. Review our ',
+    cookiePolicy: 'Cookie Policy',
+    descMiddle: ' and ',
+    dataNotice: 'Data Notice',
+    descAfter: ' for details.',
+    essentialOnly: 'Essential Only',
+    acceptAll: 'Accept All',
+    close: 'Close',
+  },
+  de: {
+    ariaLabel: 'Cookie-Einwilligungsbanner',
+    title: 'Cookie-Einstellungen & Datenschutzerklärung',
+    complianceBadge: 'DSGVO & ePrivacy',
+    descBefore: 'Wir verwenden essenzielle Cookies für Plattform-Sicherheit, Sitzungsverwaltung und anonymisierte Leistungsanalysen. Lesen Sie unsere ',
+    cookiePolicy: 'Cookie-Richtlinie',
+    descMiddle: ' und den ',
+    dataNotice: 'Datenschutzhinweis',
+    descAfter: ' für weitere Informationen.',
+    essentialOnly: 'Nur Notwendige',
+    acceptAll: 'Alle Akzeptieren',
+    close: 'Schließen',
+  },
+  fr: {
+    ariaLabel: 'Bannière de consentement aux cookies',
+    title: 'Préférences de cookies et confidentialité',
+    complianceBadge: 'RGPD & ePrivacy',
+    descBefore: 'Nous utilisons des cookies essentiels pour la sécurité, la gestion des sessions et l\'analyse anonyme des performances. Consultez notre ',
+    cookiePolicy: 'Politique de Cookies',
+    descMiddle: ' et nos ',
+    dataNotice: 'Mentions Légales',
+    descAfter: ' pour plus de détails.',
+    essentialOnly: 'Essentiels Uniquement',
+    acceptAll: 'Tout Accepter',
+    close: 'Fermer',
+  },
+  es: {
+    ariaLabel: 'Banner de consentimiento de cookies',
+    title: 'Preferencias de cookies y privacidad',
+    complianceBadge: 'RGPD & ePrivacy',
+    descBefore: 'Utilizamos cookies esenciales para la seguridad de la plataforma, la gestión de sesiones y el análisis de rendimiento anónimo. Consulte nuestra ',
+    cookiePolicy: 'Política de Cookies',
+    descMiddle: ' y el ',
+    dataNotice: 'Aviso de Privacidad',
+    descAfter: ' para más detalles.',
+    essentialOnly: 'Solo Esenciales',
+    acceptAll: 'Aceptar Todo',
+    close: 'Cerrar',
+  },
+  ja: {
+    ariaLabel: 'Cookie同意バナー',
+    title: 'Cookie設定およびプライバシー通知',
+    complianceBadge: 'GDPR & APPI',
+    descBefore: '当サイトでは、セキュリティ確保、セッション管理、匿名のアクセス解析のために必要不可欠なCookieを使用しています。詳細は',
+    cookiePolicy: 'クッキーポリシー',
+    descMiddle: 'および',
+    dataNotice: 'プライバシー通知',
+    descAfter: 'をご確認ください。',
+    essentialOnly: '必須のみ',
+    acceptAll: 'すべて同意',
+    close: '閉じる',
+  },
+  zh: {
+    ariaLabel: 'Cookie 同意横幅',
+    title: 'Cookie 偏好与隐私声明',
+    complianceBadge: 'PIPL & GDPR',
+    descBefore: '我们使用必要的 Cookie 来保障平台安全、维持安全会话以及进行匿名性能分析。详情请查阅我们的',
+    cookiePolicy: 'Cookie 政策',
+    descMiddle: '与',
+    dataNotice: '数据合规说明',
+    descAfter: '。',
+    essentialOnly: '仅必要',
+    acceptAll: '全部接受',
+    close: '关闭',
+  },
+  ru: {
+    ariaLabel: 'Баннер согласия на использование файлов cookie',
+    title: 'Настройки cookie и конфиденциальность',
+    complianceBadge: 'GDPR & 152-ФЗ',
+    descBefore: 'Мы используем обязательные файлы cookie для безопасности платформы, управления сессиями и анонимной аналитики. Ознакомьтесь с нашей ',
+    cookiePolicy: 'Политикой cookie',
+    descMiddle: ' и ',
+    dataNotice: 'Уведомлением о конфиденциальности',
+    descAfter: ' для подробностей.',
+    essentialOnly: 'Только обязательные',
+    acceptAll: 'Принять все',
+    close: 'Закрыть',
+  },
+  ar: {
+    ariaLabel: 'إشعار الموافقة على ملفات تعريف الارتباط',
+    title: 'تفضيلات ملفات تعريف الارتباط وإشعار الخصوصية',
+    complianceBadge: 'GDPR & حماية البيانات',
+    descBefore: 'نستخدم ملفات تعريف الارتباط الأساسية لأمان المنصة وإدارة الجلسات والتحليلات مجهولة المصدر. يُرجى مراجعة ',
+    cookiePolicy: 'سياسة ملفات تعريف الارتباط',
+    descMiddle: ' و ',
+    dataNotice: 'إشعار حماية البيانات',
+    descAfter: ' للاطلاع على التفاصيل.',
+    essentialOnly: 'الأساسية فقط',
+    acceptAll: 'قبول الكل',
+    close: 'إغلاق',
+  },
+  pt: {
+    ariaLabel: 'Aviso de consentimento de cookies',
+    title: 'Preferências de cookies e privacidade',
+    complianceBadge: 'RGPD & LGPD',
+    descBefore: 'Utilizamos cookies essenciais para segurança da plataforma, gestão de sessões e análise anónima de desempenho. Consulte a nossa ',
+    cookiePolicy: 'Política de Cookies',
+    descMiddle: ' e o ',
+    dataNotice: 'Aviso de Privacidade',
+    descAfter: ' para mais informações.',
+    essentialOnly: 'Apenas Essenciais',
+    acceptAll: 'Aceitar Tudo',
+    close: 'Fechar',
+  },
+  id: {
+    ariaLabel: 'Banner persetujuan cookie',
+    title: 'Preferensi Cookie & Privasi',
+    complianceBadge: 'UU PDP & GDPR',
+    descBefore: 'Kami menggunakan cookie esensial untuk keamanan platform, pengelolaan sesi, dan analisis performa anonim. Pelajari ',
+    cookiePolicy: 'Kebijakan Cookie',
+    descMiddle: ' dan ',
+    dataNotice: 'Pemberitahuan Data',
+    descAfter: ' kami untuk detail selengkapnya.',
+    essentialOnly: 'Hanya Esensial',
+    acceptAll: 'Terima Semua',
+    close: 'Tutup',
+  },
+};
+
 interface CookieBannerProps {
   onOpenLegalModal: (tab: LegalTab) => void;
 }
@@ -51,11 +211,13 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenLegalModal }) 
 
   if (!visible) return null;
 
-  const isTr = language === 'tr';
+  const loc = cookieLocales[language] || cookieLocales.en;
+  const isRtl = language === 'ar';
 
   return (
     <aside 
-      aria-label={isTr ? 'Çerez Bilgilendirme ve Onay Bildirimi' : 'Cookie Consent Banner'}
+      aria-label={loc.ariaLabel}
+      dir={isRtl ? 'rtl' : 'ltr'}
       style={{
         position: 'fixed',
         bottom: '1.25rem',
@@ -108,57 +270,31 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenLegalModal }) 
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
               <span style={{ fontSize: '0.92rem', fontWeight: 700, color: '#ffffff' }}>
-                {isTr ? 'Çerez Tercihleri ve Gizlilik Bildirimi' : 'Cookie Preferences & Privacy Notice'}
+                {loc.title}
               </span>
               <span style={{ fontSize: '0.72rem', color: '#34d399', background: 'rgba(16, 185, 129, 0.12)', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>
-                KVKK & GDPR
+                {loc.complianceBadge}
               </span>
             </div>
 
             <p style={{ margin: 0, fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5 }}>
-              {isTr ? (
-                <>
-                  Sitemizde temel fonksiyonlar, güvenli oturum yönetimi ve anonim trafik analitiği için çerezler kullanılmaktadır. 
-                  Haklarınız ve tercihleriniz için{' '}
-                  <button
-                    type="button"
-                    onClick={() => onOpenLegalModal('cookies')}
-                    style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: 0, textDecoration: 'underline', font: 'inherit' }}
-                  >
-                    Çerez Politikası
-                  </button>
-                  {' '}ve{' '}
-                  <button
-                    type="button"
-                    onClick={() => onOpenLegalModal('kvkk')}
-                    style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: 0, textDecoration: 'underline', font: 'inherit' }}
-                  >
-                    KVKK Metnini
-                  </button>
-                  {' '}inceleyebilirsiniz.
-                </>
-              ) : (
-                <>
-                  We deploy essential cookies for platform security, session handling, and anonymized performance analytics. 
-                  Review our{' '}
-                  <button
-                    type="button"
-                    onClick={() => onOpenLegalModal('cookies')}
-                    style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: 0, textDecoration: 'underline', font: 'inherit' }}
-                  >
-                    Cookie Policy
-                  </button>
-                  {' '}and{' '}
-                  <button
-                    type="button"
-                    onClick={() => onOpenLegalModal('kvkk')}
-                    style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: 0, textDecoration: 'underline', font: 'inherit' }}
-                  >
-                    Data Notice
-                  </button>
-                  {' '}for details.
-                </>
-              )}
+              {loc.descBefore}
+              <button
+                type="button"
+                onClick={() => onOpenLegalModal('cookies')}
+                style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: 0, textDecoration: 'underline', font: 'inherit' }}
+              >
+                {loc.cookiePolicy}
+              </button>
+              {loc.descMiddle}
+              <button
+                type="button"
+                onClick={() => onOpenLegalModal('kvkk')}
+                style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: 0, textDecoration: 'underline', font: 'inherit' }}
+              >
+                {loc.dataNotice}
+              </button>
+              {loc.descAfter}
             </p>
           </div>
         </div>
@@ -180,7 +316,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenLegalModal }) 
               whiteSpace: 'nowrap',
             }}
           >
-            {isTr ? 'Sadece Zorunlu Olanlar' : 'Essential Only'}
+            {loc.essentialOnly}
           </button>
 
           <button
@@ -203,7 +339,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenLegalModal }) 
             }}
           >
             <ShieldCheck size={15} />
-            <span>{isTr ? 'Tümünü Kabul Et' : 'Accept All'}</span>
+            <span>{loc.acceptAll}</span>
           </button>
 
           <button
@@ -219,7 +355,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenLegalModal }) 
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            aria-label="Kapat"
+            aria-label={loc.close}
           >
             <X size={16} />
           </button>

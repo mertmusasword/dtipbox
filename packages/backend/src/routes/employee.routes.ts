@@ -74,6 +74,8 @@ router.get('/dashboard', async (req: AuthRequest, res, next) => {
           shareWeight: Number(ps.share_weight),
           grossShare: Number(ps.gross_share),
           netShare: Number(ps.net_share),
+          cashShare: Number(ps.cash_share || 0),
+          digitalShare: Number(ps.digital_share || 0),
           isPaid: ps.is_paid,
           paidAt: ps.paid_at,
           notes: ps.distribution.notes,
@@ -92,8 +94,10 @@ router.get('/feedbacks', async (req: AuthRequest, res, next) => {
     }
 
     const feedbackService = await import('../services/feedback.service');
-    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+    const rawPage = parseInt(req.query.page as string || '1', 10) || 1;
+    const page = Math.max(1, rawPage);
+    const rawLimit = parseInt(req.query.limit as string || '20', 10) || 20;
+    const limit = Math.min(100, Math.max(1, rawLimit));
 
     const data = await feedbackService.getEmployeeFeedbacks(
       req.user.employeeId,

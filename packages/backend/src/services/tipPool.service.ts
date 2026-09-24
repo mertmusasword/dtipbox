@@ -106,6 +106,7 @@ export async function getTipPoolSimulation(
     tipsWhere = {
       business_id: businessId,
       payment_status: 'SUCCESS',
+      is_settled: false,
       created_at: {
         gte: periodStart,
         lte: periodEnd,
@@ -440,11 +441,12 @@ export async function settleTipPool(
       });
     }
 
-    // Mark settled tips
+    // Mark settled tips (guaranteed idempotent: only update un-settled tips)
     if (simulation.tipIds && simulation.tipIds.length > 0) {
       await tx.tip.updateMany({
         where: {
           id: { in: simulation.tipIds },
+          is_settled: false,
         },
         data: {
           is_settled: true,
@@ -460,14 +462,16 @@ export async function settleTipPool(
 }
 
 export async function getTipPoolHistory(businessId: string, page = 1, limit = 20) {
-  const skip = (page - 1) * limit;
+  const safePage = Math.max(1, page);
+  const safeLimit = Math.min(100, Math.max(1, limit));
+  const skip = (safePage - 1) * safeLimit;
 
   const [items, total] = await Promise.all([
     prisma.tipPoolDistribution.findMany({
       where: { business_id: businessId },
       orderBy: { created_at: 'desc' },
       skip,
-      take: limit,
+      take: safeLimit,
       include: {
         shares: {
           include: {
@@ -496,4 +500,70 @@ export async function getTipPoolHistory(businessId: string, page = 1, limit = 20
       totalPages: Math.ceil(total / limit),
     },
   };
+}
+
+export async function markSharePaymentStatus(businessId: string, shareId: string, isPaid: boolean) {
+  const share = await prisma.tipPoolShare.findFirst({
+    where: {
+      id: shareId,
+      distribution: {
+        business_id: businessId,
+      },
+    },
+  });
+
+  if (!share) {
+    throw new AppError('Pay kaydı bulunamadı veya bu işletmeye ait değil.', 404);
+  }
+
+  const updated = await prisma.tipPoolShare.update({
+    where: { id: shareId },
+    data: {
+      is_paid: isPaid,
+      paid_at: isPaid ? new Date() : null,
+    },
+  });
+
+  return updated;
+}
+
+export async function markDistributionAllPaid(businessId: string, distributionId: string) {
+  const distribution = await prisma.tipPoolDistribution.findFirst({
+    where: {
+      id: distributionId,
+      business_id: businessId,
+    },
+  });
+
+  if (!distribution) {
+    throw new AppError('Kasa kapanış dağıtım kaydı bulunamadı.', 404);
+  }
+
+  const now = new Date();
+  await prisma.tipPoolShare.updateMany({
+    where: { distribution_id: distributionId },
+    data: {
+      is_paid: true,
+      paid_at: now,
+    },
+  });
+
+  return prisma.tipPoolDistribution.findUnique({
+    where: { id: distributionId },
+    include: {
+      shares: {
+        include: {
+          employee: {
+            select: {
+              id: true,
+              first_name: true,
+              last_name: true,
+              position: true,
+              role_title: true,
+            },
+          },
+        },
+      },
+    },
+  });
 }

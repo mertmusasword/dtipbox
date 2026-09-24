@@ -240,8 +240,10 @@ router.get(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const businessId = req.user!.businessId!;
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const rawPage = parseInt(req.query.page as string || '1', 10) || 1;
+      const page = Math.max(1, rawPage);
+      const rawLimit = parseInt(req.query.limit as string || '20', 10) || 20;
+      const limit = Math.min(100, Math.max(1, rawLimit));
       const data = await loyaltyService.getBusinessLoyaltyTransactions(businessId, page, limit);
       res.json({ success: true, data });
     } catch (error) {

@@ -9,9 +9,10 @@ import rateLimit from 'express-rate-limit';
 const router = Router();
 
 // Abuse protection: limit tip creation attempts per IP to prevent spam or flood attacks
+// Configured to 60/min to safely support high-density venue Wi-Fi NAT IPs during rush hours
 const tipSubmissionLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 15, // max 15 tip attempts per minute per IP
+  max: 60, // max 60 tip attempts per minute per IP
   standardHeaders: true,
   legacyHeaders: false,
   message: {

@@ -22,7 +22,7 @@ class EmailService {
             pass: env.SMTP_PASS,
           },
           tls: {
-            rejectUnauthorized: false,
+            rejectUnauthorized: !env.isDev,
           },
         });
         this.isConfigured = true;

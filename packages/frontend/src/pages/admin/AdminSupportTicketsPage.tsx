@@ -72,7 +72,7 @@ const STATUS_CONFIG: Record<TicketStatus, { label: string; color: string; bg: st
 
 const CATEGORY_CONFIG: Record<TicketCategory, { label: string; icon: React.ReactNode; color: string; bg: string }> = {
   POS_INTEGRATION: {
-    label: 'POS & Entegrasyon',
+    label: 'Ödeme Altyapısı & Sanal POS',
     icon: <CreditCard size={13} />,
     color: '#38bdf8',
     bg: 'rgba(56, 189, 248, 0.12)',
@@ -355,7 +355,7 @@ export const AdminSupportTicketsPage: React.FC = () => {
             }}
           >
             <option value="ALL" style={{ background: '#0f172a', color: '#f8fafc' }}>Tüm Kategoriler</option>
-            <option value="POS_INTEGRATION" style={{ background: '#0f172a', color: '#f8fafc' }}>💳 POS & Entegrasyon</option>
+            <option value="POS_INTEGRATION" style={{ background: '#0f172a', color: '#f8fafc' }}>💳 Ödeme Altyapısı & Sanal POS</option>
             <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#f8fafc' }}>🛠️ Teknik Destek</option>
             <option value="ACCOUNT_BILLING" style={{ background: '#0f172a', color: '#f8fafc' }}>📄 Hesap & Faturalama</option>
             <option value="TIP_PAYOUT" style={{ background: '#0f172a', color: '#f8fafc' }}>💰 Bahşiş & Hakediş (Personel)</option>

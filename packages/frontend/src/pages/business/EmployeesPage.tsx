@@ -118,6 +118,10 @@ export const EmployeesPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password && formData.password.length < 8) {
+      showToast(t('auth.passwordLengthError') || 'Şifre en az 8 karakter uzunluğunda olmalıdır.', 'error');
+      return;
+    }
     try {
       if (editingEmployee) {
         await api.put(`/business/employees/${editingEmployee.id}`, {
@@ -619,7 +623,7 @@ export const EmployeesPage: React.FC = () => {
               <label className="form-label">{t('auth.passwordLabel')}</label>
               <input
                 type="password"
-                minLength={6}
+                minLength={8}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 placeholder={editingEmployee ? '••••••••' : '••••••••'}

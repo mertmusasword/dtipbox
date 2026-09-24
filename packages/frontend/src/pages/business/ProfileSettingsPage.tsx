@@ -12,7 +12,7 @@ import { TipDistributionMode, PosFeePayer } from '../../types';
 export const ProfileSettingsPage: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
@@ -404,6 +404,25 @@ export const ProfileSettingsPage: React.FC = () => {
                 placeholder="2.90"
               />
             </div>
+          </div>
+
+          {/* Şeffaf Bilgilendirme Notu */}
+          <div
+            style={{
+              background: 'rgba(99, 102, 241, 0.08)',
+              border: '1px solid rgba(99, 102, 241, 0.2)',
+              borderRadius: '8px',
+              padding: '0.65rem 0.85rem',
+              fontSize: '0.78rem',
+              color: 'var(--text-secondary)',
+              lineHeight: 1.45,
+              marginBottom: '1rem',
+            }}
+          >
+            <strong style={{ color: 'var(--primary)' }}>💡 Naponi %0 Komisyon Alır:</strong>{' '}
+            {language === 'tr'
+              ? 'Bu oran Naponi’nin değil; misafir kartla bahşiş verdiğinde işletmenizin bankasına/ödeme kuruluşuna (Stripe, PayTR, Sanal POS) ödediği gerçek takas maliyetidir. Nakit ve doğrudan IBAN/FAST transferlerinde banka kesintisi yapılmaz (%100 net personele kalır).'
+              : 'Naponi charges 0% platform fee. This rate covers only the actual interchange fee charged by your acquiring bank/gateway when guests tip via card. Direct wire/FAST or cash tips are never subject to interchange fees.'}
           </div>
 
           {/* Stopaj / Vergi Kesintisi */}

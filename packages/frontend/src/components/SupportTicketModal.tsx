@@ -91,6 +91,7 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
         category: form.category,
         subject: form.subject.trim(),
         message: form.message.trim(),
+        website_url_hp: form._hp || undefined,
       });
 
       setSuccess(true);
@@ -280,10 +281,10 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
                     {isEmployee ? (
                       <>
                         <option value="TIP_PAYOUT" style={{ background: '#0f172a', color: '#fff' }}>
-                          💰 {language === 'tr' ? 'Bahşiş & Hakediş Ödemesi' : 'Tip & Payout Inquiry'}
+                          💰 {t('support.categoryPayout')}
                         </option>
                         <option value="QR_PROFILE" style={{ background: '#0f172a', color: '#fff' }}>
-                          🪪 {language === 'tr' ? 'QR Kod & Profil Bilgisi' : 'QR Badge & Profile Info'}
+                          🪪 {t('support.categoryProfile')}
                         </option>
                         <option value="TECHNICAL_SUPPORT" style={{ background: '#0f172a', color: '#fff' }}>
                           🛠️ {t('support.categoryTech')}

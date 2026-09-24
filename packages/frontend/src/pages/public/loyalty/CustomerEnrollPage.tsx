@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useToast } from '../../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../../i18n';
-import { Award, Sparkles, ShieldCheck, Mail, User, ArrowRight, Gift, CheckCircle2, AlertCircle } from 'lucide-react';
+import { getLoyaltyLocale } from '../../../i18n/loyaltyLocales';
+import { Award, Sparkles, Mail, User, ArrowRight, Gift, AlertCircle } from 'lucide-react';
 
 interface ProgramInfo {
   business: {
@@ -25,8 +26,7 @@ export const CustomerEnrollPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { language, dir } = useLanguage();
-  const isTr = language === 'tr';
-  const isRu = language === 'ru';
+  const loc = getLoyaltyLocale(language);
 
   const [data, setData] = useState<ProgramInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,25 +55,11 @@ export const CustomerEnrollPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      showToast(
-        isTr
-          ? 'Lütfen geçerli bir e-posta adresi girin'
-          : isRu
-          ? 'Пожалуйста, введите корректный адрес электронной почты'
-          : 'Please enter a valid email address',
-        'warning'
-      );
+      showToast(loc.emailValidation, 'warning');
       return;
     }
     if (!kvkkAccepted) {
-      showToast(
-        isTr
-          ? 'Lütfen KVKK ve kullanım koşullarını onaylayın'
-          : isRu
-          ? 'Пожалуйста, подтвердите согласие с условиями'
-          : 'Please accept the privacy and terms of use',
-        'warning'
-      );
+      showToast(loc.kvkkValidation, 'warning');
       return;
     }
 
@@ -87,23 +73,11 @@ export const CustomerEnrollPage: React.FC = () => {
       });
 
       const publicCardId = res.data.data.publicCardId || res.data.data.card?.public_id || res.data.data.public_card_id;
-      showToast(
-        isTr
-          ? 'Sadakat kartınız başarıyla oluşturuldu!'
-          : isRu
-          ? 'Ваша карта лояльности успешно создана!'
-          : 'Your loyalty card was created successfully!',
-        'success'
-      );
+      showToast(loc.cardCreatedSuccess, 'success');
       navigate(`/loyalty/card/${publicCardId}`);
     } catch (err: any) {
       showToast(
-        err.response?.data?.error ||
-        (isTr
-          ? 'Kayıt sırasında bir hata oluştu'
-          : isRu
-          ? 'Ошибка при оформлении карты'
-          : 'An error occurred during enrollment'),
+        err.response?.data?.error || loc.enrollError,
         'error'
       );
     } finally {
@@ -113,7 +87,7 @@ export const CustomerEnrollPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="loyalty-public-layout">
+      <div className="loyalty-public-layout" dir={dir}>
         <div className="spinner" style={{ margin: '3rem auto' }} />
       </div>
     );
@@ -121,18 +95,14 @@ export const CustomerEnrollPage: React.FC = () => {
 
   if (!data || !data.program || data.program.is_active === false) {
     return (
-      <div className="loyalty-public-layout">
+      <div className="loyalty-public-layout" dir={dir}>
         <div className="loyalty-enroll-card" style={{ textAlign: 'center' }}>
           <AlertCircle size={48} color="#f59e0b" style={{ margin: '0 auto 1rem' }} />
           <h1 style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>
-            {isTr ? 'Program Bulunamadı' : isRu ? 'Программа не найдена' : 'Program Not Found'}
+            {loc.programNotFoundTitle}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-            {isTr
-              ? 'Bu işletmenin sadakat programı şu anda aktif değil veya geçici olarak durdurulmuş olabilir.'
-              : isRu
-              ? 'Программа лояльности этого заведения в данный момент не активна.'
-              : 'The loyalty program for this venue is currently inactive or unavailable.'}
+            {loc.programNotFoundDesc}
           </p>
           <Link
             to="/"
@@ -145,7 +115,7 @@ export const CustomerEnrollPage: React.FC = () => {
               fontWeight: 600,
             }}
           >
-            ← {isTr ? 'Naponi Ana Sayfasına Dön' : isRu ? 'На главную Naponi' : 'Back to Naponi Home'}
+            {loc.backToHome}
           </Link>
         </div>
       </div>
@@ -156,7 +126,7 @@ export const CustomerEnrollPage: React.FC = () => {
   const businessLogo = business.logo_url || (business as any).logo;
 
   return (
-    <div className="loyalty-public-layout" style={{ position: 'relative' }}>
+    <div className="loyalty-public-layout" dir={dir} style={{ position: 'relative' }}>
       {/* Top Language Selector */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
         <LanguageSelector variant="compact" />
@@ -199,7 +169,7 @@ export const CustomerEnrollPage: React.FC = () => {
         )}
         <h1 style={{ fontSize: '1.5rem', margin: '0 0 0.25rem', fontWeight: 800 }}>{business.name}</h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: 0 }}>
-          {isTr ? 'Dijital Sadakat & Damga Kartı' : isRu ? 'Цифровая карта лояльности' : 'Digital Loyalty & Stamp Card'}
+          {loc.digitalLoyaltySubtitle}
         </p>
       </div>
 
@@ -211,7 +181,7 @@ export const CustomerEnrollPage: React.FC = () => {
               {program.name}
             </div>
             <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', marginTop: '2px' }}>
-              0 / {program.target_stamps} {isTr ? 'Damga' : isRu ? 'штампов' : 'Stamps'}
+              0 / {program.target_stamps} {loc.stamps}
             </div>
           </div>
           <div
@@ -229,7 +199,7 @@ export const CustomerEnrollPage: React.FC = () => {
             }}
           >
             <Gift size={14} />
-            {program.target_stamps} {isTr ? 'Damga = Ödül' : isRu ? 'штампов = Награда' : 'Stamps = Reward'}
+            {program.target_stamps} {loc.stampsReward}
           </div>
         </div>
 
@@ -245,7 +215,7 @@ export const CustomerEnrollPage: React.FC = () => {
         }}>
           <Sparkles size={16} color="#fbbf24" style={{ flexShrink: 0 }} />
           <span>
-            {isTr ? 'Kazanılacak Ödül: ' : isRu ? 'Ваша награда: ' : 'Reward to Earn: '}
+            {loc.rewardToEarn}
             <strong style={{ color: '#fff' }}>{program.reward_description}</strong>
           </span>
         </div>
@@ -254,49 +224,41 @@ export const CustomerEnrollPage: React.FC = () => {
       {/* Registration Form Card */}
       <div className="loyalty-enroll-card">
         <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.5rem' }}>
-          {isTr ? 'Kartınızı Ücretsiz Alın' : isRu ? 'Получите карту бесплатно' : 'Get Your Card for Free'}
+          {loc.freeCardTitle}
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', margin: '0 0 1.25rem', lineHeight: 1.5 }}>
-          {isTr
-            ? 'Uygulama indirmenize gerek yoktur. E-posta adresinizi girerek anında dijital damga kartınızı kullanmaya başlayın.'
-            : isRu
-            ? 'Без загрузки приложений. Введите email и начните собирать штампы мгновенно.'
-            : 'No app download needed. Enter your email to start collecting stamps immediately.'}
+          {loc.noAppNeededDesc}
         </p>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
             <label className="loyalty-input-label">
-              <Mail size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
-              {isTr ? 'E-posta Adresi' : isRu ? 'Электронная почта' : 'Email Address'} <span style={{ color: '#f87171' }}>*</span>
+              <Mail size={14} style={{ display: 'inline', verticalAlign: '-2px', marginInlineEnd: '4px' }} />
+              {loc.emailAddress} <span style={{ color: '#f87171' }}>*</span>
             </label>
             <input
               type="email"
               className="loyalty-text-input"
-              placeholder={isTr ? 'ornek@mail.com' : 'name@example.com'}
+              placeholder={loc.emailAddressPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               autoFocus
             />
             <span style={{ fontSize: '0.73rem', color: 'var(--text-muted)' }}>
-              {isTr
-                ? 'Kartınıza daha sonra ulaşabilmeniz için bağlantınız bu adrese iletilecektir.'
-                : isRu
-                ? 'Ссылка на карту будет отправлена на этот адрес для быстрого доступа.'
-                : 'Your card link will be sent to this email so you never lose it.'}
+              {loc.emailHelpDesc}
             </span>
           </div>
 
           <div style={{ marginBottom: '1.25rem' }}>
             <label className="loyalty-input-label">
-              <User size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
-              {isTr ? 'Adınız & Soyadınız (İsteğe bağlı)' : isRu ? 'Ваше имя (Необязательно)' : 'Your Name (Optional)'}
+              <User size={14} style={{ display: 'inline', verticalAlign: '-2px', marginInlineEnd: '4px' }} />
+              {loc.fullNameOptional}
             </label>
             <input
               type="text"
               className="loyalty-text-input"
-              placeholder={isTr ? 'Adınızı girin' : isRu ? 'Имя' : 'Enter your name'}
+              placeholder={loc.enterYourName}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -318,16 +280,10 @@ export const CustomerEnrollPage: React.FC = () => {
                 type="checkbox"
                 checked={kvkkAccepted}
                 onChange={(e) => setKvkkAccepted(e.target.checked)}
-                style={{ marginTop: '2px' }}
+                style={{ marginTop: '2px', flexShrink: 0 }}
                 required
               />
-              <span>
-                {isTr
-                  ? 'Sadakat kartı oluşturmak ve damga bildirimlerimi almak için e-posta adresimin işlenmesini, KVKK ve Gizlilik Politikası koşullarını kabul ediyorum.'
-                  : isRu
-                  ? 'Я согласен с обработкой email для получения цифровой карты и уведомлений программы лояльности.'
-                  : 'I agree to the processing of my email to create a loyalty card and receive stamp notifications.'}
-              </span>
+              <span>{loc.kvkkConsent}</span>
             </label>
           </div>
 
@@ -347,11 +303,11 @@ export const CustomerEnrollPage: React.FC = () => {
             }}
           >
             {submitting ? (
-              isTr ? 'Kartınız Hazırlanıyor...' : isRu ? 'Создание карты...' : 'Preparing Your Card...'
+              loc.creatingCardProgress
             ) : (
               <>
-                {isTr ? 'Dijital Kartımı Oluştur' : isRu ? 'Создать карту' : 'Create My Digital Card'}
-                <ArrowRight size={18} />
+                <span>{loc.createDigitalCard}</span>
+                <ArrowRight size={18} style={{ transform: dir === 'rtl' ? 'scaleX(-1)' : 'none' }} />
               </>
             )}
           </button>
@@ -360,11 +316,7 @@ export const CustomerEnrollPage: React.FC = () => {
         {/* Existing card link */}
         <div style={{ marginTop: '1.5rem', textAlign: 'center', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0 0 0.5rem' }}>
-            {isTr
-              ? 'Zaten bu işletmede kayıtlı bir kartınız var mı?'
-              : isRu
-              ? 'У вас уже есть карта в этом заведении?'
-              : 'Already have a registered card at this venue?'}
+            {loc.alreadyHaveCard}
           </p>
           <Link
             to={`/loyalty/recover?businessId=${business.id}`}
@@ -375,19 +327,16 @@ export const CustomerEnrollPage: React.FC = () => {
               textDecoration: 'none',
             }}
           >
-            {isTr
-              ? 'Mevcut Kartımı Bul / E-posta Gönder →'
-              : isRu
-              ? 'Найти существующую карту →'
-              : 'Find My Existing Card →'}
+            {loc.findExistingCard}
           </Link>
         </div>
       </div>
 
       {/* Micro footer */}
       <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-        {isTr ? 'Güvenli ve Temassız Sadakat Altyapısı' : 'Secure & Cashless Loyalty Infrastructure'} • <strong>Naponi Loyalty</strong>
+        {loc.safeLoyaltyFooter} • <strong>Naponi Loyalty</strong>
       </div>
     </div>
   );
 };
+export default CustomerEnrollPage;

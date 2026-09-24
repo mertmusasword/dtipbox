@@ -9,8 +9,13 @@ export async function getBusinessAnalytics(businessId: string) {
   startOfWeek.setHours(0, 0, 0, 0);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  // Consider successful or unverified (bank transfer accepted for record) tips in metrics
-  const validStatuses: PaymentStatus[] = [PaymentStatus.SUCCESS, PaymentStatus.UNVERIFIED, PaymentStatus.CANCELLED];
+  // Consider successful, unverified (bank transfer), or pending (external card link) tips in metrics
+  const validStatuses: PaymentStatus[] = [
+    PaymentStatus.SUCCESS,
+    PaymentStatus.UNVERIFIED,
+    PaymentStatus.PENDING,
+    PaymentStatus.CANCELLED,
+  ];
 
   const [
     allTips,
@@ -128,7 +133,7 @@ export async function getBusinessAnalytics(businessId: string) {
       }
       paymentMethodUsage[method].count += 1;
       paymentMethodUsage[method].total += amt;
-    } else if (tip.payment_status === PaymentStatus.UNVERIFIED) {
+    } else if (tip.payment_status === PaymentStatus.UNVERIFIED || tip.payment_status === PaymentStatus.PENDING) {
       pendingTipCount += 1;
       pendingAmount += amt;
     }
@@ -205,7 +210,7 @@ export async function getEmployeeAnalytics(employeeId: string, businessId: strin
   startOfWeek.setHours(0, 0, 0, 0);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const validStatuses: PaymentStatus[] = [PaymentStatus.SUCCESS, PaymentStatus.UNVERIFIED];
+  const validStatuses: PaymentStatus[] = [PaymentStatus.SUCCESS, PaymentStatus.UNVERIFIED, PaymentStatus.PENDING];
 
   const tips = await prisma.tip.findMany({
     where: {

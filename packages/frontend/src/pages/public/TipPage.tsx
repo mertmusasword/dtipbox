@@ -218,16 +218,30 @@ export const TipPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPaymentMethod) {
-      alert(t('tip.noPaymentMethods'));
+      showToast(t('tip.noPaymentMethods'), 'warning');
       return;
     }
     if (effectiveAmount <= 0) {
-      alert(t('tip.selectAmountTitle'));
+      showToast(t('tip.selectAmountTitle'), 'warning');
+      return;
+    }
+    if (effectiveAmount > 100000) {
+      showToast(
+        language === 'tr'
+          ? 'Tek seferde bahşiş tutarı en fazla 100.000 olabilir.'
+          : 'Tip amount exceeds maximum allowed single transaction limit (100,000).',
+        'warning'
+      );
       return;
     }
 
     if (isOffline) {
-      alert(language === 'tr' ? 'İnternet bağlantınız koptu. Lütfen ağınızı kontrol edip tekrar deneyin.' : 'You are currently offline. Please check your connection.');
+      showToast(
+        language === 'tr'
+          ? 'İnternet bağlantınız koptu. Lütfen ağınızı kontrol edip tekrar deneyin.'
+          : 'You are currently offline. Please check your connection.',
+        'error'
+      );
       return;
     }
 
@@ -278,7 +292,7 @@ export const TipPage: React.FC = () => {
       setPaymentResult(res.data.data);
     } catch (err: any) {
       trackPaymentFailed(selectedPaymentMethod, err.response?.data?.error || 'Payment failed');
-      alert(err.response?.data?.error || t('common.error'));
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setSubmitting(false);
       isSubmittingRef.current = false;
@@ -301,8 +315,12 @@ export const TipPage: React.FC = () => {
         comment: feedbackComment.trim() || undefined,
       });
       setFeedbackSubmitted(true);
+      showToast(
+        language === 'tr' ? 'Geri bildiriminiz için teşekkür ederiz!' : 'Thank you for your feedback!',
+        'success'
+      );
     } catch (err: any) {
-      alert(err.response?.data?.error || t('common.error'));
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setFeedbackSubmitting(false);
     }
@@ -395,8 +413,12 @@ export const TipPage: React.FC = () => {
         comment: standaloneComment.trim() || undefined,
       });
       setStandaloneSubmitted(true);
+      showToast(
+        language === 'tr' ? 'Değerlendirmeniz iletildi, teşekkürler!' : 'Feedback submitted, thank you!',
+        'success'
+      );
     } catch (err: any) {
-      alert(err.response?.data?.error || t('common.error'));
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setStandaloneSubmitting(false);
     }
@@ -405,7 +427,7 @@ export const TipPage: React.FC = () => {
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!leadEmail && !leadPhone) || !publicToken) {
-      alert(t('tip.enterEmailOrPhone'));
+      showToast(t('tip.enterEmailOrPhone'), 'warning');
       return;
     }
     setLeadSubmitting(true);
@@ -417,8 +439,12 @@ export const TipPage: React.FC = () => {
         consent_marketing: leadConsent,
       });
       setLeadSubmitted(true);
+      showToast(
+        language === 'tr' ? 'Ayrıcalıklar kulübüne kaydınız alındı!' : 'Successfully enrolled in VIP club!',
+        'success'
+      );
     } catch (err: any) {
-      alert(err.response?.data?.error || t('common.error'));
+      showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setLeadSubmitting(false);
     }

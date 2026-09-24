@@ -279,7 +279,72 @@ const legalEN: LegalBundle = {
   },
 };
 
+const legalUiLocales: Record<string, { tabs: { kvkk: string; privacy: string; terms: string; cookies: string }; closeBtn: string; printBtn: string }> = {
+  tr: {
+    tabs: { kvkk: 'KVKK Aydınlatma Metni', privacy: 'Gizlilik Politikası', terms: 'Kullanım Koşulları', cookies: 'Çerez Politikası' },
+    closeBtn: 'Kapat',
+    printBtn: 'Yazdır / İndir',
+  },
+  en: {
+    tabs: { kvkk: 'Data Processing & Notice', privacy: 'Global Privacy Policy', terms: 'Terms of Service', cookies: 'Cookie Policy' },
+    closeBtn: 'Close',
+    printBtn: 'Print / Save PDF',
+  },
+  de: {
+    tabs: { kvkk: 'Datenschutz & DSGVO', privacy: 'Datenschutzerklärung', terms: 'Nutzungsbedingungen', cookies: 'Cookie-Richtlinie' },
+    closeBtn: 'Schließen',
+    printBtn: 'Drucken / PDF',
+  },
+  fr: {
+    tabs: { kvkk: 'Mentions & RGPD', privacy: 'Politique de Confidentialité', terms: 'Conditions d\'Utilisation', cookies: 'Politique de Cookies' },
+    closeBtn: 'Fermer',
+    printBtn: 'Imprimer / PDF',
+  },
+  es: {
+    tabs: { kvkk: 'Aviso Legal & RGPD', privacy: 'Política de Privacidad', terms: 'Términos de Servicio', cookies: 'Política de Cookies' },
+    closeBtn: 'Cerrar',
+    printBtn: 'Imprimir / PDF',
+  },
+  ja: {
+    tabs: { kvkk: 'データ処理方針', privacy: 'プライバシーポリシー', terms: '利用規約', cookies: 'クッキーポリシー' },
+    closeBtn: '閉じる',
+    printBtn: '印刷 / PDF保存',
+  },
+  zh: {
+    tabs: { kvkk: '数据合规声明', privacy: '隐私政策', terms: '服务条款', cookies: 'Cookie 政策' },
+    closeBtn: '关闭',
+    printBtn: '打印 / 保存PDF',
+  },
+  ru: {
+    tabs: { kvkk: 'Обработка данных', privacy: 'Политика конфиденциальности', terms: 'Условия использования', cookies: 'Политика cookie' },
+    closeBtn: 'Закрыть',
+    printBtn: 'Печать / Сохранить в PDF',
+  },
+  ar: {
+    tabs: { kvkk: 'معالجة البيانات', privacy: 'سياسة الخصوصية', terms: 'شروط الخدمة', cookies: 'سياسة ملفات تعريف الارتباط' },
+    closeBtn: 'إغلاق',
+    printBtn: 'طباعة / حفظ PDF',
+  },
+  pt: {
+    tabs: { kvkk: 'Tratamento de Dados & RGPD', privacy: 'Política de Privacidade', terms: 'Termos de Serviço', cookies: 'Política de Cookies' },
+    closeBtn: 'Fechar',
+    printBtn: 'Imprimir / PDF',
+  },
+  id: {
+    tabs: { kvkk: 'Pemrosesan Data & Kepatuhan', privacy: 'Kebijakan Privasi', terms: 'Ketentuan Layanan', cookies: 'Kebijakan Cookie' },
+    closeBtn: 'Tutup',
+    printBtn: 'Cetak / Simpan PDF',
+  },
+};
+
 export function getLegalBundle(lang: string): LegalBundle {
   const normalized = (lang || 'en').toLowerCase().slice(0, 2);
-  return normalized === 'tr' ? legalTR : legalEN;
+  const base = normalized === 'tr' ? legalTR : legalEN;
+  const ui = legalUiLocales[normalized] || legalUiLocales.en;
+  return {
+    ...base,
+    tabs: ui.tabs,
+    closeBtn: ui.closeBtn,
+    printBtn: ui.printBtn,
+  };
 }
