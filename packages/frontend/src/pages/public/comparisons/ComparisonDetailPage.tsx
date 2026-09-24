@@ -331,12 +331,21 @@ export const ComparisonDetailPage: React.FC = () => {
             <h2>{isEn ? 'Modernize Your Hospitality Tipping with Naponi' : 'Mekanınızın Bahşiş Altyapısını Naponi ile Güçlendirin'}</h2>
             <p>
               {isEn
-                ? 'Join thousands of forward-thinking restaurants, bars, and hotels. Set up your zero-hardware QR tipping system in under 2 minutes.'
+                ? 'Empower your restaurant, bar, or hotel with zero-hardware QR tipping. Set up your free business account in under 2 minutes.'
                 : 'POS karmaşasını ve personel kayıplarını geride bırakın. 2 dakikada ücretsiz işletme hesabınızı açın.'}
             </p>
             <Link to="/register" className="home-btn-primary home-btn-hero-large">
               {isEn ? 'Start Free Now' : 'Ücretsiz Başlayın'} <ArrowRight size={18} />
             </Link>
+          </div>
+
+          {/* Trademark Disclaimer Box */}
+          <div style={{ maxWidth: 860, margin: '2.5rem auto 0', padding: '1rem 1.5rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '0.75rem', textAlign: 'center' }}>
+            <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b', lineHeight: 1.6 }}>
+              {isEn
+                ? 'Legal Notice: Product names, logos, brands, and other trademarks featured or referred to within this website are the property of their respective trademark holders. These trademark holders are not affiliated with Naponi, and do not sponsor or endorse Naponi. This analysis is prepared solely for comparative and educational purposes based on publicly available data.'
+                : 'Yasal Uyarı: Bu sayfada adı geçen ürün isimleri, logolar ve markalar ilgili hak sahiplerinin mülkiyetindedir. İlgili marka sahiplerinin Naponi ile doğrudan bir ortaklığı, sponsorluğu veya onayı bulunmamaktadır. Bu inceleme tamamen kamuya açık verilere dayalı objektif karşılaştırma amacıyla hazırlanmıştır.'}
+            </p>
           </div>
         </div>
       </main>

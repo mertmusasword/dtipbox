@@ -1238,6 +1238,12 @@ COMPARISONS.forEach((comp) => {
       <div style="margin: 3rem 0; text-align: center;">
         <a href="/register" class="home-btn-primary">Try Naponi Cashless Tipping Free &rarr;</a>
       </div>
+
+      <div style="margin-top: 2rem; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0.75rem; text-align: center;">
+        <p style="margin: 0; font-size: 0.78rem; color: #64748b; line-height: 1.6;">
+          Legal Notice: Product names, logos, brands, and other trademarks featured or referred to within this website are the property of their respective trademark holders. These trademark holders are not affiliated with Naponi, and do not sponsor or endorse Naponi. This analysis is prepared solely for comparative and educational purposes based on publicly available data.
+        </p>
+      </div>
     </main>
   `;
 
@@ -1378,6 +1384,11 @@ POS_INTEGRATIONS.forEach((pos) => {
         </section>
         <div style="text-align: center; margin: 3rem 0;">
           <a href="/register" class="home-btn-primary">Set Up Naponi for ${pos.posName} Free &rarr;</a>
+        </div>
+        <div style="margin-top: 2rem; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0.75rem; text-align: center;">
+          <p style="margin: 0; font-size: 0.78rem; color: #64748b; line-height: 1.6;">
+            Legal Disclaimer: ${pos.posName} is a trademark and/or registered trademark of its respective owner. Naponi is an independent software platform and is not affiliated with, sponsored by, or endorsed by ${pos.posName} or its parent entities. Compatibility refers to operational coexistence as an independent tableside QR layer.
+          </p>
         </div>
       </div>
     </main>

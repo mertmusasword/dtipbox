@@ -323,8 +323,8 @@ export const PosIntegrationDetailPage: React.FC = () => {
           </h2>
           <p style={{ color: '#94a3b8', fontSize: '1.15rem', marginBottom: '2rem', lineHeight: 1.6 }}>
             {isEn
-              ? 'Join hundreds of forward-thinking restaurants and hospitality teams boosting staff earnings and table turnover today.'
-              : 'Yüzlerce modern restoran ve konaklama ekibine katılın; garson gelirlerinizi ve masa devir hızınızı bugün artırın.'}
+              ? 'Empower your restaurant and hospitality team: boost staff tip earnings and guest satisfaction with zero hardware.'
+              : 'Restoran ve konaklama ekibinizi güçlendirin; donanım maliyeti olmadan personel bahşişlerini ve misafir memnuniyetini artırın.'}
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/register" className="home-btn-primary home-btn-hero-large">
@@ -333,6 +333,15 @@ export const PosIntegrationDetailPage: React.FC = () => {
             <Link to="/tools/free-hospitality-qr-generator" className="home-btn-secondary">
               {isEn ? 'Try Free QR Generator' : 'Ücretsiz QR Oluştur'}
             </Link>
+          </div>
+
+          {/* Trademark & Interoperability Disclaimer */}
+          <div style={{ marginTop: '3.5rem', padding: '1rem 1.5rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '0.75rem', textAlign: 'center' }}>
+            <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b', lineHeight: 1.6 }}>
+              {isEn
+                ? `Legal Disclaimer: ${item.posName} is a trademark and/or registered trademark of its respective owner. Naponi is an independent software platform and is not affiliated with, sponsored by, or endorsed by ${item.posName} or its parent entities. Compatibility refers to operational coexistence as an independent tableside QR layer.`
+                : `Yasal Uyarı: ${item.posName}, ilgili hak sahibinin tescilli ticari markasıdır. Naponi bağımsız bir yazılım platformudur ve ${item.posName} veya ana kuruluşu ile doğrudan bir ortaklığı, sponsorluğu veya resmi bağı bulunmamaktadır. Uyumluluk, bağımsız bir masabaşı QR katmanı olarak yan yana operasyonel kullanımı ifade eder.`}
+            </p>
           </div>
         </div>
       </section>

@@ -220,8 +220,8 @@ export const POS_INTEGRATIONS: PosIntegrationItem[] = [
           en: 'Do you support multi-location Toast restaurant groups?',
         },
         answer: {
-          tr: 'Evet. Naponi Kurumsal Yönetim Paneli ile 100’lerce şubenin masa QR’larını, personel listelerini ve performans raporlarını tek ekrandan merkezi olarak yönetebilirsiniz.',
-          en: 'Yes. Naponi Enterprise Dashboard allows hospitality groups to manage hundreds of branches, localized tables, and staff rosters from a unified console.',
+          tr: 'Evet. Naponi Kurumsal Yönetim Paneli ile çok şubeli zincirlerin tüm lokasyonlarını, masa QR’larını, personel listelerini ve performans raporlarını tek ekrandan merkezi olarak yönetebilirsiniz.',
+          en: 'Yes. Naponi Enterprise Dashboard allows hospitality groups to manage multi-location restaurant chains, localized tables, and staff rosters from a unified console.',
         },
       },
     ],
@@ -485,8 +485,8 @@ export const POS_INTEGRATIONS: PosIntegrationItem[] = [
           en: 'Accelerate Google Maps Ranking Growth',
         },
         description: {
-          tr: 'Naponi akıllı yönlendirmesiyle ayda yüzlerce organik 5 yıldızlı pozitif yorum toplayarak yerel aramalarda zirveye çıkın.',
-          en: 'Turn happy tableside experiences into dozens of verified 5-star Google reviews every week, boosting local SEO ranking.',
+          tr: 'Naponi akıllı yönlendirmesiyle memnun misafirlerinizi Google Haritalar’a yönlendirerek düzenli organik 5 yıldızlı yorumlar toplayın.',
+          en: 'Turn delighted tableside experiences into steady, verified 5-star Google reviews, boosting your local search visibility.',
         },
         icon: 'Star',
       },

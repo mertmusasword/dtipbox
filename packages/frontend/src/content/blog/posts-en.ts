@@ -1153,6 +1153,12 @@ export const BLOG_POSTS_EN: BlogPost[] = [
       <p>
         Calculate your team's end-of-shift distribution with our free <a href="/tools/restaurant-tip-pool-calculator">Restaurant Tip Pool Calculator</a> or explore our companion integration for <a href="/integrations/toast-pos-smart-qr">Toast POS Venues</a>.
       </p>
+
+      <div style="margin-top: 2.5rem; padding: 1.25rem 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem;">
+        <p style="margin: 0; font-size: 0.825rem; color: #94a3b8; line-height: 1.6;">
+          <strong>Legal & Tax Disclaimer:</strong> This article is published solely for educational and informational purposes and does not constitute formal legal, financial, or tax advice. Federal, state, and local labor regulations change frequently. Restaurant operators, hospitality owners, and payroll managers should consult a certified employment attorney or licensed Certified Public Accountant (CPA) regarding their specific establishment and jurisdictional requirements.
+        </p>
+      </div>
     `,
   },
 
@@ -1224,6 +1230,12 @@ export const BLOG_POSTS_EN: BlogPost[] = [
       <p>
         Review standard rates and customs in our <a href="/guides/tipping-in-united-kingdom">Tipping in the United Kingdom Guide</a> or explore our <a href="/tools/tip-calculator">Free Hospitality Tip Calculator</a>.
       </p>
+
+      <div style="margin-top: 2.5rem; padding: 1.25rem 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem;">
+        <p style="margin: 0; font-size: 0.825rem; color: #94a3b8; line-height: 1.6;">
+          <strong>Legal & Compliance Disclaimer:</strong> This guide provides general operational insight into the UK Employment (Allocation of Tips) Act and does not substitute for qualified legal or HMRC tax advice. Tipping structures, Tronc administration, and National Insurance exemption criteria must be evaluated on a venue-by-venue basis. Consult an ACAS advisor, qualified employment solicitor, or certified hospitality tax professional.
+        </p>
+      </div>
     `,
   },
 
@@ -1290,6 +1302,12 @@ export const BLOG_POSTS_EN: BlogPost[] = [
       <p>
         Lesen Sie unseren umfassenden Länderleitfaden für <a href="/guides/tipping-in-germany">Trinkgeld in Deutschland</a> oder erstellen Sie Ihren kostenlosen QR-Aufsteller mit unserem <a href="/tools/free-hospitality-qr-generator">QR-Generator</a>.
       </p>
+
+      <div style="margin-top: 2.5rem; padding: 1.25rem 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem;">
+        <p style="margin: 0; font-size: 0.825rem; color: #94a3b8; line-height: 1.6;">
+          <strong>Rechtlicher Hinweis / Steuer-Disclaimer:</strong> Dieser Beitrag dient ausschließlich Informations- und Bildungszwecken und stellt keine steuerliche oder juristische Beratung dar. Die steuerrechtliche Einordnung kann je nach Betriebskonstellation und Kassensystem variieren. Gastronomen und Betriebsleiter sollten sich für verbindliche Auskünfte an einen qualifizierten Steuerberater oder Fachanwalt für Arbeitsrecht wenden.
+        </p>
+      </div>
     `,
   },
 ];
