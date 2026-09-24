@@ -589,7 +589,7 @@ export const HomePage: React.FC = () => {
           <div className="home-hero-grid">
             {/* Left Hero Column */}
             <div className="home-hero-content">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
                 <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
                   <Sparkles size={13} />
                   <span>NAPONI • Smart QR for Hospitality</span>
