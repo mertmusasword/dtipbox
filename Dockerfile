@@ -61,4 +61,5 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Run db push to sync schema with production database and start server
-CMD ["sh", "-c", "npx prisma db push --schema=packages/backend/prisma/schema.prisma && node packages/backend/dist/index.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss --schema=packages/backend/prisma/schema.prisma && node packages/backend/dist/index.js"]
+
