@@ -39,9 +39,9 @@ export const env = {
   // CORS
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
 
-  // Rate Limiting
+  // Rate Limiting (Default 2000 per 15 mins allows high-density venue Wi-Fi NAT IPs)
   RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-  RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
+  RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '2000', 10),
 
   // Email / SMTP (Optional)
   SMTP_HOST: process.env.SMTP_HOST || '',

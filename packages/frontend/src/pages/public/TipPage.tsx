@@ -97,6 +97,26 @@ export const TipPage: React.FC = () => {
   const [redirectingUrl, setRedirectingUrl] = useState<string | null>(null);
   const [copiedIban, setCopiedIban] = useState(false);
 
+  // Idempotency & Concurrency Resilience
+  const [idempotencyKey, setIdempotencyKey] = useState<string>(() => {
+    return typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `tip_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  });
+  const [isOffline, setIsOffline] = useState(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+  const isSubmittingRef = React.useRef(false);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   // Post-tip Feedback State
   const [feedbackRating, setFeedbackRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
@@ -206,16 +226,41 @@ export const TipPage: React.FC = () => {
       return;
     }
 
+    if (isOffline) {
+      alert(language === 'tr' ? 'İnternet bağlantınız koptu. Lütfen ağınızı kontrol edip tekrar deneyin.' : 'You are currently offline. Please check your connection.');
+      return;
+    }
+
+    if (isSubmittingRef.current || submitting) return;
+    isSubmittingRef.current = true;
+
     trackPaymentStarted(selectedPaymentMethod, effectiveAmount, details?.business?.currency || 'USD');
     setSubmitting(true);
     try {
-      const res = await api.post(`/tip/${publicToken}`, {
-        employeeId: selectedEmployeeId || undefined,
-        amount: effectiveAmount,
-        paymentMethod: selectedPaymentMethod,
-        customerName: customerName.trim() || undefined,
-        customerMessage: customerMessage.trim() || undefined,
-      });
+      const res = await api.post(
+        `/tip/${publicToken}`,
+        {
+          employeeId: selectedEmployeeId || undefined,
+          amount: effectiveAmount,
+          paymentMethod: selectedPaymentMethod,
+          customerName: customerName.trim() || undefined,
+          customerMessage: customerMessage.trim() || undefined,
+          idempotencyKey,
+        },
+        {
+          headers: {
+            'Idempotency-Key': idempotencyKey,
+          },
+        }
+      );
+
+      // Regenerate fresh idempotency key for subsequent tips
+      setIdempotencyKey(
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `tip_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+      );
+
       trackPaymentSuccess(
         res.data.data?.tip?.payment_method || selectedPaymentMethod,
         res.data.data?.tip?.id,
@@ -236,6 +281,7 @@ export const TipPage: React.FC = () => {
       alert(err.response?.data?.error || t('common.error'));
     } finally {
       setSubmitting(false);
+      isSubmittingRef.current = false;
     }
   };
 
@@ -1392,6 +1438,33 @@ export const TipPage: React.FC = () => {
   return (
     <div className="theme-warm-light" style={{ minHeight: '100vh', padding: '1.25rem 1rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', background: '#FAF9F6', color: '#1C1917' }}>
       <div style={{ maxWidth: '480px', width: '100%' }}>
+        {/* Offline Network Warning Banner */}
+        {isOffline && (
+          <div
+            role="alert"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '12px',
+              padding: '0.65rem 0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#DC2626',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              marginBottom: '0.85rem',
+            }}
+          >
+            <AlertCircle size={16} />
+            <span>
+              {language === 'tr'
+                ? 'İnternet bağlantınız koptu. Lütfen ağınızı kontrol edin.'
+                : 'You are currently offline. Please check your network connection.'}
+            </span>
+          </div>
+        )}
+
         {/* Sleek Horizontal App Header (Option B) */}
         <div
           style={{

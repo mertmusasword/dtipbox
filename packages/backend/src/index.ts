@@ -15,6 +15,9 @@ import { logger, requestLogger } from './utils/logger';
 
 const app = express();
 
+// Trust reverse proxy (Cloudflare, Railway) for accurate client IP in rate limiting
+app.set('trust proxy', 1);
+
 // Security headers with production CSP
 app.use(
   helmet({
@@ -156,6 +159,7 @@ const limiter = rateLimit({
   max: env.RATE_LIMIT_MAX,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path === '/health',
   message: { success: false, error: 'Too many requests, please try again later.' },
 });
 app.use('/api', limiter);
@@ -176,10 +180,21 @@ app.use(requestLogger);
 // Mount API routes
 app.use('/api', apiRouter);
 
-// Serve frontend static assets in production
+// Serve frontend static assets in production with Cloudflare & CDN caching headers
 if (env.isProd) {
   const frontendDist = path.resolve(__dirname, '../../frontend/dist');
-  app.use(express.static(frontendDist));
+  app.use(
+    express.static(frontendDist, {
+      maxAge: '1y',
+      immutable: true,
+      setHeaders: (res, filePath) => {
+        // HTML files must never be aggressively cached so deployments take effect immediately
+        if (filePath.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        }
+      },
+    })
+  );
 
   // SPA fallback
   app.get('*', (req: Request, res: Response) => {
@@ -187,6 +202,7 @@ if (env.isProd) {
       res.status(404).json({ success: false, error: 'API route not found' });
       return;
     }
+    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
 }

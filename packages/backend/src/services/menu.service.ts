@@ -2,6 +2,7 @@ import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { ALLERGEN_CATALOG, ALLERGEN_DISCLAIMER } from '../constants/allergens';
 import { getOrCreateSmartQrConfig } from './smartQr.service';
+import { eventBuffer } from '../utils/eventBuffer';
 
 export interface UpdateMenuConfigInput {
   menu_mode?: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
@@ -415,17 +416,13 @@ export async function getPublicMenu(publicToken: string) {
     throw new AppError('This venue is currently not active', 403);
   }
 
-  // Record MENU_VIEW event asynchronously
-  prisma.smartQrEvent
-    .create({
-      data: {
-        business_id: qr.business_id,
-        qr_id: qr.id,
-        table_id: qr.table_id,
-        event_type: 'MENU_VIEW',
-      },
-    })
-    .catch(() => {});
+  // Record MENU_VIEW event asynchronously via eventBuffer
+  eventBuffer.queueSmartQrEvent({
+    business_id: qr.business_id,
+    qr_id: qr.id,
+    table_id: qr.table_id,
+    event_type: 'MENU_VIEW',
+  });
 
   const smartConfig = qr.business.smart_qr_config;
 

@@ -415,6 +415,7 @@ model Tip {
   provider_transaction_id String?
   customer_name           String?
   customer_message        String?
+  idempotency_key         String?       @unique
 
   // Pool distribution settlement tracking
   is_settled                 Boolean       @default(false)

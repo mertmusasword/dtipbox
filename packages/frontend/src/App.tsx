@@ -146,9 +146,10 @@ export const App: React.FC = () => {
           <BrowserRouter>
             <ScrollToTop />
             <AnalyticsTracker />
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                {/* Public Landing & Showcase */}
+            <ErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  {/* Public Landing & Showcase */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/tr" element={<HomePage />} />
 
@@ -249,7 +250,8 @@ export const App: React.FC = () => {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
-            <FloatingSupportWidget />
+          </ErrorBoundary>
+          <FloatingSupportWidget />
           </BrowserRouter>
         </ToastProvider>
       </AuthProvider>

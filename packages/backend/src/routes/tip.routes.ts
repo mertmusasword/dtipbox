@@ -52,15 +52,22 @@ const createTipSchema = {
       .trim()
       .max(500, 'Message cannot exceed 500 characters')
       .optional(),
+    idempotencyKey: z
+      .string()
+      .trim()
+      .max(128, 'Idempotency key exceeds maximum length')
+      .optional(),
   }),
 };
 
 // Public: Submit tip and start payment (no login required, rate-limited against abuse)
 router.post('/:publicToken', tipSubmissionLimiter, validate(createTipSchema), async (req, res, next) => {
   try {
+    const idempotencyKey = (req.body.idempotencyKey || req.headers['idempotency-key']) as string | undefined;
     const result = await tipService.createTip({
       publicToken: req.params.publicToken,
       ...req.body,
+      idempotencyKey: idempotencyKey?.trim() || undefined,
     });
     res.status(201).json({ success: true, data: result });
   } catch (error) {

@@ -4,6 +4,19 @@ import { paymentService } from './payment/core/payment.service';
 import { PaymentMethodType, PaymentStatus, Prisma } from '@prisma/client';
 import { getActivePaymentMethods, getCustomerPaymentMethodsCatalog } from './paymentMethod.service';
 import { logger } from '../utils/logger';
+import { eventBuffer } from '../utils/eventBuffer';
+
+// Concurrency lock for in-flight requests with the same idempotency key
+const inFlightTipCreations = new Map<string, Promise<any>>();
+
+function sanitizeText(input?: string): string | undefined {
+  if (!input) return undefined;
+  return input
+    .replace(/<[^>]*>?/gm, '')
+    .replace(/javascript:/gi, '')
+    .trim()
+    .slice(0, 500);
+}
 
 interface CreateTipRequest {
   publicToken: string;
@@ -13,6 +26,7 @@ interface CreateTipRequest {
   paymentMethod: PaymentMethodType;
   customerName?: string;
   customerMessage?: string;
+  idempotencyKey?: string;
 }
 
 export async function getTipPageDetails(publicToken: string) {
@@ -101,16 +115,12 @@ export async function getTipPageDetails(publicToken: string) {
   };
   const presets = currencyPresets[qr.business.currency.toUpperCase()] || [5, 10, 20, 50];
 
-  // Record SCAN event asynchronously
-  prisma.smartQrEvent.create({
-    data: {
-      business_id: qr.business_id,
-      qr_id: qr.id,
-      table_id: qr.table_id,
-      event_type: 'SCAN',
-    },
-  }).catch((err) => {
-    logger.warn('Failed to record SCAN smartQrEvent', 'TIP_SERVICE', { error: String(err) });
+  // Record SCAN event asynchronously via in-memory batch buffer
+  eventBuffer.queueSmartQrEvent({
+    business_id: qr.business_id,
+    qr_id: qr.id,
+    table_id: qr.table_id,
+    event_type: 'SCAN',
   });
 
   const smartConfig = qr.business.smart_qr_config;
@@ -313,110 +323,164 @@ export async function createTip(data: CreateTipRequest) {
     }
   }
 
-  // Anti-duplicate protection: prevent duplicate tip creation if submitted multiple times within 5 seconds
-  const fiveSecondsAgo = new Date(Date.now() - 5000);
-  const recentDuplicate = await prisma.tip.findFirst({
-    where: {
-      business_id: qr.business_id,
-      employee_id: data.employeeId || null,
-      table_id: effectiveTableId,
-      amount: new Prisma.Decimal(data.amount),
-      payment_method: data.paymentMethod,
-      customer_name: data.customerName || null,
-      customer_message: data.customerMessage || null,
-      created_at: { gte: fiveSecondsAgo },
-    },
-    orderBy: { created_at: 'desc' },
-  });
+  const cleanName = sanitizeText(data.customerName);
+  const cleanMessage = sanitizeText(data.customerMessage);
 
-  if (recentDuplicate) {
-    let duplicatePaymentResult: any = {
-      transactionId: recentDuplicate.provider_transaction_id || `DUP_${recentDuplicate.id}`,
-      status: recentDuplicate.payment_status,
-    };
-    if (data.paymentMethod === PaymentMethodType.IBAN_TRANSFER) {
-      const paymentAccount = await prisma.businessPaymentAccount.findUnique({
-        where: { business_id: qr.business_id },
-      });
-      if (paymentAccount) {
-        const referenceCode = `TIP-${recentDuplicate.id.slice(0, 8).toUpperCase()}`;
-        duplicatePaymentResult = {
-          transactionId: recentDuplicate.provider_transaction_id || `IBAN_${referenceCode}`,
-          status: recentDuplicate.payment_status,
-          instructions: `Please transfer ${data.amount} ${qr.business.currency} to the following bank account with reference code "${referenceCode}".`,
-          ibanDetails: {
-            accountHolderName: paymentAccount.account_holder_name,
-            iban: paymentAccount.iban,
-            bankName: paymentAccount.bank_name,
-            swiftBic: paymentAccount.swift_bic,
-            referenceCode,
-          },
-        };
-      }
+  // 1. Idempotency Check & In-Flight Concurrency Lock
+  if (data.idempotencyKey) {
+    const existingInFlight = inFlightTipCreations.get(data.idempotencyKey);
+    if (existingInFlight) {
+      return await existingInFlight;
     }
-    return {
-      tip: {
-        id: recentDuplicate.id,
-        amount: recentDuplicate.amount,
-        currency: recentDuplicate.currency,
-        payment_method: recentDuplicate.payment_method,
-        status: recentDuplicate.payment_status,
-        created_at: recentDuplicate.created_at,
-      },
-      payment: duplicatePaymentResult,
-    };
+
+    const existingTip = await prisma.tip.findUnique({
+      where: { idempotency_key: data.idempotencyKey },
+      include: { business: { include: { payment_account: true } } },
+    });
+
+    if (existingTip) {
+      return buildTipResponse(existingTip, data.paymentMethod, qr);
+    }
   }
 
-  // Create initial tip entry in PENDING state
-  const tip = await prisma.tip.create({
-    data: {
-      business_id: qr.business_id,
-      employee_id: data.employeeId || null,
-      table_id: effectiveTableId,
-      amount: new Prisma.Decimal(data.amount),
+  // Helper to execute tip creation safely
+  const executeTipCreation = async () => {
+    // Anti-duplicate protection: fallback check if submitted within 5 seconds without key
+    if (!data.idempotencyKey) {
+      const fiveSecondsAgo = new Date(Date.now() - 5000);
+      const recentDuplicate = await prisma.tip.findFirst({
+        where: {
+          business_id: qr.business_id,
+          employee_id: data.employeeId || null,
+          table_id: effectiveTableId,
+          amount: new Prisma.Decimal(data.amount),
+          payment_method: data.paymentMethod,
+          customer_name: cleanName || null,
+          customer_message: cleanMessage || null,
+          created_at: { gte: fiveSecondsAgo },
+        },
+        orderBy: { created_at: 'desc' },
+      });
+
+      if (recentDuplicate) {
+        return buildTipResponse(recentDuplicate, data.paymentMethod, qr);
+      }
+    }
+
+    let tip: any;
+    try {
+      tip = await prisma.tip.create({
+        data: {
+          business_id: qr.business_id,
+          employee_id: data.employeeId || null,
+          table_id: effectiveTableId,
+          amount: new Prisma.Decimal(data.amount),
+          currency: qr.business.currency,
+          payment_method: data.paymentMethod,
+          payment_status: PaymentStatus.PENDING,
+          customer_name: cleanName || null,
+          customer_message: cleanMessage || null,
+          idempotency_key: data.idempotencyKey || null,
+        },
+      });
+    } catch (err: any) {
+      // If unique constraint violation occurs concurrently on idempotency_key
+      if (err.code === 'P2002' && data.idempotencyKey) {
+        const raceTip = await prisma.tip.findUnique({
+          where: { idempotency_key: data.idempotencyKey },
+          include: { business: { include: { payment_account: true } } },
+        });
+        if (raceTip) {
+          return buildTipResponse(raceTip, data.paymentMethod, qr);
+        }
+      }
+      throw err;
+    }
+
+    // Process through payment orchestrator
+    const paymentResult = await paymentService.processPayment({
+      tipId: tip.id,
+      businessId: qr.business_id,
+      amount: data.amount,
       currency: qr.business.currency,
-      payment_method: data.paymentMethod,
-      payment_status: PaymentStatus.PENDING,
-      customer_name: data.customerName || null,
-      customer_message: data.customerMessage || null,
-    },
-  });
+      paymentMethodType: data.paymentMethod,
+      metadata: {
+        employeeId: data.employeeId || '',
+        tableId: effectiveTableId || '',
+      },
+    });
 
-  // Process through payment orchestrator
-  const paymentResult = await paymentService.processPayment({
-    tipId: tip.id,
-    businessId: qr.business_id,
-    amount: data.amount,
-    currency: qr.business.currency,
-    paymentMethodType: data.paymentMethod,
-    metadata: {
-      employeeId: data.employeeId || '',
-      tableId: effectiveTableId || '',
-    },
-  });
-
-  // Record initial tip initiation event (TIP_SUCCESS is recorded upon confirmed webhook/payout)
-  const initialEventType = paymentResult.status === PaymentStatus.SUCCESS ? 'TIP_SUCCESS' : 'TIP_INITIATED';
-  prisma.smartQrEvent.create({
-    data: {
+    // Record initial tip initiation event via batch eventBuffer
+    const initialEventType = paymentResult.status === PaymentStatus.SUCCESS ? 'TIP_SUCCESS' : 'TIP_INITIATED';
+    eventBuffer.queueSmartQrEvent({
       business_id: qr.business_id,
       qr_id: qr.id,
       table_id: effectiveTableId || null,
       event_type: initialEventType,
       metadata: { amount: data.amount, paymentMethod: data.paymentMethod },
-    },
-  }).catch((err) => {
-    logger.warn('Failed to record tip initiation event', 'TIP_SERVICE', { error: String(err) });
-  });
+    });
+
+    return {
+      tip: {
+        id: tip.id,
+        amount: tip.amount,
+        currency: tip.currency,
+        payment_method: tip.payment_method,
+        status: paymentResult.status,
+        created_at: tip.created_at,
+      },
+      payment: paymentResult,
+    };
+  };
+
+  if (data.idempotencyKey) {
+    const promise = executeTipCreation();
+    inFlightTipCreations.set(data.idempotencyKey, promise);
+    try {
+      return await promise;
+    } finally {
+      inFlightTipCreations.delete(data.idempotencyKey);
+    }
+  }
+
+  return await executeTipCreation();
+}
+
+async function buildTipResponse(tipRecord: any, paymentMethod: PaymentMethodType, qr: any) {
+  let paymentResult: any = {
+    transactionId: tipRecord.provider_transaction_id || `DUP_${tipRecord.id}`,
+    status: tipRecord.payment_status,
+  };
+
+  if (paymentMethod === PaymentMethodType.IBAN_TRANSFER) {
+    const paymentAccount = await prisma.businessPaymentAccount.findUnique({
+      where: { business_id: qr.business_id },
+    });
+    if (paymentAccount) {
+      const referenceCode = `TIP-${tipRecord.id.slice(0, 8).toUpperCase()}`;
+      paymentResult = {
+        transactionId: tipRecord.provider_transaction_id || `IBAN_${referenceCode}`,
+        status: tipRecord.payment_status,
+        instructions: `Please transfer ${tipRecord.amount} ${qr.business.currency} to the following bank account with reference code "${referenceCode}".`,
+        ibanDetails: {
+          accountHolderName: paymentAccount.account_holder_name,
+          iban: paymentAccount.iban,
+          bankName: paymentAccount.bank_name,
+          swiftBic: paymentAccount.swift_bic,
+          referenceCode,
+        },
+      };
+    }
+  }
 
   return {
     tip: {
-      id: tip.id,
-      amount: tip.amount,
-      currency: tip.currency,
-      payment_method: tip.payment_method,
-      status: paymentResult.status,
-      created_at: tip.created_at,
+      id: tipRecord.id,
+      amount: tipRecord.amount,
+      currency: tipRecord.currency,
+      payment_method: tipRecord.payment_method,
+      status: tipRecord.payment_status,
+      created_at: tipRecord.created_at,
     },
     payment: paymentResult,
   };
