@@ -534,6 +534,21 @@ export const HomePage: React.FC = () => {
                 </button>
               </div>
 
+              {/* Friction-Eliminating Micro-Proof */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.75rem', marginBottom: '0.5rem', fontSize: '0.82rem', color: '#94a3b8' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#38bdf8', fontWeight: 600 }}>
+                  <ShieldCheck size={14} /> {language === 'tr' ? 'Kredi kartı gerekmez' : 'No credit card required'}
+                </span>
+                <span style={{ opacity: 0.4 }}>•</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#34d399', fontWeight: 600 }}>
+                  <Zap size={14} /> {language === 'tr' ? '60 saniyede hazır' : 'Live in 60 seconds'}
+                </span>
+                <span style={{ opacity: 0.4 }}>•</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#fbbf24', fontWeight: 600 }}>
+                  <Coins size={14} /> {language === 'tr' ? '0 Gün Bloke • Doğrudan Hesabınıza' : '0-Day Hold • Direct to Bank'}
+                </span>
+              </div>
+
               <div className="home-hero-trust-row">
                 <div className="home-trust-item">
                   <CheckCircle2 size={16} />
