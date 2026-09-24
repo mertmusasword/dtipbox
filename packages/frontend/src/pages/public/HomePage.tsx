@@ -614,7 +614,7 @@ export const HomePage: React.FC = () => {
                 >
                   {t('founder.ctaButton')} <ArrowRight size={18} />
                 </Link>
-                <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
+                <Link to="/login" className="home-btn-secondary">
                   {t('home.ctaLogin')}
                 </Link>
                 <button
