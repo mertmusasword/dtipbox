@@ -2932,7 +2932,7 @@ export const HomePage: React.FC = () => {
                 }}>
                   <Play size={12} fill="currentColor" style={{ marginLeft: 1 }} />
                 </div>
-                <span>Naponi — The Future of Digital Tipping</span>
+                <span>From Tip Box to Digital Tipping 💳 | Naponi</span>
               </div>
               <button
                 type="button"
@@ -2946,8 +2946,8 @@ export const HomePage: React.FC = () => {
 
             <div className="home-video-modal-iframe-wrap">
               <iframe
-                src="https://www.youtube.com/embed/oiMt1zl2G5w?autoplay=1&rel=0"
-                title="Naponi — The Future of Digital Tipping"
+                src="https://www.youtube.com/embed/E2nAATFf0zg?autoplay=1&rel=0"
+                title="From Tip Box to Digital Tipping 💳 | Naponi"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 referrerPolicy="strict-origin-when-cross-origin"
