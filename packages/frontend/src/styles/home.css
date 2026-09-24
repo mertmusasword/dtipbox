@@ -2895,4 +2895,265 @@ body:has(.home-mobile-menu) .support-floating-btn {
   }
 }
 
+/* ==========================================================================
+   INTERACTIVE TIP RECOVERY & ROI CALCULATOR
+   ========================================================================== */
+.home-roi-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(30, 27, 75, 0.45) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 24px;
+  padding: 2.75rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-roi-card::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.home-roi-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2.5rem;
+  align-items: stretch;
+}
+
+.home-roi-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.home-roi-sector-pills {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+
+.home-roi-sector-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.home-roi-sector-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.home-roi-sector-btn.active {
+  background: rgba(99, 102, 241, 0.16);
+  border-color: #6366f1;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.3);
+}
+
+.home-roi-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.home-roi-slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-roi-slider-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.home-roi-slider-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #38bdf8;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-roi-range-input {
+  width: 100%;
+  height: 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.home-roi-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.home-roi-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.home-roi-range-input::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+  cursor: pointer;
+}
+
+.home-roi-info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #93c5fd;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* Results Box */
+.home-roi-results {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.25rem 2rem;
+  border-radius: 18px;
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 60%), rgba(10, 15, 26, 0.75);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.home-roi-main-stat {
+  margin-bottom: 1.5rem;
+}
+
+.home-roi-main-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #34d399;
+  margin-bottom: 0.4rem;
+}
+
+.home-roi-main-num {
+  font-size: 2.75rem;
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #10b981 0%, #38bdf8 60%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.3));
+  margin-bottom: 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-roi-main-desc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.home-roi-sub-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-roi-sub-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.home-roi-sub-label {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.home-roi-sub-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-roi-sub-val.free {
+  color: #34d399;
+}
+
+.home-roi-cta-btn {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  border-radius: 9999px;
+  background: var(--accent-gradient, linear-gradient(135deg, #6366f1, #8b5cf6 50%, #ec4899));
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  transition: all 0.25s ease;
+}
+
+.home-roi-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(99, 102, 241, 0.55);
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .home-roi-card {
+    padding: 1.75rem 1.25rem;
+  }
+  .home-roi-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .home-roi-sector-pills {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .home-roi-main-num {
+    font-size: 2.25rem;
+  }
+}
+
 

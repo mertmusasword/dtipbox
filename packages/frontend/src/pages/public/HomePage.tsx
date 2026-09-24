@@ -24,6 +24,7 @@ import {
   Coffee,
   Wine,
   Hotel,
+  Calculator,
   Scissors,
   Car,
   Check,
@@ -205,6 +206,97 @@ export const HomePage: React.FC = () => {
   };
 
   const isTr = language === 'tr';
+
+  // ROI / Tip Recovery Calculator State
+  const [calcSector, setCalcSector] = useState<'cafe' | 'restaurant' | 'bar' | 'hotel'>('restaurant');
+  const [calcDailyTables, setCalcDailyTables] = useState<number>(50);
+  const [calcAverageCheck, setCalcAverageCheck] = useState<number>(isTr ? 650 : 45);
+
+  const calcCurrencySymbol = useMemo(() => {
+    switch (language) {
+      case 'tr': return '₺';
+      case 'de':
+      case 'fr':
+      case 'es':
+      case 'pt': return '€';
+      case 'ja': return '¥';
+      default: return '$';
+    }
+  }, [language]);
+
+  const handleSelectSector = (sector: 'cafe' | 'restaurant' | 'bar' | 'hotel') => {
+    setCalcSector(sector);
+    if (calcCurrencySymbol === '₺') {
+      switch (sector) {
+        case 'cafe':
+          setCalcDailyTables(70);
+          setCalcAverageCheck(220);
+          break;
+        case 'restaurant':
+          setCalcDailyTables(50);
+          setCalcAverageCheck(650);
+          break;
+        case 'bar':
+          setCalcDailyTables(45);
+          setCalcAverageCheck(950);
+          break;
+        case 'hotel':
+          setCalcDailyTables(30);
+          setCalcAverageCheck(1400);
+          break;
+      }
+    } else if (calcCurrencySymbol === '¥') {
+      switch (sector) {
+        case 'cafe':
+          setCalcDailyTables(70);
+          setCalcAverageCheck(1500);
+          break;
+        case 'restaurant':
+          setCalcDailyTables(50);
+          setCalcAverageCheck(5000);
+          break;
+        case 'bar':
+          setCalcDailyTables(45);
+          setCalcAverageCheck(8000);
+          break;
+        case 'hotel':
+          setCalcDailyTables(30);
+          setCalcAverageCheck(12000);
+          break;
+      }
+    } else {
+      switch (sector) {
+        case 'cafe':
+          setCalcDailyTables(70);
+          setCalcAverageCheck(15);
+          break;
+        case 'restaurant':
+          setCalcDailyTables(50);
+          setCalcAverageCheck(45);
+          break;
+        case 'bar':
+          setCalcDailyTables(45);
+          setCalcAverageCheck(65);
+          break;
+        case 'hotel':
+          setCalcDailyTables(30);
+          setCalcAverageCheck(95);
+          break;
+      }
+    }
+  };
+
+  const formatCalcCurrency = (amount: number) => {
+    const formatted = Math.round(amount).toLocaleString(isTr ? 'tr-TR' : 'en-US');
+    return isTr ? `${formatted} ₺` : `${calcCurrencySymbol}${formatted}`;
+  };
+
+  const calcMonthlyTurnover = calcDailyTables * 30 * calcAverageCheck;
+  // Estimated tip potential ~ 8.5%
+  // Tips lost due to lack of cash ~ 45%
+  const calcMonthlyRecoveredTips = Math.round(calcMonthlyTurnover * 0.085 * 0.45);
+  const calcStaffCount = calcSector === 'cafe' ? 4 : calcSector === 'restaurant' ? 7 : calcSector === 'bar' ? 5 : 8;
+  const calcPerStaffGain = Math.round(calcMonthlyRecoveredTips / calcStaffCount);
 
   // 14-Point Comparative Matrix for "Naponi Farkı" section
   const diffItems = useMemo(() => {
@@ -1928,6 +2020,196 @@ export const HomePage: React.FC = () => {
             <div>
               <div className="home-stat-num">{t('home.stat4Num')}</div>
               <div className="home-stat-label">{t('home.stat4Label')}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          6B. INTERACTIVE TIP RECOVERY & ROI CALCULATOR
+          ==================================================================== */}
+      <section className="home-section" id="calculator" style={{ paddingTop: 20, paddingBottom: 60 }}>
+        <div className="home-container">
+          <div className="home-section-header">
+            <span className="home-section-tag" style={{ background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
+              <Calculator size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
+              {isTr ? 'İnteraktif Gelir & Bahşiş Simülatörü' : 'Interactive Tip Recovery Simulator'}
+            </span>
+            <h2 className="home-section-title">
+              {isTr ? (
+                <>
+                  Masada Nakitsiz Kaçan Bahşişi & <br />
+                  <span className="home-gradient-text">Ekibinizin Potansiyel Kazancını Hesaplayın</span>
+                </>
+              ) : (
+                <>
+                  Calculate Tips Missed at the Table & <br />
+                  <span className="home-gradient-text">Your Team’s Extra Earnings</span>
+                </>
+              )}
+            </h2>
+            <p className="home-section-desc">
+              {isTr
+                ? "Misafirlerin %70'inden fazlası artık nakit taşımıyor. Masada QR kod olmadığında bahşişler buharlaşıyor. İşletme profilinizi seçin, ekibinizin her ay kurtaracağı bahşişi canlı görün."
+                : "Over 70% of guests no longer carry cash. When there is no QR code on the table, tips simply disappear. Pick your venue type and see how much gratuity your team can recover."}
+            </p>
+          </div>
+
+          <div className="home-roi-card">
+            <div className="home-roi-grid">
+              {/* Controls Column */}
+              <div className="home-roi-controls">
+                <div>
+                  <label className="home-roi-slider-label" style={{ display: 'block', marginBottom: '0.65rem' }}>
+                    {isTr ? '1. İşletme Türünüzü Seçin' : '1. Select Your Venue Type'}
+                  </label>
+                  <div className="home-roi-sector-pills">
+                    <button
+                      type="button"
+                      className={`home-roi-sector-btn ${calcSector === 'cafe' ? 'active' : ''}`}
+                      onClick={() => handleSelectSector('cafe')}
+                    >
+                      <Coffee size={20} />
+                      <span>{isTr ? 'Kafe' : 'Cafe'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`home-roi-sector-btn ${calcSector === 'restaurant' ? 'active' : ''}`}
+                      onClick={() => handleSelectSector('restaurant')}
+                    >
+                      <Utensils size={20} />
+                      <span>{isTr ? 'Restoran' : 'Restaurant'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`home-roi-sector-btn ${calcSector === 'bar' ? 'active' : ''}`}
+                      onClick={() => handleSelectSector('bar')}
+                    >
+                      <Wine size={20} />
+                      <span>{isTr ? 'Bar / Pub' : 'Bar / Pub'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`home-roi-sector-btn ${calcSector === 'hotel' ? 'active' : ''}`}
+                      onClick={() => handleSelectSector('hotel')}
+                    >
+                      <Hotel size={20} />
+                      <span>{isTr ? 'Otel' : 'Hotel'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Slider 1: Daily Tables */}
+                <div className="home-roi-slider-group">
+                  <div className="home-roi-slider-header">
+                    <span className="home-roi-slider-label">
+                      {isTr ? '2. Günlük Ağırlanan Masa / Misafir Grubu' : '2. Daily Tables / Guest Groups'}
+                    </span>
+                    <span className="home-roi-slider-val">{calcDailyTables} {isTr ? 'Masa' : 'Tables'}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={10}
+                    max={300}
+                    step={5}
+                    value={calcDailyTables}
+                    onChange={(e) => setCalcDailyTables(Number(e.target.value))}
+                    className="home-roi-range-input"
+                    aria-label="Daily Tables"
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
+                    <span>10 {isTr ? 'Masa' : 'Tables'}</span>
+                    <span>150</span>
+                    <span>300+ {isTr ? 'Masa' : 'Tables'}</span>
+                  </div>
+                </div>
+
+                {/* Slider 2: Average Check */}
+                <div className="home-roi-slider-group">
+                  <div className="home-roi-slider-header">
+                    <span className="home-roi-slider-label">
+                      {isTr ? '3. Ortalama Masa Hesabı' : '3. Average Bill / Spend'}
+                    </span>
+                    <span className="home-roi-slider-val">{formatCalcCurrency(calcAverageCheck)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={calcCurrencySymbol === '₺' ? 50 : calcCurrencySymbol === '¥' ? 500 : 5}
+                    max={calcCurrencySymbol === '₺' ? 3000 : calcCurrencySymbol === '¥' ? 30000 : 200}
+                    step={calcCurrencySymbol === '₺' ? 25 : calcCurrencySymbol === '¥' ? 250 : 5}
+                    value={calcAverageCheck}
+                    onChange={(e) => setCalcAverageCheck(Number(e.target.value))}
+                    className="home-roi-range-input"
+                    aria-label="Average Check"
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
+                    <span>{formatCalcCurrency(calcCurrencySymbol === '₺' ? 50 : calcCurrencySymbol === '¥' ? 500 : 5)}</span>
+                    <span>{formatCalcCurrency(calcCurrencySymbol === '₺' ? 1500 : calcCurrencySymbol === '¥' ? 15000 : 100)}</span>
+                    <span>{formatCalcCurrency(calcCurrencySymbol === '₺' ? 3000 : calcCurrencySymbol === '¥' ? 30000 : 200)}+</span>
+                  </div>
+                </div>
+
+                {/* Trust info note */}
+                <div className="home-roi-info-banner">
+                  <Sparkles size={18} style={{ flexShrink: 0, color: '#38bdf8' }} />
+                  <span>
+                    {isTr
+                      ? 'Araştırmalara göre masada QR bahşiş sunan mekanlarda bahşiş bırakma oranı %38 artar ve hesapların %82’si nakitsiz ödenir.'
+                      : 'Hospitality studies show table QR tipping boosts tip frequency by 38%, with 82% of cashless guests choosing to tip.'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Results Column */}
+              <div className="home-roi-results">
+                <div>
+                  <div className="home-roi-main-stat">
+                    <div className="home-roi-main-label">
+                      {isTr ? '⚡ Aylık Kurtarılan Bahşiş Hacmi' : '⚡ Monthly Tips Recovered for Team'}
+                    </div>
+                    <div className="home-roi-main-num">
+                      +{formatCalcCurrency(calcMonthlyRecoveredTips)}
+                    </div>
+                    <div className="home-roi-main-desc">
+                      {isTr
+                        ? 'Masada nakit olmadığı için her ay havaya uçan ve Naponi ile ekibinize dönecek tahmini tutar.'
+                        : 'Estimated gratuity otherwise lost to the cashless barrier, directly credited to your staff.'}
+                    </div>
+                  </div>
+
+                  <div className="home-roi-sub-stats">
+                    <div className="home-roi-sub-item">
+                      <span className="home-roi-sub-label">
+                        {isTr ? `Personel Başına Ek Gelir (~${calcStaffCount} kişi)` : `Est. Boost / Staff (~${calcStaffCount} team)`}
+                      </span>
+                      <span className="home-roi-sub-val">
+                        +{formatCalcCurrency(calcPerStaffGain)}
+                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>{isTr ? ' /ay' : '/mo'}</span>
+                      </span>
+                    </div>
+                    <div className="home-roi-sub-item">
+                      <span className="home-roi-sub-label">
+                        {isTr ? 'Naponi İşletme Maliyeti' : 'Naponi Cost to Venue'}
+                      </span>
+                      <span className="home-roi-sub-val free">
+                        {isTr ? '0 ₺ (Ömür Boyu)' : '$0 Free Forever'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  to="/register"
+                  className="home-roi-cta-btn"
+                  onClick={() => {
+                    trackFounderCtaClicked('roi_calculator');
+                    trackBusinessRegisterStarted('roi_calculator');
+                  }}
+                >
+                  <span>{isTr ? 'Ekibinizin Bahşişini Hemen Kurtarın' : 'Start Recovering Tips in 60s'}</span>
+                  <ArrowRight size={17} />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
