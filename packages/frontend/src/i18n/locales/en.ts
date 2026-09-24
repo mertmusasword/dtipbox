@@ -166,7 +166,7 @@ export const en = {
     "heroBadge": "Next-Gen Financial Infrastructure for Hospitality",
     "heroTitle": "No Cash at the Table?",
     "heroHighlight": "Tips Flow with Naponi",
-    "heroSubtitle": "From premier bistros and boutique cafes to hotels and mobile coffee carts — guests tip seamlessly in seconds by scanning a table QR. Zero app downloads, zero held funds. 100% direct payout to your bank account.",
+    "heroSubtitle": "End table QR clutter: One sleek QR code delivers touchless tipping, dynamic menu, instant Wi-Fi, and VIP loyalty. No app downloads, zero held funds. 100% direct settlement to your bank account.",
     "ctaGetStarted": "Create Your First Table QR",
     "ctaLogin": "Access Portal",
     "statVenues": "Active Venues Globally",

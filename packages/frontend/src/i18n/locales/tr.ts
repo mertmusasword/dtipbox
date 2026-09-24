@@ -166,7 +166,7 @@ export const tr = {
     "heroBadge": "Ağırlama ve Hizmet Sektörü İçin Yeni Nesil Finansal Altyapı",
     "heroTitle": "Masada Nakit Yoksa",
     "heroHighlight": "Bahşiş Naponi'de Var",
-    "heroSubtitle": "İster restoran, ister butik kafe, otel veya mobil kahveci olun — nakitsiz misafirleriniz masadaki QR kodu okutup saniyeler içinde bahşiş bıraksın. Uygulama indirme yok, fon bloke etme yok. Tutar %100 doğrudan banka hesabınıza geçer.",
+    "heroSubtitle": "Masadaki QR karmaşasına son: Tek bir şık QR ile doğrudan bahşiş, dijital menü, 1-tıkla Wi-Fi ve sadakat programı bir arada. Uygulama indirme yok, fon bloke etme yok. Tutar %100 doğrudan banka hesabınıza geçer.",
     "ctaGetStarted": "Masanızın İlk QR'ını Oluşturun",
     "ctaLogin": "Panele Giriş Yap",
     "statVenues": "Aktif Küresel İşletme",

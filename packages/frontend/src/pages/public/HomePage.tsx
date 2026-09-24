@@ -25,6 +25,8 @@ import {
   Wine,
   Hotel,
   Calculator,
+  Wifi,
+  BookOpen,
   Scissors,
   Car,
   Check,
@@ -187,10 +189,13 @@ export const HomePage: React.FC = () => {
   }, [language]);
 
   // Hero Simulator Interactive State
+  const [simTab, setSimTab] = useState<'tip' | 'menu' | 'wifi' | 'review'>('tip');
   const [simAmount, setSimAmount] = useState<number>(simConfig.defaultAmount);
   const [simStaff, setSimStaff] = useState<string>(simConfig.defaultStaff);
   const [simPayment, setSimPayment] = useState<'apple' | 'card' | 'wire'>('apple');
   const [simSuccess, setSimSuccess] = useState<boolean>(false);
+  const [simWifiConnected, setSimWifiConnected] = useState<boolean>(false);
+  const [simReviewGiven, setSimReviewGiven] = useState<boolean>(false);
 
   // Sync simulator defaults whenever language changes
   useEffect(() => {
@@ -584,9 +589,15 @@ export const HomePage: React.FC = () => {
           <div className="home-hero-grid">
             {/* Left Hero Column */}
             <div className="home-hero-content">
-              <div className="home-hero-badge" style={{ background: 'rgba(234, 179, 8, 0.12)', border: '1px solid rgba(234, 179, 8, 0.35)', color: '#facc15' }}>
-                <Award size={14} className="sparkle" />
-                <span>{t('founder.heroBadge')}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(234, 179, 8, 0.12)', border: '1px solid rgba(234, 179, 8, 0.35)', color: '#facc15' }}>
+                  <Award size={14} className="sparkle" />
+                  <span>{t('founder.heroBadge')}</span>
+                </div>
+                <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
+                  <Sparkles size={13} />
+                  <span>{isTr ? 'Tek QR • Tüm Masa Deneyimi' : 'One QR • Everything Your Guests Need'}</span>
+                </div>
               </div>
 
               <h1 className="home-hero-title">
@@ -672,97 +683,277 @@ export const HomePage: React.FC = () => {
                     <div className="home-phone-venue-title">{simConfig.tableText}</div>
                   </div>
 
-                  {!simSuccess ? (
-                    <form onSubmit={handleSimSubmit}>
-                      {/* Staff Selector */}
-                      <div className="home-phone-staff-box">
-                        <div className="home-phone-staff-info">
-                          <div className="home-phone-staff-avatar">
-                            {simStaff.charAt(0)}
-                          </div>
-                          <div>
-                            <div className="home-phone-staff-name">{simStaff}</div>
-                            <div className="home-phone-staff-role">{simConfig.assignedLabel}</div>
-                          </div>
-                        </div>
-                        <select
-                          value={simStaff}
-                          onChange={(e) => setSimStaff(e.target.value)}
-                          style={{
-                            background: 'transparent',
-                            color: '#94a3b8',
-                            border: 'none',
-                            fontSize: '0.72rem',
-                            cursor: 'pointer',
-                            outline: 'none'
-                          }}
-                        >
-                          {simConfig.staffOptions.map((opt) => (
-                            <option key={opt.id} value={opt.id}>{opt.label}</option>
-                          ))}
-                        </select>
-                      </div>
+                  {/* One QR Multi-Feature Hub Bar */}
+                  <div className="home-phone-hub-bar">
+                    <button
+                      type="button"
+                      className={`home-phone-hub-tab ${simTab === 'tip' ? 'active' : ''}`}
+                      onClick={() => setSimTab('tip')}
+                    >
+                      <CreditCard size={12} />
+                      <span>{isTr ? 'Bahşiş' : 'Tip'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`home-phone-hub-tab ${simTab === 'menu' ? 'active' : ''}`}
+                      onClick={() => setSimTab('menu')}
+                    >
+                      <BookOpen size={12} />
+                      <span>{isTr ? 'Menü' : 'Menu'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`home-phone-hub-tab ${simTab === 'wifi' ? 'active' : ''}`}
+                      onClick={() => setSimTab('wifi')}
+                    >
+                      <Wifi size={12} />
+                      <span>Wi-Fi</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`home-phone-hub-tab ${simTab === 'review' ? 'active' : ''}`}
+                      onClick={() => setSimTab('review')}
+                    >
+                      <Star size={12} />
+                      <span>{isTr ? 'Puan' : 'Review'}</span>
+                    </button>
+                  </div>
 
-                      {/* Amount Selection */}
-                      <div className="home-phone-amounts-label">{t('tip.selectAmountTitle')}</div>
-                      <div className="home-phone-amounts-grid">
-                        {simConfig.amounts.map((amt) => (
-                          <button
-                            key={amt}
-                            type="button"
-                            className={`home-amount-chip ${simAmount === amt ? 'active' : ''}`}
-                            onClick={() => setSimAmount(amt)}
+                  {simTab === 'tip' && (
+                    !simSuccess ? (
+                      <form onSubmit={handleSimSubmit}>
+                        {/* Staff Selector */}
+                        <div className="home-phone-staff-box">
+                          <div className="home-phone-staff-info">
+                            <div className="home-phone-staff-avatar">
+                              {simStaff.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="home-phone-staff-name">{simStaff}</div>
+                              <div className="home-phone-staff-role">{simConfig.assignedLabel}</div>
+                            </div>
+                          </div>
+                          <select
+                            value={simStaff}
+                            onChange={(e) => setSimStaff(e.target.value)}
+                            style={{
+                              background: 'transparent',
+                              color: '#94a3b8',
+                              border: 'none',
+                              fontSize: '0.72rem',
+                              cursor: 'pointer',
+                              outline: 'none'
+                            }}
                           >
-                            {simConfig.currency}{amt}
+                            {simConfig.staffOptions.map((opt) => (
+                              <option key={opt.id} value={opt.id}>{opt.label}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Amount Selection */}
+                        <div className="home-phone-amounts-label">{t('tip.selectAmountTitle')}</div>
+                        <div className="home-phone-amounts-grid">
+                          {simConfig.amounts.map((amt) => (
+                            <button
+                              key={amt}
+                              type="button"
+                              className={`home-amount-chip ${simAmount === amt ? 'active' : ''}`}
+                              onClick={() => setSimAmount(amt)}
+                            >
+                              {simConfig.currency}{amt}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Payment Method Selector */}
+                        <div className="home-phone-amounts-label">{t('tip.paymentMethodTitle')}</div>
+                        <div className="home-phone-pay-methods">
+                          <button
+                            type="button"
+                            className={`home-phone-pay-btn ${simPayment === 'apple' ? 'selected' : ''}`}
+                            onClick={() => setSimPayment('apple')}
+                          >
+                            <span> Apple Pay / Google Pay</span>
+                            {simPayment === 'apple' && <Check size={14} color="#6366f1" />}
                           </button>
-                        ))}
-                      </div>
+                          <button
+                            type="button"
+                            className={`home-phone-pay-btn ${simPayment === 'card' ? 'selected' : ''}`}
+                            onClick={() => setSimPayment('card')}
+                          >
+                            <span>{t('tip.creditCard')}</span>
+                            {simPayment === 'card' && <Check size={14} color="#6366f1" />}
+                          </button>
+                        </div>
 
-                      {/* Payment Method Selector */}
-                      <div className="home-phone-amounts-label">{t('tip.paymentMethodTitle')}</div>
-                      <div className="home-phone-pay-methods">
+                        {/* Submit Tip Button */}
+                        <button type="submit" className="home-phone-tip-submit">
+                          <Zap size={16} /> {t('tip.payBtn')} {simConfig.currency}{simAmount}.00
+                        </button>
+                      </form>
+                    ) : (
+                      /* Instant Confirmation View */
+                      <div className="home-phone-success">
+                        <div className="home-phone-success-icon">
+                          <Check size={24} />
+                        </div>
+                        <div className="home-phone-success-title">{t('tip.successTitle')}</div>
+                        <div className="home-phone-success-sub">
+                          {t('tip.successSubtitle')}
+                        </div>
                         <button
                           type="button"
-                          className={`home-phone-pay-btn ${simPayment === 'apple' ? 'selected' : ''}`}
-                          onClick={() => setSimPayment('apple')}
+                          className="home-phone-reset-btn"
+                          onClick={handleSimReset}
                         >
-                          <span> Apple Pay / Google Pay</span>
-                          {simPayment === 'apple' && <Check size={14} color="#6366f1" />}
+                          {t('common.retry')}
                         </button>
-                        <button
-                          type="button"
-                          className={`home-phone-pay-btn ${simPayment === 'card' ? 'selected' : ''}`}
-                          onClick={() => setSimPayment('card')}
-                        >
-                          <span>{t('tip.creditCard')}</span>
-                          {simPayment === 'card' && <Check size={14} color="#6366f1" />}
-                        </button>
+                      </div>
+                    )
+                  )}
+
+                  {simTab === 'menu' && (
+                    <div className="home-phone-subscreen">
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#f8fafc' }}>
+                            {isTr ? '📖 Masaya Özel Dijital Menü' : '📖 Digital Table Menu'}
+                          </span>
+                          <span style={{ fontSize: '0.68rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.15)', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                            {isTr ? 'Canlı Fiyat' : 'Live'}
+                          </span>
+                        </div>
+
+                        <div className="home-phone-menu-item">
+                          <div>
+                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff' }}>Single Origin Flat White</div>
+                            <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Oat milk, double shot</div>
+                          </div>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38bdf8' }}>{simConfig.currency}85</span>
+                        </div>
+
+                        <div className="home-phone-menu-item">
+                          <div>
+                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff' }}>Truffle Parmesan Fries</div>
+                            <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>House truffle aioli</div>
+                          </div>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38bdf8' }}>{simConfig.currency}190</span>
+                        </div>
+
+                        <div className="home-phone-menu-item">
+                          <div>
+                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff' }}>Dry Aged Bistro Burger</div>
+                            <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Caramelized onion, brioche</div>
+                          </div>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38bdf8' }}>{simConfig.currency}360</span>
+                        </div>
                       </div>
 
-                      {/* Submit Tip Button */}
-                      <button type="submit" className="home-phone-tip-submit">
-                        <Zap size={16} /> {t('tip.payBtn')} {simConfig.currency}{simAmount}.00
-                      </button>
-                    </form>
-                  ) : (
-                    /* Instant Confirmation View */
-                    <div className="home-phone-success">
-                      <div className="home-phone-success-icon">
-                        <Check size={24} />
-                      </div>
-                      <div className="home-phone-success-title">{t('tip.successTitle')}</div>
-                      <div className="home-phone-success-sub">
-                        {t('tip.successSubtitle')}
-                      </div>
                       <button
                         type="button"
-                        className="home-phone-reset-btn"
-                        onClick={handleSimReset}
+                        className="home-phone-tip-submit"
+                        onClick={() => setSimTab('tip')}
+                        style={{ marginTop: '0.5rem' }}
                       >
-                        {t('common.retry')}
+                        <CreditCard size={15} />
+                        <span>{isTr ? 'Garsona Bahşiş Ekle' : 'Add Gratuity for Staff'}</span>
                       </button>
                     </div>
                   )}
+
+                  {simTab === 'wifi' && (
+                    <div className="home-phone-subscreen">
+                      <div className="home-phone-wifi-box">
+                        <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(56, 189, 248, 0.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8', marginBottom: '0.65rem' }}>
+                          <Wifi size={22} />
+                        </div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', marginBottom: '0.2rem' }}>
+                          Grand_Bistro_Guest_5G
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: '1rem' }}>
+                          {isTr ? 'Garsona şifre sormadan tek tıkla bağlanın' : 'Connect instantly with zero password hassle'}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSimWifiConnected(true)}
+                          style={{
+                            width: '100%',
+                            padding: '0.65rem',
+                            borderRadius: '10px',
+                            background: simWifiConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(56, 189, 248, 0.2)',
+                            border: `1px solid ${simWifiConnected ? '#10b981' : '#38bdf8'}`,
+                            color: simWifiConnected ? '#34d399' : '#38bdf8',
+                            fontWeight: 700,
+                            fontSize: '0.82rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.35rem'
+                          }}
+                        >
+                          <Check size={14} />
+                          <span>{simWifiConnected ? (isTr ? 'Wi-Fi Bağlandı ✓' : 'Connected to Wi-Fi ✓') : (isTr ? '1-Tıkla Bağlan' : 'Connect 1-Tap')}</span>
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="home-phone-tip-submit"
+                        onClick={() => setSimTab('tip')}
+                      >
+                        <CreditCard size={15} />
+                        <span>{isTr ? 'Garsona Bahşiş Bırak' : 'Leave Server a Tip'}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {simTab === 'review' && (
+                    <div className="home-phone-subscreen">
+                      <div style={{ textAlign: 'center', padding: '1rem 0.5rem' }}>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff', marginBottom: '0.3rem' }}>
+                          {isTr ? 'Deneyiminizi Puanlayın' : 'Rate Your Experience'}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                          {isTr ? '5 yıldızlı puanlar doğrudan Google Haritalar’a yönlenir' : '5-star reviews sync directly to Google Maps'}
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.35rem', margin: '1rem 0' }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setSimReviewGiven(true)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                              aria-label={`Star ${star}`}
+                            >
+                              <Star size={24} fill="#facc15" color="#facc15" />
+                            </button>
+                          ))}
+                        </div>
+                        {simReviewGiven && (
+                          <div style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600, marginBottom: '0.75rem' }}>
+                            {isTr ? '✓ Teşekkürler! Değerlendirmeniz kaydedildi.' : '✓ Thank you! Rating saved.'}
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        className="home-phone-tip-submit"
+                        onClick={() => setSimTab('tip')}
+                      >
+                        <CreditCard size={15} />
+                        <span>{isTr ? 'Garsona Bahşiş Ekle' : 'Tip Your Server'}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Simulator footer caption */}
+                  <div className="home-phone-footer-caption">
+                    <Sparkles size={11} color="#818cf8" />
+                    <span>{isTr ? 'Tek QR: Bahşiş • Menü • Hızlı Wi-Fi • Puan' : 'One QR: Tipping • Menu • Guest Wi-Fi • Reviews'}</span>
+                  </div>
                 </div>
               </div>
             </div>
