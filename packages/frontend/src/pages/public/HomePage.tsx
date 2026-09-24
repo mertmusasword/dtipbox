@@ -413,13 +413,13 @@ export const HomePage: React.FC = () => {
       <SeoHead
         title={
           language === 'tr'
-            ? 'Naponi — Restoran ve Oteller İçin Doğrudan QR Kod Dijital Bahşiş Sistemi'
-            : 'Naponi — Direct QR Digital Tipping Platform for Global Businesses'
+            ? "Naponi — Smart QR Ağırlama Platformu | Mevcut POS'unuzla Uyumlu"
+            : 'Naponi — Smart QR for Hospitality | One QR. Everything Your Guests Need.'
         }
         description={
           language === 'tr'
-            ? 'Personel ve hizmet ekipleriniz için temassız, anında IBAN transferli QR kod dijital bahşiş platformu. Uygulama indirme yok, üyelik yok.'
-            : 'Empower your hospitality and service team with direct QR code digital tipping. No app downloads, no customer accounts. Instant, direct-to-bank settlement.'
+            ? "POS cihazınızı değiştirmeyin, Naponi'yi ekleyin. Tek Smart QR ile bahşiş, dijital menü, 1-tıkla Wi-Fi, VIP sadakat ve Google yorumları. Toast, Square, Clover, Lightspeed ve yerel POS sistemleriyle uyumlu."
+            : 'Keep your POS. Add NAPONI. One Smart QR for digital tipping, dynamic menu, 1-tap Wi-Fi, VIP loyalty, and reviews. Compatible with Toast, Square, Clover, Lightspeed & local POS systems.'
         }
         canonicalUrl={language === 'tr' ? 'https://www.naponi.com/tr' : 'https://www.naponi.com/'}
         keywords={[

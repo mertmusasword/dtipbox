@@ -248,8 +248,8 @@ const homepageSemanticContent = `
 `;
 
 writeStaticRoute('', {
-  title: 'Naponi — Direct QR Digital Tipping Platform for Global Businesses',
-  description: 'Empower your hospitality and service team with direct QR code digital tipping. No app downloads, no customer accounts. Instant, direct-to-bank settlement.',
+  title: 'Naponi — Smart QR for Hospitality | One QR. Everything Your Guests Need.',
+  description: 'Keep your POS. Add NAPONI. The Smart QR guest experience layer for hospitality: Tips, Menu, Wi-Fi, Loyalty, Campaigns & Reviews. Compatible with Toast, Square, Clover, Lightspeed & your local POS.',
   canonicalUrl: 'https://www.naponi.com/',
   alternateLanguages: [
     { lang: 'x-default', url: 'https://www.naponi.com/' },
