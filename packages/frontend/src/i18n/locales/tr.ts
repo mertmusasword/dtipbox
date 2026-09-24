@@ -161,12 +161,12 @@ export const tr = {
     "resetPasswordError": "Şifre sıfırlanırken bir hata oluştu. Bağlantı süresi dolmuş olabilir."
   },
   "home": {
-    "metaTitle": "Naponi — İşletmeler İçin Doğrudan QR Dijital Bahşiş Platformu",
-    "metaDesc": "Hizmet ve ağırlama ekibinizi doğrudan QR kod ile dijital bahşişle güçlendirin. Uygulama indirme yok, müşteri hesabı yok. Anında doğrudan banka hesabına aktarım.",
-    "heroBadge": "Ağırlama ve Hizmet Sektörü İçin Yeni Nesil Finansal Altyapı",
-    "heroTitle": "Masada Nakit Yoksa",
-    "heroHighlight": "Bahşiş Naponi'de Var",
-    "heroSubtitle": "Masadaki QR karmaşasına son: Tek bir şık QR ile doğrudan bahşiş, dijital menü, 1-tıkla Wi-Fi ve sadakat programı bir arada. Uygulama indirme yok, fon bloke etme yok. Tutar %100 doğrudan banka hesabınıza geçer.",
+    "metaTitle": "Naponi — Smart QR Ağırlama Platformu | Mevcut POS'unuzla Uyumlu",
+    "metaDesc": "POS cihazınızı değiştirmeyin, Naponi'yi ekleyin. Tek Smart QR ile bahşiş, dijital menü, 1-tıkla Wi-Fi, VIP sadakat ve Google yorumları. Toast, Square, Clover, Lightspeed ve yerel POS sistemleriyle uyumlu.",
+    "heroBadge": "Smart QR for Hospitality • Ağırlama İçin Akıllı QR",
+    "heroTitle": "Tek QR. Misafirinizin İhtiyaç Duyduğu Her Şey.",
+    "heroHighlight": "Mevcut POS'unuzu Koruyun. Naponi'yi Ekleyin.",
+    "heroSubtitle": "Bahşiş • Menü • Wi-Fi • Sadakat • Kampanyalar • Yorumlar. Kasanız ve POS'unuz operasyonu yönetsin, Naponi masadaki misafirlerinizle bağ kursun. Toast, Square, Clover, Lightspeed ve yerel POS sistemlerinizle uyumlu çalışan bağımsız misafir deneyim katmanı.",
     "ctaGetStarted": "Masanızın İlk QR'ını Oluşturun",
     "ctaLogin": "Panele Giriş Yap",
     "statVenues": "Aktif Küresel İşletme",

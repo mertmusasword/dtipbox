@@ -161,12 +161,12 @@ export const en = {
     "resetPasswordError": "An error occurred while resetting password. The link may have expired."
   },
   "home": {
-    "metaTitle": "Naponi — Direct QR Digital Tipping Platform for Global Businesses",
-    "metaDesc": "Empower your hospitality and service team with direct QR code digital tipping. No app downloads, no customer accounts. Instant, direct-to-bank settlement.",
-    "heroBadge": "Next-Gen Financial Infrastructure for Hospitality",
-    "heroTitle": "No Cash at the Table?",
-    "heroHighlight": "Tips Flow with Naponi",
-    "heroSubtitle": "End table QR clutter: One sleek QR code delivers touchless tipping, dynamic menu, instant Wi-Fi, and VIP loyalty. No app downloads, zero held funds. 100% direct settlement to your bank account.",
+    "metaTitle": "Naponi — Smart QR for Hospitality | Works With Your Existing POS",
+    "metaDesc": "Keep your POS. Add NAPONI. One Smart QR for digital tipping, dynamic menu, 1-tap Wi-Fi, VIP loyalty, and Google reviews. Compatible with Toast, Square, Clover, Lightspeed, and local POS systems.",
+    "heroBadge": "Smart QR for Hospitality",
+    "heroTitle": "One QR. Everything your guests need.",
+    "heroHighlight": "Keep your POS. Add NAPONI.",
+    "heroSubtitle": "Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews. Your POS runs the business. NAPONI connects you with your guests. An independent Smart QR guest experience layer compatible with Toast, Square, Clover, Lightspeed, and your local POS.",
     "ctaGetStarted": "Create Your First Table QR",
     "ctaLogin": "Access Portal",
     "statVenues": "Active Venues Globally",

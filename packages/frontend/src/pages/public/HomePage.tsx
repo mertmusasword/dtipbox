@@ -590,13 +590,13 @@ export const HomePage: React.FC = () => {
             {/* Left Hero Column */}
             <div className="home-hero-content">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
+                  <Sparkles size={13} />
+                  <span>NAPONI • Smart QR for Hospitality</span>
+                </div>
                 <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(234, 179, 8, 0.12)', border: '1px solid rgba(234, 179, 8, 0.35)', color: '#facc15' }}>
                   <Award size={14} className="sparkle" />
                   <span>{t('founder.heroBadge')}</span>
-                </div>
-                <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
-                  <Sparkles size={13} />
-                  <span>{isTr ? 'Tek QR • Tüm Masa Deneyimi' : 'One QR • Everything Your Guests Need'}</span>
                 </div>
               </div>
 
@@ -663,6 +663,50 @@ export const HomePage: React.FC = () => {
                 <div className="home-trust-item">
                   <CheckCircle2 size={16} />
                   <span>{t('home.statTipLatency')}</span>
+                </div>
+              </div>
+
+              {/* POS Compatibility Ribbon */}
+              <div
+                style={{
+                  marginTop: '1.25rem',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(15, 23, 42, 0.7)',
+                  border: '1px solid rgba(99, 102, 241, 0.25)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.45rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontWeight: 700, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <Cpu size={14} />
+                    <span>{isTr ? "Mevcut POS'unuzla Uyumlu:" : 'Works with your POS:'}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+                    {['Toast', 'Square', 'Clover', 'Lightspeed', 'Simpra', isTr ? '+ Yerel POS' : '+ Local POS'].map((posName, idx) => (
+                      <span
+                        key={idx}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.06)',
+                          border: '1px solid rgba(255, 255, 255, 0.12)',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.73rem',
+                          fontWeight: 600,
+                          color: '#e2e8f0',
+                        }}
+                      >
+                        {posName}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.76rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                  {isTr
+                    ? "POS cihazınızı değiştirmeyin. Kasanız operasyonu yönetsin, Naponi misafirinizle bağ kursun."
+                    : 'Keep your POS. Add NAPONI. Your POS runs the business, NAPONI connects you with your guests.'}
                 </div>
               </div>
             </div>
@@ -1313,7 +1357,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          GLOBAL PAYMENT GATEWAY & DIRECT ROUTING LAYER: BRING YOUR OWN PROVIDER
+          EXISTING POS & PAYMENT ARCHITECTURE: KEEP YOUR POS. ADD NAPONI.
           ==================================================================== */}
       <section className="home-section" id="pos-integrations" style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <div className="home-container">
@@ -1336,17 +1380,92 @@ export const HomePage: React.FC = () => {
                 boxShadow: '0 2px 12px rgba(99, 102, 241, 0.15)',
               }}
             >
-              <Globe size={14} style={{ flexShrink: 0 }} />
-              <span>{language === 'tr' ? 'Global Ödeme & Doğrudan Tahsilat' : 'Global Payment & Direct Routing'}</span>
+              <Cpu size={14} style={{ flexShrink: 0 }} />
+              <span>{language === 'tr' ? 'Mevcut POS & Ödeme Tamamlayıcı Katmanı' : 'Existing POS & Payment Companion Layer'}</span>
             </span>
             <h2 className="home-section-title">
-              {language === 'tr' ? 'Kendi Ödeme Sağlayıcınızı veya Bankanızı Kullanın. Sıfır Finansal Aracı.' : 'Bring Your Own Payment Gateway. Zero Financial Middleman.'}
+              {language === 'tr'
+                ? 'Kasanız İşletmeyi Yönetir. Naponi Misafirinizle Bağ Kurar.'
+                : 'Your POS Runs the Business. NAPONI Connects You With Your Guests.'}
             </h2>
             <p className="home-section-desc">
               {language === 'tr'
-                ? 'Naponi bir ödeme kuruluşu veya POS cihazı satıcısı değildir; paranızı asla emanet havuzunda tutmaz. İşletmenizin mevcut ödeme bağlantısını (Payment Link) veya doğrudan banka/IBAN hesabınızı bağlayın; bahşişler aracısız doğrudan sizin hesabınıza aksın.'
-                : 'Naponi is not a payment facilitator or POS hardware vendor. We never hold your funds or touch your money. Simply connect your existing hosted checkout link or direct bank/IBAN details. Tips flow 100% directly into your merchant account or bank.'}
+                ? "POS cihazınızı değiştirmeyin. Naponi'yi ekleyin. Toast, Square, Clover, Lightspeed veya yerel POS sisteminizi değiştirmenize gerek yok. Kasanız adisyon, mutfak ve stok operasyonlarını yönetirken; Naponi masadaki bağımsız Smart QR misafir katmanınız olur. Paranızı emanette tutmaz, doğrudan kendi lisanslı sağlayıcınızla tahsilat yaparsınız."
+                : "Keep your POS. Add NAPONI. You don't need to replace Toast, Square, Clover, Lightspeed, or your local POS. Your existing POS handles orders, kitchen routing, and inventory—while NAPONI delivers the Smart QR guest experience layer. Zero held funds, 100% direct settlement."}
             </p>
+          </div>
+
+          {/* Dual-Layer Target Architecture Visualization */}
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.85)',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              borderRadius: '16px',
+              padding: '1.5rem',
+              marginBottom: '2.5rem',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.35)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '0.75rem', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#818cf8', fontWeight: 700, fontSize: '0.9rem' }}>
+                <Layers size={18} />
+                <span>{language === 'tr' ? 'Hedef Mimari: Bağımsız Çift Katman' : 'Target Architecture: Independent Dual Layer'}</span>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                <strong style={{ color: '#38bdf8' }}>POS</strong> = {language === 'tr' ? 'Restoran Operasyon Katmanı' : 'Restaurant Operations Layer'} &nbsp;|&nbsp; <strong style={{ color: '#ec4899' }}>NAPONI</strong> = {language === 'tr' ? 'Misafir Deneyimi Katmanı' : 'Guest Experience Layer'}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', alignItems: 'center' }}>
+              {/* Box 1: Operations */}
+              <div style={{ background: 'rgba(30, 41, 59, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.25rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                  {language === 'tr' ? 'Mevcut Operasyonunuz' : 'Existing Systems'}
+                </div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
+                  POS • Ödeme • Kasa
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                  Toast • Square • Clover • Lightspeed • Yerel POS
+                </div>
+              </div>
+
+              {/* Plus Sign */}
+              <div style={{ textAlign: 'center', color: '#818cf8', fontWeight: 900, fontSize: '1.4rem' }}>
+                +
+              </div>
+
+              {/* Box 2: NAPONI Hub */}
+              <div style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(236, 72, 153, 0.15) 100%)', border: '1px solid rgba(99, 102, 241, 0.45)', borderRadius: '12px', padding: '1.25rem', textAlign: 'center', boxShadow: '0 4px 20px rgba(99, 102, 241, 0.2)' }}>
+                <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: '#f472b6', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                  {language === 'tr' ? 'Masada Akıllı Katman' : 'Table Experience'}
+                </div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff', marginBottom: '0.35rem' }}>
+                  NAPONI Smart QR Hub
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>
+                  {language === 'tr' ? 'One QR • Tek QR Masa Giriş Noktası' : 'One QR • Everything Your Guests Need'}
+                </div>
+              </div>
+
+              {/* Arrow Sign */}
+              <div style={{ textAlign: 'center', color: '#34d399', fontWeight: 900, fontSize: '1.4rem' }}>
+                ↓
+              </div>
+
+              {/* Box 3: 6 Modules */}
+              <div style={{ background: 'rgba(30, 41, 59, 0.6)', border: '1px solid rgba(52, 211, 153, 0.3)', borderRadius: '12px', padding: '1.25rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: '#34d399', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                  {language === 'tr' ? 'Tüm Misafir İhtiyaçları' : 'Guest Touchpoints'}
+                </div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.2rem' }}>
+                  Bahşiş • Menü • Wi-Fi
+                </div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#cbd5e1' }}>
+                  Sadakat • Fırsat • Yorum
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Payment Gateway Compatibility Showcase */}
@@ -1492,21 +1611,21 @@ export const HomePage: React.FC = () => {
               }}
             >
               <Sparkles size={14} style={{ flexShrink: 0 }} />
-              <span>{language === 'tr' ? 'Masada Yeni Nesil Etkileşim' : 'Next-Gen Table Experience'}</span>
+              <span>{language === 'tr' ? 'Ağırlama Sektörü İçin Akıllı QR' : 'Smart QR for Hospitality'}</span>
             </span>
             <h2 className="home-section-title">
-              {language === 'tr' ? 'Naponi Smart QR — Tek QR. Sınırsız Olanak.' : 'Naponi Smart QR — One QR. Endless Hospitality.'}
+              {language === 'tr' ? 'Tek QR. Misafirinizin İhtiyaç Duyduğu Her Şey.' : 'One QR. Everything Your Guests Need.'}
             </h2>
             <p className="home-section-desc">
               {language === 'tr'
-                ? 'Masaya yapıştırdığınız tek bir QR kod artık sadece bahşiş almakla kalmaz. Misafirlerinize tek dokunuşla Wi-Fi sunar, günün fırsatlarını gösterir, 5 yıldızlı yorumlar toplar ve sadık müşteri veritabanınızı büyütür.'
-                : 'Your table QR code is no longer just a tip jar. In a single scan, guests can access guest Wi-Fi, view daily specials, submit Google reviews, and join your VIP club.'}
+                ? "Bahşiş • Menü • Wi-Fi • Sadakat • Kampanyalar • Yorumlar. Masadaki tek bir Smart QR giriş noktası ile misafirleriniz ihtiyaç duyduğu her şeye anında erişir; mevcut POS'unuz operasyonu yönetirken Naponi misafirlerinizle bağ kurar."
+                : 'Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews. One single QR entry point at the table connects your guests with everything they need, while your existing POS continues running daily operations smoothly.'}
             </p>
           </div>
 
-          {/* 5-Pillars Grid */}
+          {/* 6-Pillars Grid: Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-            {/* Pillar 1: Tipping */}
+            {/* 1. Tips */}
             <div
               className="glass-card"
               style={{
@@ -1536,12 +1655,12 @@ export const HomePage: React.FC = () => {
                   <CreditCard size={22} />
                 </div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? 'Temassız Dijital Bahşiş' : 'Touchless Digital Tip'}
+                  {language === 'tr' ? '1. Dijital Bahşiş' : '1. Digital Tips'}
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
                   {language === 'tr'
-                    ? 'Uygulama indirmeden, üyelik olmadan işletmenizin güvenli ödeme bağlantısı veya FAST/IBAN ile 10 saniyede doğrudan aktarım.'
-                    : 'Direct gratuity to staff or team pool in 10 seconds via your venue\'s secure payment link or direct bank transfer.'}
+                    ? "Uygulama indirmeden, üyelik olmadan işletmenizin lisanslı ödeme bağlantısı veya doğrudan banka/FAST transferi ile 10 saniyede emanetsiz aktarım."
+                    : "Direct gratuity to staff or team pool in 10 seconds via your venue's secure checkout link or direct bank transfer. Non-custodial."}
                 </p>
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
@@ -1549,179 +1668,7 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Pillar 2: Wi-Fi */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(56, 189, 248, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(56, 189, 248, 0.15)',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#38bdf8',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Zap size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '1-Tıkla Misafir Wi-Fi' : 'One-Tap Guest Wi-Fi'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Garsona şifre sorma devri bitti. Misafir tek tıkla şifreyi panoya kopyalar veya yerleşik Wi-Fi profiliyle bağlanır.'
-                    : 'No more asking waitstaff for passwords. Guests copy the network password with one tap and connect instantly.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>Personel Zamanından Tasarruf</span>
-              </div>
-            </div>
-
-            {/* Pillar 3: Campaigns */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(245, 158, 11, 0.15)',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#f59e0b',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Tag size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? 'Dinamik Kampanya & Fırsat' : 'Specials & Coupons'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Günün tatlısı, mutlu saatler (happy hour) indirimleri veya özel promosyon kuponlarını anlık olarak masadaki ekrana yansıtın.'
-                    : 'Highlight daily desserts, happy hour discounts, or exclusive promo codes right on table mobile screens.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>Adisyon Ortalamasını Artırın</span>
-              </div>
-            </div>
-
-            {/* Pillar 4: Feedback */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(251, 191, 36, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(251, 191, 36, 0.15)',
-                    border: '1px solid rgba(251, 191, 36, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fbbf24',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Star size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? 'Müşteri Değerlendirmesi' : 'Direct Reviews'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Müşteriler işletmeden ayrılmadan anlık 1-5 yıldız puanı verir. Google / TripAdvisor itibarınızı yükseltin.'
-                    : 'Collect in-venue 1-5 star ratings and reviews before guests leave, boosting your local review rankings.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 600 }}>Google & TripAdvisor Uyumlu</span>
-              </div>
-            </div>
-
-            {/* Pillar 5: VIP Lead Capture */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(236, 72, 153, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(236, 72, 153, 0.15)',
-                    border: '1px solid rgba(236, 72, 153, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ec4899',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Mail size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? 'VIP Sadakat & Lead Verisi' : 'VIP Loyalty & Leads'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Özel ikram veya duyurular karşılığında KVKK/GDPR uyumlu misafir e-posta ve telefon rehberi oluşturun.'
-                    : 'Build a compliant first-party marketing database of guest emails and phone numbers for SMS & newsletters.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#ec4899', fontWeight: 600 }}>%100 KVKK & GDPR Uyumlu</span>
-              </div>
-            </div>
-
-            {/* Pillar 6: Native QR Menu & Allergen Filter */}
+            {/* 2. Menu */}
             <div
               className="glass-card"
               style={{
@@ -1751,16 +1698,188 @@ export const HomePage: React.FC = () => {
                   <UtensilsCrossed size={22} />
                 </div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? 'Native Menü & Alerjen Filtresi' : 'Native Menu & Allergens'}
+                  {language === 'tr' ? '2. Native QR Menü' : '2. Digital Menu'}
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
                   {language === 'tr'
-                    ? 'Masalara ayrı menü QR\'ı basmaya son. 14 standart alerjen etiketli, kategorili ve anlık stok kontrollü native dijital menünüz tek Smart QR\'da.'
+                    ? "Masalara ayrı menü QR'ı basmaya son. 14 standart alerjen etiketli, kategorili ve anlık stok kontrollü native dijital menünüz tek Smart QR'da."
                     : 'No separate menu QR stands needed. Mobile menu with 14 standardized allergen filters and instant stock toggles inside your unified Smart QR.'}
                 </p>
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
                 <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>14 Standart Alerjen • Tek QR</span>
+              </div>
+            </div>
+
+            {/* 3. Wi-Fi */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(56, 189, 248, 0.15)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#38bdf8',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Zap size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? '3. 1-Tıkla Misafir Wi-Fi' : '3. Guest Wi-Fi'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Garsona şifre sorma devri bitti. Misafir tek tıkla şifreyi panoya kopyalar veya yerleşik Wi-Fi profiliyle masadan anında bağlanır.'
+                    : 'No more asking waitstaff for passwords. Guests copy the network password with one tap and connect instantly.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>Personel Zamanından Tasarruf</span>
+              </div>
+            </div>
+
+            {/* 4. Loyalty */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(236, 72, 153, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(236, 72, 153, 0.15)',
+                    border: '1px solid rgba(236, 72, 153, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ec4899',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Mail size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? '4. VIP Sadakat & Kulüp' : '4. Loyalty & VIP'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Özel ikram veya duyurular karşılığında KVKK/GDPR uyumlu misafir e-posta ve telefon rehberi oluşturun.'
+                    : 'Build a compliant first-party marketing database of guest emails and phone numbers for SMS & newsletters.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#ec4899', fontWeight: 600 }}>%100 KVKK & GDPR Uyumlu</span>
+              </div>
+            </div>
+
+            {/* 5. Campaigns */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#f59e0b',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Tag size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? '5. Dinamik Kampanyalar' : '5. Campaigns & Specials'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Günün tatlısı, mutlu saatler (happy hour) indirimleri veya özel promosyon kuponlarını anlık olarak masadaki ekrana yansıtın.'
+                    : 'Highlight daily desserts, happy hour discounts, or exclusive promo codes right on table mobile screens.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>Adisyon Ortalamasını Artırın</span>
+              </div>
+            </div>
+
+            {/* 6. Reviews */}
+            <div
+              className="glass-card"
+              style={{
+                padding: '1.5rem',
+                border: '1px solid rgba(251, 191, 36, 0.25)',
+                background: 'rgba(15, 23, 42, 0.65)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(251, 191, 36, 0.15)',
+                    border: '1px solid rgba(251, 191, 36, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fbbf24',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Star size={22} />
+                </div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
+                  {language === 'tr' ? '6. Müşteri Yorumları' : '6. Direct Reviews'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+                  {language === 'tr'
+                    ? 'Müşteriler işletmeden ayrılmadan anlık 1-5 yıldız puanı verir. Google / TripAdvisor itibarınızı doğrudan masadan yükseltin.'
+                    : 'Collect in-venue 1-5 star ratings and reviews before guests leave, boosting your local review rankings.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 600 }}>Google & TripAdvisor Uyumlu</span>
               </div>
             </div>
           </div>
