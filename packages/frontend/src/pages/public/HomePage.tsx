@@ -371,13 +371,12 @@ export const HomePage: React.FC = () => {
             <LanguageSelector variant="navbar" />
             <button
               type="button"
-              className="home-btn-ghost"
+              className="home-nav-support-btn"
               onClick={() => setSupportModalOpen(true)}
               aria-label={t('support.widgetBtn')}
               title={t('support.widgetBtn')}
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 38, height: 38, padding: 0, borderRadius: '50%' }}
             >
-              <Headphones size={16} />
+              <Headphones size={17} />
             </button>
             <Link to="/login" className="home-btn-ghost">
               {t('nav.login')}

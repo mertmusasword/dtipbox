@@ -57,6 +57,11 @@
   padding: 0;
 }
 
+html {
+  background-color: var(--bg-main, #090d16);
+  color-scheme: dark;
+}
+
 body {
   font-family: var(--font-family);
   background-color: var(--bg-main);
