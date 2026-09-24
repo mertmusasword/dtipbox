@@ -22,6 +22,7 @@ import { SECTOR_SOLUTIONS_EN } from '../src/content/solutions/sectors-en';
 import { SEO_TOOLS, SEO_TOOLS_EN } from '../src/content/tools/tools';
 import { TIPPING_GUIDES } from '../src/content/guides/tipping-guides';
 import { COMPARISONS } from '../src/content/comparisons/comparisons';
+import { POS_INTEGRATIONS } from '../src/content/integrations/pos-integrations';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -255,11 +256,11 @@ writeStaticRoute('', {
     { lang: 'x-default', url: 'https://www.naponi.com/' },
     { lang: 'en', url: 'https://www.naponi.com/' },
     { lang: 'tr', url: 'https://www.naponi.com/tr' },
-    { lang: 'es', url: 'https://www.naponi.com/?lang=es' },
+    { lang: 'de', url: 'https://www.naponi.com/de' },
+    { lang: 'fr', url: 'https://www.naponi.com/fr' },
+    { lang: 'es', url: 'https://www.naponi.com/es' },
     { lang: 'zh', url: 'https://www.naponi.com/?lang=zh' },
     { lang: 'ar', url: 'https://www.naponi.com/?lang=ar' },
-    { lang: 'de', url: 'https://www.naponi.com/?lang=de' },
-    { lang: 'fr', url: 'https://www.naponi.com/?lang=fr' },
     { lang: 'pt', url: 'https://www.naponi.com/?lang=pt' },
     { lang: 'id', url: 'https://www.naponi.com/?lang=id' },
     { lang: 'ja', url: 'https://www.naponi.com/?lang=ja' },
@@ -429,6 +430,9 @@ writeStaticRoute('tr', {
     { lang: 'x-default', url: 'https://www.naponi.com/' },
     { lang: 'en', url: 'https://www.naponi.com/' },
     { lang: 'tr', url: 'https://www.naponi.com/tr' },
+    { lang: 'de', url: 'https://www.naponi.com/de' },
+    { lang: 'fr', url: 'https://www.naponi.com/fr' },
+    { lang: 'es', url: 'https://www.naponi.com/es' },
   ],
   jsonLd: [
     {
@@ -453,6 +457,255 @@ writeStaticRoute('tr', {
     },
   ],
   contentHtml: homepageSemanticContentTr,
+});
+
+// =============================================================================
+// 0C. PRE-RENDER GERMAN HOMEPAGE (dist/de/index.html)
+// =============================================================================
+const homepageSemanticContentDe = `
+  <main class="home-wrapper" lang="de">
+    <header class="home-nav-wrapper">
+      <nav class="home-nav" aria-label="Hauptnavigation">
+        <a href="/de" class="home-nav-brand">
+          <img src="/naponi-brand.svg" alt="Naponi Digitales Trinkgeld" style="height: 40px; width: auto;" />
+        </a>
+        <div class="home-nav-links">
+          <a href="/solutions/restaurants" class="home-nav-link">Restaurants</a>
+          <a href="/solutions/hotels" class="home-nav-link">Hotels</a>
+          <a href="/solutions/cafes" class="home-nav-link">Cafés</a>
+          <a href="/tools/tip-calculator" class="home-nav-link">Trinkgeld-Rechner</a>
+          <a href="/blog" class="home-nav-link">Ratgeber</a>
+          <a href="/login" class="home-btn-ghost">Anmelden</a>
+          <a href="/register" class="home-btn-primary">Jetzt starten</a>
+        </div>
+      </nav>
+    </header>
+
+    <section class="home-hero-section" style="padding-top: 6rem; padding-bottom: 4rem; text-align: center;">
+      <div class="home-container">
+        <span class="home-section-tag">Direktes QR-Code Trinkgeldsystem</span>
+        <h1 class="home-hero-title" style="font-size: 3rem; max-width: 900px; margin: 1rem auto;">
+          Digitales Trinkgeld per QR-Code für die moderne Gastronomie & Hotellerie
+        </h1>
+        <p class="home-hero-desc" style="font-size: 1.2rem; max-width: 760px; margin: 1rem auto 2rem; color: #94a3b8;">
+          100% steuerfrei nach § 3 Nr. 51 EStG. Gäste geben in 6 Sekunden Trinkgeld via Apple Pay & Google Pay direkt an das Servicepersonal. Ohne App-Download, ohne Registrierung, direkt auf das Bankkonto.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/register" class="home-btn-primary home-btn-hero-large">Kostenloses Geschäftskonto eröffnen &rarr;</a>
+          <a href="/tools/tip-calculator" class="home-btn-secondary">Trinkgeld-Rechner</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section">
+      <div class="home-container">
+        <div class="home-section-header">
+          <span class="home-section-tag">Branchenlösungen</span>
+          <h2 class="home-section-title">Maßgeschneidert für jeden Gastronomiebereich</h2>
+          <p class="home-section-desc">Von Restauranttischen bis zum Zimmerservice – kontaktlose Trinkgeldabläufe für höchste Mitarbeiterzufriedenheit.</p>
+        </div>
+        <div class="home-features-grid">
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/restaurants">Restaurants & Gaststätten</a></h3>
+            <p class="home-feature-desc">Tischaufsteller für sekundenschnelles Trinkgeld per Smartphone, ohne Kassenverbindung oder Kartengebührenabzug.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/cafes">Cafés & Röstereien</a></h3>
+            <p class="home-feature-desc">Digitale Trinkgelddose am Tresen. Schnelle Wertschätzung für Baristas ohne lästiges Kleingeldsuchen.</p>
+          </article>
+          <article class="home-feature-card">
+            <h3 class="home-feature-title"><a href="/solutions/hotels">Hotels & Resorts</a></h3>
+            <p class="home-feature-desc">Zimmeraufsteller für Housekeeping und Bellboys mit Unterstützung internationaler Währungen für ausländische Gäste.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="home-footer">
+      <div class="home-container">
+        <p>© ${new Date().getFullYear()} NAPONI Technologies. Direktes QR-Code Trinkgeldsystem für Gastronomie und Hotellerie.</p>
+      </div>
+    </footer>
+  </main>
+`;
+
+writeStaticRoute('de', {
+  title: 'Naponi — Digitales Trinkgeld per QR-Code für Gastronomie & Hotellerie',
+  description: 'Kontaktloses, bargeldloses QR-Trinkgeld für Servicekräfte, Kellner und Hotelteams. 100% steuerfrei nach § 3 Nr. 51 EStG. Keine App erforderlich.',
+  canonicalUrl: 'https://www.naponi.com/de',
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/' },
+    { lang: 'en', url: 'https://www.naponi.com/' },
+    { lang: 'tr', url: 'https://www.naponi.com/tr' },
+    { lang: 'de', url: 'https://www.naponi.com/de' },
+    { lang: 'fr', url: 'https://www.naponi.com/fr' },
+    { lang: 'es', url: 'https://www.naponi.com/es' },
+  ],
+  jsonLd: [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.naponi.com/#organization',
+      name: 'Naponi',
+      url: 'https://www.naponi.com',
+      logo: 'https://www.naponi.com/logo.png',
+      description: 'Digitales Trinkgeld per QR-Code für Restaurants und Hotels in Deutschland, Österreich und der Schweiz.',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Naponi Digitales Trinkgeld',
+      operatingSystem: 'All (Web-Browser)',
+      applicationCategory: 'BusinessApplication',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR',
+      },
+      description: 'Direktes QR-basiertes digitales Trinkgeldsystem für Gastronomie- und Serviceteams.',
+    },
+  ],
+  contentHtml: homepageSemanticContentDe,
+});
+
+// =============================================================================
+// 0D. PRE-RENDER FRENCH HOMEPAGE (dist/fr/index.html)
+// =============================================================================
+const homepageSemanticContentFr = `
+  <main class="home-wrapper" lang="fr">
+    <header class="home-nav-wrapper">
+      <nav class="home-nav" aria-label="Navigation principale">
+        <a href="/fr" class="home-nav-brand">
+          <img src="/naponi-brand.svg" alt="Naponi Pourboire Numérique" style="height: 40px; width: auto;" />
+        </a>
+        <div class="home-nav-links">
+          <a href="/solutions/restaurants" class="home-nav-link">Restaurants</a>
+          <a href="/solutions/hotels" class="home-nav-link">Hôtels</a>
+          <a href="/solutions/cafes" class="home-nav-link">Cafés</a>
+          <a href="/tools/tip-calculator" class="home-nav-link">Calculateur</a>
+          <a href="/blog" class="home-nav-link">Blog</a>
+          <a href="/login" class="home-btn-ghost">Connexion</a>
+          <a href="/register" class="home-btn-primary">Commencer</a>
+        </div>
+      </nav>
+    </header>
+
+    <section class="home-hero-section" style="padding-top: 6rem; padding-bottom: 4rem; text-align: center;">
+      <div class="home-container">
+        <span class="home-section-tag">Plateforme de Pourboire Numérique QR</span>
+        <h1 class="home-hero-title" style="font-size: 3rem; max-width: 900px; margin: 1rem auto;">
+          Pourboire Dématérialisé par QR Code pour la Restauration & l'Hôtellerie
+        </h1>
+        <p class="home-hero-desc" style="font-size: 1.2rem; max-width: 760px; margin: 1rem auto 2rem; color: #94a3b8;">
+          Permettez à vos clients de récompenser vos serveurs en 6 secondes via Apple Pay et Google Pay. Sans téléchargement d'application, versement direct sur compte bancaire.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/register" class="home-btn-primary home-btn-hero-large">Créer un Compte Établissement Gratuit &rarr;</a>
+          <a href="/tools/tip-calculator" class="home-btn-secondary">Calculateur de Pourboire</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="home-footer">
+      <div class="home-container">
+        <p>© ${new Date().getFullYear()} NAPONI Technologies. Plateforme de Pourboire Numérique QR.</p>
+      </div>
+    </footer>
+  </main>
+`;
+
+writeStaticRoute('fr', {
+  title: 'Naponi — Pourboire Dématérialisé par QR Code pour Restaurants & Hôtels',
+  description: 'Solution de pourboire sans contact par QR Code pour serveurs et équipes hôtelières. Compatible Apple Pay et cartes bancaires. Sans application.',
+  canonicalUrl: 'https://www.naponi.com/fr',
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/' },
+    { lang: 'en', url: 'https://www.naponi.com/' },
+    { lang: 'tr', url: 'https://www.naponi.com/tr' },
+    { lang: 'de', url: 'https://www.naponi.com/de' },
+    { lang: 'fr', url: 'https://www.naponi.com/fr' },
+    { lang: 'es', url: 'https://www.naponi.com/es' },
+  ],
+  jsonLd: [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.naponi.com/#organization',
+      name: 'Naponi',
+      url: 'https://www.naponi.com',
+      logo: 'https://www.naponi.com/logo.png',
+      description: 'Plateforme de pourboire numérique sans contact pour restaurants et hôtels.',
+    },
+  ],
+  contentHtml: homepageSemanticContentFr,
+});
+
+// =============================================================================
+// 0E. PRE-RENDER SPANISH HOMEPAGE (dist/es/index.html)
+// =============================================================================
+const homepageSemanticContentEs = `
+  <main class="home-wrapper" lang="es">
+    <header class="home-nav-wrapper">
+      <nav class="home-nav" aria-label="Navegación principal">
+        <a href="/es" class="home-nav-brand">
+          <img src="/naponi-brand.svg" alt="Naponi Propinas Digitales" style="height: 40px; width: auto;" />
+        </a>
+        <div class="home-nav-links">
+          <a href="/solutions/restaurants" class="home-nav-link">Restaurantes</a>
+          <a href="/solutions/hotels" class="home-nav-link">Hoteles</a>
+          <a href="/solutions/cafes" class="home-nav-link">Cafeterías</a>
+          <a href="/tools/tip-calculator" class="home-nav-link">Calculadora</a>
+          <a href="/blog" class="home-nav-link">Blog</a>
+          <a href="/login" class="home-btn-ghost">Iniciar sesión</a>
+          <a href="/register" class="home-btn-primary">Empezar gratis</a>
+        </div>
+      </nav>
+    </header>
+
+    <section class="home-hero-section" style="padding-top: 6rem; padding-bottom: 4rem; text-align: center;">
+      <div class="home-container">
+        <span class="home-section-tag">Plataforma de Propinas Digitales por Código QR</span>
+        <h1 class="home-hero-title" style="font-size: 3rem; max-width: 900px; margin: 1rem auto;">
+          Propinas Digitales por Código QR para Restaurantes y Hoteles
+        </h1>
+        <p class="home-hero-desc" style="font-size: 1.2rem; max-width: 760px; margin: 1rem auto 2rem; color: #94a3b8;">
+          Permita que sus clientes dejen propina a camareros y personal en 6 segundos con Apple Pay y Google Pay. Sin descargar apps, liquidación directa en cuenta bancaria.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/register" class="home-btn-primary home-btn-hero-large">Crear Cuenta de Negocio Gratis &rarr;</a>
+          <a href="/tools/tip-calculator" class="home-btn-secondary">Calculadora de Propinas</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="home-footer">
+      <div class="home-container">
+        <p>© ${new Date().getFullYear()} NAPONI Technologies. Plataforma de Propinas Digitales por Código QR.</p>
+      </div>
+    </footer>
+  </main>
+`;
+
+writeStaticRoute('es', {
+  title: 'Naponi — Propinas Digitales por Código QR para Restaurantes y Hoteles',
+  description: 'Sistema de propinas contactless por código QR para camareros y equipos de hostelería. Pago directo con Apple Pay y tarjetas bancarias sin app.',
+  canonicalUrl: 'https://www.naponi.com/es',
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/' },
+    { lang: 'en', url: 'https://www.naponi.com/' },
+    { lang: 'tr', url: 'https://www.naponi.com/tr' },
+    { lang: 'de', url: 'https://www.naponi.com/de' },
+    { lang: 'fr', url: 'https://www.naponi.com/fr' },
+    { lang: 'es', url: 'https://www.naponi.com/es' },
+  ],
+  jsonLd: [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.naponi.com/#organization',
+      name: 'Naponi',
+      url: 'https://www.naponi.com',
+      logo: 'https://www.naponi.com/logo.png',
+      description: 'Plataforma de propinas digitales contactless para hostelería.',
+    },
+  ],
+  contentHtml: homepageSemanticContentEs,
 });
 
 // =============================================================================
@@ -1073,7 +1326,105 @@ writeStaticRoute('technology-partners', {
 });
 
 // =============================================================================
+// 4F. PRE-RENDER B2B POS COMPANIONS (TOAST, SQUARE, CLOVER, LIGHTSPEED)
+// =============================================================================
+console.log('[SEO-GEN] Pre-rendering B2B POS Companions...');
+
+POS_INTEGRATIONS.forEach((pos) => {
+  const canonicalUrl = `https://www.naponi.com/integrations/${pos.slug}`;
+  const jsonLd: any[] = [
+    {
+      '@type': 'SoftwareApplication',
+      name: `Naponi ${pos.posName} Companion`,
+      operatingSystem: 'All (Mobile Web)',
+      applicationCategory: 'BusinessApplication',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      description: pos.metaDescription.en,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: pos.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.question.en,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.answer.en,
+        },
+      })),
+    },
+  ];
+
+  const contentHtml = `
+    <main class="home-wrapper" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <div class="home-container" style="max-width: 900px; margin: 0 auto;">
+        <span class="home-section-tag">${pos.logoBadge}</span>
+        <h1 class="home-hero-title">${pos.heroHeadline.en}</h1>
+        <p class="home-hero-desc">${pos.heroSubheadline.en}</p>
+        <section style="margin: 3rem 0;">
+          <h2>${pos.whyCombineTitle.en}</h2>
+          <p>${pos.whyCombineDescription.en}</p>
+          <div style="margin-top: 2rem;">
+            ${pos.keyBenefits.map(b => `
+              <div style="margin-bottom: 1.5rem;">
+                <h3>${b.title.en}</h3>
+                <p>${b.description.en}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+        <div style="text-align: center; margin: 3rem 0;">
+          <a href="/register" class="home-btn-primary">Set Up Naponi for ${pos.posName} Free &rarr;</a>
+        </div>
+      </div>
+    </main>
+  `;
+
+  writeStaticRoute(`integrations/${pos.slug}`, {
+    title: pos.metaTitle.en,
+    description: pos.metaDescription.en,
+    canonicalUrl,
+    keywords: pos.keywords,
+    jsonLd,
+    contentHtml,
+  });
+});
+
+// =============================================================================
+// 4G. PRE-RENDER TRUST & SECURITY CENTER
+// =============================================================================
+writeStaticRoute('trust', {
+  title: 'Trust & Security Center — Non-Custodial Architecture & Compliance | Naponi',
+  description: 'Explore Naponi’s non-custodial architecture, PCI-DSS Level 1 tokenized processing, GDPR compliance, and SHA-256 cryptographic audit trails.',
+  canonicalUrl: 'https://www.naponi.com/trust',
+  keywords: ['naponi trust center', 'non-custodial tipping', 'pci dss level 1 digital tipping', 'gdpr compliant qr tipping'],
+  contentHtml: `
+    <main class="home-wrapper" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <div class="home-container" style="max-width: 850px; margin: 0 auto; text-align: center;">
+        <span class="home-section-tag">Enterprise Trust & Security</span>
+        <h1 class="home-hero-title">Engineered for Zero-Custody Security and Global Compliance</h1>
+        <p class="home-hero-desc">Naponi separates guest engagement from fund custody. Tips settle directly into verified staff and merchant bank accounts.</p>
+        <div style="margin: 3rem 0; text-align: left;">
+          <h2>Core Security Tenets</h2>
+          <ul>
+            <li><strong>Non-Custodial Architecture:</strong> Zero proprietary wallet custody or escrow risk.</li>
+            <li><strong>PCI-DSS Level 1 Tokenization:</strong> PAN and CVV data routed directly to certified gateways.</li>
+            <li><strong>GDPR & KVKK Compliance:</strong> Privacy by design with strict data minimization.</li>
+            <li><strong>SHA-256 Cryptographic Audits:</strong> Digital contracts sealed with immutable hashes.</li>
+          </ul>
+        </div>
+        <a href="/register" class="home-btn-primary">Open Verified Merchant Account &rarr;</a>
+      </div>
+    </main>
+  `,
+});
+
+// =============================================================================
 // 5. DYNAMIC SITEMAP GENERATION WITH COMPLETE GLOBAL HREFLANG
+
 // =============================================================================
 function generateDynamicSitemap() {
   const today = new Date().toISOString().split('T')[0];
@@ -1154,27 +1505,78 @@ ${TIPPING_GUIDES.map(
   </url>`
   ).join('\n');
 
+  const posUrls = POS_INTEGRATIONS.map((pos) => `  <url>
+    <loc>https://www.naponi.com/integrations/${pos.slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.93</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/integrations/${pos.slug}" />
+  </url>`).join('\n');
+
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
-  <!-- 1. Homepage -->
+  <!-- 1. Multilingual Homepage Regional Endpoints -->
   <url>
     <loc>https://www.naponi.com/</loc>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/?lang=tr" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://www.naponi.com/?lang=es" />
-    <xhtml:link rel="alternate" hreflang="zh" href="https://www.naponi.com/?lang=zh" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://www.naponi.com/?lang=ar" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/?lang=de" />
-    <xhtml:link rel="alternate" hreflang="fr" href="https://www.naponi.com/?lang=fr" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.naponi.com/?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="id" href="https://www.naponi.com/?lang=id" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://www.naponi.com/?lang=ja" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/tr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.naponi.com/fr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.naponi.com/es" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/tr</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/tr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.naponi.com/fr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.naponi.com/es" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/de</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/tr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.naponi.com/fr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.naponi.com/es" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/fr</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/tr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.naponi.com/fr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.naponi.com/es" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/es</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/tr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.naponi.com/fr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.naponi.com/es" />
   </url>
 
   <!-- 2. Blog Hub -->
@@ -1222,6 +1624,18 @@ ${comparisonUrls}
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/technology-partners" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/technology-partners" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/technology-partners" />
+  </url>
+
+  <!-- 7D. B2B POS Ecosystem Companions (${POS_INTEGRATIONS.length} platforms) -->
+${posUrls}
+
+  <!-- 7E. Trust & Security Center -->
+  <url>
+    <loc>https://www.naponi.com/trust</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/trust" />
   </url>
 
   <!-- 8. Business Registration & Authentication -->

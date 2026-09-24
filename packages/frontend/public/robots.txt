@@ -13,6 +13,8 @@ Allow: /solutions/
 Allow: /tools/
 Allow: /guides/
 Allow: /compare/
+Allow: /integrations/
+Allow: /trust
 Allow: /catalog
 Allow: /technology-partners
 Allow: /llms.txt

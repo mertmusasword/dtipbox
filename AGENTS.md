@@ -148,20 +148,22 @@ d-tipbox (Monorepo)
 * Access is provided via **Footer** ("Blog") and Homepage Section 10B ("Son Yazılar" / "Recent Articles").
 * On `/blog`, visitors can toggle between `🇹🇷 Türkçe (15)` and `🇬🇧 English (15)` with instant category re-filtering.
 
-### 4.4. Sector Solutions & SEO Tools
+### 4.4. Sector Solutions, Tools & B2B POS Companions
 * **6 Sector Landing Pages:** `/solutions/restaurants`, `/solutions/cafes`, `/solutions/hotels`, `/solutions/bars`, `/solutions/barbers`, `/solutions/valet`.
-  * **Bilingual Support:** Full English content (`sectors-en.ts`) and Turkish content (`sectors.ts`).
-  * `SolutionPage.tsx` dynamically switches copy, breadcrumbs, workflows, and FAQs based on `useLanguage()`.
-  * Bidirectional hreflang meta tags (`tr`, `en`, `x-default`) on every sector route.
-* **4 Free Interactive Calculators & Tools:**
-  * `/tools/tip-calculator`
-  * `/tools/tip-split-calculator`
-  * `/tools/restaurant-tip-pool-calculator`
-  * `/tools/free-hospitality-qr-generator`
-  * Multi-currency support, bilingual UI & FAQ, and full pre-rendering.
+* **4 Free Interactive Calculators & Tools:** `/tools/tip-calculator`, `/tools/tip-split-calculator`, `/tools/restaurant-tip-pool-calculator`, `/tools/free-hospitality-qr-generator`.
+* **4 B2B POS Ecosystem Companions:** `/integrations/toast-pos-smart-qr`, `/integrations/square-pos-digital-tipping`, `/integrations/clover-pos-qr-hospitality`, `/integrations/lightspeed-pos-smart-qr`.
+* **4 High-Intent B2B Comparisons:** `/compare/card-machine-vs-qr-tipping`, `/compare/best-cashless-tipping-systems`, `/compare/naponi-vs-sunday-app`, `/compare/naponi-vs-tiptap`.
+* **Enterprise Trust & Security Center:** `/trust` (aliases: `/security`, `/guvenlik`) highlighting non-custodial architecture, PCI-DSS Level 1 tokenization, GDPR, and SHA-256 cryptographic audit logs.
+* **33 Total Live Blog Articles:** Includes high-impact US & EU regulatory and compliance guides (`us-restaurant-tip-regulations-flsa-irs-compliance`, `uk-employment-allocation-of-tips-act-tronc-compliance`, `german-tax-free-tips-gastronomie-estg-guide`).
 * **Global Tipping Guides (10 Countries):** `/guides/tipping-in-[country]` with pre-rendered SEO and hreflang tags.
-* **Root Homepage Pre-Rendering:**
-  * `dist/index.html` is pre-rendered with semantic HTML ensuring crawlers index complete text even without executing JS.
+* **Root Homepage & Subfolder Pre-Rendering:**
+  * `dist/index.html` (EN default root), `dist/tr/index.html` (TR), `dist/de/index.html` (DE), `dist/fr/index.html` (FR), and `dist/es/index.html` (ES) are statically pre-rendered with fully localized semantic HTML, OpenGraph tags, JSON-LD schemas, and reciprocal hreflangs.
+  * Ensures search engine crawlers from USA, UK, Germany, France, and Spain index rich localized content immediately without JavaScript evaluation.
+
+### 4.5. Edge Caching & CDN Strategy (Cloudflare on Railway)
+* **Static Assets (`/assets/*`, `*.js`, `*.css`, images, fonts):** Cache-Control `public, max-age=31536000, immutable` (Cloudflare Cache Everything, 1-month TTL).
+* **HTML Pages (`/`, `/tr`, `/de`, `/fr`, `/es`, `/blog/*`, `/solutions/*`, `/guides/*`, `/compare/*`, `/integrations/*`, `/trust`):** Edge TTL 2 hours with `stale-while-revalidate=86400`.
+* **Dynamic & Protected Routes (`/api/*`, `/tip/*`, `/business/*`, `/employee/*`, `/admin/*`):** Bypass Cache (Proxy only, SSL/TLS strict, WebSockets enabled).
 
 ---
 
@@ -181,6 +183,8 @@ d-tipbox (Monorepo)
   * `/tools/*`
   * `/guides/*`
   * `/compare/*`
+  * `/integrations/*`
+  * `/trust`
   * `/catalog`
   * `/sitemap.xml`
 

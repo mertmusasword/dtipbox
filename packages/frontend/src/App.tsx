@@ -25,6 +25,9 @@ const TippingGuidesHubPage = React.lazy(() => import('./pages/public/guides/Tipp
 const TippingGuideDetailPage = React.lazy(() => import('./pages/public/guides/TippingGuideDetailPage').then((m) => ({ default: m.TippingGuideDetailPage })));
 const ComparisonDetailPage = React.lazy(() => import('./pages/public/comparisons/ComparisonDetailPage').then((m) => ({ default: m.ComparisonDetailPage })));
 const NaponiCatalogPage = React.lazy(() => import('./pages/public/NaponiCatalogPage').then((m) => ({ default: m.NaponiCatalogPage })));
+const PosIntegrationDetailPage = React.lazy(() => import('./pages/public/integrations/PosIntegrationDetailPage').then((m) => ({ default: m.PosIntegrationDetailPage })));
+const TrustCenterPage = React.lazy(() => import('./pages/public/TrustCenterPage').then((m) => ({ default: m.TrustCenterPage })));
+
 
 // Loyalty Public Pages
 const CustomerEnrollPage = React.lazy(() => import('./pages/public/loyalty/CustomerEnrollPage').then((m) => ({ default: m.CustomerEnrollPage })));
@@ -149,9 +152,12 @@ export const App: React.FC = () => {
             <ErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  {/* Public Landing & Showcase */}
-                <Route path="/" element={<HomePage />} />
-                <Route path="/tr" element={<HomePage />} />
+                  {/* Public Landing & Showcase (Multilingual Subfolder Routing) */}
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/tr" element={<HomePage />} />
+                  <Route path="/de" element={<HomePage />} />
+                  <Route path="/fr" element={<HomePage />} />
+                  <Route path="/es" element={<HomePage />} />
 
                 {/* Public Blog & Content Hub */}
                 <Route path="/blog" element={<BlogIndexPage />} />
@@ -183,6 +189,14 @@ export const App: React.FC = () => {
                 {/* Public B2B Technology Partners Channel */}
                 <Route path="/technology-partners" element={<TechnologyPartnersPage />} />
                 <Route path="/teknoloji-partnerleri" element={<Navigate to="/technology-partners" replace />} />
+
+                {/* Public B2B POS Integrations */}
+                <Route path="/integrations/:slug" element={<PosIntegrationDetailPage />} />
+
+                {/* Public Trust & Compliance Center */}
+                <Route path="/trust" element={<TrustCenterPage />} />
+                <Route path="/security" element={<TrustCenterPage />} />
+                <Route path="/guvenlik" element={<Navigate to="/trust" replace />} />
 
                 {/* Public Customer Tip & Menu Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />

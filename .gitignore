@@ -38,3 +38,7 @@ packages/backend/prisma/*.db
 
 # Docker volumes
 pgdata/
+
+# Previews
+*-preview.html
+

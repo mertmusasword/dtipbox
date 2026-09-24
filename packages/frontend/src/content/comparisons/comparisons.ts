@@ -253,5 +253,164 @@ export const COMPARISONS: ComparisonItem[] = [
       },
       keywords: ['dijital bahşiş sistemleri', 'temassız bahşiş', 'en iyi bahşiş uygulaması', 'best cashless tipping systems', 'qr tipping comparison']
     }
+  },
+  {
+    slug: 'naponi-vs-sunday-app',
+    shortTitle: { tr: 'Naponi vs Sunday', en: 'Naponi vs Sunday' },
+    badge: { tr: 'Global Rakip Analizi', en: 'Competitor Benchmark' },
+    title: {
+      tr: 'Naponi vs Sunday App: Restoran Masabaşı QR Ödeme ve Bahşiş Karşılaştırması',
+      en: 'Naponi vs Sunday App: Hospitality QR Payment & Tipping Comparison (2026)'
+    },
+    subtitle: {
+      tr: 'Masa hesabı ödeme, komisyon kesintileri, donanım gereksinimleri ve POS entegrasyon bağımlılığı açısından detaylı kıyaslama.',
+      en: 'A deep-dive operational breakdown of transaction take-rates, POS lock-in, table turnover, and staff tip retention.'
+    },
+    heroSummary: {
+      tr: 'Sunday App tüm adisyon ödemesini kendi sistemine çekip yüksek işlem komisyonu keserken, Naponi restoranın mevcut POS sistemine dokunmadan saf misafir deneyimi, bahşiş ve yorum katmanı olarak %0 komisyon (MVP) ile çalışır.',
+      en: 'While Sunday App requires restaurants to route the entire check through their proprietary payment flow (taking a higher transaction cut), Naponi serves as a lightweight, zero-commission guest experience layer that complements your existing POS without disrupting checkout economics.'
+    },
+    targetAudience: {
+      tr: 'Restoran ve otel işletmecileri, F&B yöneticileri, genel müdürler.',
+      en: 'Restaurant operators, hospitality directors, and general managers evaluating QR platforms.'
+    },
+    quickVerdict: {
+      tr: 'Mevcut POS ve banka oranlarınızı değiştirmeden yalnızca masabaşı bahşiş, yorum ve misafir sadakatini büyütmek istiyorsanız Naponi çok daha esnek ve karlı bir alternatiftir.',
+      en: 'If you want to keep your existing POS contract, bank interchange rates, and kitchen workflows while supercharging staff tips and Google reviews, Naponi is the clear, cost-effective winner.'
+    },
+    comparisonTable: {
+      headers: {
+        feature: { tr: 'Özellik', en: 'Core Capability' },
+        optionA: { tr: 'Sunday App', en: 'Sunday App' },
+        optionB: { tr: 'Naponi', en: 'Naponi' },
+        naponiAdvantage: { tr: 'Naponi Avantajı', en: 'The Naponi Advantage' }
+      },
+      rows: [
+        {
+          feature: { tr: 'İş Modeli & Komisyon', en: 'Business Model & Fees' },
+          optionA: { tr: 'Her adisyon üzerinden %1.5 - %2.5+ işlem komisyonu.', highlight: 'bad', en: '1.5% - 2.5%+ transaction fee on full check amount.' },
+          optionB: { tr: 'Doğrudan personele pass-through, %0 işletme komisyonu (MVP).', highlight: 'good', en: '0% platform fee for MVP, direct staff settlement.' },
+          verdict: { tr: 'Restoranın kar marjını korur.', en: 'Protects restaurant margin from hefty tech surcharges.' }
+        },
+        {
+          feature: { tr: 'POS Bağımlılığı', en: 'POS Dependency' },
+          optionA: { tr: 'Sadece desteklenen sınırlı POS sistemleriyle çalışır.', highlight: 'neutral', en: 'Requires deep bidirectional API integration with specific POS systems.' },
+          optionB: { tr: 'Tüm POS sistemleri (Toast, Square, Clover vb.) ile eşlikçi katman.', highlight: 'good', en: 'Universal companion layer compatible alongside ANY POS system.' },
+          verdict: { tr: 'Sıfır entegrasyon bekleme süresi, anında canlıya alma.', en: 'Zero technical onboarding delays; deploy in 2 minutes.' }
+        },
+        {
+          feature: { tr: 'Bahşiş Emaneti (Custody)', en: 'Fund Custody' },
+          optionA: { tr: 'Fonlar aracı hesaplarda toplanır ve periyodik ödenir.', highlight: 'neutral', en: 'Escrowed and held before batched merchant payouts.' },
+          optionB: { tr: 'Emanetsiz (Non-custodial) doğrudan personele aktarım.', highlight: 'good', en: 'Non-custodial: tips transfer straight to staff bank accounts.' },
+          verdict: { tr: 'Muhasebe ve vergi riski sıfırdır.', en: 'Zero reconciliation disputes or tax mingling.' }
+        }
+      ]
+    },
+    deepDiveSections: [
+      {
+        title: { tr: 'Neden Tüm Adisyonu Değil de Bahşiş ve Yorumu Ayırmalısınız?', en: 'Why Separating Tips and Reviews from the Core Check is Smarter' },
+        content: {
+          tr: 'Bir restoranda tüm yemek tutarını yeni bir QR platformuna yönlendirmek mutfak yazıcıları, iadeler ve banka mutabakatlarında aksaklıklara yol açabilir. Naponi ana adisyonu mevcut POS’unuzda tutarken bahşişi ve yorumları bağımsız bir akışta çözerek operasyonel riski sıfırlar.',
+          en: 'Forcing your entire ticket revenue through a third-party QR provider creates single-point-of-failure risks for kitchen printing, voids, and end-of-day bank reconciliations. Naponi isolates the guest experience without endangering your core billing.'
+        }
+      }
+    ],
+    faqs: [
+      {
+        question: { tr: 'Naponi, Sunday App gibi adisyon bölmeyi (Split bill) destekler mi?', en: 'Does Naponi support bill splitting like Sunday App?' },
+        answer: {
+          tr: 'Evet. Masadaki misafirler diledikleri oranda veya kişi başı bahşiş tutarını bölüşebilirler.',
+          en: 'Yes. Guests can calculate individual share splits or pool gratuity with multiple mobile payment methods.'
+        }
+      }
+    ],
+    meta: {
+      title: {
+        tr: 'Naponi vs Sunday App: Restoran Masabaşı QR Bahşiş Karşılaştırması (2026)',
+        en: 'Naponi vs Sunday App: 2026 Hospitality QR Tipping Comparison'
+      },
+      description: {
+        tr: 'Sunday App ve Naponi özelliklerini, komisyon oranlarını ve POS uyumluluğunu karşılaştırın. Hangisi restoranınız için daha avantajlı?',
+        en: 'Compare Naponi and Sunday App for restaurant QR tipping, table turnover, POS integration, and commission costs.'
+      },
+      keywords: ['naponi vs sunday app', 'sunday app alternatives', 'restaurant qr payment comparison', 'digital tipping platforms']
+    }
+  },
+  {
+    slug: 'naponi-vs-tiptap',
+    shortTitle: { tr: 'Naponi vs Tiptap', en: 'Naponi vs Tiptap' },
+    badge: { tr: 'Donanım vs Yazılım', en: 'Hardware vs Software' },
+    title: {
+      tr: 'Naponi vs Tiptap: Fiziksel Donanım vs Akıllı QR Bahşiş Çözümü',
+      en: 'Naponi vs Tiptap: Standalone Hardware Terminals vs Smart QR Tipping'
+    },
+    subtitle: {
+      tr: 'Sabit temassız kart donanımı ile akıllı telefon tabanlı QR sistemlerinin maliyet, esneklik ve personel motivasyonu analizi.',
+      en: 'Comparing fixed contactless tap-to-pay devices against dynamic mobile camera QR codes for hospitality and events.'
+    },
+    heroSummary: {
+      tr: 'Tiptap sabit kart okuyucu cihazları (aylık kira ve donanım maliyeti ile) masaya veya duvara monte ederken, Naponi misafirin kendi telefonunu kullanarak $0 donanım maliyetiyle çoklu para birimi ve anında Google yorumu sunar.',
+      en: 'Tiptap requires deploying physical standalone battery-powered NFC tap pucks (with recurring hardware leases and cellular costs). Naponi turns any tabletop into a dynamic smart portal using the guest’s own smartphone with zero device maintenance.'
+    },
+    targetAudience: {
+      tr: 'Oteller, valeler, barlar, kafeler ve etkinlik mekanları.',
+      en: 'Hotels, valet stands, bars, cafes, and charity events.'
+    },
+    quickVerdict: {
+      tr: 'Şarj etme, cihaz çalınması ve donanım kirası derdi olmadan hızlıca ölçeklenmek isteyen işletmeler için Naponi tartışmasız daha sürdürülebilirdir.',
+      en: 'For venues seeking instant deployment without charging devices, hardware loss risks, or recurring leasing fees, Naponi is the premier cloud-native choice.'
+    },
+    comparisonTable: {
+      headers: {
+        feature: { tr: 'Kriter', en: 'Evaluation Metric' },
+        optionA: { tr: 'Tiptap (Fiziksel Cihaz)', en: 'Tiptap (Hardware Puck)' },
+        optionB: { tr: 'Naponi (Akıllı QR)', en: 'Naponi (Smart QR)' },
+        naponiAdvantage: { tr: 'Naponi Avantajı', en: 'The Naponi Advantage' }
+      },
+      rows: [
+        {
+          feature: { tr: 'Donanım & Başlangıç Maliyeti', en: 'Hardware & Upfront Cost' },
+          optionA: { tr: 'Cihaz başı satın alma veya aylık kiralama ücreti.', highlight: 'bad', en: 'Upfront device purchase and ongoing monthly unit leases.' },
+          optionB: { tr: '$0 Donanım. Şık pleksi veya ahşap stantlar.', highlight: 'good', en: '$0 Hardware. Elegant acrylic plaques or check presenters.' },
+          verdict: { tr: 'Sıfır donanım amortismanı.', en: 'Zero equipment maintenance or battery degradation.' }
+        },
+        {
+          feature: { tr: 'Google Haritalar Yorumu', en: 'Google Maps Review Prompt' },
+          optionA: { tr: 'Desteklenmiyor (Ekranı yok, sadece kart okur).', highlight: 'bad', en: 'Not supported (No interactive display for review prompts).' },
+          optionB: { tr: 'Bahşiş anında 5 yıldızlı yorum yönlendirmesi.', highlight: 'good', en: 'Automated post-tip 5-star Google review capture.' },
+          verdict: { tr: 'Yorum sayısını katlar.', en: 'Turns every tip into real local SEO authority.' }
+        }
+      ]
+    },
+    deepDiveSections: [
+      {
+        title: { tr: 'Neden Fiziksel Bahşiş Donanımları Yerini Akıllı QR’a Bırakıyor?', en: 'Why Standalone Tipping Hardware is Giving Way to Smart QR' },
+        content: {
+          tr: 'Masa üzerinde duran elektronik cihazların bataryasını her gece şarj etmek, çalınma riskini yönetmek ve arızalanan terminalleri servise göndermek restoranlar için ek bir operasyonel yüktür. Akıllı QR kodlar ise su geçirmez, kırılmaz ve asla şarj istemez.',
+          en: 'Managing nightly recharging cycles, theft prevention, and hardware firmware updates drains staff energy. High-durability tabletop QR plaques require zero charging, zero cellular contracts, and zero maintenance.'
+        }
+      }
+    ],
+    faqs: [
+      {
+        question: { tr: 'Turistler internet olmadan QR okutabilir mi?', en: 'Can international tourists use QR without cellular data?' },
+        answer: {
+          tr: 'Naponi QR kodları tek tıkla işletmenizin misafir Wi-Fi ağına bağlanma özelliği sunar; böylece yabancı turistler veri dolaşımı (roaming) olmadan saniyeler içinde bağlanıp bahşiş verebilir.',
+          en: 'Yes. Naponi QR plaques feature one-tap guest Wi-Fi connection, allowing international travelers without roaming data to connect and tip in seconds.'
+        }
+      }
+    ],
+    meta: {
+      title: {
+        tr: 'Naponi vs Tiptap: Donanımlı Bahşiş Cihazı vs Akıllı QR Karşılaştırması',
+        en: 'Naponi vs Tiptap: Standalone Hardware vs Smart QR Tipping (2026)'
+      },
+      description: {
+        tr: 'Tiptap fiziksel temassız cihazları ile Naponi akıllı QR kod sistemini karşılaştırdık. Donanım maliyetleri, Google yorum özellikleri ve operasyonel esneklik.',
+        en: 'Compare Tiptap hardware terminals with Naponi smart QR tipping. Evaluate hardware expenses, battery maintenance, review capture, and tourist ease.'
+      },
+      keywords: ['naponi vs tiptap', 'tiptap alternatives', 'contactless tipping hardware vs qr', 'digital tip devices']
+    }
   }
 ];
+

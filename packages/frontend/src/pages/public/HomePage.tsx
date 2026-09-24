@@ -3363,6 +3363,8 @@ export const HomePage: React.FC = () => {
                 <li><a href="#experience">{t('nav.solutions')}</a></li>
                 <li><Link to="/solutions/restaurants">{t('nav.restaurants')}</Link></li>
                 <li><Link to="/solutions/hotels">{t('nav.hotels')}</Link></li>
+                <li><Link to="/integrations/toast-pos-smart-qr">{language === 'tr' ? 'Toast POS Uyumu' : 'Toast POS Companion'}</Link></li>
+                <li><Link to="/integrations/square-pos-digital-tipping">{language === 'tr' ? 'Square POS Uyumu' : 'Square POS Companion'}</Link></li>
                 <li><Link to="/tools/restaurant-tip-pool-calculator">{ht('shiftTipPool')}</Link></li>
                 <li><Link to="/tools/free-hospitality-qr-generator">{ht('hospitalityQrMaker')}</Link></li>
                 <li><Link to="/tools/tip-calculator">{t('nav.tipCalculator')}</Link></li>
@@ -3373,11 +3375,11 @@ export const HomePage: React.FC = () => {
             <div>
               <h4 className="home-footer-col-title">{ht('guidesAndPlatform')}</h4>
               <ul className="home-footer-links">
+                <li><Link to="/trust" style={{ color: '#10b981', fontWeight: 700 }}>{language === 'tr' ? 'Güvenlik & Trust Center' : 'Trust & Security Center'}</Link></li>
                 <li><Link to="/catalog" style={{ color: '#34d399', fontWeight: 700 }}>{ht('b2bCorporateDeck')}</Link></li>
                 <li><Link to="/technology-partners" style={{ color: '#38bdf8', fontWeight: 700 }}>{ht('techPartnersNav')}</Link></li>
                 <li><Link to="/guides">{ht('globalTippingGuides')}</Link></li>
-                <li><Link to="/guides/tipping-in-japan">{ht('tippingInJapan')}</Link></li>
-                <li><Link to="/guides/tipping-in-united-states">{ht('tippingInUsa')}</Link></li>
+                <li><Link to="/compare/naponi-vs-sunday-app">{language === 'tr' ? 'Naponi vs Sunday' : 'Naponi vs Sunday App'}</Link></li>
                 <li><Link to="/compare/best-cashless-tipping-systems">{ht('cashlessReview')}</Link></li>
                 <li><Link to="/blog">{t('nav.blogGuides')}</Link></li>
                 <li><Link to="/register">{t('nav.getStarted')}</Link></li>
