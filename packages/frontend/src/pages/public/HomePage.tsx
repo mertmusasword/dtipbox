@@ -680,6 +680,107 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
+          2B. ZERO-APP FRICTION SHOWCASE BANNER
+          ==================================================================== */}
+      <section className="home-zero-friction-section">
+        <div className="home-container">
+          <div className="home-zero-friction-card">
+            <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 1.5rem' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '5px 14px', borderRadius: '999px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', color: '#f87171', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.85rem' }}>
+                <Smartphone size={14} />
+                <span>{t('home.zeroAppBadge')}</span>
+              </div>
+              <h2 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.3rem)', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', margin: '0 0 0.75rem' }}>
+                {t('home.zeroAppTitle')}
+              </h2>
+              <p style={{ color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6, margin: 0 }}>
+                {t('home.zeroAppSubtitle')}
+              </p>
+            </div>
+
+            {/* Side-by-Side Friction Contrast Grid */}
+            <div className="home-friction-grid">
+              {/* Bad Way (Clunky App Stores) */}
+              <div className="home-friction-col-bad">
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f87171', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                      {t('home.frictionBadTitle')}
+                    </span>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <span className="home-app-store-crossed">App Store</span>
+                      <span className="home-app-store-crossed">Google Play</span>
+                    </div>
+                  </div>
+
+                  <div className="home-friction-item" style={{ color: '#fca5a5' }}>
+                    <X size={18} style={{ color: '#ef4444', flexShrink: 0, marginTop: 2 }} />
+                    <span>{t('home.frictionBad1')}</span>
+                  </div>
+                  <div className="home-friction-item" style={{ color: '#fca5a5' }}>
+                    <X size={18} style={{ color: '#ef4444', flexShrink: 0, marginTop: 2 }} />
+                    <span>{t('home.frictionBad2')}</span>
+                  </div>
+                  <div className="home-friction-item" style={{ color: '#fca5a5' }}>
+                    <X size={18} style={{ color: '#ef4444', flexShrink: 0, marginTop: 2 }} />
+                    <span>{t('home.frictionBad3')}</span>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(239, 68, 68, 0.15)', fontSize: '0.78rem', color: '#f87171', fontWeight: 600 }}>
+                  ⚠️ {language === 'tr' ? '%85 Masada Bahşiş Bırakma Kaybı' : '85% Guest Tip Abandonment Rate'}
+                </div>
+              </div>
+
+              {/* VS Divider */}
+              <div className="home-friction-vs">
+                <div style={{ width: 1, height: 40, background: 'rgba(255, 255, 255, 0.1)' }} />
+                <span>VS</span>
+                <div style={{ width: 1, height: 40, background: 'rgba(255, 255, 255, 0.1)' }} />
+              </div>
+
+              {/* Good Way (Naponi Lightning Web) */}
+              <div className="home-friction-col-good">
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#34d399', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                      {t('home.frictionGoodTitle')}
+                    </span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '4px 10px', borderRadius: '999px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', fontSize: '0.78rem', fontWeight: 700 }}>
+                      <Zap size={13} /> {language === 'tr' ? 'Doğrudan Web' : 'Native Web'}
+                    </span>
+                  </div>
+
+                  <div className="home-friction-item" style={{ color: '#d1fae5' }}>
+                    <Check size={18} style={{ color: '#10b981', flexShrink: 0, marginTop: 2 }} />
+                    <span>{t('home.frictionGood1')}</span>
+                  </div>
+                  <div className="home-friction-item" style={{ color: '#d1fae5' }}>
+                    <Check size={18} style={{ color: '#10b981', flexShrink: 0, marginTop: 2 }} />
+                    <span>{t('home.frictionGood2')}</span>
+                  </div>
+                  <div className="home-friction-item" style={{ color: '#d1fae5' }}>
+                    <Check size={18} style={{ color: '#10b981', flexShrink: 0, marginTop: 2 }} />
+                    <span>{t('home.frictionGood3')}</span>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(16, 185, 129, 0.2)', fontSize: '0.78rem', color: '#34d399', fontWeight: 600 }}>
+                  ✓ {language === 'tr' ? '%100 iOS & Android Kamera Uyumluluğu' : '100% iOS & Android Native Camera Ready'}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Stat Footer Banner */}
+            <div style={{ marginTop: '1.75rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <ShieldCheck size={16} color="#6366f1" />
+              <span>{t('home.zeroAppStatText')}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
           3. HOW IT WORKS (THE 3-STEP VELOCITY FLOW)
           ==================================================================== */}
       <section className="home-section" id="how-it-works">
