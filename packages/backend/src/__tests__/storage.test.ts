@@ -59,4 +59,37 @@ describe('Storage & Media Service (Cloudflare R2 / Local Storage)', () => {
     const result = await storageService.uploadBase64(existingCdnUrl, 'menu');
     expect(result.url).toBe(existingCdnUrl);
   });
+
+  it('should strictly reject malicious SVGs containing executable script tags (XSS)', async () => {
+    const maliciousSvg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert("pwned")</script></svg>', 'utf-8');
+    await expect(storageService.uploadBuffer(maliciousSvg, 'image/svg+xml', 'logos', 'xss-script')).rejects.toThrow(
+      'SVG contains executable script tags'
+    );
+  });
+
+  it('should strictly reject malicious SVGs containing onload or onerror event handlers', async () => {
+    const maliciousSvg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" onload="fetch(\'/api/steal\')"></svg>', 'utf-8');
+    await expect(storageService.uploadBuffer(maliciousSvg, 'image/svg+xml', 'logos', 'xss-handler')).rejects.toThrow(
+      'SVG contains executable event handlers'
+    );
+  });
+
+  it('should strictly reject malicious SVGs containing foreignObject or javascript URIs', async () => {
+    const foreignObjectSvg = Buffer.from('<svg><foreignObject><iframe src="https://evil.com"></iframe></foreignObject></svg>', 'utf-8');
+    await expect(storageService.uploadBuffer(foreignObjectSvg, 'image/svg+xml', 'logos', 'xss-foreign')).rejects.toThrow(
+      'SVG contains prohibited HTML or external object elements'
+    );
+
+    const javascriptUriSvg = Buffer.from('<svg><a href="javascript:alert(1)"><text>Click</text></a></svg>', 'utf-8');
+    await expect(storageService.uploadBuffer(javascriptUriSvg, 'image/svg+xml', 'logos', 'xss-js-uri')).rejects.toThrow(
+      'SVG contains unsafe javascript URI references'
+    );
+  });
+
+  it('should strictly reject SVGs containing DOCTYPE entity injections (XXE)', async () => {
+    const xxeSvg = Buffer.from('<!DOCTYPE svg [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><svg>&xxe;</svg>', 'utf-8');
+    await expect(storageService.uploadBuffer(xxeSvg, 'image/svg+xml', 'logos', 'xxe-test')).rejects.toThrow(
+      'SVG contains prohibited DOCTYPE or ENTITY definitions'
+    );
+  });
 });

@@ -1,6 +1,7 @@
 import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { createAuditLog, getAllAuditLogs } from './audit.service';
+import { invalidateUserAuthCache } from '../middleware/auth';
 
 export async function getAdminBusinesses(page: number = 1, limit: number = 20) {
   const skip = (page - 1) * limit;
@@ -58,7 +59,21 @@ export async function toggleBusinessStatus(businessId: string, isActive: boolean
   const business = await prisma.business.update({
     where: { id: businessId },
     data: { is_active: isActive },
+    include: {
+      owner: { select: { id: true } },
+      employees: { select: { user_id: true } },
+    },
   });
+
+  // Security: Invalidate auth cache immediately so active/inactive state takes effect on the next request
+  if (business.owner?.id) {
+    invalidateUserAuthCache(business.owner.id);
+  }
+  for (const emp of business.employees) {
+    if (emp.user_id) {
+      invalidateUserAuthCache(emp.user_id);
+    }
+  }
 
   await createAuditLog({
     actorUserId: adminUserId,

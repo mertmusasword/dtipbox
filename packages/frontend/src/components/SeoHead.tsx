@@ -72,7 +72,7 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
     }
 
     // 3. Robots
-    updateOrCreateMeta('robots', noindex ? 'noindex, follow' : 'index, follow');
+    updateOrCreateMeta('robots', noindex ? 'noindex, nofollow' : 'index, follow');
 
     // 4. Canonical URL
     updateOrCreateCanonical(canonicalUrl);

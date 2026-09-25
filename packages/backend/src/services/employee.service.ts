@@ -3,6 +3,7 @@ import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { createAuditLog } from './audit.service';
 import { Role } from '@prisma/client';
+import { invalidateUserAuthCache } from '../middleware/auth';
 
 interface CreateEmployeeInput {
   first_name: string;
@@ -241,6 +242,10 @@ export async function updateEmployee(
     },
   });
 
+  if (employee.user_id) {
+    invalidateUserAuthCache(employee.user_id);
+  }
+
   const action = input.is_active !== undefined
     ? (input.is_active ? 'EMPLOYEE_ACTIVATED' : 'EMPLOYEE_DEACTIVATED')
     : 'EMPLOYEE_UPDATED';
@@ -284,6 +289,7 @@ export async function deleteEmployee(
       where: { id: existing.user_id },
       data: { is_active: false },
     });
+    invalidateUserAuthCache(existing.user_id);
   }
 
   await createAuditLog({

@@ -74,8 +74,16 @@ export async function authenticate(
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       include: {
-        business: { select: { id: true } },
-        employee: { select: { id: true, business_id: true } },
+        business: { select: { id: true, is_active: true } },
+        employee: {
+          select: {
+            id: true,
+            business_id: true,
+            is_active: true,
+            deleted_at: true,
+            business: { select: { is_active: true } },
+          },
+        },
       },
     });
 
@@ -83,6 +91,27 @@ export async function authenticate(
       userAuthCache.delete(decoded.userId);
       res.status(401).json({ success: false, error: 'User not found or inactive' });
       return;
+    }
+
+    // Role-specific active verification: Business owner
+    if (user.role === 'BUSINESS' && user.business && !user.business.is_active) {
+      userAuthCache.delete(decoded.userId);
+      res.status(403).json({ success: false, error: 'Business account is suspended or inactive' });
+      return;
+    }
+
+    // Role-specific active verification: Employee
+    if (user.role === 'EMPLOYEE') {
+      if (!user.employee || !user.employee.is_active || user.employee.deleted_at !== null) {
+        userAuthCache.delete(decoded.userId);
+        res.status(403).json({ success: false, error: 'Employee account is deactivated' });
+        return;
+      }
+      if (user.employee.business && !user.employee.business.is_active) {
+        userAuthCache.delete(decoded.userId);
+        res.status(403).json({ success: false, error: 'Business account is suspended or inactive' });
+        return;
+      }
     }
 
     const authUser = {

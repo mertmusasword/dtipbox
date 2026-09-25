@@ -41,5 +41,9 @@ Disallow: /api/
 # Disallow Dynamic Customer Tipping Sessions (Private transaction tokens)
 Disallow: /tip/
 
+# Disallow Private Customer Loyalty Cards & Staff Scan Portals
+Disallow: /loyalty/card/
+Disallow: /loyalty/scan/
+
 # Sitemap Location
 Sitemap: https://www.naponi.com/sitemap.xml

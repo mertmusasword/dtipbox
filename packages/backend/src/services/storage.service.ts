@@ -25,6 +25,44 @@ export interface UploadResult {
   storage: 'r2' | 'local';
 }
 
+/**
+ * Validates SVG content against Stored Cross-Site Scripting (XSS) and XML Entity injection.
+ * Throws AppError(400) if any executable scripts, handlers, or dangerous tags are found.
+ */
+export function validateSvgSecurity(buffer: Buffer): void {
+  const content = buffer.toString('utf-8');
+
+  // 1. Prohibit XML/DOCTYPE Entity attacks (XXE)
+  if (/<!DOCTYPE[\s\S]*?>/i.test(content) || /<!ENTITY[\s\S]*?>/i.test(content)) {
+    throw new AppError('SVG contains prohibited DOCTYPE or ENTITY definitions.', 400);
+  }
+
+  // 2. Prohibit script tags (including namespaced tags like <svg:script> or <html:script>)
+  if (/<\s*([a-zA-Z0-9_]+:)?script[\s\S]*?>/i.test(content)) {
+    throw new AppError('SVG contains executable script tags and was rejected for security.', 400);
+  }
+
+  // 3. Prohibit dangerous HTML / external embedding elements
+  if (/<\s*([a-zA-Z0-9_]+:)?(foreignObject|iframe|object|embed|applet|meta|link)[\s\S]*?>/i.test(content)) {
+    throw new AppError('SVG contains prohibited HTML or external object elements.', 400);
+  }
+
+  // 4. Prohibit inline event handlers (onload, onerror, onclick, etc.)
+  if (/\bon[a-zA-Z]+\s*=/i.test(content)) {
+    throw new AppError('SVG contains executable event handlers (e.g. onload) and was rejected.', 400);
+  }
+
+  // 5. Prohibit javascript: or data:text/html URI schemes in attributes like href, xlink:href, src
+  if (/(href|src|action|formaction)\s*=\s*['"]?\s*(javascript:|vbscript:|data:text\/html)/i.test(content)) {
+    throw new AppError('SVG contains unsafe javascript URI references and was rejected.', 400);
+  }
+
+  // 6. Prohibit CSS expressions or javascript: inside style attributes or tags
+  if (/style[\s\S]*?expression\s*\(|style[\s\S]*?javascript\s*:/i.test(content)) {
+    throw new AppError('SVG contains unsafe CSS expressions and was rejected.', 400);
+  }
+}
+
 class StorageService {
   private s3Client: S3Client | null = null;
   private isR2Active = false;
@@ -97,6 +135,11 @@ class StorageService {
     const ext = ALLOWED_MIME_TYPES[cleanMime];
     if (!ext) {
       throw new AppError(`Unsupported image format '${mimeType}'. Allowed formats: JPEG, PNG, WebP, GIF, SVG.`, 400);
+    }
+
+    // Security: Validate SVG to prevent Stored XSS attacks
+    if (cleanMime === 'image/svg+xml') {
+      validateSvgSecurity(buffer);
     }
 
     const uniqueId = crypto.randomBytes(12).toString('hex');

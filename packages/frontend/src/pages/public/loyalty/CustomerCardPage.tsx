@@ -5,6 +5,7 @@ import { api } from '../../../api/client';
 import { useToast } from '../../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../../i18n';
 import { getLoyaltyLocale } from '../../../i18n/loyaltyLocales';
+import { SeoHead } from '../../../components/SeoHead';
 import {
   Award,
   Sparkles,
@@ -235,6 +236,12 @@ export const CustomerCardPage: React.FC = () => {
 
   return (
     <div className="loyalty-public-layout" dir={dir} style={{ position: 'relative' }}>
+      <SeoHead
+        title={data ? `${data.business.name} - ${data.program.name}` : 'Loyalty Card'}
+        description="Private customer loyalty card"
+        canonicalUrl={`https://www.naponi.com/loyalty/card/${publicCardId}`}
+        noindex={true}
+      />
       {/* Top Language Selector */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
         <LanguageSelector variant="compact" />

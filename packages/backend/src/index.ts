@@ -74,9 +74,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// SEO & Privacy: prevent search engines from indexing private dashboards, api, and customer tip sessions
+// SEO & Privacy: prevent search engines from indexing private dashboards, api, customer tip sessions, and loyalty cards
 app.use((req, res, next) => {
-  const privatePrefixes = ['/admin', '/business', '/employee', '/dashboard', '/api', '/tip'];
+  const privatePrefixes = ['/admin', '/business', '/employee', '/dashboard', '/api', '/tip', '/loyalty/card', '/loyalty/scan'];
   if (privatePrefixes.some((prefix) => req.path.startsWith(prefix))) {
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   }
@@ -187,6 +187,13 @@ app.use(
   express.static(uploadsDir, {
     maxAge: '30d',
     immutable: true,
+    setHeaders: (res, filePath) => {
+      // Security: Prevent MIME confusion and XSS execution on uploaded assets
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      if (filePath.endsWith('.svg')) {
+        res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'");
+      }
+    },
   })
 );
 
@@ -198,9 +205,14 @@ if (env.isProd) {
       maxAge: '1y',
       immutable: true,
       setHeaders: (res, filePath) => {
-        // HTML files must never be aggressively cached so deployments take effect immediately
-        if (filePath.endsWith('.html')) {
-          res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        // HTML files and SEO descriptors (sitemap, robots.txt) must never be aggressively cached
+        if (
+          filePath.endsWith('.html') ||
+          filePath.endsWith('robots.txt') ||
+          filePath.endsWith('sitemap.xml') ||
+          filePath.endsWith('llms.txt')
+        ) {
+          res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
         }
       },
     })
