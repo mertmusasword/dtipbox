@@ -11,6 +11,7 @@ import apiRouter from './routes';
 import { errorHandler } from './middleware/errorHandler';
 import { providerRegistry } from './services/payment/core/providerRegistry';
 import { bootstrapDefaultAgreement } from './services/agreement.service';
+import { loyaltyService } from './services/loyalty.service';
 import { logger, requestLogger } from './utils/logger';
 
 const app = express();
@@ -307,6 +308,14 @@ app.listen(PORT, '0.0.0.0', async () => {
   await providerRegistry.syncCatalogToDatabase();
   await bootstrapDefaultAgreement();
   await bootstrapFounderMembership();
+
+  // Background Maintenance: Periodically purge expired loyalty tokens (every 1 hour)
+  const tokenPurgeInterval = setInterval(() => {
+    loyaltyService.purgeExpiredTokens().catch((err: any) => {
+      logger.warn(`Background loyalty token purge error: ${err.message}`, 'CLEANUP');
+    });
+  }, 60 * 60 * 1000);
+  tokenPurgeInterval.unref();
 });
 
 export default app;

@@ -537,6 +537,17 @@ export class LoyaltyService {
     const tokenString = generateScanToken();
     const expiresAt = new Date(Date.now() + 60 * 1000); // 60s window (UI auto-polls every 25s)
 
+    // Opportunistic cleanup: remove expired or used tokens for this specific card
+    await prisma.loyaltyScanToken.deleteMany({
+      where: {
+        card_id: card.id,
+        OR: [
+          { expires_at: { lt: new Date() } },
+          { used_at: { not: null } },
+        ],
+      },
+    }).catch(() => {});
+
     const scanToken = await prisma.loyaltyScanToken.create({
       data: {
         card_id: card.id,
@@ -550,6 +561,22 @@ export class LoyaltyService {
       expires_at: scanToken.expires_at,
       valid_seconds: 60,
     };
+  }
+
+  /**
+   * System Maintenance: Purge expired and used scan tokens to prevent unbounded database growth.
+   */
+  async purgeExpiredTokens(): Promise<number> {
+    const cutoff = new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
+    const res = await prisma.loyaltyScanToken.deleteMany({
+      where: {
+        OR: [
+          { expires_at: { lt: cutoff } },
+          { used_at: { lt: cutoff } },
+        ],
+      },
+    });
+    return res.count;
   }
 
   /**
@@ -606,6 +633,7 @@ export class LoyaltyService {
     businessId: string;
     employeeId?: string | null;
     userId?: string | null;
+    cooldownSeconds?: number;
   }) {
     const cleanToken = params.token.trim();
     if (!cleanToken) {
@@ -647,6 +675,33 @@ export class LoyaltyService {
 
       if (!card.program.is_active) {
         throw new AppError('İşletmenin sadakat programı şu anda pasif durumda', 400);
+      }
+
+      // Anti-fraud cooldown check: prevent rapid repeated stamps on the same card
+      const cooldownSeconds = params.cooldownSeconds !== undefined ? params.cooldownSeconds : 60;
+      if (cooldownSeconds > 0) {
+        const lastStamp = await tx.loyaltyStampTransaction.findFirst({
+          where: {
+            card_id: card.id,
+            business_id: params.businessId,
+            action_type: 'STAMP_ADDED',
+          },
+          orderBy: { created_at: 'desc' },
+        });
+
+        if (lastStamp) {
+          const nowMs = Date.now();
+          const lastStampMs = new Date(lastStamp.created_at).getTime();
+          const elapsedSeconds = Math.max(0, Math.floor((nowMs - lastStampMs) / 1000));
+
+          if (elapsedSeconds < cooldownSeconds) {
+            const remainingSeconds = cooldownSeconds - elapsedSeconds;
+            throw new AppError(
+              `Bu karta çok kısa süre önce damga basıldı. Lütfen ${remainingSeconds} saniye sonra tekrar deneyin.`,
+              429
+            );
+          }
+        }
       }
 
       // Mark token as used immediately (replay protection)
