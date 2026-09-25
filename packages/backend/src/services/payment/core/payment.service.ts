@@ -31,10 +31,30 @@ export class PaymentService {
         );
       }
 
+      let paymentUrl = business.external_payment_url.trim();
+
+      // Check if template variables are used: {amount}, {currency}, {tip_id}, {reference}
+      if (
+        paymentUrl.includes('{amount}') ||
+        paymentUrl.includes('{currency}') ||
+        paymentUrl.includes('{tip_id}') ||
+        paymentUrl.includes('{reference}')
+      ) {
+        paymentUrl = paymentUrl
+          .replace(/{amount}/g, encodeURIComponent(String(params.amount)))
+          .replace(/{currency}/g, encodeURIComponent(params.currency))
+          .replace(/{tip_id}/g, encodeURIComponent(params.tipId))
+          .replace(/{reference}/g, encodeURIComponent(params.tipId));
+      } else {
+        // Automatically append standard query parameters for hosted payment gateways
+        const separator = paymentUrl.includes('?') ? '&' : '?';
+        paymentUrl = `${paymentUrl}${separator}amount=${encodeURIComponent(String(params.amount))}&currency=${encodeURIComponent(params.currency)}&ref=${encodeURIComponent(params.tipId)}&tip_id=${encodeURIComponent(params.tipId)}`;
+      }
+
       result = {
         transactionId: `ext_${params.tipId}`,
         status: PaymentStatus.PENDING,
-        paymentUrl: business.external_payment_url,
+        paymentUrl,
       };
     }
 

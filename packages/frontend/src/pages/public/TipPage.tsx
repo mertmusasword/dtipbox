@@ -163,9 +163,24 @@ export const TipPage: React.FC = () => {
         }
 
         // Smart QR primary routing & auto-selection
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('completed') === 'true') {
+          setPaymentResult({
+            tip: {
+              id: searchParams.get('tip_id') || '',
+              payment_method: 'CARD',
+              status: 'SUCCESS',
+              amount: searchParams.get('amount') || '',
+              currency: d.business?.currency || 'TRY',
+            },
+            payment: {
+              status: 'SUCCESS',
+            },
+          });
+        }
+
         const sq = d.smartQr;
         if (sq?.isSmartEnabled) {
-          const searchParams = new URLSearchParams(window.location.search);
           const forceTipView = searchParams.get('view') === 'tip';
           const isNativeMenu = sq?.menuMode === 'NATIVE' || sq?.hasNativeMenu;
 
@@ -495,11 +510,48 @@ export const TipPage: React.FC = () => {
           </p>
           <a
             href={redirectingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn btn-primary"
             style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.85rem' }}
           >
             {t('tip.proceedToPaymentBtn')} <ArrowRight size={16} />
           </a>
+
+          <button
+            type="button"
+            onClick={() => {
+              setPaymentResult({
+                tip: {
+                  id: idempotencyKey,
+                  payment_method: 'CARD',
+                  status: 'SUCCESS',
+                  amount: selectedAmount || customAmount,
+                  currency: details?.business?.currency || 'TRY',
+                },
+                payment: {
+                  status: 'SUCCESS',
+                },
+              });
+              setRedirectingUrl(null);
+            }}
+            className="btn btn-secondary"
+            style={{
+              width: '100%',
+              marginTop: '0.75rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              padding: '0.85rem',
+              background: '#f1f5f9',
+              color: '#0f172a',
+              border: '1px solid #cbd5e1',
+            }}
+          >
+            <CheckCircle2 size={16} style={{ color: '#059669' }} />
+            {language === 'tr' ? 'Ödemeyi Tamamladım, Değerlendir' : 'I Have Completed Payment'}
+          </button>
         </div>
       </div>
     );

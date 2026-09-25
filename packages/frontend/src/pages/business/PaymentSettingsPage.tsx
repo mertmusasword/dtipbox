@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 import { useAuth } from '../../contexts/AuthContext';
+import { AgreementModal } from '../../components/AgreementModal';
 
 export const PaymentSettingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -32,6 +33,7 @@ export const PaymentSettingsPage: React.FC = () => {
   const [iban, setIban] = useState('');
   const [country, setCountry] = useState(user?.business?.country || 'TR');
   const [savingBank, setSavingBank] = useState(false);
+  const [showAgreementModal, setShowAgreementModal] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -77,6 +79,10 @@ export const PaymentSettingsPage: React.FC = () => {
       showToast(t('payments.linkSavedToast'));
       loadData();
     } catch (err: any) {
+      if (err.response?.data?.error === 'AGREEMENT_REQUIRED' || err.response?.data?.code === 'AGREEMENT_REQUIRED') {
+        setShowAgreementModal(true);
+        return;
+      }
       showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setSavingUrl(false);
@@ -112,6 +118,10 @@ export const PaymentSettingsPage: React.FC = () => {
       showToast(t('payments.bankSavedToast'));
       loadData();
     } catch (err: any) {
+      if (err.response?.data?.error === 'AGREEMENT_REQUIRED' || err.response?.data?.code === 'AGREEMENT_REQUIRED') {
+        setShowAgreementModal(true);
+        return;
+      }
       showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
       setSavingBank(false);
@@ -286,6 +296,11 @@ export const PaymentSettingsPage: React.FC = () => {
               <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '0.35rem' }}>
                 🔒 {t('payments.httpsRequiredToast')}
               </div>
+              <div style={{ fontSize: '0.78rem', color: '#38bdf8', marginTop: '0.35rem', lineHeight: 1.4 }}>
+                💡 {language === 'tr'
+                  ? 'Dinamik parametre desteği: Linkinizde {amount}, {currency}, {reference} etiketlerini kullanabilirsiniz (Örn: https://pos.com/pay?tut={amount}&ref={reference}). Kullanılmazsa standart parametreler otomatik eklenir.'
+                  : 'Dynamic parameters: You can use {amount}, {currency}, and {reference} tags in your URL. If not included, standard query parameters are appended automatically.'}
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -427,6 +442,16 @@ export const PaymentSettingsPage: React.FC = () => {
           </form>
         </div>
       </div>
+
+      <AgreementModal
+        isOpen={showAgreementModal}
+        onClose={() => setShowAgreementModal(false)}
+        onAccepted={() => {
+          setShowAgreementModal(false);
+          loadData();
+          showToast(t('common.success') || 'Sözleşme başarıyla onaylandı');
+        }}
+      />
     </div>
   );
 };
