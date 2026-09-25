@@ -54,6 +54,14 @@ export const env = {
   // 2026 Founder Membership Campaign Deadline (ISO string)
   FOUNDER_MEMBER_DEADLINE: process.env.FOUNDER_MEMBER_DEADLINE || '2026-12-31T23:59:59.999Z',
 
+  // Cloudflare R2 / S3 Object Storage for Media
+  R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID || '',
+  R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || '',
+  R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || '',
+  R2_BUCKET_NAME: process.env.R2_BUCKET_NAME || 'naponi-media',
+  R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || '',
+  S3_ENDPOINT: process.env.S3_ENDPOINT || '',
+
   // Helpers
   isDev: process.env.NODE_ENV !== 'production',
   isProd: process.env.NODE_ENV === 'production',

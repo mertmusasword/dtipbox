@@ -180,6 +180,16 @@ app.use(requestLogger);
 // Mount API routes
 app.use('/api', apiRouter);
 
+// Serve static media uploads (local fallback storage)
+const uploadsDir = path.resolve(__dirname, '../uploads');
+app.use(
+  '/uploads',
+  express.static(uploadsDir, {
+    maxAge: '30d',
+    immutable: true,
+  })
+);
+
 // Serve frontend static assets in production with Cloudflare & CDN caching headers
 if (env.isProd) {
   const frontendDist = path.resolve(__dirname, '../../frontend/dist');

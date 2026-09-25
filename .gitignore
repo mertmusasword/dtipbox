@@ -39,6 +39,10 @@ packages/backend/prisma/*.db
 # Docker volumes
 pgdata/
 
+# Uploads (local media storage)
+uploads/
+packages/backend/uploads/
+
 # Previews
 *-preview.html
 

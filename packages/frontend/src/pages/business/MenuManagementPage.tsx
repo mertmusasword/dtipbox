@@ -7,6 +7,7 @@ import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
+import { uploadImageToServer } from '../../utils/upload';
 import { ALLERGEN_CATALOG, getAllergenLabel, getAllergenIcon, getAllergenDetail } from '../../constants/allergens';
 import {
   UtensilsCrossed,
@@ -231,8 +232,12 @@ export const MenuManagementPage: React.FC = () => {
         }
         setMenuConfig((prev) => ({ ...prev, menu_cover_image: optimized }));
         setIsProcessingCover(false);
-        handleSaveConfig({ menu_cover_image: optimized });
         showToast(language === 'tr' ? 'Mekan kapak görseli başarıyla yüklendi' : 'Cover image uploaded successfully');
+
+        uploadImageToServer(optimized, 'menu').then((uploadedUrl) => {
+          setMenuConfig((prev) => ({ ...prev, menu_cover_image: uploadedUrl }));
+          handleSaveConfig({ menu_cover_image: uploadedUrl });
+        });
       };
       img.onerror = () => {
         setIsProcessingCover(false);
@@ -461,6 +466,10 @@ export const MenuManagementPage: React.FC = () => {
         setProductImageUrl(optimized);
         setIsProcessingImage(false);
         showToast(language === 'tr' ? 'Ürün fotoğrafı başarıyla yüklendi ve optimize edildi' : 'Product photo uploaded and optimized successfully');
+
+        uploadImageToServer(optimized, 'menu').then((uploadedUrl) => {
+          setProductImageUrl(uploadedUrl);
+        });
       };
       img.onerror = () => {
         setIsProcessingImage(false);

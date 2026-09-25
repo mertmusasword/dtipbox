@@ -7,6 +7,7 @@ import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
+import { uploadImageToServer } from '../../utils/upload';
 import { Plus, Trash2, Edit2, UserCheck, UserX, Users, Upload, Camera } from 'lucide-react';
 
 export const EmployeesPage: React.FC = () => {
@@ -64,6 +65,10 @@ export const EmployeesPage: React.FC = () => {
         const optimized = canvas.toDataURL('image/jpeg', 0.85);
         setFormData((prev) => ({ ...prev, avatar: optimized }));
         showToast(t('employees.photoUploadedSuccess'));
+
+        uploadImageToServer(optimized, 'avatars').then((uploadedUrl) => {
+          setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
+        });
       };
       img.src = e.target?.result as string;
     };

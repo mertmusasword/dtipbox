@@ -4,6 +4,7 @@ import { Business } from '../../types';
 import { useToast } from '../../components/Toast';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
+import { uploadImageToServer } from '../../utils/upload';
 import { useLanguage } from '../../i18n';
 import {
   Building2,
@@ -61,8 +62,11 @@ export const BusinessProfilePage: React.FC = () => {
 
     if (file.type === 'image/svg+xml') {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setFormData((prev) => ({ ...prev, logo: e.target?.result as string }));
+      reader.onload = async (e) => {
+        const raw = e.target?.result as string;
+        setFormData((prev) => ({ ...prev, logo: raw }));
+        const uploadedUrl = await uploadImageToServer(raw, 'logos');
+        setFormData((prev) => ({ ...prev, logo: uploadedUrl }));
         showToast('Logo başarıyla yüklendi');
       };
       reader.readAsDataURL(file);
@@ -90,7 +94,11 @@ export const BusinessProfilePage: React.FC = () => {
         const quality = file.type === 'image/png' ? undefined : 0.88;
         const optimized = canvas.toDataURL(mimeType, quality);
         setFormData((prev) => ({ ...prev, logo: optimized }));
-        showToast('İşletme logosu başarıyla yüklendi ve uyarlandı');
+        showToast('İşletme logosu başarıyla yüklendi');
+
+        uploadImageToServer(optimized, 'logos').then((uploadedUrl) => {
+          setFormData((prev) => ({ ...prev, logo: uploadedUrl }));
+        });
       };
       img.src = e.target?.result as string;
     };
