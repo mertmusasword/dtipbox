@@ -134,6 +134,10 @@ export const CustomerCardPage: React.FC = () => {
   // 1-second countdown ticker for QR expiration
   useEffect(() => {
     const timer = setInterval(() => {
+      // Battery & Performance: Pause seconds countdown if tab/screen is inactive
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
+        return;
+      }
       setSecondsRemaining((prev) => {
         if (prev <= 1) {
           // Token expired, fetch fresh token and re-poll card for updates
@@ -148,14 +152,28 @@ export const CustomerCardPage: React.FC = () => {
     return () => clearInterval(timer);
   }, [fetchScanToken, fetchCardData]);
 
-  // Polling card updates every 10 seconds (silent)
+  // Polling card updates every 10 seconds (silent, visible screen only)
   useEffect(() => {
     const pollInterval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
+        return;
+      }
       fetchCardData(true);
     }, 10000);
 
-    return () => clearInterval(pollInterval);
-  }, [fetchCardData]);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchCardData(true);
+        fetchScanToken();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(pollInterval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchCardData, fetchScanToken]);
 
   const handleCopyCode = () => {
     if (!data?.card.card_code) return;

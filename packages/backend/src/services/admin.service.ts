@@ -101,17 +101,18 @@ export async function getAdminPlatformStatistics() {
     prisma.employee.count({ where: { deleted_at: null } }),
     prisma.qrCode.count(),
     prisma.tip.count({ where: { payment_status: 'SUCCESS' } }),
-    prisma.tip.findMany({
+    prisma.tip.groupBy({
+      by: ['currency'],
       where: { payment_status: 'SUCCESS' },
-      select: { amount: true, currency: true },
+      _sum: { amount: true },
     }),
   ]);
 
-  // Aggregate platform volumes by currency
+  // Aggregate platform volumes by currency directly via SQL engine
   const volumeByCurrency: Record<string, number> = {};
   for (const t of tipsVolume) {
     const curr = t.currency.toUpperCase();
-    volumeByCurrency[curr] = (volumeByCurrency[curr] || 0) + Number(t.amount);
+    volumeByCurrency[curr] = Number(t._sum.amount || 0);
   }
 
   return {
