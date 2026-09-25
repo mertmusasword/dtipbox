@@ -194,13 +194,25 @@ export async function updateCategory(businessId: string, categoryId: string, inp
 /**
  * Delete a category and its items (cascade).
  */
-export async function deleteCategory(businessId: string, categoryId: string) {
+export async function deleteCategory(businessId: string, categoryId: string, force = false) {
   const existing = await prisma.menuCategory.findFirst({
     where: { id: categoryId, business_id: businessId },
+    include: {
+      _count: {
+        select: { items: true },
+      },
+    },
   });
 
   if (!existing) {
     throw new AppError('Category not found or does not belong to this venue', 404);
+  }
+
+  if (existing._count.items > 0 && !force) {
+    throw new AppError(
+      `Bu kategoride ${existing._count.items} adet ürün bulunmaktadır. Silmek için lütfen önce içindeki ürünleri siliniz veya onay kutusuyla zorlayarak siliniz.`,
+      400
+    );
   }
 
   await prisma.menuCategory.delete({

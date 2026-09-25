@@ -32,10 +32,26 @@ export async function createTable(
   actorUserId: string,
   input: CreateTableInput
 ) {
+  const trimmedName = input.name?.trim();
+  if (!trimmedName) {
+    throw new AppError('Table name is required', 400);
+  }
+
+  const duplicate = await prisma.table.findFirst({
+    where: {
+      business_id: businessId,
+      name: { equals: trimmedName, mode: 'insensitive' },
+    },
+  });
+
+  if (duplicate) {
+    throw new AppError('A table with this name already exists in your business', 409);
+  }
+
   const table = await prisma.table.create({
     data: {
       business_id: businessId,
-      name: input.name,
+      name: trimmedName,
     },
   });
 
@@ -45,7 +61,7 @@ export async function createTable(
     action: 'TABLE_CREATED',
     entityType: 'table',
     entityId: table.id,
-    metadata: { name: input.name },
+    metadata: { name: trimmedName },
   });
 
   return table;
@@ -66,6 +82,27 @@ export async function updateTable(
 
   if (!existing) {
     throw new AppError('Table not found', 404);
+  }
+
+  if (input.name !== undefined) {
+    const trimmedName = input.name.trim();
+    if (!trimmedName) {
+      throw new AppError('Table name cannot be empty', 400);
+    }
+
+    const duplicate = await prisma.table.findFirst({
+      where: {
+        business_id: businessId,
+        id: { not: tableId },
+        name: { equals: trimmedName, mode: 'insensitive' },
+      },
+    });
+
+    if (duplicate) {
+      throw new AppError('A table with this name already exists in your business', 409);
+    }
+
+    input.name = trimmedName;
   }
 
   const table = await prisma.table.update({

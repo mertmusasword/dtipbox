@@ -364,9 +364,16 @@ export const MenuManagementPage: React.FC = () => {
   };
 
   const handleDeleteCategory = async (cat: MenuCategory) => {
-    if (!confirm(t('menu.deleteCategoryConfirm') || (language === 'tr' ? `"${cat.name}" kategorisini ve içerisindeki tüm ürünleri silmek istediğinize emin misiniz?` : `Delete category "${cat.name}" and all its items?`))) return;
+    const itemCount = cat.items?.length || 0;
+    const confirmMsg = itemCount > 0
+      ? (language === 'tr'
+          ? `"${cat.name}" kategorisinde ${itemCount} adet ürün var. Bu kategoriyi ve içerisindeki TÜM ürünleri kalıcı olarak silmek istediğinize emin misiniz?`
+          : `Category "${cat.name}" contains ${itemCount} items. Are you sure you want to permanently delete it and all its items?`)
+      : (t('menu.deleteCategoryConfirm') || (language === 'tr' ? `"${cat.name}" kategorisini silmek istediğinize emin misiniz?` : `Delete category "${cat.name}"?`));
+
+    if (!confirm(confirmMsg)) return;
     try {
-      await api.delete(`/business/menu/categories/${cat.id}`);
+      await api.delete(`/business/menu/categories/${cat.id}?force=true`);
       showToast(language === 'tr' ? `"${cat.name}" kategorisi silindi` : `Category "${cat.name}" deleted`);
       await loadMenu();
     } catch (err: any) {

@@ -161,7 +161,8 @@ router.delete(
   async (req, res, next) => {
     try {
       const businessId = getBizId(req);
-      const result = await menuService.deleteCategory(businessId, req.params.id as string);
+      const force = req.query.force === 'true';
+      const result = await menuService.deleteCategory(businessId, req.params.id as string, force);
       res.json({ success: true, data: result });
     } catch (err) {
       next(err);

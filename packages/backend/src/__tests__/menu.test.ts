@@ -230,4 +230,16 @@ describe('Naponi Native QR Menu & Allergen System Suite', () => {
     const dessertCat = updatedPublic.menu.categories.find((c) => c.id === catDesserts.id);
     expect(dessertCat?.items.find((i) => i.id === itemCheesecake.id)).toBeUndefined();
   });
+
+  it('should guard category deletion against unintended cascade unless force is true', async () => {
+    // catCoffees has itemLatte
+    await expect(
+      menuService.deleteCategory(businessA.id, catCoffees.id, false)
+    ).rejects.toThrow('ürün bulunmaktadır');
+
+    // With force=true, it should delete cleanly
+    const result = await menuService.deleteCategory(businessA.id, catCoffees.id, true);
+    expect(result.success).toBe(true);
+    expect(result.deletedId).toBe(catCoffees.id);
+  });
 });
