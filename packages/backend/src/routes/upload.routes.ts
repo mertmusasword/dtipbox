@@ -41,7 +41,7 @@ router.post('/image', authenticate, validate(uploadImageSchema), async (req: Aut
  * GET /api/upload/status
  * Check storage configuration health.
  */
-router.get('/status', authenticate, async (_req: AuthRequest, res) => {
+router.get('/status', async (_req, res) => {
   res.json({
     success: true,
     isCloudStorageActive: storageService.isConfigured(),
