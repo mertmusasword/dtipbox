@@ -1564,16 +1564,48 @@ export const MenuPage: React.FC = () => {
             }}
           >
             {inspectingItem.image_url && (
-              <img
-                src={inspectingItem.image_url}
-                alt={inspectingItem.name}
+              <div
                 style={{
+                  position: 'relative',
                   width: '100%',
-                  height: '220px',
-                  objectFit: 'cover',
+                  height: '320px',
+                  maxHeight: '45vh',
+                  background: 'radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.4) 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
                   borderBottom: `1px solid ${theme.surfaceBorder}`,
                 }}
-              />
+              >
+                {/* Subtle blurred ambient background for depth */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: '-20px',
+                    backgroundImage: `url(${inspectingItem.image_url})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    filter: 'blur(28px) brightness(0.4)',
+                    opacity: 0.6,
+                    transform: 'scale(1.2)',
+                  }}
+                />
+                {/* Crisp, uncropped foreground image */}
+                <img
+                  src={inspectingItem.image_url}
+                  alt={inspectingItem.name}
+                  style={{
+                    position: 'relative',
+                    zIndex: 1,
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                    padding: '0.75rem',
+                    filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.5))',
+                  }}
+                />
+              </div>
             )}
 
             <div style={{ padding: '1.35rem' }}>
