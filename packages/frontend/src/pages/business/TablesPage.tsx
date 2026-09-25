@@ -11,7 +11,7 @@ import { Plus, Trash2, Edit2, UtensilsCrossed } from 'lucide-react';
 
 export const TablesPage: React.FC = () => {
   const { showToast } = useToast();
-  const { t, formatNumber } = useLanguage();
+  const { t, formatNumber, language } = useLanguage();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +19,8 @@ export const TablesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<Table | null>(null);
   const [tableName, setTableName] = useState('');
+  const [deletingTable, setDeletingTable] = useState<Table | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadTables = useCallback(() => {
     setLoading(true);
@@ -63,14 +65,18 @@ export const TablesPage: React.FC = () => {
     }
   };
 
-  const handleDelete = async (table: Table) => {
-    if (!confirm(`Delete table "${table.name}"?`)) return;
+  const confirmDelete = async () => {
+    if (!deletingTable) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/business/tables/${table.id}`);
-      showToast(`Table "${table.name}" deleted`);
+      await api.delete(`/business/tables/${deletingTable.id}`);
+      showToast(language === 'tr' ? `"${deletingTable.name}" masası silindi` : `Table "${deletingTable.name}" deleted`);
+      setDeletingTable(null);
       loadTables();
     } catch (err: any) {
       showToast(err.response?.data?.error || 'Failed to delete table', 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -128,7 +134,7 @@ export const TablesPage: React.FC = () => {
                         <button className="btn btn-secondary btn-sm" onClick={() => openEditModal(tbl)} title={t('common.edit')}>
                           <Edit2 size={14} />
                         </button>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(tbl)} title={t('common.delete')}>
+                        <button className="btn btn-danger btn-sm" onClick={() => setDeletingTable(tbl)} title={t('common.delete')}>
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -163,6 +169,39 @@ export const TablesPage: React.FC = () => {
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Delete Table Confirmation Modal */}
+      <Modal
+        isOpen={Boolean(deletingTable)}
+        onClose={() => setDeletingTable(null)}
+        title={t('common.delete')}
+      >
+        <div style={{ padding: '0.5rem 0' }}>
+          <p style={{ margin: '0 0 1.5rem 0', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            {language === 'tr'
+              ? `"${deletingTable?.name}" masasını silmek istediğinize emin misiniz?`
+              : `Are you sure you want to delete table "${deletingTable?.name}"?`}
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setDeletingTable(null)}
+              disabled={isDeleting}
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? t('common.loading') : t('common.delete')}
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

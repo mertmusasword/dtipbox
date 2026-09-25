@@ -126,11 +126,34 @@ export const TipPage: React.FC = () => {
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [copiedReviewText, setCopiedReviewText] = useState(false);
 
+  const safeCopy = (text: string): Promise<void> => {
+    if (navigator?.clipboard?.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return Promise.resolve();
+    } catch (e) {
+      document.body.removeChild(textArea);
+      return Promise.reject(e);
+    }
+  };
+
   const handleOpenGoogleReview = (url: string, text?: string) => {
     if (text && text.trim()) {
-      navigator.clipboard.writeText(text.trim());
-      setCopiedReviewText(true);
-      setTimeout(() => setCopiedReviewText(false), 3000);
+      safeCopy(text.trim())
+        .then(() => {
+          setCopiedReviewText(true);
+          setTimeout(() => setCopiedReviewText(false), 3000);
+        })
+        .catch(() => {});
     }
     let targetUrl = url.trim();
     if (!/^https?:\/\//i.test(targetUrl)) {
@@ -315,9 +338,15 @@ export const TipPage: React.FC = () => {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIban(true);
-    setTimeout(() => setCopiedIban(false), 2000);
+    safeCopy(text)
+      .then(() => {
+        setCopiedIban(true);
+        showToast(language === 'tr' ? 'IBAN panoya kopyalandı!' : 'IBAN copied to clipboard!', 'success');
+        setTimeout(() => setCopiedIban(false), 2000);
+      })
+      .catch(() => {
+        showToast(language === 'tr' ? 'Kopyalanamadı' : 'Failed to copy', 'error');
+      });
   };
 
   const handleFeedbackSubmit = async () => {
@@ -401,21 +430,33 @@ export const TipPage: React.FC = () => {
   };
 
   const copyWifiPassword = (pwd: string) => {
-    navigator.clipboard.writeText(pwd);
-    setCopiedWifi(true);
-    if (publicToken) {
-      api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'WIFI_CLICK' }).catch(() => {});
-    }
-    setTimeout(() => setCopiedWifi(false), 2500);
+    safeCopy(pwd)
+      .then(() => {
+        setCopiedWifi(true);
+        showToast(language === 'tr' ? 'Wi-Fi şifresi kopyalandı!' : 'Wi-Fi password copied!', 'success');
+        if (publicToken) {
+          api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'WIFI_CLICK' }).catch(() => {});
+        }
+        setTimeout(() => setCopiedWifi(false), 2500);
+      })
+      .catch(() => {
+        showToast(language === 'tr' ? 'Kopyalanamadı' : 'Failed to copy', 'error');
+      });
   };
 
   const copyCouponCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCoupon(code);
-    if (publicToken) {
-      api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'CAMPAIGN_CLICK', metadata: { code } }).catch(() => {});
-    }
-    setTimeout(() => setCopiedCoupon(null), 2500);
+    safeCopy(code)
+      .then(() => {
+        setCopiedCoupon(code);
+        showToast(language === 'tr' ? 'Kupon kodu kopyalandı!' : 'Coupon code copied!', 'success');
+        if (publicToken) {
+          api.post(`/smart-qr/public/${publicToken}/event`, { event_type: 'CAMPAIGN_CLICK', metadata: { code } }).catch(() => {});
+        }
+        setTimeout(() => setCopiedCoupon(null), 2500);
+      })
+      .catch(() => {
+        showToast(language === 'tr' ? 'Kopyalanamadı' : 'Failed to copy', 'error');
+      });
   };
 
   const handleStandaloneFeedbackSubmit = async (e: React.FormEvent) => {
