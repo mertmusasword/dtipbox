@@ -217,26 +217,28 @@ export const GLOBAL_PROVIDER_CATALOG: CatalogProviderDefinition[] = [
   },
 ];
 
+import { NonCustodialProviderAdapter } from './nonCustodialAdapter';
+
 /**
- * Lazy adapter loaders. Modules are imported on demand only when getAdapter() is invoked.
+ * Known payment provider keys supported by the non-custodial platform.
  */
-const ADAPTER_LOADERS: Record<string, () => IPaymentProvider> = {
-  stripe: () => require('../providers/stripe/stripe.provider').stripeProvider,
-  iyzico: () => require('../providers/iyzico/iyzico.provider').iyzicoProvider,
-  paytr: () => require('../providers/paytr/paytr.provider').paytrProvider,
-  square: () => require('../providers/square/square.provider').squareProvider,
-  paypal: () => require('../providers/paypal/paypal.provider').payPalProvider,
-  adyen: () => require('../providers/adyen/adyen.provider').adyenProvider,
-  moneris: () => require('../providers/moneris/moneris.provider').monerisProvider,
-  alipay: () => require('../providers/alipay/alipay.provider').alipayProvider,
-  wechatpay: () => require('../providers/wechatpay/wechatpay.provider').weChatPayProvider,
-};
+const KNOWN_PROVIDER_KEYS = new Set([
+  'stripe',
+  'square',
+  'moneris',
+  'iyzico',
+  'paytr',
+  'adyen',
+  'paypal',
+  'alipay',
+  'wechatpay',
+]);
 
 export class ProviderRegistry {
   private adapters: Map<string, IPaymentProvider> = new Map();
 
   constructor() {
-    // Adapters are lazy-loaded on demand to optimize startup latency and memory usage.
+    // Adapters are initialized on demand using NonCustodialProviderAdapter.
   }
 
   registerAdapter(name: string, adapter: IPaymentProvider) {
@@ -249,16 +251,10 @@ export class ProviderRegistry {
       return this.adapters.get(key);
     }
 
-    const loader = ADAPTER_LOADERS[key];
-    if (loader) {
-      try {
-        const adapter = loader();
-        this.adapters.set(key, adapter);
-        return adapter;
-      } catch (err: any) {
-        console.error(`[ProviderRegistry] Failed to lazy-load payment adapter for '${key}':`, err?.message || err);
-        return undefined;
-      }
+    if (KNOWN_PROVIDER_KEYS.has(key)) {
+      const adapter = new NonCustodialProviderAdapter(key);
+      this.adapters.set(key, adapter);
+      return adapter;
     }
 
     return undefined;
@@ -266,7 +262,7 @@ export class ProviderRegistry {
 
   hasAdapter(name: string): boolean {
     const key = name.toLowerCase();
-    return this.adapters.has(key) || Object.prototype.hasOwnProperty.call(ADAPTER_LOADERS, key);
+    return this.adapters.has(key) || KNOWN_PROVIDER_KEYS.has(key);
   }
 
   /**

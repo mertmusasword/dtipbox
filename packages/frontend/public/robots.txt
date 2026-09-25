@@ -7,6 +7,12 @@ User-agent: *
 Allow: /
 Allow: /tr
 Allow: /tr/
+Allow: /de
+Allow: /de/
+Allow: /fr
+Allow: /fr/
+Allow: /es
+Allow: /es/
 Allow: /blog
 Allow: /blog/
 Allow: /solutions/

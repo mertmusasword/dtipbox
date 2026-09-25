@@ -1,6 +1,5 @@
 import prisma from '../utils/prisma';
 import { paymentService } from '../services/payment/core/payment.service';
-import { providerRegistry } from '../services/payment/core/providerRegistry';
 import * as tipService from '../services/tip.service';
 import * as qrService from '../services/qr.service';
 import * as analyticsService from '../services/analytics.service';

@@ -30,6 +30,8 @@
 - [Free Hospitality QR Generator](https://www.naponi.com/tools/free-hospitality-qr-generator): Generate printable tableside QR codes.
 
 ## Key Resources
+- [Trust & Security Center](https://www.naponi.com/trust): Non-custodial architecture, PCI-DSS Level 1 tokenization, GDPR compliance.
+- [POS Ecosystem Companions](https://www.naponi.com/integrations/toast-pos-smart-qr): Toast POS, Square POS, Clover, and Lightspeed smart QR companions.
 - [Global Tipping Guides](https://www.naponi.com/guides): Comprehensive tipping etiquette across 20+ countries.
 - [B2B Comparisons](https://www.naponi.com/compare/card-machine-vs-qr-tipping): Card terminals vs. QR tipping systems.
 - [Corporate Catalog](https://www.naponi.com/catalog): Official corporate product overview and specifications.

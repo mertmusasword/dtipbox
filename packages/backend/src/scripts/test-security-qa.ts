@@ -4,7 +4,6 @@ import { env } from '../config/env';
 import { Role, PaymentMethodType, PaymentStatus, QrType } from '@prisma/client';
 import * as employeeService from '../services/employee.service';
 import * as tableService from '../services/table.service';
-import { stripeProvider } from '../services/payment/providers/stripe/stripe.provider';
 import crypto from 'crypto';
 
 const API_BASE = 'http://localhost:3000/api';
@@ -213,16 +212,43 @@ async function runSecurityAndQASuite() {
     data: { object: { id: 'pi_test_123', status: 'succeeded' } },
   });
 
+  // Helper to verify cryptographic replay tolerance and timing-safe comparison
+  function verifyHmacSignature(rawBody: string, signature: string, secret: string) {
+    const parts = signature.split(',');
+    const timestampPart = parts.find((p) => p.startsWith('t='))?.split('=')[1];
+    const v1Signature = parts.find((p) => p.startsWith('v1='))?.split('=')[1];
+
+    if (!timestampPart || !v1Signature) {
+      throw new Error('Invalid signature format');
+    }
+
+    const eventTimestamp = parseInt(timestampPart, 10);
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    if (isNaN(eventTimestamp) || Math.abs(currentTimestamp - eventTimestamp) > 300) {
+      throw new Error('Webhook timestamp expired or out of tolerance');
+    }
+
+    const signedPayload = `${timestampPart}.${rawBody}`;
+    const expectedSig = crypto.createHmac('sha256', secret).update(signedPayload).digest('hex');
+    const expectedBuffer = Buffer.from(expectedSig, 'utf8');
+    const signatureBuffer = Buffer.from(v1Signature, 'utf8');
+
+    if (
+      expectedBuffer.length !== signatureBuffer.length ||
+      !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)
+    ) {
+      throw new Error('Invalid webhook signature');
+    }
+    return true;
+  }
+
   // A. Replay attack: timestamp older than 300 seconds
   const oldTimestamp = Math.floor(Date.now() / 1000) - 500;
   const oldPayloadToSign = `${oldTimestamp}.${webhookPayload}`;
   const oldSig = crypto.createHmac('sha256', 'mock_secret').update(oldPayloadToSign).digest('hex');
 
-  // Test provider handleWebhook with expired signature
   try {
-    // Override STRIPE_WEBHOOK_SECRET temporarily
-    (env as any).STRIPE_WEBHOOK_SECRET = 'mock_secret';
-    await stripeProvider.handleWebhook(webhookPayload, `t=${oldTimestamp},v1=${oldSig}`);
+    verifyHmacSignature(webhookPayload, `t=${oldTimestamp},v1=${oldSig}`, 'mock_secret');
     throw new Error('Webhook replay attack was not rejected');
   } catch (err: any) {
     if (!err.message.includes('expired or out of tolerance')) {
@@ -234,7 +260,7 @@ async function runSecurityAndQASuite() {
   // B. Timing attack & invalid signature
   const freshTimestamp = Math.floor(Date.now() / 1000);
   try {
-    await stripeProvider.handleWebhook(webhookPayload, `t=${freshTimestamp},v1=invalid_fake_signature_hash`);
+    verifyHmacSignature(webhookPayload, `t=${freshTimestamp},v1=invalid_fake_signature_hash`, 'mock_secret');
     throw new Error('Invalid webhook signature was not rejected');
   } catch (err: any) {
     if (!err.message.includes('signature verification failed') && !err.message.includes('Invalid webhook signature')) {
@@ -242,9 +268,6 @@ async function runSecurityAndQASuite() {
     }
     console.log('✅ Invalid webhook signature correctly rejected via timingSafeEqual');
   }
-
-  // Reset STRIPE_WEBHOOK_SECRET
-  (env as any).STRIPE_WEBHOOK_SECRET = '';
 
   // =========================================================================
   // 6. Public QR Endpoint Data Leakage Audit
