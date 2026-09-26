@@ -359,23 +359,14 @@ export const HomePage: React.FC = () => {
           </Link>
 
           <ul className="home-nav-links">
-            <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
+            <li><a href="#how-it-works" className="home-nav-link">{isTr ? 'Nasıl Çalışır?' : 'How It Works'}</a></li>
             <li><a href="#pos-integrations" className="home-nav-link">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
             <li><a href="#naponi-farki" className="home-nav-link">{ht('whyNaponi')}</a></li>
-            <li><a href="#industries" className="home-nav-link">{t('nav.solutions')}</a></li>
+            <li><a href="#industries" className="home-nav-link">{isTr ? 'Sektörler' : 'Industries'}</a></li>
           </ul>
 
           <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <button
-              type="button"
-              className="home-nav-support-btn"
-              onClick={() => setSupportModalOpen(true)}
-              aria-label={t('support.widgetBtn')}
-              title={t('support.widgetBtn')}
-            >
-              <Headphones size={17} />
-            </button>
+            <LanguageSelector variant="minimal" />
             <UserNavbarAction
               variant="desktop"
               onRegisterClick={() => trackBusinessRegisterStarted('navbar_desktop_cta')}

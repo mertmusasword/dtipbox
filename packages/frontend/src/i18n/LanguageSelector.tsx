@@ -4,7 +4,7 @@ import { SupportedLanguage } from './types';
 import { trackLanguageSelected } from '../analytics';
 
 interface LanguageSelectorProps {
-  variant?: 'navbar' | 'compact' | 'flagOnly' | 'footer' | 'floating';
+  variant?: 'navbar' | 'compact' | 'flagOnly' | 'footer' | 'floating' | 'minimal';
   direction?: 'up' | 'down' | 'auto';
   className?: string;
   theme?: 'dark' | 'light';
@@ -76,8 +76,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     setIsOpen(false);
   };
 
+  const isMinimal = variant === 'minimal';
   const isFlagOnly = variant === 'flagOnly';
-  const isCompact = variant === 'compact' || isFlagOnly;
+  const isCompact = variant === 'compact' || isFlagOnly || isMinimal;
 
   return (
     <div
@@ -95,14 +96,32 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: isFlagOnly ? '4px' : '8px',
-          padding: isFlagOnly ? '5px 8px' : variant === 'compact' ? '6px 12px' : '7px 14px',
+          gap: isMinimal ? '5px' : isFlagOnly ? '4px' : '8px',
+          padding: isMinimal
+            ? '6px 11px'
+            : isFlagOnly
+            ? '5px 8px'
+            : variant === 'compact'
+            ? '6px 12px'
+            : '7px 14px',
           borderRadius: '9999px',
-          background: isLight ? '#FFFFFF' : 'rgba(255, 255, 255, 0.12)',
-          border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.28)',
-          boxShadow: isLight ? '0 2px 8px rgba(0, 0, 0, 0.04)' : '0 2px 10px rgba(0, 0, 0, 0.25)',
-          color: isLight ? '#1C1917' : '#ffffff',
-          fontSize: '14px',
+          background: isMinimal
+            ? 'rgba(255, 255, 255, 0.05)'
+            : isLight
+            ? '#FFFFFF'
+            : 'rgba(255, 255, 255, 0.12)',
+          border: isMinimal
+            ? '1px solid rgba(255, 255, 255, 0.14)'
+            : isLight
+            ? '1px solid rgba(0, 0, 0, 0.08)'
+            : '1px solid rgba(255, 255, 255, 0.28)',
+          boxShadow: isMinimal
+            ? 'none'
+            : isLight
+            ? '0 2px 8px rgba(0, 0, 0, 0.04)'
+            : '0 2px 10px rgba(0, 0, 0, 0.25)',
+          color: isLight ? '#1C1917' : '#cbd5e1',
+          fontSize: isMinimal ? '13px' : '14px',
           fontWeight: 600,
           cursor: 'pointer',
           backdropFilter: 'blur(16px)',
@@ -110,7 +129,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           outline: 'none',
         }}
       >
-        <span style={{ fontSize: isFlagOnly ? '20px' : '18px', lineHeight: 1 }}>{currentMeta.flag}</span>
+        {isMinimal ? (
+          <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#f1f5f9', letterSpacing: '0.04em' }}>
+            {currentMeta.code.toUpperCase()}
+          </span>
+        ) : (
+          <span style={{ fontSize: isFlagOnly ? '20px' : '18px', lineHeight: 1 }}>{currentMeta.flag}</span>
+        )}
         {!isCompact && (
           <span className="lang-name-text" style={{ whiteSpace: 'nowrap', fontWeight: 600 }}>
             {currentMeta.nativeName}
@@ -118,8 +143,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         )}
         <svg
           style={{
-            width: isFlagOnly ? '11px' : '14px',
-            height: isFlagOnly ? '11px' : '14px',
+            width: isMinimal || isFlagOnly ? '11px' : '14px',
+            height: isMinimal || isFlagOnly ? '11px' : '14px',
             opacity: 0.75,
             color: isLight ? '#78716C' : 'currentColor',
             transform: openUpwards
@@ -131,7 +156,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 

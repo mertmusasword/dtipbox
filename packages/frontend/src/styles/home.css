@@ -59,30 +59,41 @@
 }
 
 /* ==========================================================================
-   Navigation Bar
+   1. FLOATING ISLAND NAVBAR (PREMIUM CAPSULE)
    ========================================================================== */
 .home-nav-wrapper {
   position: fixed;
-  top: 0;
+  top: 18px;
   left: 0;
   right: 0;
   z-index: 1000;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(9, 13, 22, 0.82);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  transition: all 0.3s ease;
+  padding: 0 1.5rem;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .home-nav {
+  pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  height: 72px;
-  max-width: 1280px;
+  height: 64px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 0.85rem 0 1.4rem;
+  background: rgba(13, 18, 32, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.65), 0 0 24px -4px rgba(99, 102, 241, 0.22);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-nav:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 20px 42px -10px rgba(0, 0, 0, 0.75), 0 0 32px -4px rgba(99, 102, 241, 0.3);
 }
 
 .home-nav-brand {
@@ -91,18 +102,20 @@
   gap: 0.75rem;
   text-decoration: none;
   color: #fff;
-  transition: opacity 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
+  flex-shrink: 0;
 }
 
 .home-nav-brand:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
 .home-brand-logo-img {
-  height: 42px;
+  height: 38px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.4));
+  filter: drop-shadow(0 0 14px rgba(99, 102, 241, 0.5));
 }
 
 .home-nav-links {
@@ -479,7 +492,7 @@ body:has(.home-mobile-menu) .support-floating-btn {
    Hero Section
    ========================================================================== */
 .home-hero-section {
-  padding-top: 92px;
+  padding-top: 116px;
   padding-bottom: 50px;
   position: relative;
 }
@@ -1636,8 +1649,16 @@ body:has(.home-mobile-menu) .support-floating-btn {
 }
 
 @media (max-width: 960px) {
+  .home-nav-wrapper {
+    top: 10px;
+    padding: 0 0.75rem;
+  }
+  .home-nav {
+    height: 56px;
+    padding: 0 0.65rem 0 1rem;
+  }
   .home-brand-logo-img {
-    height: 34px;
+    height: 32px;
   }
   .home-nav-links,
   .home-nav-actions {
