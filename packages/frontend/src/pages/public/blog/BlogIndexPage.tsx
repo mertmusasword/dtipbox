@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
   Search,
@@ -139,24 +140,7 @@ export const BlogIndexPage: React.FC = () => {
       />
 
       {/* Nav */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-          <div className="home-nav-actions">
-            <Link to="/solutions/restaurants" className="home-btn-ghost">{isEn ? 'Restaurants' : 'Restoranlar'}</Link>
-            <Link to="/login" className="home-btn-ghost">{isEn ? 'Log in' : 'Giriş Yap'}</Link>
-            <Link
-              to="/register"
-              className="home-btn-primary"
-              onClick={() => trackBlogCtaClick('blog_index_nav', '/register')}
-            >
-              {isEn ? 'Get Started' : 'Hemen Başlayın'} <ArrowRight size={16} />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       <main className="blog-container" style={{ paddingTop: '7.5rem', paddingBottom: '5rem' }}>
         {/* Breadcrumb */}

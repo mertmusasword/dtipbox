@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { Link } from 'react-router-dom';
 import {
   Calculator,
@@ -133,23 +134,7 @@ export const TipCalculatorPage: React.FC = () => {
       />
 
       {/* Nav */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="Tool Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-          <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <Link to="/blog" className="home-btn-ghost">Blog</Link>
-            <Link to="/tools/tip-split-calculator" className="home-btn-ghost">
-              {isEn ? 'Tip Pool Splitter' : 'Bahşiş Bölüştürücü'}
-            </Link>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Get QR for Business' : 'İşletmenize QR Alın'}
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       <main className="blog-container" style={{ paddingTop: '7rem', paddingBottom: '5rem' }}>
         {/* Breadcrumbs */}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -27,7 +28,6 @@ export const ComparisonDetailPage: React.FC = () => {
 
   const item = COMPARISONS.find((c) => c.slug === slug);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (!item) {
     return <Navigate to="/compare/card-machine-vs-qr-tipping" replace />;
@@ -58,82 +58,7 @@ export const ComparisonDetailPage: React.FC = () => {
       />
 
       {/* Header Navigation */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="Comparison Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-
-          <ul className="home-nav-links-seo">
-            <li><Link to="/guides">{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link></li>
-            <li><Link to="/tools/restaurant-tip-pool-calculator">{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link></li>
-            <li><Link to="/tools/free-hospitality-qr-generator">{isEn ? 'QR Generator' : 'QR Üretici'}</Link></li>
-            <li><Link to="/compare/card-machine-vs-qr-tipping" className="active">{isEn ? 'Comparisons' : 'Karşılaştırma'}</Link></li>
-          </ul>
-
-          <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <Link to="/login" className="home-btn-ghost">
-              {isEn ? 'Login' : 'Giriş'}
-            </Link>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          <div className="home-mobile-controls">
-            <LanguageSelector variant="flagOnly" />
-            <Link to="/register" className="home-btn-primary home-btn-mobile-cta">
-              {isEn ? 'Get Started' : 'Hemen Başla'}
-            </Link>
-            <button
-              className="home-mobile-toggle"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={isEn ? 'Toggle menu' : 'Menüyü Aç/Kapat'}
-            >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </nav>
-
-        {mobileMenuOpen && (
-          <div className="home-mobile-menu">
-            <div className="home-mobile-menu-top-actions">
-              <Link to="/login" className="home-btn-ghost home-mobile-action-btn" onClick={() => setMobileMenuOpen(false)}>
-                <LogIn size={15} />
-                <span>{isEn ? 'Login' : 'Giriş Yap'}</span>
-              </Link>
-              <Link to="/register" className="home-btn-primary home-mobile-action-btn" onClick={() => setMobileMenuOpen(false)}>
-                <span>{isEn ? 'Get Started' : 'Hemen Başla'}</span>
-                <ArrowRight size={15} />
-              </Link>
-            </div>
-
-            <div className="home-mobile-menu-links">
-              <Link to="/" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Home' : 'Ana Sayfa'}</Link>
-              <Link to="/technology-partners" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>{isEn ? 'Tech Partners' : 'Teknoloji Partnerleri'}</Link>
-              <Link to="/compare/card-machine-vs-qr-tipping" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#10b981', fontWeight: 600 }}>{isEn ? 'Comparisons' : 'Karşılaştırmalar'}</Link>
-            </div>
-
-            <div>
-              <div className="home-mobile-menu-section-label">
-                {isEn ? 'FREE TOOLS & GUIDES' : 'ÜCRETSİZ ARAÇLAR & REHBERLER'}
-              </div>
-              <div className="home-mobile-tools-grid">
-                <Link to="/tools/free-hospitality-qr-generator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                  <span>📱 {isEn ? 'QR Maker' : 'QR Üretici'}</span>
-                </Link>
-                <Link to="/tools/restaurant-tip-pool-calculator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                  <span>📊 {isEn ? 'Tip Pool' : 'Vardiya Havuzu'}</span>
-                </Link>
-                <Link to="/guides" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                  <span>🌍 {isEn ? 'Guides' : 'Rehberler'}</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-      </header>
+      <PublicNavbar />
 
       {/* Main Container */}
       <main className="seo-page-wrapper">

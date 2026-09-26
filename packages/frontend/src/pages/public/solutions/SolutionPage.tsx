@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import {
   Utensils,
@@ -81,27 +82,7 @@ export const SolutionPage: React.FC = () => {
       />
 
       {/* Navigation */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="Solution Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-          <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <Link to="/blog" className="home-btn-ghost">Blog</Link>
-            <Link to="/login" className="home-btn-ghost">
-              {isEn ? 'Login' : 'Giriş Yap'}
-            </Link>
-            <Link
-              to="/register"
-              className="home-btn-primary"
-              onClick={() => trackBlogCtaClick(`solution_nav_${data.slug}`, '/register')}
-            >
-              {isEn ? 'Get Started' : 'Hemen Başlayın'} <ArrowRight size={16} />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       <main style={{ paddingTop: '7rem' }}>
         {/* Breadcrumb Bar */}

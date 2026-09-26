@@ -174,7 +174,7 @@
 .partners-hero {
   position: relative;
   z-index: 1;
-  padding: 5rem 1.5rem 4rem;
+  padding: 7rem 1.5rem 4rem;
   text-align: center;
   max-width: 1000px;
   margin: 0 auto;
@@ -1129,7 +1129,7 @@
   }
 
   .partners-hero {
-    padding: 3.5rem 1.25rem 2.5rem;
+    padding: 5.5rem 1.25rem 2.5rem;
   }
 
   .partners-section {

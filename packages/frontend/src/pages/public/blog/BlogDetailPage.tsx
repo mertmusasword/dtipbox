@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import {
   Calendar,
@@ -87,24 +88,7 @@ export const BlogDetailPage: React.FC = () => {
       />
 
       {/* Nav */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-          <div className="home-nav-actions">
-            <Link to="/blog" className="home-btn-ghost">{isEn ? 'All Articles' : 'Tüm Yazılar'}</Link>
-            <Link to="/login" className="home-btn-ghost">{isEn ? 'Log in' : 'Giriş'}</Link>
-            <Link
-              to="/register"
-              className="home-btn-primary"
-              onClick={() => trackBlogCtaClick(`blog_detail_nav_${post.slug}`, '/register')}
-            >
-              {isEn ? 'Get Started' : 'Hemen Başlayın'} <ArrowRight size={16} />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       <main className="blog-container" style={{ paddingTop: '7.5rem', paddingBottom: '5rem' }}>
         {/* Breadcrumb Navigation */}

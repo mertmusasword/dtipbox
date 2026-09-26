@@ -47,6 +47,7 @@ import {
   PARTNER_MODELS
 } from '../../content/partners/technology-partners-data';
 import { SeoHead } from '../../components/SeoHead';
+import { PublicNavbar } from '../../components/PublicNavbar';
 import '../../styles/partners.css';
 
 export const TechnologyPartnersPage: React.FC = () => {
@@ -240,39 +241,14 @@ export const TechnologyPartnersPage: React.FC = () => {
       {/* ====================================================================
           1. HEADER / NAVIGATION
           ==================================================================== */}
-      <header className="partners-navbar">
-        <div className="partners-nav-container">
-          <div className="partners-nav-left">
-            <Link to="/" className="partners-nav-brand" title="Naponi">
-              <img src="/naponi-brand.svg" alt="Naponi" className="partners-brand-logo" />
-            </Link>
-
-            <span className="partners-nav-badge">
-              <Handshake size={13} />
-              <span>{isTr ? 'B2B Teknoloji Partnerliği' : 'B2B Tech Partnership'}</span>
-            </span>
-          </div>
-
-          <div className="partners-nav-actions">
-            <Link to="/" className="partners-back-link" title={isTr ? 'İşletmeler İçin Naponi' : 'Naponi for Venues'}>
-              <span className="partners-back-link-desktop">{isTr ? '← İşletmeler İçin Naponi' : '← Naponi for Venues'}</span>
-              <span className="partners-back-link-mobile">{isTr ? '← İşletmeler' : '← Venues'}</span>
-            </Link>
-            <div className="partners-nav-lang">
-              <LanguageSelector variant="navbar" />
-            </div>
-            <button
-              type="button"
-              onClick={() => scrollToSection('partner-form')}
-              className="partners-btn-primary partners-nav-cta"
-            >
-              <Send size={13} />
-              <span className="partners-nav-cta-desktop">{isTr ? 'Partnerlik Başvurusu' : 'Apply Now'}</span>
-              <span className="partners-nav-cta-mobile">{isTr ? 'Başvur' : 'Apply'}</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      <PublicNavbar
+        badge={
+          <span className="partners-nav-badge">
+            <Handshake size={13} />
+            <span>{isTr ? 'B2B Teknoloji Partnerliği' : 'B2B Tech Partnership'}</span>
+          </span>
+        }
+      />
 
       <main>
         {/* ====================================================================

@@ -1,4 +1,5 @@
 import React from 'react';
+import { PublicNavbar } from '../../components/PublicNavbar';
 import { Link } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -45,30 +46,7 @@ export const TrustCenterPage: React.FC = () => {
       />
 
       {/* Header Navigation */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="Trust Center Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-
-          <ul className="home-nav-links-seo">
-            <li><Link to="/solutions/restaurants">{isEn ? 'Solutions' : 'Çözümler'}</Link></li>
-            <li><Link to="/integrations/toast-pos-smart-qr">{isEn ? 'POS Integrations' : 'POS Entegrasyonları'}</Link></li>
-            <li><Link to="/guides">{isEn ? 'Tipping Guides' : 'Rehberler'}</Link></li>
-            <li><Link to="/catalog">{isEn ? 'Catalog' : 'Katalog'}</Link></li>
-          </ul>
-
-          <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <Link to="/login" className="home-btn-ghost">
-              {isEn ? 'Login' : 'Giriş'}
-            </Link>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       {/* Hero Section */}
       <section className="home-hero-section" style={{ paddingTop: '7rem', paddingBottom: '4.5rem' }}>

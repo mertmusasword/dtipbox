@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -64,31 +65,7 @@ export const PosIntegrationDetailPage: React.FC = () => {
       />
 
       {/* Header Navigation */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="POS Integration Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-
-          <ul className="home-nav-links-seo">
-            <li><Link to="/solutions/restaurants">{isEn ? 'Restaurants' : 'Restoranlar'}</Link></li>
-            <li><Link to="/solutions/hotels">{isEn ? 'Hotels' : 'Oteller'}</Link></li>
-            <li><Link to="/tools/restaurant-tip-pool-calculator">{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link></li>
-            <li><Link to="/compare/card-machine-vs-qr-tipping">{isEn ? 'Comparisons' : 'Karşılaştırma'}</Link></li>
-            <li><Link to="/catalog">{isEn ? 'Catalog' : 'Katalog'}</Link></li>
-          </ul>
-
-          <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <Link to="/login" className="home-btn-ghost">
-              {isEn ? 'Login' : 'Giriş'}
-            </Link>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       {/* Hero Section */}
       <section className="home-hero-section" style={{ paddingTop: '7rem', paddingBottom: '4.5rem' }}>

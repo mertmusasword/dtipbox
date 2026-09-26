@@ -70,24 +70,11 @@ import { LegalModal, LegalTab } from '../../components/LegalModal';
 import { CookieBanner } from '../../components/CookieBanner';
 import { SeoHead } from '../../components/SeoHead';
 import { UserNavbarAction } from '../../components/UserNavbarAction';
+import { PublicNavbar } from '../../components/PublicNavbar';
 
 export const HomePage: React.FC = () => {
   const { t, language } = useLanguage();
   const ht = (key: any, params?: any) => getHomeText(key, language, params);
-
-  // Mobile Nav Drawer State
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
 
   // Corporate Application Modal State
   const [corporateModalOpen, setCorporateModalOpen] = useState(false);
@@ -348,116 +335,10 @@ export const HomePage: React.FC = () => {
       {/* ====================================================================
           1. NAVIGATION BAR
           ==================================================================== */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="Main Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img
-              src="/naponi-brand.svg"
-              alt="NAPONI Digital Tipping"
-              className="home-brand-logo-img"
-            />
-          </Link>
-
-          <ul className="home-nav-links">
-            <li><a href="#how-it-works" className="home-nav-link">{isTr ? 'Nasıl Çalışır?' : 'How It Works'}</a></li>
-            <li><a href="#pos-integrations" className="home-nav-link">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
-            <li><a href="#naponi-farki" className="home-nav-link">{ht('whyNaponi')}</a></li>
-            <li><a href="#industries" className="home-nav-link">{isTr ? 'Sektörler' : 'Industries'}</a></li>
-          </ul>
-
-          <div className="home-nav-actions">
-            <LanguageSelector variant="minimal" />
-            <UserNavbarAction
-              variant="desktop"
-              onRegisterClick={() => trackBusinessRegisterStarted('navbar_desktop_cta')}
-            />
-          </div>
-
-          <div className="home-mobile-controls">
-            <LanguageSelector variant="flagOnly" />
-            <UserNavbarAction
-              variant="mobile-bar"
-              onRegisterClick={() => trackBusinessRegisterStarted('navbar_mobile_cta')}
-            />
-            <button
-              className="home-mobile-toggle"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={t('nav.toggleMenu')}
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </nav>
-      </header>
-
-      {/* Mobile Dropdown Menu (Mounted outside header to guarantee full viewport height without backdrop-filter clipping) */}
-      {mobileMenuOpen && (
-        <div className="home-mobile-menu">
-          {/* 1. TOP QUICK ACTIONS: Instant 1-tap access to Login & Register OR Logged-in User Profile */}
-          <UserNavbarAction
-            variant="mobile-drawer"
-            onRegisterClick={() => trackBusinessRegisterStarted('mobile_drawer_cta')}
-            onItemClick={() => setMobileMenuOpen(false)}
-          />
-
-          {/* 2. MAIN NAVIGATION */}
-          <div className="home-mobile-menu-links">
-            <a href="#how-it-works" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              <span>{t('nav.features')}</span>
-            </a>
-            <a href="#pos-integrations" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              <span>⚡ {isTr ? 'POS Katmanı' : 'POS Layer'}</span>
-            </a>
-            <a href="#naponi-farki" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
-              <span>✨ {ht('whyNaponi')}</span>
-            </a>
-            <a href="#industries" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              <span>{t('nav.solutions')}</span>
-            </a>
-            <Link to="/technology-partners" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
-              <span>{ht('techPartnersNav')}</span>
-            </Link>
-            <a href="#faq" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              <span>{t('nav.faq')}</span>
-            </a>
-          </div>
-
-          {/* 3. FREE TOOLS & GUIDES (COMPACT 2x2 GRID) */}
-          <div>
-            <div className="home-mobile-menu-section-label">
-              {ht('freeToolsGuides')}
-            </div>
-            <div className="home-mobile-tools-grid">
-              <Link to="/tools/free-hospitality-qr-generator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>📱 {ht('qrMaker')}</span>
-              </Link>
-              <Link to="/tools/restaurant-tip-pool-calculator" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>📊 {ht('shiftPool')}</span>
-              </Link>
-              <Link to="/compare/card-machine-vs-qr-tipping" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>⚖️ {ht('posVsQr')}</span>
-              </Link>
-              <Link to="/guides" className="home-mobile-tool-card" onClick={() => setMobileMenuOpen(false)}>
-                <span>🌍 {ht('guides')}</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* 4. LIVE SUPPORT */}
-          <button
-            type="button"
-            className="home-btn-ghost"
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setSupportModalOpen(true);
-            }}
-            style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.45rem', padding: '0.65rem 1rem', fontSize: '0.88rem', marginTop: '0.2rem' }}
-          >
-            <Headphones size={15} />
-            <span>{t('support.widgetBtn')}</span>
-          </button>
-        </div>
-      )}
+      <PublicNavbar
+        onRegisterClick={() => trackBusinessRegisterStarted('navbar_desktop_cta')}
+        onSupportClick={() => setSupportModalOpen(true)}
+      />
 
       {/* ====================================================================
           2. HERO SECTION WITH INTERACTIVE SMARTPHONE SIMULATOR

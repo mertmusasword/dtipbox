@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { PublicNavbar } from '../../../components/PublicNavbar';
 import { Link } from 'react-router-dom';
 import {
   Globe,
@@ -52,30 +53,7 @@ export const TippingGuidesHubPage: React.FC = () => {
       />
 
       {/* Header */}
-      <header className="home-nav-wrapper">
-        <nav className="home-nav" aria-label="Guides Navigation">
-          <Link to="/" className="home-nav-brand">
-            <img src="/naponi-brand.svg" alt="Naponi" className="home-brand-logo-img" />
-          </Link>
-
-          <ul className="home-nav-links-seo">
-            <li><Link to="/guides" className="active">{isEn ? 'Tipping Guides' : 'Bahşiş Rehberleri'}</Link></li>
-            <li><Link to="/tools/restaurant-tip-pool-calculator">{isEn ? 'Tip Pool Calculator' : 'Havuz Hesaplayıcı'}</Link></li>
-            <li><Link to="/tools/free-hospitality-qr-generator">{isEn ? 'QR Generator' : 'QR Üretici'}</Link></li>
-            <li><Link to="/compare/card-machine-vs-qr-tipping">{isEn ? 'Comparisons' : 'Karşılaştırma'}</Link></li>
-          </ul>
-
-          <div className="home-nav-actions">
-            <LanguageSelector variant="navbar" />
-            <Link to="/login" className="home-btn-ghost">
-              {isEn ? 'Login' : 'Giriş'}
-            </Link>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       {/* Main Content */}
       <main className="seo-page-wrapper">
