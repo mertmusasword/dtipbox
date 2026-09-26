@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as partnerService from '../services/partner.service';
 import { validateEmailQuality } from '../utils/emailValidator';
+import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
 
 const router = Router();
 
@@ -33,7 +34,14 @@ const createPartnerApplicationSchema = {
       .refine((val) => validateEmailQuality(val).isValid, (val) => ({
         message: validateEmailQuality(val).error || 'Geçerli bir kurumsal e-posta adresi giriniz',
       })),
-    phone: z.string().trim().max(35).optional(),
+    phone: z
+      .string()
+      .trim()
+      .max(35)
+      .optional()
+      .refine((val) => !val || validateGlobalPhoneNumber(val).isValid, (val) => ({
+        message: validateGlobalPhoneNumber(val || '').error || 'Geçerli bir telefon numarası giriniz',
+      })),
     companyType: z.string().trim().min(2, 'Firma türü seçimi zorunludur').max(100).optional(),
     company_type: z.string().trim().min(2, 'Firma türü seçimi zorunludur').max(100).optional(),
     customerCount: z.string().trim().max(100).optional(),

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building2, X, CheckCircle2, Send } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { validateEmailClient } from '../utils/emailValidator';
+import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
 import '../styles/home.css';
 
 interface CorporateApplicationModalProps {
@@ -41,6 +42,13 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
     // Honeypot spam check
     if (form._hp) {
       setSuccess(true);
+      return;
+    }
+
+    // Client-side phone validation (global E.164 and TR mobile)
+    const phoneCheck = validateGlobalPhoneNumber(form.phone);
+    if (!phoneCheck.isValid) {
+      setError(phoneCheck.error || 'Lütfen geçerli bir telefon numarası giriniz.');
       return;
     }
 

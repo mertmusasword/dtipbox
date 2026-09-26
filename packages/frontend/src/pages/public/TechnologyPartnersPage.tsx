@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage, LanguageSelector } from '../../i18n';
+import { validateEmailClient } from '../../utils/emailValidator';
+import { validateGlobalPhoneNumber } from '../../utils/phoneValidator';
 import {
   Handshake,
   Sparkles,
@@ -118,6 +120,20 @@ export const TechnologyPartnersPage: React.FC = () => {
           : 'Please confirm the Privacy & Contact consent.'
       );
       return;
+    }
+
+    const emailCheck = validateEmailClient(formData.email);
+    if (!emailCheck.isValid) {
+      setSubmitError(emailCheck.error || (isTr ? 'Lütfen geçerli bir e-posta adresi giriniz.' : 'Please enter a valid email address.'));
+      return;
+    }
+
+    if (formData.phone && formData.phone.trim()) {
+      const phoneCheck = validateGlobalPhoneNumber(formData.phone);
+      if (!phoneCheck.isValid) {
+        setSubmitError(phoneCheck.error || (isTr ? 'Lütfen geçerli bir telefon numarası giriniz.' : 'Please enter a valid phone number.'));
+        return;
+      }
     }
 
     try {

@@ -2,6 +2,7 @@ import prisma from '../utils/prisma';
 import { CorporateApplicationStatus } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
 import { validateEmailQuality } from '../utils/emailValidator';
+import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
 
 export interface CreateCorporateApplicationInput {
   companyName?: string;
@@ -20,7 +21,7 @@ export interface CreateCorporateApplicationInput {
 
 export async function createCorporateApplication(data: CreateCorporateApplicationInput) {
   const cleanEmail = data.email.toLowerCase().trim();
-  const cleanPhone = data.phone.trim();
+  const rawPhone = data.phone.trim();
   const cleanCompany = (data.companyName || data.company_name || '').trim();
   const cleanContact = (data.contactName || data.contact_name || '').trim();
   const cleanSector = data.sector.trim();
@@ -29,9 +30,15 @@ export async function createCorporateApplication(data: CreateCorporateApplicatio
   const cleanMessage = data.message?.trim() || null;
   const ip = data.ipAddress || data.ip_address || null;
 
-  if (!cleanCompany || !cleanContact || !cleanEmail || !cleanPhone || !cleanSector) {
+  if (!cleanCompany || !cleanContact || !cleanEmail || !rawPhone || !cleanSector) {
     throw new AppError('Lütfen tüm zorunlu alanları doldurunuz', 400);
   }
+
+  const phoneValidation = validateGlobalPhoneNumber(rawPhone);
+  if (!phoneValidation.isValid) {
+    throw new AppError(phoneValidation.error || 'Geçersiz telefon numarası', 400);
+  }
+  const cleanPhone = phoneValidation.normalized || rawPhone;
 
   const emailValidation = validateEmailQuality(cleanEmail);
   if (!emailValidation.isValid) {

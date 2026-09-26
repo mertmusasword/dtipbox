@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as corporateService from '../services/corporate.service';
 import { validateEmailQuality } from '../utils/emailValidator';
+import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
 
 const router = Router();
 
@@ -24,7 +25,14 @@ const createCorporateApplicationSchema = {
     company_name: z.string().trim().min(2).max(150).optional(),
     contactName: z.string().trim().min(2).max(100).optional(),
     contact_name: z.string().trim().min(2).max(100).optional(),
-    phone: z.string().trim().min(5, 'Geçerli bir telefon numarası giriniz').max(35),
+    phone: z
+      .string()
+      .trim()
+      .min(5, 'Geçerli bir telefon numarası giriniz')
+      .max(35)
+      .refine((val) => validateGlobalPhoneNumber(val).isValid, (val) => ({
+        message: validateGlobalPhoneNumber(val).error || 'Geçerli bir telefon numarası giriniz',
+      })),
     email: z
       .string()
       .trim()
