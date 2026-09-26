@@ -108,7 +108,7 @@
 .home-nav-links {
   display: flex;
   align-items: center;
-  gap: 1.4rem;
+  gap: 1.75rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1635,9 +1635,9 @@ body:has(.home-mobile-menu) .support-floating-btn {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   .home-brand-logo-img {
-    height: 32px;
+    height: 34px;
   }
   .home-nav-links,
   .home-nav-actions {

@@ -361,11 +361,8 @@ export const HomePage: React.FC = () => {
           <ul className="home-nav-links">
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
             <li><a href="#pos-integrations" className="home-nav-link">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
-            <li><a href="#naponi-farki" className="home-nav-link" style={{ color: '#a5b4fc', fontWeight: 600 }}>{ht('whyNaponi')}</a></li>
+            <li><a href="#naponi-farki" className="home-nav-link">{ht('whyNaponi')}</a></li>
             <li><a href="#industries" className="home-nav-link">{t('nav.solutions')}</a></li>
-            <li><Link to="/technology-partners" className="home-nav-link" style={{ color: '#38bdf8' }}>{ht('techPartners')}</Link></li>
-            <li><Link to="/guides" className="home-nav-link">{ht('guides')}</Link></li>
-            <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
           </ul>
 
           <div className="home-nav-actions">
@@ -1647,7 +1644,10 @@ export const HomePage: React.FC = () => {
               <h4 className="home-footer-col-title">{t('home.footerProduct')}</h4>
               <ul className="home-footer-links">
                 <li><a href="#how-it-works">{t('nav.features')}</a></li>
+                <li><a href="#pos-integrations">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
+                <li><a href="#naponi-farki">{ht('whyNaponi')}</a></li>
                 <li><a href="#industries">{t('nav.solutions')}</a></li>
+                <li><a href="#faq">{t('nav.faq')}</a></li>
                 <li><Link to="/solutions/restaurants">{t('nav.restaurants')}</Link></li>
                 <li><Link to="/solutions/hotels">{t('nav.hotels')}</Link></li>
                 <li><Link to="/integrations/toast-pos-smart-qr">{language === 'tr' ? 'Toast POS Uyumu' : 'Toast POS Companion'}</Link></li>
