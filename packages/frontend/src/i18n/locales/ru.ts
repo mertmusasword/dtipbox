@@ -43,7 +43,8 @@ export const ru = {
     "comingSoon": "Скоро",
     "inDevelopment": "В разработке",
     "verified": "Подтверждено",
-    "unverified": "Не подтверждено"
+    "unverified": "Не подтверждено",
+    "saved": "Успешно сохранено"
   },
   "nav": {
     "home": "Главная",
@@ -417,7 +418,8 @@ export const ru = {
     "completePaymentBtn": "Завершить оплату",
     "proceedToPaymentBtn": "Перейти к оплате",
     "sendAnotherTip": "Отправить еще чаевые",
-    "enterEmailOrPhone": "Пожалуйста, укажите телефон или эл. почту"
+    "enterEmailOrPhone": "Пожалуйста, укажите телефон или эл. почту",
+    "title": "Оставить чаевые"
   },
   "business": {
     "dashboardTitle": "Сводка заведения",
@@ -655,7 +657,12 @@ export const ru = {
     "stars1": "1 звезда",
     "customerSatisfaction": "Удовлетворенность гостей",
     "satisfactionRate": "Процент положительных оценок",
-    "staffRatingReviews": "Отзывы о персонале"
+    "staffRatingReviews": "Отзывы о персонале",
+    "reputationShield": "Умный щит репутации Google",
+    "activeLink": "Активно",
+    "noLinkSet": "Ссылка не указана",
+    "googleReviewUrlUpdated": "Ссылка на отзывы Google обновлена!",
+    "testUrl": "Проверить ссылку"
   },
   "loyalty": {
     "title": "Программа лояльности",
@@ -744,7 +751,7 @@ export const ru = {
     "photoPreview": "Предпросмотр фото",
     "allergens": "Аллергены и диетические свойства",
     "allergensSelectHelp": "Выберите ингредиенты, важные для аллергиков",
-    "allergensSelectedCount": "Выбрано аллергенов: {count}",
+    "allergensSelectedCount": "выбранных аллергенов",
     "noAllergensSelected": "Аллергены не указаны",
     "status": "Статус наличия",
     "inStock": "В наличии",
@@ -769,7 +776,12 @@ export const ru = {
     "clearFilter": "Сбросить фильтр",
     "filterDisclaimerNote": "Пожалуйста, предупредите официанта о серьезных пищевых аллергиях.",
     "noProductsFound": "По вашему запросу ничего не найдено",
-    "clearSearch": "Очистить поиск"
+    "clearSearch": "Очистить поиск",
+    "curatedMenu": "Специальное меню",
+    "chefsHighlights": "Выбор шеф-повара",
+    "chefsChoice": "Блюдо от шефа",
+    "featured": "Популярное",
+    "hidden": "Скрыто"
   },
   "profile": {
     "distributionTitle": "Модель распределения чаевых",
@@ -808,7 +820,7 @@ export const ru = {
     "recommendedStandards": "Квадратный формат, не менее 400x400 px",
     "imageFormatError": "Поддерживаются только форматы JPG, PNG, WebP",
     "imageSizeError": "Размер файла не должен превышать 5 МБ",
-    "photoUploadedSuccess": "Фотография сотрудника успешно обновлена!",
+    "photoUploadedSuccess": "Фотография сотрудника успешно обновлена!"
   },
   "employeeDashboard": {
     "loading": "Загрузка панели сотрудника...",
@@ -844,7 +856,33 @@ export const ru = {
     "pendingPayment": "Ожидает выплаты",
     "cash": "Наличные",
     "digital": "Безналичные"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "Мои QR-коды и столы",
+      "modules": "Смарт-модули и Wi-Fi",
+      "campaigns": "Акции и спецпредложения",
+      "leads": "База клиентов (Лиды)",
+      "analytics": "Смарт-аналитика"
+    },
+    "table": {
+      "type": "Тип",
+      "destination": "Назначение / Стол",
+      "status": "Смарт-статус",
+      "token": "Публичный токен",
+      "designPrint": "Оформить и распечатать QR"
+    },
+    "config": {
+      "smartHub": "Смарт-хаб Naponi",
+      "digitalTipping": "Цифровые чаевые",
+      "digitalMenu": "Цифровое меню и аллергены",
+      "guestWifi": "Гостевой Wi-Fi",
+      "customerFeedback": "Отзывы клиентов",
+      "vipSignup": "Регистрация VIP-клиентов",
+      "saveSettings": "Сохранить изменения",
+      "settingsSaved": "Настройки Смарт-QR успешно сохранены"
+    }
   }
-};
+} as const;
 
 export default ru;

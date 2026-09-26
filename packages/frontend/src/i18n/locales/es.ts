@@ -43,7 +43,8 @@ export const es = {
     "comingSoon": "Próximamente",
     "inDevelopment": "En desarrollo",
     "verified": "Verificado",
-    "unverified": "No verificado"
+    "unverified": "No verificado",
+    "saved": "Guardado correctamente"
   },
   "nav": {
     "home": "Inicio",
@@ -417,7 +418,8 @@ export const es = {
     "externalRedirecting": "Redirigiendo a la página de pago seguro...",
     "externalRedirectNotice": "Está siendo redirigido a la pasarela de pago seguro del establecimiento.",
     "paymentNotConfigured": "Aún no se ha configurado un método de pago activo para este local.",
-    "paymentNotConfiguredHelp": "Por favor avise al personal del establecimiento."
+    "paymentNotConfiguredHelp": "Por favor avise al personal del establecimiento.",
+    "title": "Dejar Propina"
   },
   "business": {
     "dashboardTitle": "Resumen del negocio",
@@ -655,7 +657,12 @@ export const es = {
     "stars1": "1 Estrella",
     "customerSatisfaction": "Satisfacción del cliente",
     "satisfactionRate": "Tasa de satisfacción",
-    "staffRatingReviews": "valoraciones"
+    "staffRatingReviews": "valoraciones",
+    "reputationShield": "Escudo Inteligente de Reputación de Google",
+    "activeLink": "Activo",
+    "noLinkSet": "Sin enlace configurado",
+    "googleReviewUrlUpdated": "¡Enlace de reseñas de Google actualizado!",
+    "testUrl": "Probar URL"
   },
   "loyalty": {
     "title": "Programa de Fidelización",
@@ -769,7 +776,12 @@ export const es = {
     "clearFilter": "Borrar Filtro",
     "filterDisclaimerNote": "Este filtro se basa en la información facilitada por el local. Si tiene alergias severas, confirme siempre con el personal.",
     "noProductsFound": "No se encontraron platos o bebidas con estos criterios de búsqueda.",
-    "clearSearch": "Limpiar búsqueda"
+    "clearSearch": "Limpiar búsqueda",
+    "curatedMenu": "Menú Especial",
+    "chefsHighlights": "Selección del Chef",
+    "chefsChoice": "Elección del Chef",
+    "featured": "Destacados",
+    "hidden": "Oculto"
   },
   "profile": {
     "distributionTitle": "Sistema de Distribución y Bote de Propinas",
@@ -808,7 +820,7 @@ export const es = {
     "recommendedStandards": "Especificaciones recomendadas para imágenes:",
     "imageFormatError": "Seleccione un archivo en formato JPG, PNG o WebP.",
     "imageSizeError": "El tamaño de la imagen debe ser como máximo de 5 MB.",
-    "photoUploadedSuccess": "Foto subida y optimizada con éxito",
+    "photoUploadedSuccess": "Foto subida y optimizada con éxito"
   },
   "employeeDashboard": {
     "loading": "Cargando panel de empleado...",
@@ -844,6 +856,32 @@ export const es = {
     "pendingPayment": "Pendiente de pago",
     "cash": "Efectivo",
     "digital": "Digital"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "Mis Códigos QR y Mesas",
+      "modules": "Módulos Inteligentes y Wi-Fi",
+      "campaigns": "Promociones y Ofertas",
+      "leads": "Base de Clientes (Leads)",
+      "analytics": "Analítica Inteligente"
+    },
+    "table": {
+      "type": "Tipo",
+      "destination": "Destino / Mesa",
+      "status": "Estado Inteligente",
+      "token": "Token Público",
+      "designPrint": "Diseñar e Imprimir QR"
+    },
+    "config": {
+      "smartHub": "Centro Inteligente Naponi",
+      "digitalTipping": "Propinas Digitales",
+      "digitalMenu": "Menú Digital y Alérgenos",
+      "guestWifi": "Acceso Wi-Fi para Clientes",
+      "customerFeedback": "Opiniones de Clientes",
+      "vipSignup": "Registro de Clientes VIP",
+      "saveSettings": "Guardar Cambios",
+      "settingsSaved": "Ajustes de Smart QR guardados correctamente"
+    }
   }
 } as const;
 

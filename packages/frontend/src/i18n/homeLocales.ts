@@ -9,7 +9,7 @@ export const homeTranslations: Record<string, Record<string, string>> = {
     fr: 'Pourquoi Naponi',
     es: 'Por qué Naponi',
     ru: 'Почему Naponi',
-    ar: 'لماذا نابوني',
+    ar: 'لماذا نابوني؟',
     zh: '为什么选择Naponi',
     pt: 'Por que a Naponi',
     id: 'Mengapa Naponi',

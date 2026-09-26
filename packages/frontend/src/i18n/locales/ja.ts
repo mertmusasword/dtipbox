@@ -43,7 +43,8 @@ export const ja = {
     "comingSoon": "近日公開",
     "inDevelopment": "開発中",
     "verified": "認証済み",
-    "unverified": "未確認"
+    "unverified": "未確認",
+    "saved": "正常に保存されました"
   },
   "nav": {
     "home": "ホーム",
@@ -417,7 +418,8 @@ export const ja = {
     "externalRedirecting": "安全な決済ページへ移動中...",
     "externalRedirectNotice": "店舗の認証済み決済ページへ移動しています。",
     "paymentNotConfigured": "この店舗では現在利用可能な支払い方法が設定されていません。",
-    "paymentNotConfiguredHelp": "店舗スタッフまでお問い合わせください。"
+    "paymentNotConfiguredHelp": "店舗スタッフまでお問い合わせください。",
+    "title": "チップを贈る"
   },
   "business": {
     "dashboardTitle": "店舗概要",
@@ -655,7 +657,12 @@ export const ja = {
     "stars1": "星1",
     "customerSatisfaction": "顧客満足度",
     "satisfactionRate": "満足度スコア",
-    "staffRatingReviews": "件の評価"
+    "staffRatingReviews": "件の評価",
+    "reputationShield": "スマートGoogle評価シールド",
+    "activeLink": "有効",
+    "noLinkSet": "リンク未設定",
+    "googleReviewUrlUpdated": "Googleレビューのリンクを更新しました！",
+    "testUrl": "URLをテスト"
   },
   "loyalty": {
     "title": "ロイヤルティプログラム",
@@ -769,7 +776,12 @@ export const ja = {
     "clearFilter": "フィルターを解除",
     "filterDisclaimerNote": "本フィルターは店舗からの情報に基づいています。重度のアレルギーをお持ちの場合は必ずスタッフにお声がけください。",
     "noProductsFound": "条件に一致するお料理やドリンクは見つかりませんでした。",
-    "clearSearch": "検索条件をクリア"
+    "clearSearch": "検索条件をクリア",
+    "curatedMenu": "厳選メニュー",
+    "chefsHighlights": "シェフのおすすめ",
+    "chefsChoice": "シェフのチョイス",
+    "featured": "おすすめ",
+    "hidden": "非表示"
   },
   "profile": {
     "distributionTitle": "チップ配分＆プールシステム",
@@ -808,7 +820,7 @@ export const ja = {
     "recommendedStandards": "推奨画像仕様:",
     "imageFormatError": "JPG、PNG、またはWebP形式の画像を選択してください。",
     "imageSizeError": "画像サイズは最大5MBまでです。",
-    "photoUploadedSuccess": "写真が正常にアップロードされ最適化されました",
+    "photoUploadedSuccess": "写真が正常にアップロードされ最適化されました"
   },
   "employeeDashboard": {
     "loading": "従業員ダッシュボードを読み込み中...",
@@ -844,8 +856,33 @@ export const ja = {
     "pendingPayment": "支払い保留中",
     "cash": "現金",
     "digital": "デジタル"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "QRコードとテーブル",
+      "modules": "スマートモジュール＆Wi-Fi",
+      "campaigns": "プロモーション＆お得情報",
+      "leads": "顧客リード",
+      "analytics": "スマートアナリティクス"
+    },
+    "table": {
+      "type": "種類",
+      "destination": "対象 / テーブル",
+      "status": "スマートステータス",
+      "token": "公開トークン",
+      "designPrint": "QRデザイン＆印刷"
+    },
+    "config": {
+      "smartHub": "Naponiスマートハブ",
+      "digitalTipping": "デジタルチップ機能",
+      "digitalMenu": "デジタルメニュー＆アレルゲン",
+      "guestWifi": "ゲスト用Wi-Fiアクセス",
+      "customerFeedback": "お客様の評価・フィードバック",
+      "vipSignup": "VIP顧客登録",
+      "saveSettings": "設定を保存",
+      "settingsSaved": "Smart QR設定が保存されました"
+    }
   }
-
 } as const;
 
 export default ja;

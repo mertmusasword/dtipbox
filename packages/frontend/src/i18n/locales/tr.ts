@@ -43,7 +43,8 @@ export const tr = {
     "comingSoon": "Çok Yakında",
     "inDevelopment": "Geliştiriliyor",
     "verified": "Doğrulandı",
-    "unverified": "Doğrulama Bekliyor"
+    "unverified": "Doğrulama Bekliyor",
+    "saved": "Başarıyla kaydedildi"
   },
   "nav": {
     "home": "Anasayfa",
@@ -417,7 +418,8 @@ export const tr = {
     "completePaymentBtn": "Ödemeyi Tamamla",
     "proceedToPaymentBtn": "Ödemeye Devam Et",
     "sendAnotherTip": "Yeni Bir Bahşiş Gönder",
-    "enterEmailOrPhone": "Lütfen e-posta veya telefon giriniz."
+    "enterEmailOrPhone": "Lütfen e-posta veya telefon giriniz.",
+    "title": "Bahşiş Bırak"
   },
   "business": {
     "dashboardTitle": "İşletme Özeti",
@@ -655,7 +657,12 @@ export const tr = {
     "stars1": "1 Yıldız",
     "customerSatisfaction": "Müşteri Memnuniyeti",
     "satisfactionRate": "Memnuniyet Puanı",
-    "staffRatingReviews": "Değerlendirme"
+    "staffRatingReviews": "Değerlendirme",
+    "reputationShield": "Akıllı Google İtibar Kalkanı (Review Gating)",
+    "activeLink": "Aktif",
+    "noLinkSet": "Link Bekleniyor",
+    "googleReviewUrlUpdated": "Google Haritalar linki güncellendi!",
+    "testUrl": "Test Et"
   },
   "loyalty": {
     "title": "Sadakat Programı",
@@ -769,7 +776,12 @@ export const tr = {
     "clearFilter": "Filtreyi Temizle",
     "filterDisclaimerNote": "Bu filtreleme, işletmenin beyan ettiği içerik bilgilerine dayanır. Mutfak ortamında çapraz bulaşma riski olabileceğinden lütfen servis personeline danışınız.",
     "noProductsFound": "Arama veya filtre kriterlerine uygun ürün bulunamadı.",
-    "clearSearch": "Aramayı Temizle"
+    "clearSearch": "Aramayı Temizle",
+    "curatedMenu": "Özel QR Menü",
+    "chefsHighlights": "Şefin Seçtikleri",
+    "chefsChoice": "Şefin Seçimi",
+    "featured": "Öne Çıkanlar",
+    "hidden": "Gizlendi"
   },
   "profile": {
     "distributionTitle": "Bahşiş Dağıtım & Havuzlama Sistemi",
@@ -844,6 +856,32 @@ export const tr = {
     "pendingPayment": "Ödeme Bekliyor",
     "cash": "Nakit",
     "digital": "Dijital"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "QR Kodlarım & Masalar",
+      "modules": "Smart Modüller & Wi-Fi",
+      "campaigns": "Kampanyalar & Fırsatlar",
+      "leads": "Müşteri Veritabanı (Leads)",
+      "analytics": "Smart Analitik"
+    },
+    "table": {
+      "type": "Tür",
+      "destination": "Hedef / Masa",
+      "status": "Smart Durumu",
+      "token": "QR Token",
+      "designPrint": "QR Tasarla & Yazdır"
+    },
+    "config": {
+      "smartHub": "Naponi Smart Hub",
+      "digitalTipping": "Dijital Bahşiş Modülü",
+      "digitalMenu": "Dijital Menü & Alerjen Sistemi",
+      "guestWifi": "Misafir Wi-Fi Paylaşımı",
+      "customerFeedback": "Anlık Müşteri Değerlendirmesi",
+      "vipSignup": "VIP Müşteri Kaydı (Lead Capture)",
+      "saveSettings": "Ayarları Kaydet",
+      "settingsSaved": "Smart QR ayarları kaydedildi"
+    }
   }
 } as const;
 

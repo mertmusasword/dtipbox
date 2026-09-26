@@ -43,7 +43,8 @@ export const en = {
     "comingSoon": "Coming Soon",
     "inDevelopment": "In Development",
     "verified": "Verified",
-    "unverified": "Unverified"
+    "unverified": "Unverified",
+    "saved": "Saved successfully"
   },
   "nav": {
     "home": "Home",
@@ -417,7 +418,8 @@ export const en = {
     "completePaymentBtn": "Complete Payment",
     "proceedToPaymentBtn": "Proceed to Payment",
     "sendAnotherTip": "Send Another Tip",
-    "enterEmailOrPhone": "Please enter an email or phone number."
+    "enterEmailOrPhone": "Please enter an email or phone number.",
+    "title": "Leave a Tip"
   },
   "business": {
     "dashboardTitle": "Business Overview",
@@ -655,7 +657,12 @@ export const en = {
     "stars1": "1 Star",
     "customerSatisfaction": "Customer Satisfaction",
     "satisfactionRate": "Satisfaction Rating",
-    "staffRatingReviews": "reviews"
+    "staffRatingReviews": "reviews",
+    "reputationShield": "Smart Google Reputation Shield",
+    "activeLink": "Active",
+    "noLinkSet": "No Link Set",
+    "googleReviewUrlUpdated": "Google Review link updated!",
+    "testUrl": "Test URL"
   },
   "loyalty": {
     "title": "Loyalty Program",
@@ -769,7 +776,12 @@ export const en = {
     "clearFilter": "Clear Filter",
     "filterDisclaimerNote": "This filter is based on venue-provided ingredient disclosures. Due to cross-contamination risk, please confirm with staff if you have severe allergies.",
     "noProductsFound": "No dishes or drinks match your search or filter criteria.",
-    "clearSearch": "Clear Search"
+    "clearSearch": "Clear Search",
+    "curatedMenu": "Curated Menu",
+    "chefsHighlights": "Chef's Highlights",
+    "chefsChoice": "Chef's Choice",
+    "featured": "Featured",
+    "hidden": "Hidden"
   },
   "profile": {
     "distributionTitle": "Tip Distribution & Pooling System",
@@ -844,6 +856,32 @@ export const en = {
     "pendingPayment": "Pending Payment",
     "cash": "Cash",
     "digital": "Digital"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "My QR Codes",
+      "modules": "Smart Modules & Wi-Fi",
+      "campaigns": "Promos & Offers",
+      "leads": "Guest Leads",
+      "analytics": "Analytics"
+    },
+    "table": {
+      "type": "Type",
+      "destination": "Destination",
+      "status": "Smart Status",
+      "token": "Public Token",
+      "designPrint": "Design & Print QR"
+    },
+    "config": {
+      "smartHub": "Naponi Smart Hub",
+      "digitalTipping": "Digital Tipping",
+      "digitalMenu": "Digital Menu & Allergen System",
+      "guestWifi": "Guest Wi-Fi Access",
+      "customerFeedback": "Customer Feedback",
+      "vipSignup": "VIP Customer Signup",
+      "saveSettings": "Save Changes",
+      "settingsSaved": "Smart QR settings saved successfully"
+    }
   }
 } as const;
 

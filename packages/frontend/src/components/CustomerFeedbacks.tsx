@@ -89,7 +89,7 @@ export const CustomerFeedbacks: React.FC = () => {
         enable_feedback: true,
       });
       setSmartConfigRaw(res.data.data);
-      showToast(isTr ? 'Google Haritalar linki güncellendi!' : 'Google Review link updated!');
+      showToast(t('feedback.googleReviewUrlUpdated'));
     } catch (err: any) {
       showToast(err.response?.data?.error || t('common.error'), 'error');
     } finally {
@@ -184,7 +184,7 @@ export const CustomerFeedbacks: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '1.2rem' }}>🛡️</span>
               <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-                {isTr ? 'Akıllı Google İtibar Kalkanı (Review Gating)' : 'Smart Google Reputation Shield'}
+                {t('feedback.reputationShield')}
               </h3>
               <span
                 style={{
@@ -197,7 +197,7 @@ export const CustomerFeedbacks: React.FC = () => {
                   border: googleReviewUrl ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                {googleReviewUrl ? (isTr ? '✓ Aktif' : '✓ Active') : (isTr ? 'Link Bekleniyor' : 'No Link Set')}
+                {googleReviewUrl ? `✓ ${t('feedback.activeLink')}` : t('feedback.noLinkSet')}
               </span>
             </div>
             <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
@@ -224,7 +224,7 @@ export const CustomerFeedbacks: React.FC = () => {
               className="input"
               value={googleReviewUrl}
               onChange={(e) => setGoogleReviewUrl(e.target.value)}
-              placeholder="https://g.page/r/.../review veya Haritalar linki"
+              placeholder="https://g.page/r/.../review"
               style={{
                 fontSize: '0.85rem',
                 flex: '1 1 200px',
@@ -253,7 +253,7 @@ export const CustomerFeedbacks: React.FC = () => {
                 ) : (
                   <Check size={14} />
                 )}
-                <span>{isTr ? 'Kaydet' : 'Save'}</span>
+                <span>{t('common.save')}</span>
               </button>
               {googleReviewUrl && (
                 <a
@@ -262,7 +262,7 @@ export const CustomerFeedbacks: React.FC = () => {
                   rel="noopener noreferrer"
                   className="btn btn-secondary"
                   style={{ padding: '0.55rem 0.75rem', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}
-                  title={isTr ? 'Linki Aç' : 'Test URL'}
+                  title={t('feedback.testUrl')}
                 >
                   <ExternalLink size={14} />
                 </a>

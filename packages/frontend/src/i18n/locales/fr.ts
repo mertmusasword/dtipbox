@@ -43,7 +43,8 @@ export const fr = {
     "comingSoon": "Bientôt disponible",
     "inDevelopment": "En développement",
     "verified": "Vérifié",
-    "unverified": "Non vérifié"
+    "unverified": "Non vérifié",
+    "saved": "Enregistré avec succès"
   },
   "nav": {
     "home": "Accueil",
@@ -417,7 +418,8 @@ export const fr = {
     "externalRedirecting": "Redirection vers la page de paiement sécurisée...",
     "externalRedirectNotice": "Vous êtes redirigé vers la passerelle de paiement sécurisée de l'établissement.",
     "paymentNotConfigured": "Aucun moyen de paiement actif n'a encore été configuré pour cet établissement.",
-    "paymentNotConfiguredHelp": "Veuillez en informer l'équipe de l'établissement."
+    "paymentNotConfiguredHelp": "Veuillez en informer l'équipe de l'établissement.",
+    "title": "Laisser un pourboire"
   },
   "business": {
     "dashboardTitle": "Vue d’ensemble",
@@ -655,7 +657,12 @@ export const fr = {
     "stars1": "1 Étoile",
     "customerSatisfaction": "Satisfaction client",
     "satisfactionRate": "Taux de satisfaction",
-    "staffRatingReviews": "avis"
+    "staffRatingReviews": "avis",
+    "reputationShield": "Bouclier de Réputation Google Intelligent",
+    "activeLink": "Actif",
+    "noLinkSet": "Aucun lien configuré",
+    "googleReviewUrlUpdated": "Lien d'avis Google mis à jour !",
+    "testUrl": "Tester l'URL"
   },
   "loyalty": {
     "title": "Programme de fidélité",
@@ -769,7 +776,12 @@ export const fr = {
     "clearFilter": "Effacer le filtre",
     "filterDisclaimerNote": "Ce filtre repose sur les déclarations de l'établissement. En cas d'allergie sévère, veuillez impérativement vous renseigner auprès du personnel.",
     "noProductsFound": "Aucun plat ou boisson ne correspond à vos critères.",
-    "clearSearch": "Réinitialiser la recherche"
+    "clearSearch": "Réinitialiser la recherche",
+    "curatedMenu": "Menu Sélectionné",
+    "chefsHighlights": "Sélection du Chef",
+    "chefsChoice": "Choix du Chef",
+    "featured": "En vedette",
+    "hidden": "Masqué"
   },
   "profile": {
     "distributionTitle": "Système de Répartition et Cagnotte de Pourboires",
@@ -808,7 +820,7 @@ export const fr = {
     "recommendedStandards": "Recommandations pour les visuels :",
     "imageFormatError": "Veuillez sélectionner un fichier JPG, PNG ou WebP.",
     "imageSizeError": "La taille du fichier ne doit pas dépasser 5 Mo.",
-    "photoUploadedSuccess": "Photo importée et ajustée avec succès",
+    "photoUploadedSuccess": "Photo importée et ajustée avec succès"
   },
   "employeeDashboard": {
     "loading": "Chargement de l'espace employé...",
@@ -844,6 +856,32 @@ export const fr = {
     "pendingPayment": "Paiement en attente",
     "cash": "Espèces",
     "digital": "Numérique"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "Mes QR Codes & Tables",
+      "modules": "Modules Intelligents & Wi-Fi",
+      "campaigns": "Promotions & Offres",
+      "leads": "Contacts Clients (Leads)",
+      "analytics": "Analyses Intelligentes"
+    },
+    "table": {
+      "type": "Type",
+      "destination": "Destination / Table",
+      "status": "Statut Intelligent",
+      "token": "Jeton Public",
+      "designPrint": "Créer & Imprimer QR"
+    },
+    "config": {
+      "smartHub": "Hub Intelligent Naponi",
+      "digitalTipping": "Pourboire Numérique",
+      "digitalMenu": "Menu Numérique & Allergènes",
+      "guestWifi": "Accès Wi-Fi Invités",
+      "customerFeedback": "Avis Clients en Direct",
+      "vipSignup": "Inscription Client VIP",
+      "saveSettings": "Enregistrer les modifications",
+      "settingsSaved": "Paramètres Smart QR enregistrés avec succès"
+    }
   }
 } as const;
 

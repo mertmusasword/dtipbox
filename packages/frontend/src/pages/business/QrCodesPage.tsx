@@ -461,7 +461,7 @@ export const QrCodesPage: React.FC = () => {
           }}
         >
           <QrIcon size={16} />
-          <span>{isTr ? 'QR Kodlarım & Masalar' : 'My QR Codes'}</span>
+          <span>{t('smartQr.tabs.qrcodes')}</span>
           <span
             style={{
               fontSize: '0.75rem',
@@ -494,7 +494,7 @@ export const QrCodesPage: React.FC = () => {
           }}
         >
           <Settings2 size={16} />
-          <span>{isTr ? 'Smart Modüller & Wi-Fi' : 'Smart Modules & Wi-Fi'}</span>
+          <span>{t('smartQr.tabs.modules')}</span>
         </button>
 
         <button
@@ -517,7 +517,7 @@ export const QrCodesPage: React.FC = () => {
           }}
         >
           <Tag size={16} />
-          <span>{isTr ? 'Kampanyalar & Fırsatlar' : 'Promos & Offers'}</span>
+          <span>{t('smartQr.tabs.campaigns')}</span>
           {campaigns.length > 0 && (
             <span
               style={{
@@ -552,7 +552,7 @@ export const QrCodesPage: React.FC = () => {
           }}
         >
           <Users size={16} />
-          <span>{isTr ? 'Müşteri Veritabanı (Leads)' : 'Guest Leads'}</span>
+          <span>{t('smartQr.tabs.leads')}</span>
           {leads.length > 0 && (
             <span
               style={{
@@ -588,7 +588,7 @@ export const QrCodesPage: React.FC = () => {
           }}
         >
           <BarChart3 size={16} />
-          <span>{isTr ? 'Smart Analitik' : 'Analytics'}</span>
+          <span>{t('smartQr.tabs.analytics')}</span>
         </button>
       </div>
 
@@ -623,10 +623,10 @@ export const QrCodesPage: React.FC = () => {
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>{isTr ? 'Tür' : 'Type'}</th>
-                      <th>{isTr ? 'Hedef / Masa' : 'Destination'}</th>
-                      <th>{isTr ? 'Smart Durumu' : 'Smart Status'}</th>
-                      <th>{isTr ? 'QR Token' : 'Public Token'}</th>
+                      <th>{t('smartQr.table.type')}</th>
+                      <th>{t('smartQr.table.destination')}</th>
+                      <th>{t('smartQr.table.status')}</th>
+                      <th>{t('smartQr.table.token')}</th>
                       <th>{t('common.date')}</th>
                       <th className="text-right">{t('common.actions')}</th>
                     </tr>
@@ -681,10 +681,10 @@ export const QrCodesPage: React.FC = () => {
                             <button
                               className="btn btn-secondary btn-sm"
                               onClick={() => setSelectedQr(qr)}
-                              title={isTr ? 'QR Tasarla & Yazdır' : 'Design & Print QR'}
+                              title={t('smartQr.table.designPrint')}
                               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                             >
-                              <Eye size={14} /> <span>{isTr ? 'Tasarla & Yazdır' : 'Design & Print'}</span>
+                              <Eye size={14} /> <span>{t('smartQr.table.designPrint')}</span>
                             </button>
                             <button
                               className="btn btn-danger btn-sm"
@@ -739,7 +739,7 @@ export const QrCodesPage: React.FC = () => {
                         onClick={() => setSelectedQr(qr)}
                       >
                         <Eye size={16} />
-                        <span>{isTr ? 'QR Tasarla & Baskı Al' : 'Design & Print QR'}</span>
+                        <span>{t('smartQr.table.designPrint')}</span>
                       </button>
                       <button
                         type="button"
@@ -813,7 +813,7 @@ export const QrCodesPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <QrIcon size={18} style={{ color: 'var(--accent-primary)' }} />
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-                    {isTr ? 'Dijital Bahşiş Modülü' : 'Digital Tipping'}
+                    {t('smartQr.config.digitalTipping')}
                   </h4>
                 </div>
                 <input
@@ -836,7 +836,7 @@ export const QrCodesPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <UtensilsCrossed size={18} style={{ color: '#10b981' }} />
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-                    {isTr ? 'Dijital Menü & Alerjen Sistemi' : 'Digital Menu & Allergen System'}
+                    {t('smartQr.config.digitalMenu')}
                   </h4>
                 </div>
                 <input
@@ -1021,7 +1021,7 @@ export const QrCodesPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Wifi size={18} style={{ color: '#38bdf8' }} />
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-                    {isTr ? 'Misafir Wi-Fi Paylaşımı' : 'Guest Wi-Fi Access'}
+                    {t('smartQr.config.guestWifi')}
                   </h4>
                 </div>
                 <input
@@ -1096,7 +1096,7 @@ export const QrCodesPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Star size={18} style={{ color: '#fbbf24' }} />
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-                    {isTr ? 'Anlık Müşteri Değerlendirmesi' : 'Customer Feedback'}
+                    {t('smartQr.config.customerFeedback')}
                   </h4>
                 </div>
                 <input
@@ -1143,7 +1143,7 @@ export const QrCodesPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Mail size={18} style={{ color: '#ec4899' }} />
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-                    {isTr ? 'VIP Müşteri Kaydı (Lead Capture)' : 'VIP Customer Signup'}
+                    {t('smartQr.config.vipSignup')}
                   </h4>
                 </div>
                 <input
@@ -1482,7 +1482,7 @@ export const QrCodesPage: React.FC = () => {
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
             <button type="submit" disabled={savingConfig} className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
               <CheckCircle2 size={16} />
-              <span>{savingConfig ? t('common.loading') : isTr ? 'Ayarları Kaydet' : 'Save Changes'}</span>
+              <span>{savingConfig ? t('common.loading') : t('smartQr.config.saveSettings')}</span>
             </button>
           </div>
         </form>

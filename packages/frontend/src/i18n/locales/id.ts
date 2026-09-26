@@ -43,7 +43,8 @@ export const id = {
     "comingSoon": "Segera Hadir",
     "inDevelopment": "Dalam Pengembangan",
     "verified": "Terverifikasi",
-    "unverified": "Belum Terverifikasi"
+    "unverified": "Belum Terverifikasi",
+    "saved": "Berhasil disimpan"
   },
   "nav": {
     "home": "Beranda",
@@ -417,7 +418,8 @@ export const id = {
     "externalRedirecting": "Mengalihkan ke halaman pembayaran aman...",
     "externalRedirectNotice": "Anda sedang dialihkan ke checkout aman restoran.",
     "paymentNotConfigured": "Belum ada metode pembayaran aktif yang dikonfigurasi untuk restoran ini.",
-    "paymentNotConfiguredHelp": "Silakan beri tahu staf restoran."
+    "paymentNotConfiguredHelp": "Silakan beri tahu staf restoran.",
+    "title": "Beri Tip"
   },
   "business": {
     "dashboardTitle": "Ringkasan Usaha",
@@ -655,7 +657,12 @@ export const id = {
     "stars1": "1 Bintang",
     "customerSatisfaction": "Kepuasan Pelanggan",
     "satisfactionRate": "Tingkat Kepuasan",
-    "staffRatingReviews": "ulasan"
+    "staffRatingReviews": "ulasan",
+    "reputationShield": "Perisai Reputasi Google Pintar",
+    "activeLink": "Aktif",
+    "noLinkSet": "Belum Ada Tautan",
+    "googleReviewUrlUpdated": "Tautan Ulasan Google diperbarui!",
+    "testUrl": "Uji Tautan"
   },
   "loyalty": {
     "title": "Program Loyalitas",
@@ -769,7 +776,12 @@ export const id = {
     "clearFilter": "Hapus Filter",
     "filterDisclaimerNote": "Filter ini didasarkan pada informasi bahan yang diberikan restoran. Jika Anda memiliki alergi berat, mohon konfirmasikan dengan staf.",
     "noProductsFound": "Tidak ada makanan atau minuman yang cocok dengan pencarian Anda.",
-    "clearSearch": "Bersihkan Pencarian"
+    "clearSearch": "Bersihkan Pencarian",
+    "curatedMenu": "Menu Pilihan",
+    "chefsHighlights": "Pilihan Chef",
+    "chefsChoice": "Pilihan Koki",
+    "featured": "Unggulan",
+    "hidden": "Tersembunyi"
   },
   "profile": {
     "distributionTitle": "Sistem Pembagian & Pooling Tip Staf",
@@ -808,7 +820,7 @@ export const id = {
     "recommendedStandards": "Standar gambar yang disarankan:",
     "imageFormatError": "Pilih file gambar berformat JPG, PNG, atau WebP.",
     "imageSizeError": "Ukuran file gambar maksimal 5 MB.",
-    "photoUploadedSuccess": "Foto berhasil diunggah dan disesuaikan",
+    "photoUploadedSuccess": "Foto berhasil diunggah dan disesuaikan"
   },
   "employeeDashboard": {
     "loading": "Memuat dasbor karyawan...",
@@ -844,6 +856,32 @@ export const id = {
     "pendingPayment": "Menunggu Pembayaran",
     "cash": "Tunai",
     "digital": "Digital"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "Kode QR & Meja Saya",
+      "modules": "Modul Pintar & Wi-Fi",
+      "campaigns": "Promo & Penawaran",
+      "leads": "Database Pelanggan (Leads)",
+      "analytics": "Analisis Pintar"
+    },
+    "table": {
+      "type": "Tipe",
+      "destination": "Tujuan / Meja",
+      "status": "Status Pintar",
+      "token": "Token Publik",
+      "designPrint": "Desain & Cetak QR"
+    },
+    "config": {
+      "smartHub": "Pusat Pintar Naponi",
+      "digitalTipping": "Tip Digital",
+      "digitalMenu": "Menu Digital & Alergen",
+      "guestWifi": "Akses Wi-Fi Tamu",
+      "customerFeedback": "Ulasan Pelanggan Langsung",
+      "vipSignup": "Pendaftaran Pelanggan VIP",
+      "saveSettings": "Simpan Pengaturan",
+      "settingsSaved": "Pengaturan Smart QR berhasil disimpan"
+    }
   }
 } as const;
 

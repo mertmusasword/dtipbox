@@ -43,7 +43,8 @@ export const zh = {
     "comingSoon": "即将推出",
     "inDevelopment": "开发中",
     "verified": "已验证",
-    "unverified": "未验证"
+    "unverified": "未验证",
+    "saved": "保存成功"
   },
   "nav": {
     "home": "首页",
@@ -417,7 +418,8 @@ export const zh = {
     "externalRedirecting": "正在跳转至安全支付页面...",
     "externalRedirectNotice": "正在为您跳转至商家的安全结账通道。",
     "paymentNotConfigured": "该商家暂未配置可用的付款方式。",
-    "paymentNotConfiguredHelp": "请联系店内服务人员。"
+    "paymentNotConfiguredHelp": "请联系店内服务人员。",
+    "title": "支付小费"
   },
   "business": {
     "dashboardTitle": "营业概览",
@@ -655,7 +657,12 @@ export const zh = {
     "stars1": "1 星不满",
     "customerSatisfaction": "顾客满意度",
     "satisfactionRate": "满意率",
-    "staffRatingReviews": "条评价"
+    "staffRatingReviews": "条评价",
+    "reputationShield": "智能谷歌好评守护盾",
+    "activeLink": "已启用",
+    "noLinkSet": "未设置链接",
+    "googleReviewUrlUpdated": "谷歌评价链接已更新！",
+    "testUrl": "测试链接"
   },
   "loyalty": {
     "title": "会员集章计划",
@@ -769,7 +776,12 @@ export const zh = {
     "clearFilter": "清除筛选",
     "filterDisclaimerNote": "此过滤基于餐厅提供的配料表。如有严重过敏史，请务必向店内服务人员确认。",
     "noProductsFound": "未找到符合条件的菜品或饮品。",
-    "clearSearch": "重置搜索"
+    "clearSearch": "重置搜索",
+    "curatedMenu": "精选菜单",
+    "chefsHighlights": "主厨精选",
+    "chefsChoice": "主厨推荐",
+    "featured": "推荐",
+    "hidden": "已隐藏"
   },
   "profile": {
     "distributionTitle": "小费分配与共享池系统",
@@ -808,7 +820,7 @@ export const zh = {
     "recommendedStandards": "建议图像规格：",
     "imageFormatError": "请选择 JPG、PNG 或 WebP 格式的图片。",
     "imageSizeError": "图片大小不能超过 5 MB。",
-    "photoUploadedSuccess": "员工照片已成功上传并适配",
+    "photoUploadedSuccess": "员工照片已成功上传并适配"
   },
   "employeeDashboard": {
     "loading": "正在加载员工管理看板...",
@@ -844,8 +856,33 @@ export const zh = {
     "pendingPayment": "等待支付",
     "cash": "现金",
     "digital": "数字支付"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "我的二维码与桌台",
+      "modules": "智能模块与Wi-Fi",
+      "campaigns": "促销与特惠",
+      "leads": "客户名单 (Leads)",
+      "analytics": "智能分析"
+    },
+    "table": {
+      "type": "类型",
+      "destination": "目标 / 桌台",
+      "status": "智能状态",
+      "token": "公开令牌",
+      "designPrint": "设计并打印二维码"
+    },
+    "config": {
+      "smartHub": "Naponi 智能中心",
+      "digitalTipping": "数字小费模块",
+      "digitalMenu": "数字菜单与过敏原系统",
+      "guestWifi": "客人Wi-Fi共享",
+      "customerFeedback": "顾客即时评价",
+      "vipSignup": "VIP顾客注册 (获客)",
+      "saveSettings": "保存设置",
+      "settingsSaved": "Smart QR 设置已保存"
+    }
   }
-
 } as const;
 
 export default zh;

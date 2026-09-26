@@ -43,7 +43,8 @@ export const pt = {
     "comingSoon": "Em breve",
     "inDevelopment": "Em desenvolvimento",
     "verified": "Verificado",
-    "unverified": "Não verificado"
+    "unverified": "Não verificado",
+    "saved": "Salvo com sucesso"
   },
   "nav": {
     "home": "Início",
@@ -417,7 +418,8 @@ export const pt = {
     "externalRedirecting": "Redirecionando para a página de pagamento seguro...",
     "externalRedirectNotice": "Você está sendo redirecionado para a página de pagamento segura do local.",
     "paymentNotConfigured": "Nenhum método de pagamento ativo foi configurado para este estabelecimento ainda.",
-    "paymentNotConfiguredHelp": "Por favor, avise a equipe do local."
+    "paymentNotConfiguredHelp": "Por favor, avise a equipe do local.",
+    "title": "Deixar Gorjeta"
   },
   "business": {
     "dashboardTitle": "Visão Geral do Estabelecimento",
@@ -655,7 +657,12 @@ export const pt = {
     "stars1": "1 Estrela",
     "customerSatisfaction": "Satisfação do cliente",
     "satisfactionRate": "Taxa de satisfação",
-    "staffRatingReviews": "avaliações"
+    "staffRatingReviews": "avaliações",
+    "reputationShield": "Escudo Inteligente de Reputação do Google",
+    "activeLink": "Ativo",
+    "noLinkSet": "Nenhum link configurado",
+    "googleReviewUrlUpdated": "Link de avaliação do Google atualizado!",
+    "testUrl": "Testar URL"
   },
   "loyalty": {
     "title": "Programa de Fidelidade",
@@ -769,7 +776,12 @@ export const pt = {
     "clearFilter": "Limpar Filtro",
     "filterDisclaimerNote": "Este filtro baseia-se nas informações prestadas pelo estabelecimento. Em caso de alergias graves, confirme sempre com a equipe.",
     "noProductsFound": "Nenhum prato ou bebida corresponde aos seus critérios de busca.",
-    "clearSearch": "Limpar busca"
+    "clearSearch": "Limpar busca",
+    "curatedMenu": "Cardápio Especial",
+    "chefsHighlights": "Destaques do Chef",
+    "chefsChoice": "Escolha do Chef",
+    "featured": "Em Destaque",
+    "hidden": "Oculto"
   },
   "profile": {
     "distributionTitle": "Sistema de Distribuição e Caixinha de Gorjetas",
@@ -808,7 +820,7 @@ export const pt = {
     "recommendedStandards": "Padrões recomendados para imagem:",
     "imageFormatError": "Selecione uma imagem nos formatos JPG, PNG ou WebP.",
     "imageSizeError": "O tamanho da foto deve ser de no máximo 5 MB.",
-    "photoUploadedSuccess": "Foto enviada e otimizada com sucesso",
+    "photoUploadedSuccess": "Foto enviada e otimizada com sucesso"
   },
   "employeeDashboard": {
     "loading": "Carregando painel do colaborador...",
@@ -844,6 +856,32 @@ export const pt = {
     "pendingPayment": "Aguardando Pagamento",
     "cash": "Dinheiro",
     "digital": "Digital"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "Meus Códigos QR e Mesas",
+      "modules": "Módulos Inteligentes e Wi-Fi",
+      "campaigns": "Promoções e Ofertas",
+      "leads": "Contatos de Clientes (Leads)",
+      "analytics": "Análise Inteligente"
+    },
+    "table": {
+      "type": "Tipo",
+      "destination": "Destino / Mesa",
+      "status": "Status Inteligente",
+      "token": "Token Público",
+      "designPrint": "Personalizar e Imprimir QR"
+    },
+    "config": {
+      "smartHub": "Central Inteligente Naponi",
+      "digitalTipping": "Gorjetas Digitais",
+      "digitalMenu": "Cardápio Digital e Alérgenos",
+      "guestWifi": "Wi-Fi para Clientes",
+      "customerFeedback": "Avaliações dos Clientes",
+      "vipSignup": "Cadastro de Clientes VIP",
+      "saveSettings": "Salvar Alterações",
+      "settingsSaved": "Configurações de Smart QR salvas com sucesso"
+    }
   }
 } as const;
 

@@ -43,7 +43,8 @@ export const de = {
     "comingSoon": "Demnächst verfügbar",
     "inDevelopment": "In Entwicklung",
     "verified": "Verifiziert",
-    "unverified": "Unbestätigt"
+    "unverified": "Unbestätigt",
+    "saved": "Erfolgreich gespeichert"
   },
   "nav": {
     "home": "Startseite",
@@ -349,7 +350,7 @@ export const de = {
     "touchCard3Title": "Rechnungsmappen & Belegdruck",
     "touchCard3Desc": "In edlen Rechnungsmappen oder direkt auf Kassenbons gedruckt. Niemand muss unangenehm am Tisch verweilen.",
     "touchCard4Title": "Wetterfeste Sticker & Smartphone-Display",
-    "touchCard4Desc": "Auf den Kaffeetresen oder das Truck-Fenster kleben oder direkt auf dem Smartphone-Bildschirm vorzeigen. Null Hardwarekosten.",
+    "touchCard4Desc": "Auf den Kaffeetresen oder das Truck-Fenster kleben oder direkt auf dem Smartphone-Bildschirm vorzeigen. Null Hardwarekosten."
   },
   "tip": {
     "pageTitle": "Trinkgeld geben",
@@ -417,7 +418,8 @@ export const de = {
     "externalRedirecting": "Weiterleitung zur sicheren Zahlungsseite...",
     "externalRedirectNotice": "Sie werden zum sicheren Checkout des Betriebs weitergeleitet.",
     "paymentNotConfigured": "Für diesen Betrieb ist derzeit noch keine aktive Zahlungsart eingerichtet.",
-    "paymentNotConfiguredHelp": "Bitte informieren Sie das Servicepersonal."
+    "paymentNotConfiguredHelp": "Bitte informieren Sie das Servicepersonal.",
+    "title": "Trinkgeld geben"
   },
   "business": {
     "dashboardTitle": "Betriebsübersicht",
@@ -655,7 +657,12 @@ export const de = {
     "stars1": "1 Stern",
     "customerSatisfaction": "Kundenzufriedenheit",
     "satisfactionRate": "Zufriedenheitsrate",
-    "staffRatingReviews": "Bewertungen"
+    "staffRatingReviews": "Bewertungen",
+    "reputationShield": "Intelligenter Google-Reputationsschutz",
+    "activeLink": "Aktiv",
+    "noLinkSet": "Kein Link hinterlegt",
+    "googleReviewUrlUpdated": "Google-Bewertungslink aktualisiert!",
+    "testUrl": "URL testen"
   },
   "loyalty": {
     "title": "Treueprogramm",
@@ -769,7 +776,12 @@ export const de = {
     "clearFilter": "Filter zurücksetzen",
     "filterDisclaimerNote": "Dieser Filter basiert auf den Angaben des Betriebs. Bei schweren Allergien bitten wir Sie, das Servicepersonal vor Ort zu informieren.",
     "noProductsFound": "Keine Gerichte oder Getränke entsprechen Ihrer Suche oder Filterung.",
-    "clearSearch": "Suche zurücksetzen"
+    "clearSearch": "Suche zurücksetzen",
+    "curatedMenu": "Kuratiertes Menü",
+    "chefsHighlights": "Empfehlungen des Küchenchefs",
+    "chefsChoice": "Empfehlung des Hauses",
+    "featured": "Besonders empfohlen",
+    "hidden": "Ausgeblendet"
   },
   "profile": {
     "distributionTitle": "Trinkgeld-Verteilungs- & Pool-System",
@@ -808,7 +820,7 @@ export const de = {
     "recommendedStandards": "Empfohlene Bildstandards:",
     "imageFormatError": "Bitte wählen Sie eine Datei im Format JPG, PNG oder WebP.",
     "imageSizeError": "Die Dateigröße darf maximal 5 MB betragen.",
-    "photoUploadedSuccess": "Foto erfolgreich hochgeladen und angepasst",
+    "photoUploadedSuccess": "Foto erfolgreich hochgeladen und angepasst"
   },
   "employeeDashboard": {
     "loading": "Mitarbeiter-Dashboard wird geladen...",
@@ -844,6 +856,32 @@ export const de = {
     "pendingPayment": "Zahlung ausstehend",
     "cash": "Bar",
     "digital": "Digital"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "Meine QR-Codes & Tische",
+      "modules": "Smart-Module & WLAN",
+      "campaigns": "Aktionen & Angebote",
+      "leads": "Gäste-Leads",
+      "analytics": "Smart-Analysen"
+    },
+    "table": {
+      "type": "Typ",
+      "destination": "Ziel / Tisch",
+      "status": "Smart-Status",
+      "token": "Öffentlicher Token",
+      "designPrint": "QR gestalten & drucken"
+    },
+    "config": {
+      "smartHub": "Naponi Smart Hub",
+      "digitalTipping": "Digitales Trinkgeld",
+      "digitalMenu": "Digitales Menü & Allergene",
+      "guestWifi": "Gäste-WLAN-Zugang",
+      "customerFeedback": "Kundenfeedback",
+      "vipSignup": "VIP-Kundenregistrierung",
+      "saveSettings": "Änderungen speichern",
+      "settingsSaved": "Smart-QR-Einstellungen erfolgreich gespeichert"
+    }
   }
 } as const;
 

@@ -650,7 +650,7 @@ export const MenuPage: React.FC = () => {
                   <Star size={13} fill="#F59E0B" /> 4.9
                 </span>
                 <span>•</span>
-                <span>{isTr ? 'Özel QR Menü' : 'Curated Menu'}</span>
+                <span>{t('menu.curatedMenu')}</span>
               </div>
             </div>
             {venue.logo && (
@@ -676,10 +676,10 @@ export const MenuPage: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.25rem 0.65rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.9rem', fontWeight: 800, color: theme.textPrimary, letterSpacing: '-0.01em' }}>
                 <Sparkles size={16} style={{ color: theme.accent }} />
-                <span>{isTr ? 'Şefin Seçtikleri' : "Chef's Highlights"}</span>
+                <span>{t('menu.chefsHighlights')}</span>
               </div>
               <span style={{ fontSize: '0.72rem', color: theme.accent, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {isTr ? 'Öne Çıkanlar' : 'Featured'}
+                {t('menu.featured')}
               </span>
             </div>
 
@@ -926,7 +926,7 @@ export const MenuPage: React.FC = () => {
               <span style={{ fontWeight: 700, color: theme.accent }}>
                 {excludedAllergens.length} {t('menu.filterActiveNotice')}
               </span>
-              : {excludedAllergens.map((id) => getAllergenLabel(id, language)).join(', ')} ({isTr ? 'Gizlendi' : 'Hidden'})
+              : {excludedAllergens.map((id) => getAllergenLabel(id, language)).join(', ')} ({t('menu.hidden')})
             </div>
             <button
               type="button"
@@ -1112,7 +1112,7 @@ export const MenuPage: React.FC = () => {
                               }}
                             >
                               <Star size={10} fill="currentColor" />
-                              <span>{isTr ? 'Şefin Seçimi' : "Chef's Choice"}</span>
+                              <span>{t('menu.chefsChoice')}</span>
                             </span>
                           )}
                         </div>

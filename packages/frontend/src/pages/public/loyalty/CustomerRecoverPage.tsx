@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useToast } from '../../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../../i18n';
+import { getLoyaltyLocale } from '../../../i18n/loyaltyLocales';
 import { Mail, CheckCircle2, ArrowRight, Award, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export const CustomerRecoverPage: React.FC = () => {
@@ -10,8 +11,7 @@ export const CustomerRecoverPage: React.FC = () => {
   const businessId = searchParams.get('businessId') || undefined;
   const { showToast } = useToast();
   const { language } = useLanguage();
-  const isTr = language === 'tr';
-  const isRu = language === 'ru';
+  const loc = getLoyaltyLocale(language);
 
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -20,14 +20,7 @@ export const CustomerRecoverPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      showToast(
-        isTr
-          ? 'Lütfen geçerli bir e-posta adresi girin'
-          : isRu
-          ? 'Пожалуйста, введите корректный адрес электронной почты'
-          : 'Please enter a valid email address',
-        'warning'
-      );
+      showToast(loc.enterValidEmail, 'warning');
       return;
     }
 
@@ -38,22 +31,10 @@ export const CustomerRecoverPage: React.FC = () => {
         business_id: businessId,
       });
       setSubmitted(true);
-      showToast(
-        isTr
-          ? 'Kart erişim bağlantınız e-posta adresinize gönderildi'
-          : isRu
-          ? 'Ссылка для доступа к карте отправлена на вашу почту'
-          : 'Your card access link has been sent to your email',
-        'success'
-      );
+      showToast(loc.emailSentSuccess, 'success');
     } catch (err: any) {
       showToast(
-        err.response?.data?.error ||
-        (isTr
-          ? 'İşlem sırasında bir hata oluştu'
-          : isRu
-          ? 'Произошла ошибка при отправке'
-          : 'An error occurred during recovery'),
+        err.response?.data?.error || loc.recoveryError,
         'error'
       );
     } finally {
@@ -87,14 +68,10 @@ export const CustomerRecoverPage: React.FC = () => {
           <Award size={28} />
         </div>
         <h1 style={{ fontSize: '1.45rem', margin: '0 0 0.25rem', fontWeight: 800 }}>
-          {isTr ? 'Sadakat Kartımı Bul' : isRu ? 'Найти мою карту' : 'Find My Loyalty Card'}
+          {loc.findMyCardTitle}
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: 0 }}>
-          {isTr
-            ? 'Mevcut dijital kartınıza tekrar erişmek için e-posta adresinizi girin.'
-            : isRu
-            ? 'Введите ваш email для восстановления доступа к карте.'
-            : 'Enter your email to regain access to your digital loyalty card.'}
+          {loc.findMyCardDesc}
         </p>
       </div>
 
@@ -117,22 +94,10 @@ export const CustomerRecoverPage: React.FC = () => {
               <CheckCircle2 size={36} />
             </div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem' }}>
-              {isTr ? 'E-posta Gönderildi!' : isRu ? 'Письмо отправлено!' : 'Email Sent!'}
+              {loc.emailSentTitle}
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
-              {isTr ? (
-                <>
-                  <strong style={{ color: '#fff' }}>{email}</strong> adresine kayıtlı kartınızın güvenli erişim bağlantısı gönderildi. Lütfen gelen kutunuzu (ve gerekiyorsa spam klasörünü) kontrol edin.
-                </>
-              ) : isRu ? (
-                <>
-                  Мы отправили ссылку для доступа к вашей карте на <strong style={{ color: '#fff' }}>{email}</strong>. Проверьте входящие и папку спам.
-                </>
-              ) : (
-                <>
-                  We sent your card link to <strong style={{ color: '#fff' }}>{email}</strong>. Please check your inbox and spam folder.
-                </>
-              )}
+              {loc.emailSentNotice} (<strong style={{ color: '#fff' }}>{email}</strong>)
             </p>
 
             <button
@@ -144,7 +109,7 @@ export const CustomerRecoverPage: React.FC = () => {
               className="loyalty-secondary-btn"
               style={{ width: '100%', padding: '0.75rem' }}
             >
-              {isTr ? 'Farklı Bir E-posta Dene' : isRu ? 'Попробовать другой email' : 'Try Another Email'}
+              {loc.tryAnotherEmail}
             </button>
           </div>
         ) : (
@@ -152,23 +117,19 @@ export const CustomerRecoverPage: React.FC = () => {
             <div style={{ marginBottom: '1.25rem' }}>
               <label className="loyalty-input-label">
                 <Mail size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
-                {isTr ? 'Kayıtlı E-posta Adresiniz' : isRu ? 'Ваш зарегистрированный email' : 'Your Registered Email'}
+                {loc.registeredEmailLabel}
               </label>
               <input
                 type="email"
                 className="loyalty-text-input"
-                placeholder={isTr ? 'ornek@mail.com' : 'name@example.com'}
+                placeholder={loc.emailAddressPlaceholder || 'name@example.com'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoFocus
               />
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {isTr
-                  ? 'Daha önce kart oluştururken kullandığınız e-posta adresi.'
-                  : isRu
-                  ? 'Email, указанный при создании карты.'
-                  : 'The email address you used when signing up.'}
+                {loc.findMyCardDesc}
               </span>
             </div>
 
@@ -188,10 +149,10 @@ export const CustomerRecoverPage: React.FC = () => {
               }}
             >
               {submitting ? (
-                isTr ? 'Gönderiliyor...' : isRu ? 'Отправка...' : 'Sending...'
+                loc.sendingBtn
               ) : (
                 <>
-                  {isTr ? 'Kart Bağlantımı Gönder' : isRu ? 'Отправить ссылку на карту' : 'Send My Card Link'}
+                  {loc.sendCardLinkBtn}
                   <ArrowRight size={16} />
                 </>
               )}
@@ -211,11 +172,7 @@ export const CustomerRecoverPage: React.FC = () => {
                   }}
                 >
                   <ArrowLeft size={14} />
-                  {isTr
-                    ? 'Yeni Kart Oluşturma Sayfasına Dön'
-                    : isRu
-                    ? 'Вернуться к созданию карты'
-                    : 'Back to Card Creation'}
+                  {loc.backToHome}
                 </Link>
               </div>
             )}
@@ -224,7 +181,7 @@ export const CustomerRecoverPage: React.FC = () => {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-        Naponi Loyalty • {isTr ? 'Temassız Sadakat Sistemi' : 'Cashless Loyalty System'}
+        Naponi Loyalty • {loc.cashlessLoyaltySystem}
       </div>
     </div>
   );

@@ -43,7 +43,8 @@ export const ar = {
     "comingSoon": "قريباً",
     "inDevelopment": "قيد التطوير",
     "verified": "تم التحقق",
-    "unverified": "غير موثق"
+    "unverified": "غير موثق",
+    "saved": "تم الحفظ بنجاح"
   },
   "nav": {
     "home": "الرئيسية",
@@ -417,7 +418,8 @@ export const ar = {
     "externalRedirecting": "جارٍ التوجيه إلى صفحة الدفع الآمنة...",
     "externalRedirectNotice": "يتم الآن نقلك إلى بوابة الدفع الآمنة التابعة للمنشأة.",
     "paymentNotConfigured": "لم يتم تفعيل طريقة دفع نشطة لهذه المنشأة بعد.",
-    "paymentNotConfiguredHelp": "يرجى إبلاغ موظفي الخدمة."
+    "paymentNotConfiguredHelp": "يرجى إبلاغ موظفي الخدمة.",
+    "title": "ترك إكرامية"
   },
   "business": {
     "dashboardTitle": "نظرة عامة على النشاط",
@@ -655,7 +657,12 @@ export const ar = {
     "stars1": "نجمة واحدة",
     "customerSatisfaction": "رضا العملاء",
     "satisfactionRate": "نسبة الرضا",
-    "staffRatingReviews": "تقييمات"
+    "staffRatingReviews": "تقييمات",
+    "reputationShield": "درع سمعة جوجل الذكي",
+    "activeLink": "نشط",
+    "noLinkSet": "لم يتم تعيين رابط",
+    "googleReviewUrlUpdated": "تم تحديث رابط تقييمات جوجل!",
+    "testUrl": "اختبار الرابط"
   },
   "loyalty": {
     "title": "برنامج الولاء",
@@ -769,7 +776,12 @@ export const ar = {
     "clearFilter": "إلغاء الفلتر",
     "filterDisclaimerNote": "يعتمد هذا الفلتر على إفصاح المنشأة للمكونات. في حالات الحساسية الشديدة، يرجى دائماً التأكيد مع طاقم الخدمة.",
     "noProductsFound": "لم يتم العثور على أطباق أو مشروبات تطابق خياراتك.",
-    "clearSearch": "مسح البحث"
+    "clearSearch": "مسح البحث",
+    "curatedMenu": "قائمة مميزة",
+    "chefsHighlights": "مختارات الشيف",
+    "chefsChoice": "اختيار الشيف",
+    "featured": "مميز",
+    "hidden": "مخفي"
   },
   "profile": {
     "distributionTitle": "نظام توزيع وتقاسم الإكراميات (المجموع)",
@@ -808,7 +820,7 @@ export const ar = {
     "recommendedStandards": "المعايير الموصى بها للصورة:",
     "imageFormatError": "يرجى اختيار صورة بصيغة JPG أو PNG أو WebP.",
     "imageSizeError": "الحد الأقصى لحجم الصورة هو 5 ميغابايت.",
-    "photoUploadedSuccess": "تم تحميل الصورة وتحسينها بنجاح",
+    "photoUploadedSuccess": "تم تحميل الصورة وتحسينها بنجاح"
   },
   "employeeDashboard": {
     "loading": "جارٍ تحميل لوحة تحكم الموظف...",
@@ -844,6 +856,32 @@ export const ar = {
     "pendingPayment": "بانتظار الدفع",
     "cash": "نقدي",
     "digital": "إلكتروني"
+  },
+  "smartQr": {
+    "tabs": {
+      "qrcodes": "رموز QR والطاولات",
+      "modules": "الوحدات الذكية والواي فاي",
+      "campaigns": "العروض والخصومات",
+      "leads": "بيانات العملاء (Leads)",
+      "analytics": "التحليلات الذكية"
+    },
+    "table": {
+      "type": "النوع",
+      "destination": "الوجهة / الطاولة",
+      "status": "الحالة الذكية",
+      "token": "الرمز العام",
+      "designPrint": "تصميم وطباعة رمز QR"
+    },
+    "config": {
+      "smartHub": "مركز نابوني الذكي",
+      "digitalTipping": "الإكراميات الرقمية",
+      "digitalMenu": "القائمة الرقمية ومسببات الحساسية",
+      "guestWifi": "مشاركة واي فاي للضيوف",
+      "customerFeedback": "آراء وتقييمات العملاء",
+      "vipSignup": "تسجيل عملاء VIP",
+      "saveSettings": "حفظ الإعدادات",
+      "settingsSaved": "تم حفظ إعدادات QR الذكية بنجاح"
+    }
   }
 } as const;
 

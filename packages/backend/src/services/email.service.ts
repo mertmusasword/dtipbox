@@ -139,12 +139,13 @@ class EmailService {
   /**
    * Send Password Reset Email
    */
-  async sendPasswordResetEmail(to: string, resetUrl: string): Promise<boolean> {
-    const subject = '⚡ Naponi - Şifre Sıfırlama Talebi';
+  async sendPasswordResetEmail(to: string, resetUrl: string, lang: string = 'tr'): Promise<boolean> {
+    const isTr = lang.toLowerCase().startsWith('tr');
+    const subject = isTr ? '⚡ Naponi - Şifre Sıfırlama Talebi' : '⚡ Naponi - Password Reset Request';
 
     const htmlContent = `
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="${isTr ? 'tr' : 'en'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -174,7 +175,7 @@ class EmailService {
                   </td>
                   <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; background-color: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); color: #38bdf8; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.3px;">
-                      🔒 Güvenlik Talebi
+                      ${isTr ? '🔒 Güvenlik Talebi' : '🔒 Security Request'}
                     </span>
                   </td>
                 </tr>
@@ -193,11 +194,13 @@ class EmailService {
           <tr>
             <td style="padding: 32px 40px 28px 40px;">
               <h1 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; line-height: 1.3;">
-                Şifre Sıfırlama Talebi
+                ${isTr ? 'Şifre Sıfırlama Talebi' : 'Password Reset Request'}
               </h1>
               
               <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #94a3b8;">
-                Naponi hesabınız için bir şifre yenileme talebinde bulunuldu. Hesabınıza güvenle erişebilmeniz ve yeni şifrenizi oluşturmak için aşağıdaki butona tıklayabilirsiniz.
+                ${isTr 
+                  ? 'Naponi hesabınız için bir şifre yenileme talebinde bulunuldu. Hesabınıza güvenle erişebilmeniz ve yeni şifrenizi oluşturmak için aşağıdaki butona tıklayabilirsiniz.' 
+                  : 'A password reset was requested for your Naponi account. Click the button below to securely access your account and create a new password.'}
               </p>
 
               <!-- Expiry Alert Pill -->
@@ -206,7 +209,9 @@ class EmailService {
                   <tr>
                     <td style="width: 20px; font-size: 14px; vertical-align: middle;">⏱️</td>
                     <td style="font-size: 13px; color: #93c5fd; font-weight: 500; padding-left: 8px;">
-                      Bu bağlantı güvenlik sebebiyle <strong>60 dakika</strong> boyunca geçerlidir.
+                      ${isTr 
+                        ? 'Bu bağlantı güvenlik sebebiyle <strong>60 dakika</strong> boyunca geçerlidir.' 
+                        : 'This link is valid for <strong>60 minutes</strong> for security reasons.'}
                     </td>
                   </tr>
                 </table>
@@ -215,21 +220,25 @@ class EmailService {
               <!-- Action Button CTA -->
               <div style="text-align: center; margin: 32px 0;">
                 <a href="${resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 36px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5); letter-spacing: 0.2px;">
-                  Şifremi Sıfırla &rarr;
+                  ${isTr ? 'Şifremi Sıfırla &rarr;' : 'Reset My Password &rarr;'}
                 </a>
               </div>
 
               <!-- Security Notice Box -->
               <div style="background-color: rgba(15, 23, 42, 0.6); border-left: 3px solid #38bdf8; border-radius: 0 8px 8px 0; padding: 14px 18px; margin-top: 32px;">
                 <p style="margin: 0; font-size: 12.5px; line-height: 1.6; color: #64748b;">
-                  <strong style="color: #cbd5e1;">Bu işlemi siz başlatmadıysanız:</strong> Bu e-postayı güvenle dikkate almayabilirsiniz. Mevcut şifreniz değişmeden kalacaktır.
+                  ${isTr
+                    ? '<strong style="color: #cbd5e1;">Bu işlemi siz başlatmadıysanız:</strong> Bu e-postayı güvenle dikkate almayabilirsiniz. Mevcut şifreniz değişmeden kalacaktır.'
+                    : '<strong style="color: #cbd5e1;">If you did not request this:</strong> You can safely ignore this email. Your current password will remain unchanged.'}
                 </p>
               </div>
 
               <!-- Fallback Link Section -->
               <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #1e293b;">
                 <p style="margin: 0 0 8px 0; font-size: 11.5px; color: #64748b;">
-                  Buton çalışmıyorsa aşağıdaki güvenli bağlantıyı tarayıcınıza kopyalayabilirsiniz:
+                  ${isTr
+                    ? 'Buton çalışmıyorsa aşağıdaki güvenli bağlantıyı tarayıcınıza kopyalayabilirsiniz:'
+                    : 'If the button does not work, copy and paste this secure link into your browser:'}
                 </p>
                 <div style="background-color: #070a13; border: 1px solid #1e293b; border-radius: 8px; padding: 10px 14px; word-break: break-all;">
                   <a href="${resetUrl}" style="color: #38bdf8; font-size: 11px; text-decoration: none; line-height: 1.5; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
@@ -244,10 +253,10 @@ class EmailService {
           <tr>
             <td style="background-color: #0b1120; padding: 24px 40px; text-align: center; border-top: 1px solid #1e293b;">
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #475569; font-weight: 500;">
-                © 2026 Naponi Teknoloji • Dijital Bahşiş ve Ödeme Çözümleri
+                ${isTr ? '© 2026 Naponi Teknoloji • Dijital Bahşiş ve Ödeme Çözümleri' : '© 2026 Naponi Technology • Digital Tipping & Payment Solutions'}
               </p>
               <p style="margin: 0; font-size: 11px; color: #334155;">
-                Bu otomatik bir güvenlik bildirimidir. Lütfen bu e-postayı doğrudan yanıtlamayınız.
+                ${isTr ? 'Bu otomatik bir güvenlik bildirimidir. Lütfen bu e-postayı doğrudan yanıtlamayınız.' : 'This is an automated security notification. Please do not reply directly to this email.'}
               </p>
             </td>
           </tr>
@@ -260,14 +269,9 @@ class EmailService {
 </html>
     `.trim();
 
-    const textContent = `
-Naponi - Şifre Sıfırlama Talebi
-
-Hesabınız için bir şifre sıfırlama talebinde bulunuldu. Şifrenizi yenilemek için aşağıdaki bağlantıyı ziyaret edebilirsiniz (1 saat geçerlidir):
-${resetUrl}
-
-Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
-    `.trim();
+    const textContent = isTr
+      ? `Naponi - Şifre Sıfırlama Talebi\n\nHesabınız için bir şifre sıfırlama talebinde bulunuldu. Şifrenizi yenilemek için aşağıdaki bağlantıyı ziyaret edebilirsiniz (1 saat geçerlidir):\n${resetUrl}\n\nEğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.`.trim()
+      : `Naponi - Password Reset Request\n\nA password reset was requested for your Naponi account. Visit the following link to reset your password (valid for 1 hour):\n${resetUrl}\n\nIf you did not make this request, please ignore this email.`.trim();
 
     return this.sendEmail(to, subject, htmlContent, textContent);
   }
@@ -275,13 +279,16 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
   /**
    * Send Business Welcome & Onboarding Guide Email
    */
-  async sendBusinessWelcomeEmail(to: string, businessName: string): Promise<boolean> {
-    const subject = `⚡ Naponi'ye Hoş Geldiniz! İşletmenizi 3 Adımda Hazırlayın`;
+  async sendBusinessWelcomeEmail(to: string, businessName: string, lang: string = 'tr'): Promise<boolean> {
+    const isTr = lang.toLowerCase().startsWith('tr');
+    const subject = isTr
+      ? `⚡ Naponi'ye Hoş Geldiniz! İşletmenizi 3 Adımda Hazırlayın`
+      : `⚡ Welcome to Naponi! Set Up Your Business in 3 Steps`;
     const loginUrl = `${env.APP_URL}/login`;
 
     const htmlContent = `
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="${isTr ? 'tr' : 'en'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -311,7 +318,7 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
                   </td>
                   <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.3px;">
-                      🏢 İşletme Hesabı
+                      ${isTr ? '🏢 İşletme Hesabı' : '🏢 Business Account'}
                     </span>
                   </td>
                 </tr>
@@ -330,11 +337,13 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
           <tr>
             <td style="padding: 32px 40px 28px 40px;">
               <h1 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; line-height: 1.3;">
-                Aramıza Hoş Geldiniz, <span style="color: #38bdf8;">${businessName}</span>! 🎉
+                ${isTr ? `Aramıza Hoş Geldiniz, <span style="color: #38bdf8;">${businessName}</span>! 🎉` : `Welcome to Naponi, <span style="color: #38bdf8;">${businessName}</span>! 🎉`}
               </h1>
               
               <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #94a3b8;">
-                Müşterilerinizden kredi kartı ile doğrudan masada veya kasada temassız bahşiş toplamanızı sağlayan yeni nesil dijital bahşiş sistemine hoş geldiniz. İşletmenizi hemen faaliyete geçirmek için aşağıdaki 3 kolay adımı takip edebilirsiniz:
+                ${isTr
+                  ? 'Müşterilerinizden kredi kartı ile doğrudan masada veya kasada temassız bahşiş toplamanızı sağlayan yeni nesil dijital bahşiş sistemine hoş geldiniz. İşletmenizi hemen faaliyete geçirmek için aşağıdaki 3 kolay adımı takip edebilirsiniz:'
+                  : 'Welcome to the next-generation digital tipping and guest engagement platform. Follow these 3 easy steps to activate your venue and start receiving tips immediately:'}
               </p>
 
               <!-- Step 1 Card -->
@@ -346,10 +355,12 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
                     </td>
                     <td style="padding-left: 14px;">
                       <div style="font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 4px;">
-                        Personellerinizi Ekleyin
+                        ${isTr ? 'Personellerinizi Ekleyin' : 'Add Your Staff Members'}
                       </div>
                       <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">
-                        Ekip üyelerinizi tanımlayın; her çalışanınız için kişisel bahşiş profili ve performansı otomatik oluşsun.
+                        ${isTr
+                          ? 'Ekip üyelerinizi tanımlayın; her çalışanınız için kişisel bahşiş profili ve performansı otomatik oluşsun.'
+                          : 'Set up your team members so each employee receives their own personal profile and transparent performance metrics.'}
                       </div>
                     </td>
                   </tr>
@@ -365,10 +376,12 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
                     </td>
                     <td style="padding-left: 14px;">
                       <div style="font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 4px;">
-                        Masa & Personel QR Kodlarınızı İndirin
+                        ${isTr ? 'Masa & Personel QR Kodlarınızı İndirin' : 'Download Table & Staff QR Codes'}
                       </div>
                       <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">
-                        Masalarınız veya personelleriniz için dinamik QR kodları panelinizden tek tıkla indirin ve yazdırın.
+                        ${isTr
+                          ? 'Masalarınız veya personelleriniz için dinamik QR kodları panelinizden tek tıkla indirin ve yazdırın.'
+                          : 'Download and print custom branded QR stands and table cards directly from your dashboard.'}
                       </div>
                     </td>
                   </tr>
@@ -384,10 +397,12 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
                     </td>
                     <td style="padding-left: 14px;">
                       <div style="font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 4px;">
-                        Ödeme Bilgilerinizi Bağlayın
+                        ${isTr ? 'Ödeme Bilgilerinizi Bağlayın' : 'Connect Your Payout Account'}
                       </div>
                       <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">
-                        Bahşişlerin kesintisiz aktarılması için ödeme/banka hesabınızı tanımlayın ve hemen kazanmaya başlayın.
+                        ${isTr
+                          ? 'Bahşişlerin kesintisiz aktarılması için ödeme/banka hesabınızı tanımlayın ve hemen kazanmaya başlayın.'
+                          : 'Connect your bank or merchant account to ensure seamless direct payouts for collected tips.'}
                       </div>
                     </td>
                   </tr>
@@ -397,14 +412,16 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
               <!-- CTA Button -->
               <div style="text-align: center; margin: 32px 0;">
                 <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 36px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5); letter-spacing: 0.2px;">
-                  Yönetim Paneline Git &rarr;
+                  ${isTr ? 'Yönetim Paneline Git &rarr;' : 'Go to Dashboard &rarr;'}
                 </a>
               </div>
 
               <!-- Support Contact Box -->
               <div style="background-color: rgba(15, 23, 42, 0.6); border-left: 3px solid #10b981; border-radius: 0 8px 8px 0; padding: 14px 18px; margin-top: 32px;">
                 <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #cbd5e1;">
-                  <strong>Yardıma mı ihtiyacınız var?</strong> Kurulum, QR kartlıklar veya ödeme entegrasyonuyla ilgili her konuda <a href="mailto:info@naponi.com" style="color: #38bdf8; text-decoration: none; font-weight: 600;">info@naponi.com</a> adresinden bize dilediğiniz an ulaşabilirsiniz.
+                  ${isTr
+                    ? '<strong>Yardıma mı ihtiyacınız var?</strong> Kurulum, QR kartlıklar veya ödeme entegrasyonuyla ilgili her konuda <a href="mailto:info@naponi.com" style="color: #38bdf8; text-decoration: none; font-weight: 600;">info@naponi.com</a> adresinden bize dilediğiniz an ulaşabilirsiniz.'
+                    : '<strong>Need assistance?</strong> For onboarding support, QR hardware, or payment integrations, contact us anytime at <a href="mailto:info@naponi.com" style="color: #38bdf8; text-decoration: none; font-weight: 600;">info@naponi.com</a>.'}
                 </p>
               </div>
             </td>
@@ -414,10 +431,12 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
           <tr>
             <td style="background-color: #0b1120; padding: 24px 40px; text-align: center; border-top: 1px solid #1e293b;">
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #475569; font-weight: 500;">
-                © 2026 Naponi Teknoloji • Dijital Bahşiş ve Ödeme Çözümleri
+                ${isTr ? '© 2026 Naponi Teknoloji • Dijital Bahşiş ve Ödeme Çözümleri' : '© 2026 Naponi Technology • Digital Tipping & Payment Solutions'}
               </p>
               <p style="margin: 0; font-size: 11px; color: #334155;">
-                Bu e-posta Naponi platformuna kayıt olan işletmelere bilgilendirme amacıyla gönderilmiştir.
+                ${isTr
+                  ? 'Bu e-posta Naponi platformuna kayıt olan işletmelere bilgilendirme amacıyla gönderilmiştir.'
+                  : 'This email was sent to notify registered businesses on the Naponi platform.'}
               </p>
             </td>
           </tr>
@@ -430,7 +449,8 @@ Eğer bu talebi siz yapmadıysanız bu mesajı dikkate almayınız.
 </html>
     `.trim();
 
-    const textContent = `
+    const textContent = isTr
+      ? `
 Naponi'ye Hoş Geldiniz, ${businessName}!
 
 Müşterilerinizden kredi kartı ile doğrudan masada veya kasada dijital bahşiş toplamanızı sağlayan yeni nesil sisteme hoş geldiniz.
@@ -442,7 +462,20 @@ Müşterilerinizden kredi kartı ile doğrudan masada veya kasada dijital bahşi
 
 Yönetim Paneli: ${loginUrl}
 Sorularınız için: info@naponi.com
-    `.trim();
+      `.trim()
+      : `
+Welcome to Naponi, ${businessName}!
+
+Welcome to the next-generation digital tipping and guest engagement platform.
+
+Quick setup steps:
+1. Add Your Staff Members
+2. Download & Print Table/Staff QR Codes
+3. Connect Your Payout Account
+
+Management Dashboard: ${loginUrl}
+Support: info@naponi.com
+      `.trim();
 
     return this.sendEmail(to, subject, htmlContent, textContent);
   }
@@ -450,13 +483,16 @@ Sorularınız için: info@naponi.com
   /**
    * Send Employee Welcome & Orientation Email
    */
-  async sendEmployeeWelcomeEmail(to: string, employeeName: string, businessName: string): Promise<boolean> {
-    const subject = `⚡ ${businessName} Ekibine Hoş Geldiniz! Dijital Bahşiş Profiliniz Hazır`;
+  async sendEmployeeWelcomeEmail(to: string, employeeName: string, businessName: string, lang: string = 'tr'): Promise<boolean> {
+    const isTr = lang.toLowerCase().startsWith('tr');
+    const subject = isTr
+      ? `⚡ ${businessName} Ekibine Hoş Geldiniz! Dijital Bahşiş Profiliniz Hazır`
+      : `⚡ Welcome to ${businessName}! Your Digital Tip Profile is Ready`;
     const loginUrl = `${env.APP_URL}/login`;
 
     const htmlContent = `
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="${isTr ? 'tr' : 'en'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -486,7 +522,7 @@ Sorularınız için: info@naponi.com
                   </td>
                   <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; background-color: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.3px;">
-                      👤 Personel Hesabı
+                      ${isTr ? '👤 Personel Hesabı' : '👤 Staff Account'}
                     </span>
                   </td>
                 </tr>
@@ -505,11 +541,13 @@ Sorularınız için: info@naponi.com
           <tr>
             <td style="padding: 32px 40px 28px 40px;">
               <h1 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; line-height: 1.3;">
-                Merhaba ${employeeName}, Hoş Geldin! 👋
+                ${isTr ? `Merhaba ${employeeName}, Hoş Geldin! 👋` : `Welcome aboard, ${employeeName}! 👋`}
               </h1>
               
               <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #94a3b8;">
-                <strong style="color: #f8fafc;">${businessName}</strong> işletmesi seni Naponi dijital bahşiş sistemine ekledi! Artık misafirlerinden kredi kartı ile doğrudan sana özel dijital bahşiş toplayabilirsin.
+                ${isTr
+                  ? `<strong style="color: #f8fafc;">${businessName}</strong> işletmesi seni Naponi dijital bahşiş sistemine ekledi! Artık misafirlerinden kredi kartı ile doğrudan sana özel dijital bahşiş toplayabilirsin.`
+                  : `<strong style="color: #f8fafc;">${businessName}</strong> has added you to their Naponi digital tipping system! You can now receive card and mobile wallet tips directly from guests.`}
               </p>
 
               <!-- Feature 1 -->
@@ -519,10 +557,12 @@ Sorularınız için: info@naponi.com
                     <td style="width: 24px; font-size: 18px; vertical-align: top;">📱</td>
                     <td style="padding-left: 12px;">
                       <div style="font-size: 13.5px; font-weight: 600; color: #f8fafc; margin-bottom: 2px;">
-                        Sana Özel Kişisel QR Kod
+                        ${isTr ? 'Sana Özel Kişisel QR Kod' : 'Personal Dedicated QR Code'}
                       </div>
                       <div style="font-size: 12.5px; color: #94a3b8; line-height: 1.4;">
-                        Misafirler telefon kameralarıyla QR kodunu okutarak saniyeler içinde sana teşekkür bahşişi gönderebilir.
+                        ${isTr
+                          ? 'Misafirler telefon kameralarıyla QR kodunu okutarak saniyeler içinde sana teşekkür bahşişi gönderebilir.'
+                          : 'Guests can scan your dedicated QR code with their phone camera to tip you in seconds without downloading an app.'}
                       </div>
                     </td>
                   </tr>
@@ -536,10 +576,12 @@ Sorularınız için: info@naponi.com
                     <td style="width: 24px; font-size: 18px; vertical-align: top;">📊</td>
                     <td style="padding-left: 12px;">
                       <div style="font-size: 13.5px; font-weight: 600; color: #f8fafc; margin-bottom: 2px;">
-                        Anlık & Şeffaf Kazanç Takibi
+                        ${isTr ? 'Anlık & Şeffaf Kazanç Takibi' : 'Real-time & Transparent Earnings'}
                       </div>
                       <div style="font-size: 12.5px; color: #94a3b8; line-height: 1.4;">
-                        Topladığın bahşişleri ve performansını personel panelinden dilediğin an şeffaf şekilde izleyebilirsin.
+                        ${isTr
+                          ? 'Topladığın bahşişleri ve performansını personel panelinden dilediğin an şeffaf şekilde izleyebilirsin.'
+                          : 'Track received tips, customer reviews, and your payouts transparently anytime from your staff portal.'}
                       </div>
                     </td>
                   </tr>
@@ -548,14 +590,14 @@ Sorularınız için: info@naponi.com
 
               <!-- Account Info Pill -->
               <div style="margin-top: 24px; margin-bottom: 28px; background-color: #0b1120; border: 1px dashed #334155; border-radius: 10px; padding: 12px 16px; text-align: center;">
-                <span style="font-size: 12px; color: #94a3b8;">Kayıtlı E-posta Adresiniz:</span>
+                <span style="font-size: 12px; color: #94a3b8;">${isTr ? 'Kayıtlı E-posta Adresiniz:' : 'Registered Email:'}</span>
                 <span style="font-size: 13px; color: #38bdf8; font-weight: 600; margin-left: 6px;">${to}</span>
               </div>
 
               <!-- CTA Button -->
               <div style="text-align: center; margin: 28px 0;">
                 <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 36px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5); letter-spacing: 0.2px;">
-                  Personel Paneline Giriş Yap &rarr;
+                  ${isTr ? 'Personel Paneline Giriş Yap &rarr;' : 'Log In to Staff Portal &rarr;'}
                 </a>
               </div>
             </td>
@@ -565,10 +607,12 @@ Sorularınız için: info@naponi.com
           <tr>
             <td style="background-color: #0b1120; padding: 24px 40px; text-align: center; border-top: 1px solid #1e293b;">
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #475569; font-weight: 500;">
-                © 2026 Naponi Teknoloji • Dijital Bahşiş ve Ödeme Çözümleri
+                ${isTr ? '© 2026 Naponi Teknoloji • Dijital Bahşiş ve Ödeme Çözümleri' : '© 2026 Naponi Technology • Digital Tipping & Payment Solutions'}
               </p>
               <p style="margin: 0; font-size: 11px; color: #334155;">
-                Bu e-posta ${businessName} işletmesi tarafından personel kaydınız yapıldığı için iletilmiştir.
+                ${isTr
+                  ? `Bu e-posta ${businessName} işletmesi tarafından personel kaydınız yapıldığı için iletilmiştir.`
+                  : `This email was sent because ${businessName} registered you as a staff member on Naponi.`}
               </p>
             </td>
           </tr>
@@ -581,14 +625,23 @@ Sorularınız için: info@naponi.com
 </html>
     `.trim();
 
-    const textContent = `
+    const textContent = isTr
+      ? `
 Merhaba ${employeeName}, Hoş Geldin!
 
 ${businessName} işletmesi seni Naponi dijital bahşiş sistemine ekledi. Artık misafirlerinden kredi kartı ile doğrudan sana özel dijital bahşiş toplayabilirsin!
 
 Giriş E-postası: ${to}
 Personel Paneli: ${loginUrl}
-    `.trim();
+      `.trim()
+      : `
+Welcome ${employeeName}!
+
+${businessName} has added you to the Naponi digital tipping system. You can now receive card tips directly from guests!
+
+Login Email: ${to}
+Staff Portal: ${loginUrl}
+      `.trim();
 
     return this.sendEmail(to, subject, htmlContent, textContent);
   }
@@ -1305,13 +1358,17 @@ Her türlü soru ve talebiniz için: info@naponi.com
     cardCode: string;
     targetStamps: number;
     rewardDescription: string;
+    lang?: string;
   }): Promise<boolean> {
-    const { to, businessName, programName, cardUrl, cardCode, targetStamps, rewardDescription } = params;
-    const emailSubject = `🎁 ${businessName} Sadakat Kartınız Hazır!`;
+    const { to, businessName, programName, cardUrl, cardCode, targetStamps, rewardDescription, lang = 'tr' } = params;
+    const isTr = lang.toLowerCase().startsWith('tr');
+    const emailSubject = isTr
+      ? `🎁 ${businessName} Sadakat Kartınız Hazır!`
+      : `🎁 Your ${businessName} Loyalty Card is Ready!`;
 
     const htmlContent = `
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="${isTr ? 'tr' : 'en'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1334,7 +1391,7 @@ Her türlü soru ve talebiniz için: info@naponi.com
               <img src="https://www.naponi.com/naponi-brand.png" alt="Naponi" width="135" style="display: inline-block; max-width: 135px; height: auto;" />
               <div style="margin-top: 12px;">
                 <span style="display: inline-block; background-color: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 9999px; letter-spacing: 0.6px;">
-                  🎁 DİJİTAL SADAKAT KARTI
+                  ${isTr ? '🎁 DİJİTAL SADAKAT KARTI' : '🎁 DIGITAL LOYALTY CARD'}
                 </span>
               </div>
             </td>
@@ -1347,33 +1404,39 @@ Her türlü soru ve talebiniz için: info@naponi.com
                 ${businessName}
               </h2>
               <p style="margin: 0 0 20px 0; font-size: 14.5px; color: #cbd5e1; line-height: 1.6;">
-                <strong>${programName}</strong> sadakat kartınız başarıyla oluşturuldu! Her siparişinizde kartınızı personele göstererek damga toplayabilir ve ödülünüzü kazanabilirsiniz.
+                ${isTr
+                  ? `<strong>${programName}</strong> sadakat kartınız başarıyla oluşturuldu! Her siparişinizde kartınızı personele göstererek damga toplayabilir ve ödülünüzü kazanabilirsiniz.`
+                  : `Your <strong>${programName}</strong> digital loyalty card has been created! Present your card on every visit to collect stamps and claim rewards.`}
               </p>
 
               <!-- Card Overview Box -->
               <div style="background-color: #131d35; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
                 <div style="font-size: 11.5px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
-                  Kart Kodunuz
+                  ${isTr ? 'Kart Kodunuz' : 'Your Card Code'}
                 </div>
                 <div style="font-size: 26px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; letter-spacing: 2px; margin-bottom: 12px;">
                   ${cardCode}
                 </div>
                 <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">
-                  Hedef: <strong style="color: #f8fafc;">${targetStamps} Damga</strong> &bull; Ödül: <strong style="color: #34d399;">${rewardDescription}</strong>
+                  ${isTr
+                    ? `Hedef: <strong style="color: #f8fafc;">${targetStamps} Damga</strong> &bull; Ödül: <strong style="color: #34d399;">${rewardDescription}</strong>`
+                    : `Goal: <strong style="color: #f8fafc;">${targetStamps} Stamps</strong> &bull; Reward: <strong style="color: #34d399;">${rewardDescription}</strong>`}
                 </div>
               </div>
 
               <!-- CTA Button -->
               <div style="text-align: center; margin: 28px 0;">
                 <a href="${cardUrl}" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000000 !important; font-size: 15px; font-weight: 800; text-decoration: none; padding: 14px 36px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4); letter-spacing: 0.3px;">
-                  Sadakat Kartımı Aç &rarr;
+                  ${isTr ? 'Sadakat Kartımı Aç &rarr;' : 'Open My Loyalty Card &rarr;'}
                 </a>
               </div>
 
               <!-- Tip / Note -->
               <div style="background-color: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 24px;">
                 <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #94a3b8;">
-                  <strong style="color: #cbd5e1;">İpucu:</strong> Bu bağlantıyı tarayıcınızda açtıktan sonra "Ana Ekrana Ekle" (Add to Home Screen) yaparak kartınıza tek tıkla uygulama gibi ulaşabilirsiniz.
+                  <strong style="color: #cbd5e1;">${isTr ? 'İpucu:' : 'Tip:'}</strong> ${isTr
+                    ? 'Bu bağlantıyı tarayıcınızda açtıktan sonra "Ana Ekrana Ekle" (Add to Home Screen) yaparak kartınıza tek tıkla uygulama gibi ulaşabilirsiniz.'
+                    : 'Open this link in your mobile browser and tap "Add to Home Screen" to use your card instantly like a native mobile app.'}
                 </p>
               </div>
             </td>
@@ -1386,7 +1449,9 @@ Her türlü soru ve talebiniz için: info@naponi.com
                 © 2026 Naponi Teknoloji &bull; www.naponi.com
               </p>
               <p style="margin: 0; font-size: 11px; color: #334155;">
-                Bu e-posta ${businessName} sadakat programına kaydolduğunuz için gönderilmiştir.
+                ${isTr
+                  ? `Bu e-posta ${businessName} sadakat programına kaydolduğunuz için gönderilmiştir.`
+                  : `This email was sent because you enrolled in ${businessName}'s loyalty program.`}
               </p>
             </td>
           </tr>
@@ -1399,7 +1464,8 @@ Her türlü soru ve talebiniz için: info@naponi.com
 </html>
     `.trim();
 
-    const textContent = `
+    const textContent = isTr
+      ? `
 ${businessName} Sadakat Kartınız Hazır!
 
 ${programName}
@@ -1409,7 +1475,18 @@ Hedef: ${targetStamps} Damga
 
 Kartınızı açmak için:
 ${cardUrl}
-    `.trim();
+      `.trim()
+      : `
+Your ${businessName} Loyalty Card is Ready!
+
+${programName}
+Card Code: ${cardCode}
+Goal: ${targetStamps} Stamps
+Reward: ${rewardDescription}
+
+Open your loyalty card:
+${cardUrl}
+      `.trim();
 
     return this.sendEmail(to, emailSubject, htmlContent, textContent);
   }
@@ -1419,6 +1496,7 @@ ${cardUrl}
    */
   async sendLoyaltyCardRecoveryEmail(params: {
     to: string;
+    lang?: string;
     cards: Array<{
       businessName: string;
       programName: string;
@@ -1428,18 +1506,21 @@ ${cardUrl}
       targetStamps: number;
     }>;
   }): Promise<boolean> {
-    const { to, cards } = params;
-    const emailSubject = `⚡ Naponi - Sadakat Kartı Erişim Bağlantınız`;
+    const { to, cards, lang = 'tr' } = params;
+    const isTr = lang.toLowerCase().startsWith('tr');
+    const emailSubject = isTr
+      ? `⚡ Naponi - Sadakat Kartı Erişim Bağlantınız`
+      : `⚡ Naponi - Your Digital Loyalty Cards`;
 
     const cardsHtml = cards
       .map(
         (c) => `
         <div style="background-color: #131d35; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
           <div style="font-size: 15px; font-weight: 700; color: #f8fafc; margin-bottom: 4px;">${c.businessName}</div>
-          <div style="font-size: 12.5px; color: #94a3b8; margin-bottom: 10px;">${c.programName} &bull; ${c.currentStamps} / ${c.targetStamps} Damga</div>
+          <div style="font-size: 12.5px; color: #94a3b8; margin-bottom: 10px;">${c.programName} &bull; ${c.currentStamps} / ${c.targetStamps} ${isTr ? 'Damga' : 'Stamps'}</div>
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <span style="font-family: monospace; font-size: 14px; font-weight: 700; color: #38bdf8;">${c.cardCode}</span>
-            <a href="${c.cardUrl}" style="background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 600;">Kartı Aç &rarr;</a>
+            <a href="${c.cardUrl}" style="background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 600;">${isTr ? 'Kartı Aç &rarr;' : 'Open Card &rarr;'}</a>
           </div>
         </div>
       `
@@ -1448,7 +1529,7 @@ ${cardUrl}
 
     const htmlContent = `
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="${isTr ? 'tr' : 'en'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1466,9 +1547,11 @@ ${cardUrl}
           </tr>
           <tr>
             <td style="padding: 24px 40px;">
-              <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #ffffff;">Kayıtlı Sadakat Kartlarınız 💳</h2>
+              <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #ffffff;">${isTr ? 'Kayıtlı Sadakat Kartlarınız 💳' : 'Your Digital Loyalty Cards 💳'}</h2>
               <p style="margin: 0 0 20px 0; font-size: 14px; color: #94a3b8; line-height: 1.5;">
-                E-posta adresinize bağlı aktif sadakat kartlarınız aşağıda listelenmiştir. Dilediğiniz kartı açarak kaldığınız yerden damga biriktirmeye devam edebilirsiniz.
+                ${isTr
+                  ? 'E-posta adresinize bağlı aktif sadakat kartlarınız aşağıda listelenmiştir. Dilediğiniz kartı açarak kaldığınız yerden damga biriktirmeye devam edebilirsiniz.'
+                  : 'Your active loyalty cards linked to this email address are listed below. Click on any card to continue collecting stamps.'}
               </p>
               ${cardsHtml}
             </td>
@@ -1486,10 +1569,9 @@ ${cardUrl}
 </html>
     `.trim();
 
-    const textContent = `
-Kayıtlı Sadakat Kartlarınız:
-${cards.map((c) => `${c.businessName} (${c.programName}) - ${c.currentStamps}/${c.targetStamps} Damga: ${c.cardUrl}`).join('\n')}
-    `.trim();
+    const textContent = isTr
+      ? `Kayıtlı Sadakat Kartlarınız:\n${cards.map((c) => `${c.businessName} (${c.programName}) - ${c.currentStamps}/${c.targetStamps} Damga: ${c.cardUrl}`).join('\n')}`.trim()
+      : `Your Loyalty Cards:\n${cards.map((c) => `${c.businessName} (${c.programName}) - ${c.currentStamps}/${c.targetStamps} Stamps: ${c.cardUrl}`).join('\n')}`.trim();
 
     return this.sendEmail(to, emailSubject, htmlContent, textContent);
   }
