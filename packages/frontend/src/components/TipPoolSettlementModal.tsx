@@ -27,6 +27,7 @@ interface TipPoolSettlementModalProps {
   isOpen: boolean;
   onClose: () => void;
   currency?: string;
+  businessName?: string;
   onSettled?: () => void;
 }
 
@@ -34,6 +35,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   isOpen,
   onClose,
   currency = 'TRY',
+  businessName,
   onSettled,
 }) => {
   const { formatCurrency, formatDate, formatTime } = useLanguage();
@@ -285,7 +287,380 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   };
 
   const handlePrint = () => {
-    window.print();
+    const isHistory = activeTab === 'history' && !!selectedHistoryItem;
+
+    if (!isHistory && (!simulation || simulation.summary.grossAmount <= 0)) {
+      showToast('Yazdırılacak aktif bahşiş veya hak ediş verisi bulunamadı.', 'error');
+      return;
+    }
+
+    const title = isHistory
+      ? 'KASA KAPANIŞ & PERSONEL HAK EDİŞ BORDROSU'
+      : 'KASA KAPANIŞ & PERSONEL HAK EDİŞ BORDROSU';
+
+    const bName = businessName || 'İşletme Bahşiş Kapanışı';
+    const dateFormatted = isHistory
+      ? `${formatDate(selectedHistoryItem!.created_at)} ${formatTime(selectedHistoryItem!.created_at)}`
+      : `${formatDate(new Date())} ${formatTime(new Date())}`;
+
+    const reportNote = isHistory
+      ? selectedHistoryItem!.notes || '—'
+      : note.trim() || 'Gün Sonu Kapanışı';
+
+    const grossAmt = isHistory
+      ? formatCurrency(Number(selectedHistoryItem!.gross_amount), currency)
+      : formatCurrency(simulation!.summary.grossAmount, currency);
+
+    const posFeeAmt = isHistory
+      ? formatCurrency(Number(selectedHistoryItem!.pos_fee_amount), currency)
+      : formatCurrency(simulation!.summary.posFeeAmount, currency);
+
+    const taxFeeAmt = isHistory
+      ? formatCurrency(Number(selectedHistoryItem!.tax_fee_amount), currency)
+      : formatCurrency(simulation!.summary.taxFeeAmount, currency);
+
+    const netDistributedAmt = isHistory
+      ? formatCurrency(Number(selectedHistoryItem!.net_distributed_amount), currency)
+      : formatCurrency(simulation!.summary.netDistributedAmount, currency);
+
+    const cashPool = isHistory
+      ? Number(selectedHistoryItem!.cash_amount || 0)
+      : simulation!.summary.netCashPool || 0;
+
+    const digitalPool = isHistory
+      ? Number(selectedHistoryItem!.external_pos_amount || 0)
+      : simulation!.summary.netDigitalPool || 0;
+
+    const distributionModeText = !isHistory && simulation
+      ? simulation.settings.mode === 'INDIVIDUAL'
+        ? 'Bireysel Dağıtım (Direkt)'
+        : simulation.settings.mode === 'EQUAL_POOL'
+        ? 'Eşit Havuz (Pool)'
+        : 'Puan / Rol Ağırlıklı Havuz'
+      : 'Vardiya Havuz Dağıtımı';
+
+    const rowsHtml = isHistory
+      ? (selectedHistoryItem!.shares || [])
+          .map((s, idx) => {
+            const name = `${s.employee?.first_name || ''} ${s.employee?.last_name || ''}`.trim() || 'Personel';
+            const pos = s.employee?.position || s.employee?.role_title || 'Servis Ekibi';
+            const weight = `${Number(s.share_weight || 1).toFixed(2)}x`;
+            const gross = formatCurrency(Number(s.gross_share || 0), currency);
+            const net = formatCurrency(Number(s.net_share || 0), currency);
+            const breakdown: string[] = [];
+            if (Number(s.cash_share || 0) > 0) breakdown.push(`Nakit: ${formatCurrency(Number(s.cash_share), currency)}`);
+            if (Number(s.digital_share || 0) > 0) breakdown.push(`Banka: ${formatCurrency(Number(s.digital_share), currency)}`);
+            const status = s.is_paid ? '✓ Ödendi' : 'Bekliyor';
+
+            return `
+              <tr>
+                <td style="text-align: center; color: #6b7280; font-weight: 600;">${idx + 1}</td>
+                <td><strong>${name}</strong></td>
+                <td>${pos}</td>
+                <td style="text-align: center;">${weight}</td>
+                <td style="text-align: right; color: #4b5563;">${gross}</td>
+                <td style="text-align: right; font-weight: 800; color: #15803d;">
+                  ${net}
+                  ${breakdown.length > 0 ? `<div style="font-size: 8.5px; color: #6b7280; font-weight: 400;">(${breakdown.join(' • ')})</div>` : ''}
+                </td>
+                <td style="text-align: center; font-size: 9.5px;">${status}</td>
+                <td style="height: 22px; border-bottom: 1px dotted #9ca3af;"></td>
+              </tr>
+            `;
+          })
+          .join('')
+      : (simulation!.employees || [])
+          .map((d, idx) => {
+            const name = d.employeeName || 'Personel';
+            const pos = d.position || d.roleTitle || 'Servis Ekibi';
+            const weight = `${d.shareWeight.toFixed(2)}x`;
+            const gross = formatCurrency(d.grossShare, currency);
+            const deductions = formatCurrency(d.posFeeShare + d.taxFeeShare, currency);
+            const net = formatCurrency(d.netShare, currency);
+            const breakdown: string[] = [];
+            if (d.cashShare > 0) breakdown.push(`Nakit: ${formatCurrency(d.cashShare, currency)}`);
+            if (d.digitalShare > 0) breakdown.push(`Banka: ${formatCurrency(d.digitalShare, currency)}`);
+
+            return `
+              <tr>
+                <td style="text-align: center; color: #6b7280; font-weight: 600;">${idx + 1}</td>
+                <td><strong>${name}</strong></td>
+                <td>${pos}</td>
+                <td style="text-align: center;">${weight}</td>
+                <td style="text-align: right; color: #4b5563;">${gross}</td>
+                <td style="text-align: right; color: #dc2626;">-${deductions}</td>
+                <td style="text-align: right; font-weight: 800; color: #15803d;">
+                  ${net}
+                  ${breakdown.length > 0 ? `<div style="font-size: 8.5px; color: #6b7280; font-weight: 400;">(${breakdown.join(' • ')})</div>` : ''}
+                </td>
+                <td style="height: 22px; border-bottom: 1px dotted #9ca3af;"></td>
+              </tr>
+            `;
+          })
+          .join('');
+
+    const staffCount = isHistory
+      ? selectedHistoryItem!.shares?.length || 0
+      : simulation!.employees?.length || 0;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>${bName} - Kasa Kapanis ve Hak Edis Bordrosu</title>
+        <style>
+          @page {
+            size: A4 portrait;
+            margin: 8mm 10mm;
+          }
+          * {
+            box-sizing: border-box;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #111827;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-size: 10px;
+            line-height: 1.3;
+          }
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #111827;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.2px;
+          }
+          .header .biz-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-top: 2px;
+          }
+          .header .meta {
+            text-align: right;
+            font-size: 9.5px;
+            color: #4b5563;
+          }
+          .header .meta strong {
+            color: #111827;
+          }
+          .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+          }
+          .summary-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 5px 6px;
+            text-align: center;
+          }
+          .summary-card.highlight {
+            background: #f0fdf4;
+            border: 1.5px solid #22c55e;
+          }
+          .summary-card .label {
+            font-size: 8.5px;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 700;
+            margin-bottom: 2px;
+          }
+          .summary-card .value {
+            font-size: 12px;
+            font-weight: 800;
+            color: #111827;
+          }
+          .summary-card.highlight .value {
+            color: #15803d;
+            font-size: 13px;
+          }
+          .info-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #f3f4f6;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 9px;
+            margin-bottom: 8px;
+            color: #374151;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+            page-break-inside: auto;
+          }
+          tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+          }
+          th {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 4px 6px;
+            font-weight: 700;
+            text-align: left;
+            font-size: 9px;
+          }
+          td {
+            border: 1px solid #e5e7eb;
+            padding: 3.5px 5px;
+            vertical-align: middle;
+          }
+          .signatures {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            page-break-inside: avoid;
+          }
+          .sign-box {
+            border-top: 1px dashed #6b7280;
+            padding-top: 5px;
+            text-align: center;
+            font-size: 9.5px;
+            color: #4b5563;
+          }
+          .footer-note {
+            margin-top: 10px;
+            padding-top: 4px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            color: #9ca3af;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <h1>${title}</h1>
+            <div class="biz-name">${bName}</div>
+          </div>
+          <div class="meta">
+            <div><strong>Tarih / Saat:</strong> ${dateFormatted}</div>
+            <div><strong>Model:</strong> ${distributionModeText}</div>
+            ${reportNote !== '—' ? `<div><strong>Vardiya Notu:</strong> ${reportNote}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="label">Brüt Bahşiş</div>
+            <div class="value">${grossAmt}</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">Banka POS Kesintisi</div>
+            <div class="value" style="color: #dc2626;">-${posFeeAmt}</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">Stopaj / Vergi</div>
+            <div class="value" style="color: #d97706;">-${taxFeeAmt}</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">Nakit / POS Dağılımı</div>
+            <div class="value" style="font-size: 9.5px; font-weight: 700;">
+              ${cashPool > 0 ? `💵 ${formatCurrency(cashPool, currency)}` : ''}
+              ${cashPool > 0 && digitalPool > 0 ? ' • ' : ''}
+              ${digitalPool > 0 ? `💳 ${formatCurrency(digitalPool, currency)}` : ''}
+              ${cashPool === 0 && digitalPool === 0 ? '—' : ''}
+            </div>
+          </div>
+          <div class="summary-card highlight">
+            <div class="label">Net Dağıtılan Toplam</div>
+            <div class="value">${netDistributedAmt}</div>
+          </div>
+        </div>
+
+        <div class="info-bar">
+          <span>Toplam Personel: <strong>${staffCount} kişi</strong></span>
+          <span>Kapanış Referansı: <strong>${isHistory ? selectedHistoryItem!.id.slice(0, 8).toUpperCase() : 'CANLI-KAPANIS'}</strong></span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 25px; text-align: center;">#</th>
+              <th>Personel Adı Soyadı</th>
+              <th>Görev / Rol</th>
+              <th style="width: 50px; text-align: center;">Katsayı</th>
+              <th style="width: 70px; text-align: right;">Brüt Pay</th>
+              ${!isHistory ? '<th style="width: 65px; text-align: right;">Kesinti</th>' : ''}
+              <th style="width: 105px; text-align: right;">Net Hak Ediş</th>
+              ${isHistory ? '<th style="width: 60px; text-align: center;">Durum</th>' : ''}
+              <th style="width: 100px; text-align: center;">İmza / Teslim Alan</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+
+        <div class="signatures">
+          <div class="sign-box">
+            <strong>Kasayı Kapatan / Vardiya Sorumlusu</strong><br>
+            İmza / Kaşe
+          </div>
+          <div class="sign-box">
+            <strong>İşletme Yetkilisi / Muhasebe Onayı</strong><br>
+            İmza
+          </div>
+        </div>
+
+        <div class="footer-note">
+          <span>Naponi Akıllı Bahşiş & Temassız Hizmet Platformu (www.naponi.com)</span>
+          <span>Resmi Rapor Dökümü • Çıktı Alma Zamanı: ${new Date().toLocaleString('tr-TR')}</span>
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Create an invisible iframe for instant, isolated, single-page A4 printing
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document || iframe.contentDocument;
+    if (doc) {
+      doc.open();
+      doc.write(printContent);
+      doc.close();
+
+      setTimeout(() => {
+        try {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } catch (e) {
+          console.error('Print iframe error:', e);
+        } finally {
+          setTimeout(() => {
+            if (document.body.contains(iframe)) {
+              document.body.removeChild(iframe);
+            }
+          }, 2000);
+        }
+      }, 250);
+    }
   };
 
   if (!isOpen) return null;

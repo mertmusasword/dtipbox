@@ -466,6 +466,7 @@ export const BusinessDashboard: React.FC = () => {
         isOpen={showSettlementModal}
         onClose={() => setShowSettlementModal(false)}
         currency={currency}
+        businessName={business?.name}
         onSettled={loadData}
       />
     </div>

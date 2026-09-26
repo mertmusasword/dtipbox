@@ -2186,3 +2186,88 @@ h1, h2, h3, h4, h5, h6,
   background: #D6D3D1;
 }
 
+/* ===================== Print Styles (A4 Single Page Settlement Slip) ===================== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    color: #111827 !important;
+    height: auto !important;
+    overflow: visible !important;
+    font-size: 11px !important;
+  }
+
+  /* Hide background web app elements */
+  nav, .navbar, .sidebar, .page-wrapper, .app-header, .toast-container,
+  .footer, .legal-links, button, .btn {
+    display: none !important;
+  }
+
+  /* Reset modal containers so they don't break across multiple empty pages */
+  .tip-pool-modal-overlay {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  .tip-pool-modal-card {
+    position: static !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #111827 !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .tip-pool-modal-header-actions,
+  .tip-pool-modal-close-desktop,
+  .tip-pool-modal-close-mobile,
+  .tip-pool-modal-tabs,
+  .tip-pool-modal-footer,
+  .tip-pool-add-external-btn,
+  .form-group,
+  input,
+  textarea {
+    display: none !important;
+  }
+
+  .tip-pool-modal-body {
+    overflow: visible !important;
+    padding: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .data-table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    page-break-inside: auto !important;
+  }
+
+  .data-table tr {
+    page-break-inside: avoid !important;
+  }
+
+  .data-table th, .data-table td {
+    border: 1px solid #e5e7eb !important;
+    color: #111827 !important;
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+}
+
+
