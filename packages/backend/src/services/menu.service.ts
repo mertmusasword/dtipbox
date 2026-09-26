@@ -3,6 +3,22 @@ import { AppError } from '../middleware/errorHandler';
 import { ALLERGEN_CATALOG, ALLERGEN_DISCLAIMER } from '../constants/allergens';
 import { getOrCreateSmartQrConfig } from './smartQr.service';
 import { eventBuffer } from '../utils/eventBuffer';
+import { env } from '../config/env';
+
+/**
+ * Normalizes media URLs. If an image was saved with Cloudflare R2's dev domain (*.r2.dev),
+ * which is blocked in Turkey by ISPs, dynamically rewrite it to the active R2_PUBLIC_URL (e.g. media.naponi.com).
+ */
+export function normalizeMediaUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  const publicBaseUrl = (env.R2_PUBLIC_URL || '').replace(/\/+$/, '');
+  if (publicBaseUrl && (trimmed.includes('.r2.dev/') || trimmed.includes('.r2.cloudflarestorage.com/'))) {
+    return trimmed.replace(/^https?:\/\/[^/]+(?:\.r2\.dev|\.r2\.cloudflarestorage\.com)/, publicBaseUrl);
+  }
+  return trimmed;
+}
 
 export interface UpdateMenuConfigInput {
   menu_mode?: 'DISABLED' | 'EXTERNAL_URL' | 'NATIVE';
@@ -85,13 +101,19 @@ export async function getBusinessMenu(businessId: string) {
       menu_url: smartConfig.menu_url,
       menu_title: smartConfig.menu_title,
       menu_theme: (smartConfig.menu_theme as 'DARK_LUXURY' | 'WARM_ARTISAN' | 'MODERN_EMERALD' | 'MIDNIGHT_ROSE') || 'DARK_LUXURY',
-      menu_cover_image: smartConfig.menu_cover_image || null,
+      menu_cover_image: normalizeMediaUrl(smartConfig.menu_cover_image),
       menu_cover_position: (smartConfig as any).menu_cover_position ?? 50,
       enable_item_stories: smartConfig.enable_item_stories ?? true,
       enable_menu: smartConfig.enable_menu,
     },
     businessCurrency: business?.currency || 'TRY',
-    categories,
+    categories: categories.map((cat) => ({
+      ...cat,
+      items: cat.items.map((item) => ({
+        ...item,
+        image_url: normalizeMediaUrl(item.image_url),
+      })),
+    })),
     totalItems,
     allergensCatalog: ALLERGEN_CATALOG,
   };
@@ -113,7 +135,7 @@ export async function updateMenuConfig(businessId: string, input: UpdateMenuConf
       ...(input.menu_url !== undefined && { menu_url: input.menu_url?.trim() || null }),
       ...(input.menu_title !== undefined && { menu_title: input.menu_title?.trim() || null }),
       ...(input.menu_theme !== undefined && { menu_theme: input.menu_theme }),
-      ...(input.menu_cover_image !== undefined && { menu_cover_image: input.menu_cover_image?.trim() || null }),
+      ...(input.menu_cover_image !== undefined && { menu_cover_image: normalizeMediaUrl(input.menu_cover_image) }),
       ...(input.menu_cover_position !== undefined && { menu_cover_position: input.menu_cover_position ?? 50 }),
       ...(input.enable_item_stories !== undefined && { enable_item_stories: input.enable_item_stories }),
       enable_menu: enableMenu,
@@ -126,7 +148,7 @@ export async function updateMenuConfig(businessId: string, input: UpdateMenuConf
     menu_url: updated.menu_url,
     menu_title: updated.menu_title,
     menu_theme: updated.menu_theme,
-    menu_cover_image: updated.menu_cover_image,
+    menu_cover_image: normalizeMediaUrl(updated.menu_cover_image),
     menu_cover_position: (updated as any).menu_cover_position ?? 50,
     enable_item_stories: updated.enable_item_stories,
     enable_menu: updated.enable_menu,
@@ -290,7 +312,7 @@ export async function createMenuItem(businessId: string, input: CreateMenuItemIn
       description: input.description?.trim() || null,
       price: input.price,
       currency: input.currency || business?.currency || 'TRY',
-      image_url: input.image_url?.trim() || null,
+      image_url: normalizeMediaUrl(input.image_url),
       is_active: input.is_active !== undefined ? input.is_active : true,
       sort_order: sortOrder,
       allergens,
@@ -337,7 +359,7 @@ export async function updateMenuItem(businessId: string, itemId: string, input: 
       ...(input.description !== undefined && { description: input.description?.trim() || null }),
       ...(input.price !== undefined && { price: input.price }),
       ...(input.currency !== undefined && { currency: input.currency }),
-      ...(input.image_url !== undefined && { image_url: input.image_url?.trim() || null }),
+      ...(input.image_url !== undefined && { image_url: normalizeMediaUrl(input.image_url) }),
       ...(input.is_active !== undefined && { is_active: input.is_active }),
       ...(input.sort_order !== undefined && { sort_order: input.sort_order }),
       ...(allergens !== undefined && { allergens }),
@@ -462,14 +484,20 @@ export async function getPublicMenu(publicToken: string) {
     venue: {
       id: qr.business.id,
       name: qr.business.name,
-      logo: qr.business.logo,
+      logo: normalizeMediaUrl(qr.business.logo),
       country: qr.business.country,
       currency: qr.business.currency,
       description: qr.business.description,
     },
     table: qr.table ? { id: qr.table.id, name: qr.table.name } : null,
     menu: {
-      categories,
+      categories: categories.map((cat) => ({
+        ...cat,
+        items: cat.items.map((item) => ({
+          ...item,
+          image_url: normalizeMediaUrl(item.image_url),
+        })),
+      })),
       totalItems: categories.reduce((acc, cat) => acc + cat.items.length, 0),
     },
     allergenCatalog: ALLERGEN_CATALOG,
@@ -481,8 +509,8 @@ export async function getPublicMenu(publicToken: string) {
       menuTitle: smartConfig?.menu_title || null,
       menuTheme: (smartConfig?.menu_theme as any) || 'DARK_LUXURY',
       menu_theme: (smartConfig?.menu_theme as any) || 'DARK_LUXURY',
-      menuCoverImage: smartConfig?.menu_cover_image || null,
-      menu_cover_image: smartConfig?.menu_cover_image || null,
+      menuCoverImage: normalizeMediaUrl(smartConfig?.menu_cover_image),
+      menu_cover_image: normalizeMediaUrl(smartConfig?.menu_cover_image),
       menuCoverPosition: (smartConfig as any)?.menu_cover_position ?? 50,
       menu_cover_position: (smartConfig as any)?.menu_cover_position ?? 50,
       enableItemStories: smartConfig?.enable_item_stories ?? true,

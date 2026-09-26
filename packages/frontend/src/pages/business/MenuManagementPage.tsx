@@ -231,13 +231,20 @@ export const MenuManagementPage: React.FC = () => {
           optimized = canvas.toDataURL('image/jpeg', 0.85);
         }
         setMenuConfig((prev) => ({ ...prev, menu_cover_image: optimized }));
-        setIsProcessingCover(false);
-        showToast(language === 'tr' ? 'Mekan kapak görseli başarıyla yüklendi' : 'Cover image uploaded successfully');
+        setIsProcessingCover(true);
 
-        uploadImageToServer(optimized, 'menu').then((uploadedUrl) => {
-          setMenuConfig((prev) => ({ ...prev, menu_cover_image: uploadedUrl }));
-          handleSaveConfig({ menu_cover_image: uploadedUrl });
-        });
+        uploadImageToServer(optimized, 'menu')
+          .then((uploadedUrl) => {
+            setMenuConfig((prev) => ({ ...prev, menu_cover_image: uploadedUrl }));
+            handleSaveConfig({ menu_cover_image: uploadedUrl });
+            showToast(language === 'tr' ? 'Mekan kapak görseli başarıyla yüklendi' : 'Cover image uploaded successfully');
+          })
+          .catch(() => {
+            showToast(language === 'tr' ? 'Kapak görseli sunucuya yüklenemedi' : 'Failed to upload cover image', 'error');
+          })
+          .finally(() => {
+            setIsProcessingCover(false);
+          });
       };
       img.onerror = () => {
         setIsProcessingCover(false);
@@ -471,12 +478,19 @@ export const MenuManagementPage: React.FC = () => {
           optimized = canvas.toDataURL('image/jpeg', 0.85);
         }
         setProductImageUrl(optimized);
-        setIsProcessingImage(false);
-        showToast(language === 'tr' ? 'Ürün fotoğrafı başarıyla yüklendi ve optimize edildi' : 'Product photo uploaded and optimized successfully');
+        setIsProcessingImage(true);
 
-        uploadImageToServer(optimized, 'menu').then((uploadedUrl) => {
-          setProductImageUrl(uploadedUrl);
-        });
+        uploadImageToServer(optimized, 'menu')
+          .then((uploadedUrl) => {
+            setProductImageUrl(uploadedUrl);
+            showToast(language === 'tr' ? 'Ürün fotoğrafı başarıyla yüklendi' : 'Product photo uploaded successfully');
+          })
+          .catch(() => {
+            showToast(language === 'tr' ? 'Görsel sunucuya yüklenirken hata oluştu' : 'Failed to upload photo', 'error');
+          })
+          .finally(() => {
+            setIsProcessingImage(false);
+          });
       };
       img.onerror = () => {
         setIsProcessingImage(false);
@@ -2521,8 +2535,16 @@ export const MenuManagementPage: React.FC = () => {
             >
               {t('common.cancel')}
             </button>
-            <button type="submit" className="btn btn-primary" disabled={submittingProduct}>
-              {submittingProduct ? t('common.saving') : t('common.save')}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={submittingProduct || isProcessingImage}
+            >
+              {submittingProduct
+                ? t('common.saving')
+                : isProcessingImage
+                ? (language === 'tr' ? 'Fotoğraf Yükleniyor...' : 'Uploading Photo...')
+                : t('common.save')}
             </button>
           </div>
         </form>
