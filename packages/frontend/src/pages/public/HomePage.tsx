@@ -70,7 +70,6 @@ import { LegalModal, LegalTab } from '../../components/LegalModal';
 import { CookieBanner } from '../../components/CookieBanner';
 import { SeoHead } from '../../components/SeoHead';
 import { UserNavbarAction } from '../../components/UserNavbarAction';
-import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
   const { t, language } = useLanguage();
@@ -214,97 +213,6 @@ export const HomePage: React.FC = () => {
   };
 
   const isTr = language === 'tr';
-
-  // ROI / Tip Recovery Calculator State
-  const [calcSector, setCalcSector] = useState<'cafe' | 'restaurant' | 'bar' | 'hotel'>('restaurant');
-  const [calcDailyTables, setCalcDailyTables] = useState<number>(50);
-  const [calcAverageCheck, setCalcAverageCheck] = useState<number>(isTr ? 650 : 45);
-
-  const calcCurrencySymbol = useMemo(() => {
-    switch (language) {
-      case 'tr': return '₺';
-      case 'de':
-      case 'fr':
-      case 'es':
-      case 'pt': return '€';
-      case 'ja': return '¥';
-      default: return '$';
-    }
-  }, [language]);
-
-  const handleSelectSector = (sector: 'cafe' | 'restaurant' | 'bar' | 'hotel') => {
-    setCalcSector(sector);
-    if (calcCurrencySymbol === '₺') {
-      switch (sector) {
-        case 'cafe':
-          setCalcDailyTables(70);
-          setCalcAverageCheck(220);
-          break;
-        case 'restaurant':
-          setCalcDailyTables(50);
-          setCalcAverageCheck(650);
-          break;
-        case 'bar':
-          setCalcDailyTables(45);
-          setCalcAverageCheck(950);
-          break;
-        case 'hotel':
-          setCalcDailyTables(30);
-          setCalcAverageCheck(1400);
-          break;
-      }
-    } else if (calcCurrencySymbol === '¥') {
-      switch (sector) {
-        case 'cafe':
-          setCalcDailyTables(70);
-          setCalcAverageCheck(1500);
-          break;
-        case 'restaurant':
-          setCalcDailyTables(50);
-          setCalcAverageCheck(5000);
-          break;
-        case 'bar':
-          setCalcDailyTables(45);
-          setCalcAverageCheck(8000);
-          break;
-        case 'hotel':
-          setCalcDailyTables(30);
-          setCalcAverageCheck(12000);
-          break;
-      }
-    } else {
-      switch (sector) {
-        case 'cafe':
-          setCalcDailyTables(70);
-          setCalcAverageCheck(15);
-          break;
-        case 'restaurant':
-          setCalcDailyTables(50);
-          setCalcAverageCheck(45);
-          break;
-        case 'bar':
-          setCalcDailyTables(45);
-          setCalcAverageCheck(65);
-          break;
-        case 'hotel':
-          setCalcDailyTables(30);
-          setCalcAverageCheck(95);
-          break;
-      }
-    }
-  };
-
-  const formatCalcCurrency = (amount: number) => {
-    const formatted = Math.round(amount).toLocaleString(isTr ? 'tr-TR' : 'en-US');
-    return isTr ? `${formatted} ₺` : `${calcCurrencySymbol}${formatted}`;
-  };
-
-  const calcMonthlyTurnover = calcDailyTables * 30 * calcAverageCheck;
-  // Estimated tip potential ~ 8.5%
-  // Tips lost due to lack of cash ~ 45%
-  const calcMonthlyRecoveredTips = Math.round(calcMonthlyTurnover * 0.085 * 0.45);
-  const calcStaffCount = calcSector === 'cafe' ? 4 : calcSector === 'restaurant' ? 7 : calcSector === 'bar' ? 5 : 8;
-  const calcPerStaffGain = Math.round(calcMonthlyRecoveredTips / calcStaffCount);
 
   // 14-Point Comparative Matrix for "Naponi Farkı" section
   const diffItems = useMemo(() => {
@@ -452,8 +360,9 @@ export const HomePage: React.FC = () => {
 
           <ul className="home-nav-links">
             <li><a href="#how-it-works" className="home-nav-link">{t('nav.features')}</a></li>
+            <li><a href="#pos-integrations" className="home-nav-link">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
             <li><a href="#naponi-farki" className="home-nav-link" style={{ color: '#a5b4fc', fontWeight: 600 }}>{ht('whyNaponi')}</a></li>
-            <li><a href="#experience" className="home-nav-link">{t('nav.solutions')}</a></li>
+            <li><a href="#industries" className="home-nav-link">{t('nav.solutions')}</a></li>
             <li><Link to="/technology-partners" className="home-nav-link" style={{ color: '#38bdf8' }}>{ht('techPartners')}</Link></li>
             <li><Link to="/guides" className="home-nav-link">{ht('guides')}</Link></li>
             <li><a href="#faq" className="home-nav-link">{t('nav.faq')}</a></li>
@@ -508,10 +417,13 @@ export const HomePage: React.FC = () => {
             <a href="#how-it-works" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
               <span>{t('nav.features')}</span>
             </a>
+            <a href="#pos-integrations" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <span>⚡ {isTr ? 'POS Katmanı' : 'POS Layer'}</span>
+            </a>
             <a href="#naponi-farki" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#a5b4fc', fontWeight: 600 }}>
               <span>✨ {ht('whyNaponi')}</span>
             </a>
-            <a href="#experience" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+            <a href="#industries" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
               <span>{t('nav.solutions')}</span>
             </a>
             <Link to="/technology-partners" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#38bdf8', fontWeight: 600 }}>
@@ -598,9 +510,9 @@ export const HomePage: React.FC = () => {
                 >
                   {t('founder.ctaButton')} <ArrowRight size={18} />
                 </Link>
-                <Link to="/login" className="home-btn-secondary">
-                  {t('home.ctaLogin')}
-                </Link>
+                <a href="#how-it-works" className="home-btn-secondary">
+                  {isTr ? 'Nasıl Çalışır?' : 'How It Works'}
+                </a>
                 <button
                   type="button"
                   onClick={() => setVideoModalOpen(true)}
@@ -1034,307 +946,6 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          3B. BUSINESS & MANAGER SUITE SHOWCASE (OPERATIONAL DASHBOARD)
-          ==================================================================== */}
-      <section className="home-section" id="suite" style={{ paddingTop: 30, paddingBottom: 70 }}>
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag">{t('home.suiteBadge')}</span>
-            <h2 className="home-section-title">{t('home.suiteTitle')}</h2>
-            <p className="home-section-desc">
-              {t('home.suiteSubtitle')}
-            </p>
-          </div>
-
-          {/* Interactive Feature Tabs */}
-          <div className="home-suite-tabs">
-            <button
-              type="button"
-              className={`home-suite-tab-btn ${suiteTab === 'analytics' ? 'active' : ''}`}
-              onClick={() => setSuiteTab('analytics')}
-            >
-              <BarChart3 size={16} />
-              <span>{t('home.suiteTab1')}</span>
-            </button>
-            <button
-              type="button"
-              className={`home-suite-tab-btn ${suiteTab === 'pooling' ? 'active' : ''}`}
-              onClick={() => setSuiteTab('pooling')}
-            >
-              <Coins size={16} />
-              <span>{t('home.suiteTab2')}</span>
-            </button>
-            <button
-              type="button"
-              className={`home-suite-tab-btn ${suiteTab === 'qr' ? 'active' : ''}`}
-              onClick={() => setSuiteTab('qr')}
-            >
-              <QrCode size={16} />
-              <span>{t('home.suiteTab3')}</span>
-            </button>
-          </div>
-
-          {/* macOS Style Glassmorphic Dashboard Window */}
-          <div className="home-dashboard-frame">
-            {/* Title Bar */}
-            <div className="home-dash-titlebar">
-              <div className="home-dash-dots">
-                <span className="home-dash-dot red" />
-                <span className="home-dash-dot yellow" />
-                <span className="home-dash-dot green" />
-              </div>
-              <div className="home-dash-url-bar">
-                <LayoutDashboard size={13} className="home-dash-url-icon" />
-                <span className="home-dash-url-path">naponi.app/portal/dashboard</span>
-                <span className="home-dash-url-separator">•</span>
-                <span className="home-dash-url-venue">{simConfig.venueName}</span>
-              </div>
-              <div className="home-dash-pill">
-                <span className="pulse-dot" style={{ width: 6, height: 6 }} />
-                <span className="home-dash-pill-full">{ht('liveOperations')}</span>
-                <span className="home-dash-pill-short">{ht('livePill')}</span>
-              </div>
-            </div>
-
-            {/* Dashboard Content per Tab */}
-            <div className="home-dash-body">
-              {suiteTab === 'analytics' && (
-                <div>
-                  {/* KPI Row */}
-                  <div className="home-dash-kpis">
-                    <div className="home-dash-kpi-card">
-                      <div className="home-dash-kpi-label">
-                        <span>{ht('todayTotalTips')}</span>
-                        <TrendingUp size={14} style={{ color: '#10b981' }} />
-                      </div>
-                      <div className="home-dash-kpi-val">
-                        {simConfig.currency}{language === 'tr' ? '14.850' : '1,485'}.00
-                      </div>
-                      <div className="home-dash-kpi-sub">
-                        <span>↑ 24.8%</span>
-                        <span style={{ color: '#94a3b8' }}>{ht('vsLastWeek')}</span>
-                      </div>
-                    </div>
-
-                    <div className="home-dash-kpi-card">
-                      <div className="home-dash-kpi-label">
-                        <span>{ht('avgTipRate')}</span>
-                        <Percent size={14} style={{ color: '#6366f1' }} />
-                      </div>
-                      <div className="home-dash-kpi-val">16.4%</div>
-                      <div className="home-dash-kpi-sub" style={{ color: '#6366f1' }}>
-                        <span>★ 48 {ht('transactions')}</span>
-                      </div>
-                    </div>
-
-                    <div className="home-dash-kpi-card">
-                      <div className="home-dash-kpi-label">
-                        <span>{ht('activeStaff')}</span>
-                        <Users size={14} style={{ color: '#38bdf8' }} />
-                      </div>
-                      <div className="home-dash-kpi-val">8 {ht('staffUnit')}</div>
-                      <div className="home-dash-kpi-sub" style={{ color: '#38bdf8' }}>
-                        <span>✓ {ht('allActive')}</span>
-                      </div>
-                    </div>
-
-                    <div className="home-dash-kpi-card">
-                      <div className="home-dash-kpi-label">
-                        <span>{ht('guestSatisfaction')}</span>
-                        <Award size={14} style={{ color: '#fbbf24' }} />
-                      </div>
-                      <div className="home-dash-kpi-val">4.9 / 5.0</div>
-                      <div className="home-dash-kpi-sub" style={{ color: '#fbbf24' }}>
-                        <span>98% {ht('positiveReview')}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Live Transaction Feed Preview */}
-                  <div className="home-dash-feed-box">
-                    <div className="home-dash-feed-header">
-                      <div className="home-dash-feed-title">
-                        <Clock size={16} style={{ color: '#818cf8', flexShrink: 0 }} />
-                        <span>{ht('realtimeFeed')}</span>
-                      </div>
-                      <span className="badge badge-primary home-dash-feed-badge">
-                        {ht('last10Mins')}
-                      </span>
-                    </div>
-
-                    <div className="home-dash-feed-list">
-                      {[
-                        { table: language === 'tr' ? 'Masa 14' : 'Table 14', staff: simConfig.staffOptions[0].label, amount: `${simConfig.currency}${language === 'tr' ? '150.00' : '15.00'}`, time: language === 'tr' ? '2 dk önce' : '2m ago', method: ' Apple Pay' },
-                        { table: language === 'tr' ? 'Masa 08' : 'Table 08', staff: simConfig.staffOptions[1]?.label || 'Elena M.', amount: `${simConfig.currency}${language === 'tr' ? '100.00' : '10.00'}`, time: language === 'tr' ? '5 dk önce' : '5m ago', method: 'Credit Card' },
-                        { table: language === 'tr' ? 'Bar Stand 02' : 'Bar Counter 02', staff: ht('teamPool'), amount: `${simConfig.currency}${language === 'tr' ? '250.00' : '25.00'}`, time: language === 'tr' ? '9 dk önce' : '9m ago', method: 'Google Pay' },
-                      ].map((item, idx) => (
-                        <div key={idx} className="home-dash-feed-item">
-                          <div className="home-dash-feed-left">
-                            <div className="home-dash-feed-dot" />
-                            <div className="home-dash-feed-details">
-                              <div className="home-dash-feed-main">
-                                <strong className="home-dash-feed-table">{item.table}</strong>
-                                <span className="home-dash-feed-staff">• {item.staff}</span>
-                              </div>
-                              <div className="home-dash-feed-meta">
-                                <span>{item.method}</span>
-                                <span className="home-dash-feed-bullet">•</span>
-                                <span>{item.time}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="home-dash-feed-right">
-                            <span className="home-dash-feed-amount">+{item.amount}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {suiteTab === 'pooling' && (
-                <div>
-                  {/* Hybrid Pool Breakdown Banner */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                      <div style={{ fontSize: '0.72rem', color: '#a5b4fc', marginBottom: '0.2rem' }}>
-                        💳 {ht('digitalQrTips')}
-                      </div>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
-                        {simConfig.currency}{language === 'tr' ? '9.200' : '920'}.00
-                      </div>
-                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Naponi {ht('instantSettlement')}</div>
-                    </div>
-
-                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-                      <div style={{ fontSize: '0.72rem', color: '#86efac', marginBottom: '0.2rem' }}>
-                        💵 {ht('cashTipBox')}
-                      </div>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#4ade80' }}>
-                        {simConfig.currency}{language === 'tr' ? '3.800' : '380'}.00
-                      </div>
-                      <div style={{ fontSize: '0.68rem', color: '#86efac' }}>%0 {ht('feeCashPayout')}</div>
-                    </div>
-
-                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-                      <div style={{ fontSize: '0.72rem', color: '#fde047', marginBottom: '0.2rem' }}>
-                        🏧 {ht('directBankWire')}
-                      </div>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#facc15' }}>
-                        {simConfig.currency}{language === 'tr' ? '1.800' : '180'}.00
-                      </div>
-                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>{ht('directAccountReconciliation')}</div>
-                    </div>
-
-                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)', border: '1px solid rgba(34, 197, 94, 0.4)' }}>
-                      <div style={{ fontSize: '0.72rem', color: '#4ade80', fontWeight: 700, marginBottom: '0.2rem' }}>
-                        ✨ {ht('netShiftPool')}
-                      </div>
-                      <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#4ade80' }}>
-                        {simConfig.currency}{language === 'tr' ? '14.524' : '1,452'}.40
-                      </div>
-                      <div style={{ fontSize: '0.68rem', color: '#a7f3d0' }}>4 {ht('staffAllocated')}</div>
-                    </div>
-                  </div>
-
-                  {/* Staff Distribution Table Mockup */}
-                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '12px', overflow: 'hidden' }}>
-                    <div style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>{ht('shiftPayoutBreakdown')}</span>
-                      <span style={{ fontSize: '0.72rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <CheckCheck size={14} /> {ht('pointWeightedSplit')}
-                      </span>
-                    </div>
-                    <div style={{ padding: '0.5rem 1rem' }}>
-                      {[
-                        { name: simConfig.staffOptions[0].label, role: ht('seniorServer'), weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
-                        { name: simConfig.staffOptions[1]?.label || 'Elena M.', role: ht('headBartender'), weight: '1.0x', net: `${simConfig.currency}${language === 'tr' ? '4.150' : '415'}.00`, cash: `${simConfig.currency}${language === 'tr' ? '1.085' : '108'}.50`, bank: `${simConfig.currency}${language === 'tr' ? '3.065' : '306'}.50` },
-                        { name: language === 'tr' ? 'Cemil A.' : 'David K.', role: ht('barbackSupport'), weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
-                        { name: language === 'tr' ? 'Merve S.' : 'Sarah T.', role: language === 'tr' ? 'Hostes / Karşılama' : 'Host / Greeter', weight: '0.75x', net: `${simConfig.currency}${language === 'tr' ? '3.112' : '311'}.25`, cash: `${simConfig.currency}${language === 'tr' ? '813' : '81'}.38`, bank: `${simConfig.currency}${language === 'tr' ? '2.298' : '229'}.87` },
-                      ].map((s, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0', borderBottom: idx !== 3 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none', fontSize: '0.82rem', gap: '0.5rem' }}>
-                          <div style={{ minWidth: 0, flex: 1 }}>
-                            <div style={{ fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
-                            <div style={{ fontSize: '0.72rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{s.role} • <span style={{ color: '#818cf8' }}>{s.weight}</span></div>
-                          </div>
-                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                            <div style={{ fontWeight: 800, color: '#34d399', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>{s.net}</div>
-                            <div style={{ fontSize: '0.68rem', display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', marginTop: '0.1rem', whiteSpace: 'nowrap' }}>
-                              <span style={{ color: '#86efac', whiteSpace: 'nowrap' }}>💵 {s.cash}</span>
-                              <span style={{ color: '#93c5fd', whiteSpace: 'nowrap' }}>💳 {s.bank}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {suiteTab === 'qr' && (
-                <div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
-                    {/* Table QR Generator Card */}
-                    <div style={{ padding: '1.25rem', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8' }}>
-                          <QrCode size={18} />
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{language === 'tr' ? 'Masa Standı QR Kodları' : 'Table Tent QR Studio'}</div>
-                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{language === 'tr' ? '1-48 arası tüm masalar hazır' : 'Tables 1–48 generated'}</div>
-                        </div>
-                      </div>
-                      <p style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.5, marginBottom: '1rem' }}>
-                        {language === 'tr'
-                          ? 'Masa numaranıza ve mekan logonuzla özelleştirilmiş, yüksek çözünürlüklü vektörel PDF ve SVG çıktıları anında alın.'
-                          : 'Download high-res vector PDF and SVG print templates with your logo, table numbers, and custom tip prompts.'}
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
-                        <span className="badge badge-accent" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <Printer size={12} /> {language === 'tr' ? 'Baskıya Hazır PDF' : 'Print-Ready PDF'}
-                        </span>
-                        <span className="badge badge-neutral" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <Download size={12} /> SVG
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Staff Badge Generator Card */}
-                    <div style={{ padding: '1.25rem', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399' }}>
-                          <BadgeCheck size={18} />
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{language === 'tr' ? 'Personel Yaka Kartı & QR Rozet' : 'Server Badges & QR Cards'}</div>
-                          <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{language === 'tr' ? 'Garson & Barmen özel kodlar' : 'Individual staff badges'}</div>
-                        </div>
-                      </div>
-                      <p style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.5, marginBottom: '1rem' }}>
-                        {language === 'tr'
-                          ? 'Garson ve barmenlerinize özel QR yaka kartları oluşturun. Müşteriler doğrudan sevdikleri garsona özel teşekkür edip bahşiş iletsin.'
-                          : 'Equip servers and valets with stylish wearable badges. Guests scan to directly reward exceptional personal hospitality.'}
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
-                        <span className="badge badge-success" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <CheckCheck size={12} /> {language === 'tr' ? 'Yaka Kartı Şablonu' : 'Badge Template'}
-                        </span>
-                        <span className="badge badge-info" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <Download size={12} /> {language === 'tr' ? 'Baskıya Hazır PDF/PNG' : 'Print-Ready PDF/PNG'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
           EXISTING POS & PAYMENT ARCHITECTURE: KEEP YOUR POS. ADD NAPONI.
           ==================================================================== */}
       <section className="home-section" id="pos-integrations" style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)', borderTop: '1px solid rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
@@ -1565,342 +1176,6 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          NAPONI SMART QR: ONE QR. ENDLESS POSSIBILITIES.
-          ==================================================================== */}
-      <section className="home-section" id="smart-qr" style={{ background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.7) 100%)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-        <div className="home-container">
-          <div className="home-section-header">
-            <span
-              className="home-section-tag"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.45rem',
-                background: 'rgba(236, 72, 153, 0.12)',
-                color: '#f472b6',
-                border: '1px solid rgba(236, 72, 153, 0.3)',
-                borderRadius: '9999px',
-                padding: '0.35rem 1.1rem',
-                fontSize: '0.78rem',
-                letterSpacing: '0.06em',
-                maxWidth: '100%',
-                boxShadow: '0 2px 12px rgba(236, 72, 153, 0.15)',
-              }}
-            >
-              <Sparkles size={14} style={{ flexShrink: 0 }} />
-              <span>{language === 'tr' ? 'Ağırlama Sektörü İçin Akıllı QR' : 'Smart QR for Hospitality'}</span>
-            </span>
-            <h2 className="home-section-title">
-              {language === 'tr' ? 'Tek QR. Misafirinizin İhtiyaç Duyduğu Her Şey.' : 'One QR. Everything Your Guests Need.'}
-            </h2>
-            <p className="home-section-desc">
-              {language === 'tr'
-                ? "Bahşiş • Menü • Wi-Fi • Sadakat • Kampanyalar • Yorumlar. Masadaki tek bir Smart QR giriş noktası ile misafirleriniz ihtiyaç duyduğu her şeye anında erişir; sıfır ek donanım maliyetiyle mevcut kasa düzeninizi değiştirmeden doğrudan misafirlerinizle bağ kurar."
-                : 'Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews. One single QR entry point at the table connects your guests with everything they need, with zero hardware cost and without changing your existing operational setup.'}
-            </p>
-          </div>
-
-          {/* 6-Pillars Grid: Tips • Menu • Wi-Fi • Loyalty • Campaigns • Reviews */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-            {/* 1. Tips */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(99, 102, 241, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(99, 102, 241, 0.15)',
-                    border: '1px solid rgba(99, 102, 241, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#818cf8',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <CreditCard size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '1. Dijital Bahşiş' : '1. Digital Tips'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? "Uygulama indirmeden, üyelik olmadan işletmenizin lisanslı ödeme bağlantısı veya doğrudan banka/FAST transferi ile 10 saniyede emanetsiz aktarım."
-                    : "Direct gratuity to staff or team pool in 10 seconds via your venue's secure checkout link or direct bank transfer. Non-custodial."}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#818cf8', fontWeight: 600 }}>0 Saniye Kayıp • 0 Sürtünme</span>
-              </div>
-            </div>
-
-            {/* 2. Menu */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(16, 185, 129, 0.15)',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#34d399',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <UtensilsCrossed size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '2. Native QR Menü' : '2. Digital Menu'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? "Masalara ayrı menü QR'ı basmaya son. 14 standart alerjen etiketli, kategorili ve anlık stok kontrollü native dijital menünüz tek Smart QR'da."
-                    : 'No separate menu QR stands needed. Mobile menu with 14 standardized allergen filters and instant stock toggles inside your unified Smart QR.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>14 Standart Alerjen • Tek QR</span>
-              </div>
-            </div>
-
-            {/* 3. Wi-Fi */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(56, 189, 248, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(56, 189, 248, 0.15)',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#38bdf8',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Zap size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '3. 1-Tıkla Misafir Wi-Fi' : '3. Guest Wi-Fi'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Garsona şifre sorma devri bitti. Misafir tek tıkla şifreyi panoya kopyalar veya yerleşik Wi-Fi profiliyle masadan anında bağlanır.'
-                    : 'No more asking waitstaff for passwords. Guests copy the network password with one tap and connect instantly.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>Personel Zamanından Tasarruf</span>
-              </div>
-            </div>
-
-            {/* 4. Loyalty */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(236, 72, 153, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(236, 72, 153, 0.15)',
-                    border: '1px solid rgba(236, 72, 153, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ec4899',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Mail size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '4. VIP Sadakat & Kulüp' : '4. Loyalty & VIP'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Özel ikram veya duyurular karşılığında KVKK/GDPR uyumlu misafir e-posta ve telefon rehberi oluşturun.'
-                    : 'Build a compliant first-party marketing database of guest emails and phone numbers for SMS & newsletters.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#ec4899', fontWeight: 600 }}>%100 KVKK & GDPR Uyumlu</span>
-              </div>
-            </div>
-
-            {/* 5. Campaigns */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(245, 158, 11, 0.15)',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#f59e0b',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Tag size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '5. Dinamik Kampanyalar' : '5. Campaigns & Specials'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Günün tatlısı, mutlu saatler (happy hour) indirimleri veya özel promosyon kuponlarını anlık olarak masadaki ekrana yansıtın.'
-                    : 'Highlight daily desserts, happy hour discounts, or exclusive promo codes right on table mobile screens.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>Adisyon Ortalamasını Artırın</span>
-              </div>
-            </div>
-
-            {/* 6. Reviews */}
-            <div
-              className="glass-card"
-              style={{
-                padding: '1.5rem',
-                border: '1px solid rgba(251, 191, 36, 0.25)',
-                background: 'rgba(15, 23, 42, 0.65)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
-                    background: 'rgba(251, 191, 36, 0.15)',
-                    border: '1px solid rgba(251, 191, 36, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fbbf24',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <Star size={22} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
-                  {language === 'tr' ? '6. Müşteri Yorumları' : '6. Direct Reviews'}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {language === 'tr'
-                    ? 'Müşteriler işletmeden ayrılmadan anlık 1-5 yıldız puanı verir. Google / TripAdvisor itibarınızı doğrudan masadan yükseltin.'
-                    : 'Collect in-venue 1-5 star ratings and reviews before guests leave, boosting your local review rankings.'}
-                </p>
-              </div>
-              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 600 }}>Google & TripAdvisor Uyumlu</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Compatibility Promise Banner */}
-          <div
-            style={{
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(236, 72, 153, 0.08) 100%)',
-              border: '1px solid rgba(99, 102, 241, 0.25)',
-              borderRadius: '16px',
-              padding: '1.75rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '1.25rem',
-            }}
-          >
-            <div style={{ maxWidth: '720px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#a5b4fc', fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.35rem' }}>
-                <ShieldCheck size={18} />
-                {language === 'tr' ? 'Mevcut Basılı QR Kodlarınızı Yeniden Bastırmanıza Gerek Yok' : 'Zero Re-printing Needed. 100% Backward Compatible.'}
-              </div>
-              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5 }}>
-                {language === 'tr'
-                  ? 'Daha önce masalara bastırdığınız tüm Naponi QR kodları geriye dönük tam uyumludur. İşletme panelinizden Wi-Fi veya Kampanyaları aktif ettiğiniz an, mevcut QR kodlarınız otomatik olarak Smart QR Hub haline gelir.'
-                  : 'All previously printed Naponi QR stickers immediately upgrade over-the-air. Turn on Wi-Fi or campaigns in your dashboard and your existing table codes gain smart powers instantly.'}
-              </p>
-            </div>
-
-            <Link
-              to="/register"
-              className="btn btn-primary"
-              style={{ padding: '0.75rem 1.5rem', whiteSpace: 'nowrap' }}
-            >
-              {language === 'tr' ? 'Hemen Ücretsiz Başlayın' : 'Start Free Today'}
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
           NAPONI FARKI (WHY NAPONI — 14-POINT COMPARISON SECTION)
           ==================================================================== */}
       <section className="home-section home-diff-section" id="naponi-farki">
@@ -2019,774 +1294,21 @@ export const HomePage: React.FC = () => {
                 </h3>
                 <p className="home-diff-cta-desc">
                   {isTr
-                    ? 'Naponi ile işletmenizin dijital müşteri deneyimini tek noktadan yönetin.'
-                    : 'Unify and elevate your hospitality guest experience from a single intelligent platform.'}
+                    ? 'İşletmenizin sektörüne özel akıllı QR çözümlerini keşfedin.'
+                    : 'Discover smart QR hospitality solutions tailored to your venue.'}
                 </p>
               </div>
-              <Link
-                to="/register"
+              <a
+                href="#industries"
                 className="home-btn-primary home-diff-cta-btn"
-                onClick={() => trackBusinessRegisterStarted('difference_section_cta')}
               >
-                <span>{isTr ? 'Naponi’yi Keşfet' : 'Discover Naponi'}</span>
+                <span>{isTr ? 'Sektörel Çözümleri Gör' : 'Explore Industry Solutions'}</span>
                 <ArrowRight size={18} />
-              </Link>
+              </a>
             </div>
           </div>
         </div>
       </section>
-
-      {/* ====================================================================
-          4. CUSTOMER EXPERIENCE: ZERO APP. ZERO ACCOUNT.
-          ==================================================================== */}
-      <section className="home-section" id="experience" style={{ background: 'rgba(17, 24, 39, 0.3)' }}>
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag">{t('home.frictionTag')}</span>
-            <h2 className="home-section-title">{t('home.frictionTitle')}</h2>
-            <p className="home-section-desc">
-              {t('home.frictionSubtitle')}
-            </p>
-          </div>
-
-          <div className="home-friction-comparison">
-            {/* Outdated App-Based Model */}
-            <div className="home-compare-card traditional">
-              <div className="home-compare-header">
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '0.25rem' }}>
-                    {t('home.legacyAppTitle')}
-                  </h3>
-                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{t('home.legacyAppSub')}</span>
-                </div>
-                <span className="home-compare-tag negative">{t('home.legacyAppBadge')}</span>
-              </div>
-
-              <ul className="home-compare-list">
-                <li className="home-compare-item">
-                  <XCircle size={18} className="icon-x" />
-                  <span>{t('home.legacyAppItem1')}</span>
-                </li>
-                <li className="home-compare-item">
-                  <XCircle size={18} className="icon-x" />
-                  <span>{t('home.legacyAppItem2')}</span>
-                </li>
-                <li className="home-compare-item">
-                  <XCircle size={18} className="icon-x" />
-                  <span>{t('home.legacyAppItem3')}</span>
-                </li>
-                <li className="home-compare-item">
-                  <XCircle size={18} className="icon-x" />
-                  <span>{t('home.legacyAppItem4')}</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* NAPONI Instant Flow */}
-            <div className="home-compare-card naponi">
-              <div className="home-compare-header">
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '0.25rem' }}>
-                    {t('home.naponiExpTitle')}
-                  </h3>
-                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{t('home.naponiExpSub')}</span>
-                </div>
-                <span className="home-compare-tag positive">{t('home.naponiExpBadge')}</span>
-              </div>
-
-              <ul className="home-compare-list">
-                <li className="home-compare-item">
-                  <CheckCircle2 size={18} className="icon-check" />
-                  <span>{t('home.naponiExpItem1')}</span>
-                </li>
-                <li className="home-compare-item">
-                  <CheckCircle2 size={18} className="icon-check" />
-                  <span>{t('home.naponiExpItem2')}</span>
-                </li>
-                <li className="home-compare-item">
-                  <CheckCircle2 size={18} className="icon-check" />
-                  <span>{t('home.naponiExpItem3')}</span>
-                </li>
-                <li className="home-compare-item">
-                  <CheckCircle2 size={18} className="icon-check" />
-                  <span>{t('home.naponiExpItem4')}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          4B. PHYSICAL TOUCHPOINTS & HARDWARE-FREE SETUP
-          ==================================================================== */}
-      <section className="home-section" id="touchpoints" style={{ paddingTop: 40, paddingBottom: 80 }}>
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag">{t('home.touchBadge')}</span>
-            <h2 className="home-section-title">{t('home.touchTitle')}</h2>
-            <p className="home-section-desc">
-              {t('home.touchSubtitle')}
-            </p>
-          </div>
-
-          <div className="home-touch-grid">
-            {/* 1. Acrylic Table Tents */}
-            <div className="home-touch-card">
-              <div className="home-touch-preview-wrap">
-                <div style={{ textAlign: 'center', padding: '1rem' }}>
-                  <div style={{ width: 72, height: 96, margin: '0 auto', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.2)', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#6366f1' }} />
-                    <QrCode size={34} style={{ color: '#ffffff' }} />
-                    <div style={{ fontSize: '0.55rem', fontWeight: 700, color: '#a5b4fc' }}>TABLE 14</div>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
-                    Acrylic & Wood Table Tent
-                  </span>
-                </div>
-              </div>
-              <h3 className="home-touch-title">{t('home.touchCard1Title')}</h3>
-              <p className="home-touch-desc">{t('home.touchCard1Desc')}</p>
-            </div>
-
-            {/* 2. Wearable Server Badges */}
-            <div className="home-touch-card">
-              <div className="home-touch-preview-wrap">
-                <div style={{ textAlign: 'center', padding: '1rem' }}>
-                  <div style={{ width: 120, height: 72, margin: '0 auto', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(99, 102, 241, 0.35)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.85rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-                    <div style={{ textAlign: 'left' }}>
-                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#ffffff' }}>Alex R.</div>
-                      <div style={{ fontSize: '0.55rem', color: '#94a3b8' }}>Server</div>
-                      <div style={{ fontSize: '0.5rem', color: '#10b981', marginTop: '0.2rem' }}>★ 4.9 Rating</div>
-                    </div>
-                    <QrCode size={36} style={{ color: '#818cf8' }} />
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
-                    Magnetic Wearable Badge / Lanyard
-                  </span>
-                </div>
-              </div>
-              <h3 className="home-touch-title">{t('home.touchCard2Title')}</h3>
-              <p className="home-touch-desc">{t('home.touchCard2Desc')}</p>
-            </div>
-
-            {/* 3. Bill Folders & Receipts */}
-            <div className="home-touch-card">
-              <div className="home-touch-preview-wrap">
-                <div style={{ textAlign: 'center', padding: '1rem' }}>
-                  <div style={{ width: 92, height: 96, margin: '0 auto', background: '#1e293b', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-                    <div style={{ fontSize: '0.52rem', color: '#94a3b8', letterSpacing: '0.05em' }}>GUEST CHECK</div>
-                    <div style={{ width: '80%', height: 1, background: 'rgba(255,255,255,0.1)' }} />
-                    <QrCode size={32} style={{ color: '#ffffff' }} />
-                    <div style={{ fontSize: '0.52rem', color: '#10b981', fontWeight: 600 }}>SCAN TO TIP</div>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
-                    Leather Check Presenter & Thermal Print
-                  </span>
-                </div>
-              </div>
-              <h3 className="home-touch-title">{t('home.touchCard3Title')}</h3>
-              <p className="home-touch-desc">{t('home.touchCard3Desc')}</p>
-            </div>
-
-            {/* 4. Waterproof Stickers & Phone Display */}
-            <div className="home-touch-card">
-              <div className="home-touch-preview-wrap">
-                <div style={{ textAlign: 'center', padding: '1rem' }}>
-                  <div style={{ width: 100, height: 96, margin: '0 auto', background: 'rgba(255, 255, 255, 0.05)', border: '2px dashed rgba(56, 189, 248, 0.4)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-                    <div style={{ fontSize: '0.5rem', fontWeight: 700, color: '#38bdf8', letterSpacing: '0.04em' }}>STICKER / MOBILE</div>
-                    <QrCode size={34} style={{ color: '#38bdf8' }} />
-                    <div style={{ fontSize: '0.5rem', color: '#94a3b8' }}>SCAN & TIP</div>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.65rem', display: 'block' }}>
-                    Waterproof Vinyl Sticker & Phone Screen
-                  </span>
-                </div>
-              </div>
-              <h3 className="home-touch-title">{t('home.touchCard4Title')}</h3>
-              <p className="home-touch-desc">{t('home.touchCard4Desc')}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          5. BUSINESS BENEFITS (ENTERPRISE & SME GRADE)
-          ==================================================================== */}
-      <section className="home-section" id="benefits">
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag">{t('home.benefitsTag')}</span>
-            <h2 className="home-section-title">{t('home.benefitsTitle')}</h2>
-            <p className="home-section-desc">
-              {t('home.benefitsSubtitle')}
-            </p>
-          </div>
-
-          <div className="home-features-grid">
-            <div className="home-feature-card">
-              <div className="home-feature-icon">
-                <Wallet size={24} />
-              </div>
-              <h3 className="home-feature-title">{t('home.benefit1Title')}</h3>
-              <p className="home-feature-desc">
-                {t('home.benefit1Desc')}
-              </p>
-            </div>
-
-            <div className="home-feature-card">
-              <div className="home-feature-icon">
-                <Users size={24} />
-              </div>
-              <h3 className="home-feature-title">{t('home.benefit2Title')}</h3>
-              <p className="home-feature-desc">
-                {t('home.benefit2Desc')}
-              </p>
-            </div>
-
-            <div className="home-feature-card">
-              <div className="home-feature-icon">
-                <QrCode size={24} />
-              </div>
-              <h3 className="home-feature-title">{t('home.benefit3Title')}</h3>
-              <p className="home-feature-desc">
-                {t('home.benefit3Desc')}
-              </p>
-            </div>
-
-            <div className="home-feature-card">
-              <div className="home-feature-icon">
-                <TrendingUp size={24} />
-              </div>
-              <h3 className="home-feature-title">{t('home.benefit4Title')}</h3>
-              <p className="home-feature-desc">
-                {t('home.benefit4Desc')}
-              </p>
-            </div>
-
-            <div className="home-feature-card">
-              <div className="home-feature-icon">
-                <CreditCard size={24} />
-              </div>
-              <h3 className="home-feature-title">{t('home.benefit5Title')}</h3>
-              <p className="home-feature-desc">
-                {t('home.benefit5Desc')}
-              </p>
-            </div>
-
-            <div className="home-feature-card">
-              <div className="home-feature-icon">
-                <ShieldCheck size={24} />
-              </div>
-              <h3 className="home-feature-title">{t('home.benefit6Title')}</h3>
-              <p className="home-feature-desc">
-                {t('home.benefit6Desc')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          6. STAFF & TEAM EMPOWERMENT METRICS
-          ==================================================================== */}
-      <section className="home-section" style={{ paddingTop: 0 }}>
-        <div className="home-container">
-          <div className="home-stats-banner">
-            <div>
-              <div className="home-stat-num">{t('home.stat1Num')}</div>
-              <div className="home-stat-label">{t('home.stat1Label')}</div>
-            </div>
-            <div>
-              <div className="home-stat-num">{t('home.stat2Num')}</div>
-              <div className="home-stat-label">{t('home.stat2Label')}</div>
-            </div>
-            <div>
-              <div className="home-stat-num">{t('home.stat3Num')}</div>
-              <div className="home-stat-label">{t('home.stat3Label')}</div>
-            </div>
-            <div>
-              <div className="home-stat-num">{t('home.stat4Num')}</div>
-              <div className="home-stat-label">{t('home.stat4Label')}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          6B. INTERACTIVE TIP RECOVERY & ROI CALCULATOR
-          ==================================================================== */}
-      <section className="home-section" id="calculator" style={{ paddingTop: 20, paddingBottom: 60 }}>
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag" style={{ background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
-              <Calculator size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-top' }} />
-              {isTr ? 'İnteraktif Gelir & Bahşiş Simülatörü' : 'Interactive Tip Recovery Simulator'}
-            </span>
-            <h2 className="home-section-title">
-              {isTr ? (
-                <>
-                  Masada Nakitsiz Kaçan Bahşişi & <br />
-                  <span className="home-gradient-text">Ekibinizin Potansiyel Kazancını Hesaplayın</span>
-                </>
-              ) : (
-                <>
-                  Calculate Tips Missed at the Table & <br />
-                  <span className="home-gradient-text">Your Team’s Extra Earnings</span>
-                </>
-              )}
-            </h2>
-            <p className="home-section-desc">
-              {isTr
-                ? "Misafirlerin %70'inden fazlası artık nakit taşımıyor. Masada QR kod olmadığında bahşişler buharlaşıyor. İşletme profilinizi seçin, ekibinizin her ay kurtaracağı bahşişi canlı görün."
-                : "Over 70% of guests no longer carry cash. When there is no QR code on the table, tips simply disappear. Pick your venue type and see how much gratuity your team can recover."}
-            </p>
-          </div>
-
-          <div className="home-roi-card">
-            <div className="home-roi-grid">
-              {/* Controls Column */}
-              <div className="home-roi-controls">
-                <div>
-                  <label className="home-roi-slider-label" style={{ display: 'block', marginBottom: '0.65rem' }}>
-                    {ht('selectVenueType')}
-                  </label>
-                  <div className="home-roi-sector-pills">
-                    <button
-                      type="button"
-                      className={`home-roi-sector-btn ${calcSector === 'cafe' ? 'active' : ''}`}
-                      onClick={() => handleSelectSector('cafe')}
-                    >
-                      <Coffee size={20} />
-                      <span>{ht('cafe')}</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`home-roi-sector-btn ${calcSector === 'restaurant' ? 'active' : ''}`}
-                      onClick={() => handleSelectSector('restaurant')}
-                    >
-                      <Utensils size={20} />
-                      <span>{ht('restaurant')}</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`home-roi-sector-btn ${calcSector === 'bar' ? 'active' : ''}`}
-                      onClick={() => handleSelectSector('bar')}
-                    >
-                      <Wine size={20} />
-                      <span>{ht('barPub')}</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`home-roi-sector-btn ${calcSector === 'hotel' ? 'active' : ''}`}
-                      onClick={() => handleSelectSector('hotel')}
-                    >
-                      <Hotel size={20} />
-                      <span>{ht('hotel')}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Slider 1: Daily Tables */}
-                <div className="home-roi-slider-group">
-                  <div className="home-roi-slider-header">
-                    <span className="home-roi-slider-label">
-                      {ht('dailyTablesGroups')}
-                    </span>
-                    <span className="home-roi-slider-val">{calcDailyTables} {ht('tablesUnit')}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={10}
-                    max={300}
-                    step={5}
-                    value={calcDailyTables}
-                    onChange={(e) => setCalcDailyTables(Number(e.target.value))}
-                    className="home-roi-range-input"
-                    aria-label="Daily Tables"
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
-                    <span>10 {ht('tablesUnit')}</span>
-                    <span>150</span>
-                    <span>300+ {ht('tablesUnit')}</span>
-                  </div>
-                </div>
-
-                {/* Slider 2: Average Check */}
-                <div className="home-roi-slider-group">
-                  <div className="home-roi-slider-header">
-                    <span className="home-roi-slider-label">
-                      {ht('averageBillSpend')}
-                    </span>
-                    <span className="home-roi-slider-val">{formatCalcCurrency(calcAverageCheck)}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={calcCurrencySymbol === '₺' ? 50 : calcCurrencySymbol === '¥' ? 500 : 5}
-                    max={calcCurrencySymbol === '₺' ? 3000 : calcCurrencySymbol === '¥' ? 30000 : 200}
-                    step={calcCurrencySymbol === '₺' ? 25 : calcCurrencySymbol === '¥' ? 250 : 5}
-                    value={calcAverageCheck}
-                    onChange={(e) => setCalcAverageCheck(Number(e.target.value))}
-                    className="home-roi-range-input"
-                    aria-label="Average Check"
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
-                    <span>{formatCalcCurrency(calcCurrencySymbol === '₺' ? 50 : calcCurrencySymbol === '¥' ? 500 : 5)}</span>
-                    <span>{formatCalcCurrency(calcCurrencySymbol === '₺' ? 1500 : calcCurrencySymbol === '¥' ? 15000 : 100)}</span>
-                    <span>{formatCalcCurrency(calcCurrencySymbol === '₺' ? 3000 : calcCurrencySymbol === '¥' ? 30000 : 200)}+</span>
-                  </div>
-                </div>
-
-                {/* Trust info note */}
-                <div className="home-roi-info-banner">
-                  <Sparkles size={18} style={{ flexShrink: 0, color: '#38bdf8' }} />
-                  <span>
-                    {ht('roiInfoBanner')}
-                  </span>
-                </div>
-              </div>
-
-              {/* Results Column */}
-              <div className="home-roi-results">
-                <div>
-                  <div className="home-roi-main-stat">
-                    <div className="home-roi-main-label">
-                      {ht('monthlyTipsRecovered')}
-                    </div>
-                    <div className="home-roi-main-num">
-                      +{formatCalcCurrency(calcMonthlyRecoveredTips)}
-                    </div>
-                    <div className="home-roi-main-desc">
-                      {ht('roiMainDesc')}
-                    </div>
-                  </div>
-
-                  <div className="home-roi-sub-stats">
-                    <div className="home-roi-sub-item">
-                      <span className="home-roi-sub-label">
-                        {ht('perStaffMonthlyBoost', { count: calcStaffCount })}
-                      </span>
-                      <span className="home-roi-sub-val">
-                        +{formatCalcCurrency(calcPerStaffGain)}
-                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>{ht('perMonth')}</span>
-                      </span>
-                    </div>
-                    <div className="home-roi-sub-item">
-                      <span className="home-roi-sub-label">
-                        {ht('costToVenue')}
-                      </span>
-                      <span className="home-roi-sub-val free">
-                        {ht('freeForever')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <Link
-                  to="/register"
-                  className="home-roi-cta-btn"
-                  onClick={() => {
-                    trackFounderCtaClicked('roi_calculator');
-                    trackBusinessRegisterStarted('roi_calculator');
-                  }}
-                >
-                  <span>{ht('startRecoveringCta')}</span>
-                  <ArrowRight size={17} />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          7. PAYMENT METHODS
-          ==================================================================== */}
-      <section className="home-section" style={{ paddingTop: 0, paddingBottom: 60 }}>
-        <div className="home-container" style={{ textAlign: 'center' }}>
-          <span className="home-section-tag">{t('home.payTag')}</span>
-          <h2 className="home-section-title" style={{ fontSize: '2rem' }}>
-            {t('home.payTitle')}
-          </h2>
-          <p className="home-section-desc" style={{ maxWidth: 620, margin: '0 auto 2rem' }}>
-            {t('home.paySubtitle')}
-          </p>
-
-          <div className="home-pay-badges-row">
-            <div className="home-pay-badge-item">
-              <Smartphone size={18} />
-              <span>Apple Pay</span>
-            </div>
-            <div className="home-pay-badge-item">
-              <Smartphone size={18} />
-              <span>Google Pay</span>
-            </div>
-            <div className="home-pay-badge-item">
-              <CreditCard size={18} />
-              <span>Visa & Mastercard</span>
-            </div>
-            <div className="home-pay-badge-item">
-              <CreditCard size={18} />
-              <span>American Express</span>
-            </div>
-            <div className="home-pay-badge-item">
-              <Zap size={18} />
-              <span>{t('home.payDirectBank')}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          7B. 2026 KURUCU ÜYELİK / FOUNDER MEMBERSHIP (LIFETIME FREE)
-          ==================================================================== */}
-      <section className="home-section" id="founder-program" style={{ paddingTop: 30, paddingBottom: 60 }}>
-        <div className="home-container">
-          <div
-            className="home-founder-card"
-            style={{
-              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(15, 23, 42, 0.96) 50%, rgba(99, 102, 241, 0.08) 100%)',
-              border: '1px solid rgba(234, 179, 8, 0.3)',
-              borderRadius: '24px',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            {/* Top Tag & Deadline */}
-            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.4rem 1.2rem',
-                  borderRadius: '999px',
-                  background: 'rgba(234, 179, 8, 0.15)',
-                  border: '1px solid rgba(234, 179, 8, 0.35)',
-                  color: '#facc15',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: '1rem',
-                }}
-              >
-                <Award size={16} />
-                <span>{t('founder.sectionTag')}</span>
-              </div>
-
-              <h2
-                style={{
-                  fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
-                  fontWeight: 800,
-                  color: '#ffffff',
-                  marginBottom: '1rem',
-                  lineHeight: 1.25,
-                }}
-              >
-                {t('founder.sectionTitle')}
-              </h2>
-
-              <p
-                style={{
-                  fontSize: '1.05rem',
-                  color: '#cbd5e1',
-                  maxWidth: '780px',
-                  margin: '0 auto 1rem',
-                  lineHeight: 1.6,
-                }}
-              >
-                {t('founder.sectionSubtitle')}
-              </p>
-
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#facc15', fontSize: '0.85rem', fontWeight: 600 }}>
-                <Clock size={15} />
-                <span>{t('founder.deadlineNotice')}</span>
-              </div>
-            </div>
-
-            {/* 4 Core Pillars Grid */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '1.25rem',
-                marginBottom: '2.5rem',
-              }}
-            >
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                }}
-              >
-                <div
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 12,
-                    background: 'rgba(16, 185, 129, 0.15)',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#34d399',
-                  }}
-                >
-                  <Percent size={20} />
-                </div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                  {t('founder.card1Title')}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {t('founder.card1Desc')}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                }}
-              >
-                <div
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 12,
-                    background: 'rgba(234, 179, 8, 0.15)',
-                    border: '1px solid rgba(234, 179, 8, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#facc15',
-                  }}
-                >
-                  <Award size={20} />
-                </div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                  {t('founder.card2Title')}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {t('founder.card2Desc')}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                }}
-              >
-                <div
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 12,
-                    background: 'rgba(99, 102, 241, 0.15)',
-                    border: '1px solid rgba(99, 102, 241, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#a5b4fc',
-                  }}
-                >
-                  <QrCode size={20} />
-                </div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                  {t('founder.card3Title')}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {t('founder.card3Desc')}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                }}
-              >
-                <div
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 12,
-                    background: 'rgba(56, 189, 248, 0.15)',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#38bdf8',
-                  }}
-                >
-                  <ShieldCheck size={20} />
-                </div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                  {t('founder.card4Title')}
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                  {t('founder.card4Desc')}
-                </p>
-              </div>
-            </div>
-
-            {/* CTA & Legal Disclaimer */}
-            <div
-              className="home-founder-cta-box"
-              style={{
-                background: 'rgba(0, 0, 0, 0.35)',
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-              }}
-            >
-              <div className="home-founder-cta-text" style={{ maxWidth: '750px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#facc15', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.35rem' }}>
-                  <Sparkles size={16} />
-                  <span>{t('auth.founderTitle')}</span>
-                </div>
-                <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.78rem', lineHeight: 1.6 }}>
-                  {t('founder.disclaimer')}
-                </p>
-              </div>
-
-              <Link
-                to="/register"
-                className="home-founder-cta-btn"
-                onClick={() => {
-                  trackFounderCtaClicked('home_founder_section');
-                  trackBusinessRegisterStarted('founder_section_cta');
-                }}
-              >
-                <span>{t('founder.ctaBottom')}</span>
-                <ArrowRight size={17} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ====================================================================
           8. WHO IS NAPONI FOR? (INDUSTRIES)
           ==================================================================== */}
@@ -2801,7 +1323,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="home-industries-grid">
-            <div className="home-industry-card">
+            <Link to="/solutions/restaurants" className="home-industry-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="home-industry-icon">
                 <Utensils size={22} />
               </div>
@@ -2809,9 +1331,13 @@ export const HomePage: React.FC = () => {
               <p className="home-industry-desc">
                 {t('home.indRestaurantsDesc')}
               </p>
-            </div>
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontSize: '0.82rem', fontWeight: 600 }}>
+                <span>{isTr ? 'Çözümü İncele' : 'Explore Solution'}</span>
+                <ArrowRight size={14} />
+              </div>
+            </Link>
 
-            <div className="home-industry-card">
+            <Link to="/solutions/cafes" className="home-industry-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="home-industry-icon">
                 <Coffee size={22} />
               </div>
@@ -2819,9 +1345,13 @@ export const HomePage: React.FC = () => {
               <p className="home-industry-desc">
                 {t('home.indCafesDesc')}
               </p>
-            </div>
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontSize: '0.82rem', fontWeight: 600 }}>
+                <span>{isTr ? 'Çözümü İncele' : 'Explore Solution'}</span>
+                <ArrowRight size={14} />
+              </div>
+            </Link>
 
-            <div className="home-industry-card">
+            <Link to="/solutions/hotels" className="home-industry-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="home-industry-icon">
                 <Hotel size={22} />
               </div>
@@ -2829,9 +1359,13 @@ export const HomePage: React.FC = () => {
               <p className="home-industry-desc">
                 {t('home.indHotelsDesc')}
               </p>
-            </div>
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontSize: '0.82rem', fontWeight: 600 }}>
+                <span>{isTr ? 'Çözümü İncele' : 'Explore Solution'}</span>
+                <ArrowRight size={14} />
+              </div>
+            </Link>
 
-            <div className="home-industry-card">
+            <Link to="/solutions/bars" className="home-industry-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="home-industry-icon">
                 <Wine size={22} />
               </div>
@@ -2839,9 +1373,13 @@ export const HomePage: React.FC = () => {
               <p className="home-industry-desc">
                 {t('home.indBarsDesc')}
               </p>
-            </div>
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontSize: '0.82rem', fontWeight: 600 }}>
+                <span>{isTr ? 'Çözümü İncele' : 'Explore Solution'}</span>
+                <ArrowRight size={14} />
+              </div>
+            </Link>
 
-            <div className="home-industry-card">
+            <Link to="/solutions/barbers" className="home-industry-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="home-industry-icon">
                 <Scissors size={22} />
               </div>
@@ -2849,9 +1387,13 @@ export const HomePage: React.FC = () => {
               <p className="home-industry-desc">
                 {t('home.indBarbersDesc')}
               </p>
-            </div>
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontSize: '0.82rem', fontWeight: 600 }}>
+                <span>{isTr ? 'Çözümü İncele' : 'Explore Solution'}</span>
+                <ArrowRight size={14} />
+              </div>
+            </Link>
 
-            <div className="home-industry-card">
+            <Link to="/solutions/valet" className="home-industry-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="home-industry-icon">
                 <Car size={22} />
               </div>
@@ -2859,27 +1401,11 @@ export const HomePage: React.FC = () => {
               <p className="home-industry-desc">
                 {t('home.indValetDesc')}
               </p>
-            </div>
-
-            <div className="home-industry-card">
-              <div className="home-industry-icon">
-                <Truck size={22} />
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#818cf8', fontSize: '0.82rem', fontWeight: 600 }}>
+                <span>{isTr ? 'Çözümü İncele' : 'Explore Solution'}</span>
+                <ArrowRight size={14} />
               </div>
-              <h3 className="home-industry-title">{t('home.indFoodTruckTitle')}</h3>
-              <p className="home-industry-desc">
-                {t('home.indFoodTruckDesc')}
-              </p>
-            </div>
-
-            <div className="home-industry-card">
-              <div className="home-industry-icon">
-                <Tent size={22} />
-              </div>
-              <h3 className="home-industry-title">{t('home.indPopupTitle')}</h3>
-              <p className="home-industry-desc">
-                {t('home.indPopupDesc')}
-              </p>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -2959,235 +1485,6 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          8B. B2B TECHNOLOGY PARTNERS SECTION
-          ==================================================================== */}
-      <section className="home-section" id="partners" style={{ paddingTop: 30, paddingBottom: 60 }}>
-        <div className="home-container">
-          <div
-            style={{
-              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(16, 185, 129, 0.08) 100%)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              borderRadius: '24px',
-              padding: '3rem 2rem',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.35rem 1rem',
-                  borderRadius: '999px',
-                  background: 'rgba(56, 189, 248, 0.12)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
-                  color: '#38bdf8',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: '1rem',
-                }}
-              >
-                <Handshake size={14} />
-                <span>{ht('b2bPartnership')}</span>
-              </div>
-
-              <h2
-                style={{
-                  fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
-                  fontWeight: 800,
-                  color: '#ffffff',
-                  marginBottom: '1rem',
-                  lineHeight: 1.25,
-                }}
-              >
-                {ht('integrateNaponi')}
-              </h2>
-
-              <p
-                style={{
-                  fontSize: '1.05rem',
-                  color: '#cbd5e1',
-                  marginBottom: '2rem',
-                  lineHeight: 1.6,
-                  maxWidth: '650px',
-                  margin: '0 auto 2rem',
-                }}
-              >
-                {ht('b2bDescription')}
-              </p>
-
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <Link
-                  to="/technology-partners"
-                  className="home-btn-primary"
-                  style={{
-                    padding: '0.9rem 2rem',
-                    fontSize: '0.95rem',
-                    fontWeight: 700,
-                    background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-                    color: '#090d16',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    textDecoration: 'none',
-                    borderRadius: '12px',
-                  }}
-                >
-                  <span>{ht('becomePartner')}</span>
-                  <ArrowRight size={16} />
-                </Link>
-
-                <Link
-                  to="/catalog"
-                  className="home-btn-ghost"
-                  style={{
-                    padding: '0.9rem 1.75rem',
-                    fontSize: '0.95rem',
-                    borderRadius: '12px',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <FileText size={15} className="text-emerald-400" />
-                  <span>{ht('viewB2bCatalog')}</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          9. GLOBAL BY ARCHITECTURE
-          ==================================================================== */}
-      <section className="home-section" id="global">
-        <div className="home-container">
-          <div className="home-global-box">
-            <span className="home-section-tag">{t('home.globalTag')}</span>
-            <h2 className="home-section-title" style={{ maxWidth: 700, margin: '0 auto 1rem' }}>
-              {t('home.globalTitle')}
-            </h2>
-            <p className="home-section-desc" style={{ maxWidth: 640, margin: '0 auto' }}>
-              {t('home.globalSubtitle')}
-            </p>
-
-            <div className="home-currency-tags">
-              <span className="home-currency-pill">🇺🇸 USD ($)</span>
-              <span className="home-currency-pill">🇪🇺 EUR (€)</span>
-              <span className="home-currency-pill">🇬🇧 GBP (£)</span>
-              <span className="home-currency-pill">🇹🇷 TRY (₺)</span>
-              <span className="home-currency-pill">🇦🇺 AUD ($)</span>
-              <span className="home-currency-pill">🇨🇦 CAD ($)</span>
-              <span className="home-currency-pill">🇨🇭 CHF (Fr)</span>
-              <span className="home-currency-pill">🇯🇵 JPY (¥)</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          10. BANK-GRADE SECURITY & TRUST
-          ==================================================================== */}
-      <section className="home-section" style={{ background: 'rgba(17, 24, 39, 0.25)' }}>
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag">{t('home.securityTag')}</span>
-            <h2 className="home-section-title">{t('home.securityTitle')}</h2>
-            <p className="home-section-desc">
-              {t('home.securitySubtitle')}
-            </p>
-          </div>
-
-          <div className="home-trust-grid">
-            <div className="home-trust-card">
-              <div className="home-trust-icon-large">
-                <Lock size={26} />
-              </div>
-              <h3 className="home-trust-title">{t('home.sec1Title')}</h3>
-              <p className="home-trust-desc">
-                {t('home.sec1Desc')}
-              </p>
-            </div>
-
-            <div className="home-trust-card">
-              <div className="home-trust-icon-large">
-                <ShieldCheck size={26} />
-              </div>
-              <h3 className="home-trust-title">{t('home.sec2Title')}</h3>
-              <p className="home-trust-desc">
-                {t('home.sec2Desc')}
-              </p>
-            </div>
-
-            <div className="home-trust-card">
-              <div className="home-trust-icon-large">
-                <CreditCard size={26} />
-              </div>
-              <h3 className="home-trust-title">{t('home.sec3Title')}</h3>
-              <p className="home-trust-desc">
-                {t('home.sec3Desc')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          10B. LATEST BLOG ARTICLES (SON YAZILAR & REHBERLER)
-          ==================================================================== */}
-      <section className="home-section" id="articles">
-        <div className="home-container">
-          <div className="home-section-header">
-            <span className="home-section-tag">
-              {t('home.blogTag')}
-            </span>
-            <h2 className="home-section-title">
-              {t('home.blogTitle')}
-            </h2>
-            <p className="home-section-desc">
-              {t('home.blogSubtitle')}
-            </p>
-          </div>
-
-          <div className="blog-posts-grid" style={{ marginBottom: '2.5rem' }}>
-            {BLOG_POSTS.filter((p) => p.language === (language === 'tr' ? 'tr' : 'en'))
-              .slice(0, 3)
-              .map((post) => (
-                <article key={post.slug} className="blog-card">
-                  <div className="blog-card-category">{post.category}</div>
-                  <h3 className="blog-card-title">
-                    <Link to={`/blog/${post.slug}`}>{post.title}</Link>
-                  </h3>
-                  <p className="blog-card-excerpt">{post.excerpt}</p>
-                  <div className="blog-card-footer">
-                    <span>{post.readingTime}</span>
-                    <Link to={`/blog/${post.slug}`} className="blog-card-readmore">
-                      {t('home.blogReadMore')}
-                    </Link>
-                  </div>
-                </article>
-              ))}
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <Link to="/blog" className="home-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.75rem' }}>
-              <span>{t('home.blogExploreAll')}</span>
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
           11. FREQUENTLY ASKED QUESTIONS (FAQ)
           ==================================================================== */}
       <section className="home-section" id="faq">
@@ -3262,9 +1559,15 @@ export const HomePage: React.FC = () => {
               <Link to="/register" className="home-btn-primary home-btn-hero-large">
                 {t('home.ctaGetStarted')} <ArrowRight size={18} />
               </Link>
-              <Link to="/login" className="home-btn-secondary" style={{ padding: '0.9rem 1.8rem' }}>
-                {t('nav.login')}
-              </Link>
+              <button
+                type="button"
+                onClick={() => setSupportModalOpen(true)}
+                className="home-btn-secondary"
+                style={{ padding: '0.9rem 1.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
+              >
+                <Headphones size={17} />
+                <span>{t('support.widgetBtn')}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -3344,7 +1647,7 @@ export const HomePage: React.FC = () => {
               <h4 className="home-footer-col-title">{t('home.footerProduct')}</h4>
               <ul className="home-footer-links">
                 <li><a href="#how-it-works">{t('nav.features')}</a></li>
-                <li><a href="#experience">{t('nav.solutions')}</a></li>
+                <li><a href="#industries">{t('nav.solutions')}</a></li>
                 <li><Link to="/solutions/restaurants">{t('nav.restaurants')}</Link></li>
                 <li><Link to="/solutions/hotels">{t('nav.hotels')}</Link></li>
                 <li><Link to="/integrations/toast-pos-smart-qr">{language === 'tr' ? 'Toast POS Uyumu' : 'Toast POS Companion'}</Link></li>
