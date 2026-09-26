@@ -69,6 +69,7 @@ import { SupportTicketModal } from '../../components/SupportTicketModal';
 import { LegalModal, LegalTab } from '../../components/LegalModal';
 import { CookieBanner } from '../../components/CookieBanner';
 import { SeoHead } from '../../components/SeoHead';
+import { UserNavbarAction } from '../../components/UserNavbarAction';
 import { BLOG_POSTS } from '../../content/blog/posts';
 
 export const HomePage: React.FC = () => {
@@ -469,19 +470,18 @@ export const HomePage: React.FC = () => {
             >
               <Headphones size={17} />
             </button>
-            <Link to="/login" className="home-btn-ghost">
-              {t('nav.login')}
-            </Link>
-            <Link to="/register" className="home-btn-primary" onClick={() => trackBusinessRegisterStarted('navbar_desktop_cta')}>
-              {t('nav.getStarted')} <ArrowRight size={16} />
-            </Link>
+            <UserNavbarAction
+              variant="desktop"
+              onRegisterClick={() => trackBusinessRegisterStarted('navbar_desktop_cta')}
+            />
           </div>
 
           <div className="home-mobile-controls">
             <LanguageSelector variant="flagOnly" />
-            <Link to="/register" className="home-btn-primary home-btn-mobile-cta" onClick={() => trackBusinessRegisterStarted('navbar_mobile_cta')}>
-              {t('nav.getStarted')}
-            </Link>
+            <UserNavbarAction
+              variant="mobile-bar"
+              onRegisterClick={() => trackBusinessRegisterStarted('navbar_mobile_cta')}
+            />
             <button
               className="home-mobile-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -496,28 +496,12 @@ export const HomePage: React.FC = () => {
       {/* Mobile Dropdown Menu (Mounted outside header to guarantee full viewport height without backdrop-filter clipping) */}
       {mobileMenuOpen && (
         <div className="home-mobile-menu">
-          {/* 1. TOP QUICK ACTIONS: Instant 1-tap access to Login & Register */}
-          <div className="home-mobile-menu-top-actions">
-            <Link
-              to="/login"
-              className="home-btn-ghost home-mobile-action-btn"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <LogIn size={15} />
-              <span>{t('nav.login')}</span>
-            </Link>
-            <Link
-              to="/register"
-              className="home-btn-primary home-mobile-action-btn"
-              onClick={() => {
-                trackBusinessRegisterStarted('mobile_drawer_cta');
-                setMobileMenuOpen(false);
-              }}
-            >
-              <span>{t('nav.getStarted')}</span>
-              <ArrowRight size={15} />
-            </Link>
-          </div>
+          {/* 1. TOP QUICK ACTIONS: Instant 1-tap access to Login & Register OR Logged-in User Profile */}
+          <UserNavbarAction
+            variant="mobile-drawer"
+            onRegisterClick={() => trackBusinessRegisterStarted('mobile_drawer_cta')}
+            onItemClick={() => setMobileMenuOpen(false)}
+          />
 
           {/* 2. MAIN NAVIGATION */}
           <div className="home-mobile-menu-links">

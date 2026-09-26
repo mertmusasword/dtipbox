@@ -17,6 +17,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { SeoHead } from '../../../components/SeoHead';
+import { UserNavbarAction } from '../../../components/UserNavbarAction';
 import { TIPPING_GUIDES, CountryTippingGuide } from '../../../content/guides/tipping-guides';
 import { useLanguage, LanguageSelector } from '../../../i18n';
 import '../../../styles/home.css';
@@ -133,12 +134,7 @@ export const TippingGuideDetailPage: React.FC = () => {
 
           <div className="home-nav-actions">
             <LanguageSelector variant="navbar" />
-            <Link to="/login" className="home-btn-ghost">
-              {isEn ? 'Login' : 'Giriş'}
-            </Link>
-            <Link to="/register" className="home-btn-primary">
-              {isEn ? 'Get Started' : 'Hemen Başla'} <ArrowRight size={16} />
-            </Link>
+            <UserNavbarAction variant="desktop" />
           </div>
         </nav>
       </header>
