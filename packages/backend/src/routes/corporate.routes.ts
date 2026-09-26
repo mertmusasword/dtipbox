@@ -3,6 +3,7 @@ import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as corporateService from '../services/corporate.service';
+import { validateEmailQuality } from '../utils/emailValidator';
 
 const router = Router();
 
@@ -24,7 +25,14 @@ const createCorporateApplicationSchema = {
     contactName: z.string().trim().min(2).max(100).optional(),
     contact_name: z.string().trim().min(2).max(100).optional(),
     phone: z.string().trim().min(5, 'Geçerli bir telefon numarası giriniz').max(35),
-    email: z.string().trim().email('Geçerli bir e-posta adresi giriniz').max(150),
+    email: z
+      .string()
+      .trim()
+      .email('Geçerli bir e-posta adresi giriniz')
+      .max(150)
+      .refine((val) => validateEmailQuality(val).isValid, (val) => ({
+        message: validateEmailQuality(val).error || 'Geçerli bir kurumsal e-posta adresi giriniz',
+      })),
     sector: z.string().trim().min(2, 'Sektör seçimi zorunludur').max(100),
     branchCount: z.union([z.string(), z.number()]).optional(),
     branch_count: z.union([z.string(), z.number()]).optional(),

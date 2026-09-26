@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Building2, X, CheckCircle2, Send } from 'lucide-react';
 import { useLanguage } from '../i18n';
+import { validateEmailClient } from '../utils/emailValidator';
 import '../styles/home.css';
 
 interface CorporateApplicationModalProps {
@@ -40,6 +41,13 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
     // Honeypot spam check
     if (form._hp) {
       setSuccess(true);
+      return;
+    }
+
+    // Client-side email validation (anti-disposable and dummy spam check)
+    const emailCheck = validateEmailClient(form.email);
+    if (!emailCheck.isValid) {
+      setError(emailCheck.error || 'Lütfen geçerli bir kurumsal e-posta adresi giriniz.');
       return;
     }
 

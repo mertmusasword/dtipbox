@@ -1,6 +1,7 @@
 import prisma from '../utils/prisma';
 import { CorporateApplicationStatus } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
+import { validateEmailQuality } from '../utils/emailValidator';
 
 export interface CreateCorporateApplicationInput {
   companyName?: string;
@@ -30,6 +31,11 @@ export async function createCorporateApplication(data: CreateCorporateApplicatio
 
   if (!cleanCompany || !cleanContact || !cleanEmail || !cleanPhone || !cleanSector) {
     throw new AppError('Lütfen tüm zorunlu alanları doldurunuz', 400);
+  }
+
+  const emailValidation = validateEmailQuality(cleanEmail);
+  if (!emailValidation.isValid) {
+    throw new AppError(emailValidation.error || 'Geçersiz e-posta adresi', 400);
   }
 
   // Anti-Spam & Duplicate Check: prevent rapid resubmissions from same email/phone within 60 seconds

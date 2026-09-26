@@ -3,6 +3,7 @@ import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as partnerService from '../services/partner.service';
+import { validateEmailQuality } from '../utils/emailValidator';
 
 const router = Router();
 
@@ -24,7 +25,14 @@ const createPartnerApplicationSchema = {
     website: z.string().trim().max(250).optional(),
     contactName: z.string().trim().min(2, 'Yetkili kişi adı zorunludur').max(100).optional(),
     contact_name: z.string().trim().min(2, 'Yetkili kişi adı zorunludur').max(100).optional(),
-    email: z.string().trim().email('Geçerli bir e-posta adresi giriniz').max(150),
+    email: z
+      .string()
+      .trim()
+      .email('Geçerli bir e-posta adresi giriniz')
+      .max(150)
+      .refine((val) => validateEmailQuality(val).isValid, (val) => ({
+        message: validateEmailQuality(val).error || 'Geçerli bir kurumsal e-posta adresi giriniz',
+      })),
     phone: z.string().trim().max(35).optional(),
     companyType: z.string().trim().min(2, 'Firma türü seçimi zorunludur').max(100).optional(),
     company_type: z.string().trim().min(2, 'Firma türü seçimi zorunludur').max(100).optional(),
