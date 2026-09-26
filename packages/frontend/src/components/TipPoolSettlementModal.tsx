@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   X,
   Split,
@@ -15,6 +15,8 @@ import {
   Info,
   Coins,
   Check,
+  Loader2,
+  Calculator,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useLanguage } from '../i18n';
@@ -38,19 +40,31 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<'simulate' | 'history'>('simulate');
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [isCalculating, setIsCalculating] = useState(false);
   const [settling, setSettling] = useState(false);
   const [simulation, setSimulation] = useState<TipPoolSimulation | null>(null);
   const [historyList, setHistoryList] = useState<TipPoolDistribution[]>([]);
   const [excludedEmployeeIds, setExcludedEmployeeIds] = useState<string[]>([]);
+
+  // Committed amounts currently reflected in simulation
   const [manualCash, setManualCash] = useState<string>('');
   const [manualPos, setManualPos] = useState<string>('');
   const [deductPosFeeFromManualPos, setDeductPosFeeFromManualPos] = useState<boolean>(true);
+
+  // Local immediate input states for smooth, flicker-free typing
+  const [cashInput, setCashInput] = useState<string>('');
+  const [posInput, setPosInput] = useState<string>('');
+
   const [showManualInputs, setShowManualInputs] = useState<boolean>(false);
   const [note, setNote] = useState('');
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<TipPoolDistribution | null>(null);
   const [markingShareId, setMarkingShareId] = useState<string | null>(null);
   const [markingAll, setMarkingAll] = useState(false);
+
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const simulationRef = useRef<TipPoolSimulation | null>(null);
+  simulationRef.current = simulation;
 
   // Fetch simulation with optional manual parameters
   const fetchSimulation = useCallback(
@@ -58,13 +72,20 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
       excluded: string[] = excludedEmployeeIds,
       cashVal: string = manualCash,
       posVal: string = manualPos,
-      deductFee: boolean = deductPosFeeFromManualPos
+      deductFee: boolean = deductPosFeeFromManualPos,
+      isInitial: boolean = false
     ) => {
       try {
-        setLoading(true);
+        if (isInitial) {
+          setInitialLoading(true);
+        } else {
+          setIsCalculating(true);
+        }
+
         const params: any = {};
-        if (excluded.length > 0 && simulation) {
-          const activeIds = simulation.employees
+        const currentSim = simulationRef.current;
+        if (excluded.length > 0 && currentSim) {
+          const activeIds = currentSim.employees
             .filter((e) => !excluded.includes(e.employeeId))
             .map((e) => e.employeeId);
           params.activeEmployeeIds = activeIds.join(',');
@@ -82,14 +103,19 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         const res = await api.get('/business/tip-pool/simulation', { params });
         if (res.data?.success && res.data.data) {
           setSimulation(res.data.data);
+          setManualCash(cashVal);
+          setManualPos(posVal);
         }
       } catch {
         showToast('Havuz simülasyonu yüklenemedi', 'error');
       } finally {
-        setLoading(false);
+        if (isInitial) {
+          setInitialLoading(false);
+        }
+        setIsCalculating(false);
       }
     },
-    [excludedEmployeeIds, manualCash, manualPos, deductPosFeeFromManualPos, simulation, showToast]
+    [excludedEmployeeIds, manualCash, manualPos, deductPosFeeFromManualPos, showToast]
   );
 
   // Fetch past settlements
@@ -109,36 +135,78 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
       setExcludedEmployeeIds([]);
       setManualCash('');
       setManualPos('');
+      setCashInput('');
+      setPosInput('');
       setDeductPosFeeFromManualPos(true);
       setShowManualInputs(false);
       setNote('');
       setSelectedHistoryItem(null);
-      fetchSimulation([], '', '', true);
+      fetchSimulation([], '', '', true, true);
       fetchHistory();
     }
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, [isOpen, fetchHistory]);
+
+  const commitManualValues = useCallback(
+    (newCash: string, newPos: string, deductFee: boolean = deductPosFeeFromManualPos) => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+      fetchSimulation(excludedEmployeeIds, newCash, newPos, deductFee, false);
+    },
+    [excludedEmployeeIds, deductPosFeeFromManualPos, fetchSimulation]
+  );
 
   const toggleEmployeeParticipation = (employeeId: string) => {
     const updated = excludedEmployeeIds.includes(employeeId)
       ? excludedEmployeeIds.filter((id) => id !== employeeId)
       : [...excludedEmployeeIds, employeeId];
     setExcludedEmployeeIds(updated);
-    fetchSimulation(updated, manualCash, manualPos, deductPosFeeFromManualPos);
+    fetchSimulation(updated, cashInput, posInput, deductPosFeeFromManualPos, false);
   };
 
   const handleCashChange = (val: string) => {
-    setManualCash(val);
-    fetchSimulation(excludedEmployeeIds, val, manualPos, deductPosFeeFromManualPos);
+    setCashInput(val);
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      commitManualValues(val, posInput, deductPosFeeFromManualPos);
+    }, 600);
   };
 
   const handlePosChange = (val: string) => {
-    setManualPos(val);
-    fetchSimulation(excludedEmployeeIds, manualCash, val, deductPosFeeFromManualPos);
+    setPosInput(val);
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      commitManualValues(cashInput, val, deductPosFeeFromManualPos);
+    }, 600);
+  };
+
+  const handleInputBlurOrEnter = () => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    if (cashInput !== manualCash || posInput !== manualPos) {
+      commitManualValues(cashInput, posInput, deductPosFeeFromManualPos);
+    }
   };
 
   const handleDeductFeeChange = (val: boolean) => {
     setDeductPosFeeFromManualPos(val);
-    fetchSimulation(excludedEmployeeIds, manualCash, manualPos, val);
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    commitManualValues(cashInput, posInput, val);
   };
 
   const handleToggleSharePaid = async (shareId: string, currentPaid: boolean) => {
@@ -194,8 +262,8 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
     try {
       setSettling(true);
       const activeIds = simulation.employees.map((e) => e.employeeId);
-      const cashNum = parseFloat(manualCash);
-      const posNum = parseFloat(manualPos);
+      const cashNum = parseFloat(cashInput || manualCash);
+      const posNum = parseFloat(posInput || manualPos);
 
       await api.post('/business/tip-pool/settle', {
         note: note.trim() || undefined,
@@ -286,7 +354,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         {/* Modal Body */}
         <div className="tip-pool-modal-body">
           {activeTab === 'simulate' ? (
-            loading ? (
+            initialLoading && !simulation ? (
               <div style={{ textAlign: 'center', padding: '3rem 0' }}>
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Hesaplanıyor...</div>
               </div>
@@ -380,22 +448,42 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24' }}>
                         <Coins size={16} />
                         Harici Bahşiş Ekle (Fiziksel Tip Box & İşletme POS'u)
+                        {isCalculating && (
+                          <span style={{ fontSize: '0.72rem', color: '#60a5fa', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 500, marginLeft: '0.5rem' }}>
+                            <Loader2 size={12} className="animate-spin" /> Hesaplanıyor...
+                          </span>
+                        )}
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowManualInputs(false);
-                          if (manualCash || manualPos) {
-                            setManualCash('');
-                            setManualPos('');
-                            fetchSimulation(excludedEmployeeIds, '', '', deductPosFeeFromManualPos);
-                          }
-                        }}
-                        className="btn btn-secondary btn-sm"
-                        style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem' }}
-                      >
-                        Temizle & Gizle
-                      </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {(cashInput !== manualCash || posInput !== manualPos) && (
+                          <button
+                            type="button"
+                            onClick={handleInputBlurOrEnter}
+                            className="btn btn-primary btn-sm"
+                            style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                          >
+                            <Calculator size={12} />
+                            Şimdi Hesapla
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowManualInputs(false);
+                            if (manualCash || manualPos || cashInput || posInput) {
+                              setCashInput('');
+                              setPosInput('');
+                              setManualCash('');
+                              setManualPos('');
+                              fetchSimulation(excludedEmployeeIds, '', '', deductPosFeeFromManualPos, false);
+                            }
+                          }}
+                          className="btn btn-secondary btn-sm"
+                          style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem' }}
+                        >
+                          Temizle & Gizle
+                        </button>
+                      </div>
                     </div>
 
                     <div
@@ -414,8 +502,15 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                           min="0"
                           step="0.01"
                           placeholder="Örn: 1250"
-                          value={manualCash}
+                          value={cashInput}
                           onChange={(e) => handleCashChange(e.target.value)}
+                          onBlur={handleInputBlurOrEnter}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleInputBlurOrEnter();
+                            }
+                          }}
                           className="form-input"
                           style={{ fontSize: '0.85rem' }}
                         />
@@ -433,8 +528,15 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                           min="0"
                           step="0.01"
                           placeholder="Örn: 400"
-                          value={manualPos}
+                          value={posInput}
                           onChange={(e) => handlePosChange(e.target.value)}
+                          onBlur={handleInputBlurOrEnter}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleInputBlurOrEnter();
+                            }
+                          }}
                           className="form-input"
                           style={{ fontSize: '0.85rem' }}
                         />
@@ -514,6 +616,8 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                     gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
                     gap: '0.75rem',
                     marginBottom: '1.25rem',
+                    opacity: isCalculating ? 0.65 : 1,
+                    transition: 'opacity 0.2s ease',
                   }}
                 >
                   <div className="glass-card" style={{ padding: '1rem', background: 'rgba(255, 255, 255, 0.02)' }}>
@@ -590,11 +694,16 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 </div>
 
                 {/* Staff Breakdown Table */}
-                <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ marginBottom: '1.25rem', opacity: isCalculating ? 0.65 : 1, transition: 'opacity 0.2s ease' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                     <div style={{ fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Users size={16} style={{ color: 'var(--primary)' }} />
                       Vardiyadaki Personel Hak Ediş Dağılımı
+                      {isCalculating && (
+                        <span style={{ fontSize: '0.72rem', color: '#60a5fa', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 500, marginLeft: '0.5rem' }}>
+                          <Loader2 size={12} className="animate-spin" /> Güncelleniyor...
+                        </span>
+                      )}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       Vardiyada olmayan personelin yanındaki işareti kaldırabilirsiniz
