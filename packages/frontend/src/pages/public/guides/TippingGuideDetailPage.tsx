@@ -31,6 +31,31 @@ const SECTOR_ICONS: Record<string, any> = {
   Package,
 };
 
+const parseDefaultTipRate = (guide?: CountryTippingGuide): number => {
+  if (!guide) return 10;
+  if (guide.etiquetteType === 'discouraged') return 0;
+
+  // Match percentage like "10%", "%10", "15 %"
+  const match = guide.standardRate.match(/(?:%\s*(\d+(?:\.\d+)?)|(\d+(?:\.\d+)?)\s*%)/);
+  if (match) {
+    const val = parseFloat(match[1] || match[2]);
+    if (!isNaN(val)) {
+      const presets = [0, 5, 10, 15, 18, 20];
+      return presets.reduce((prev, curr) =>
+        Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev
+      );
+    }
+  }
+
+  const anyNum = guide.standardRate.match(/\d+(?:\.\d+)?/);
+  if (anyNum) {
+    const val = parseFloat(anyNum[0]);
+    if (!isNaN(val) && val <= 100) return val;
+  }
+
+  return 10;
+};
+
 export const TippingGuideDetailPage: React.FC = () => {
   const { country } = useParams<{ country: string }>();
   const { language, t } = useLanguage();
@@ -43,9 +68,15 @@ export const TippingGuideDetailPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   // Local interactive tip calculator state
-  const defaultRateNumber = guide ? parseFloat(guide.standardRate.replace(/[^0-9.]/g, '')) || 10 : 10;
+  const defaultRateNumber = parseDefaultTipRate(guide);
   const [billAmount, setBillAmount] = useState<number>(100);
   const [selectedRate, setSelectedRate] = useState<number>(defaultRateNumber);
+
+  React.useEffect(() => {
+    if (guide) {
+      setSelectedRate(parseDefaultTipRate(guide));
+    }
+  }, [guide?.slug]);
 
   if (!guide) {
     return <Navigate to="/guides" replace />;

@@ -201,3 +201,4 @@ d-tipbox (Monorepo)
    * NEVER look at an empty local `.env` and claim that an integration (such as email, company details, or payment providers) is unconfigured or missing.
    * Always cross-reference this `AGENTS.md` file, `git log`, and backend service implementations before stating project status.
 6. **NO GENERIC CHECKLISTS:** When asked "Eksik bir şey kaldı mı?" or assessing production readiness, do not output generic textbook checklists. Base answers strictly on the verified factual state recorded in this document.
+7. **Mandatory Live Deployment Status Notification:** Her işlem ve kod değişikliği tamamlandığında kullanıcının her zaman açıkça durumdan haberdar olması için: yapılan işlemin **canlıda olup olmadığını** belirt ve yereldeyse **"Canlıya alayım mı?"** diye bilgi verip onay sor.
