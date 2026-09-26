@@ -262,7 +262,130 @@ export async function getEmployeeAnalytics(employeeId: string, businessId: strin
   };
 }
 
+export async function exportTipsCsv(
+  businessId: string,
+  options: {
+    type?: 'transactions' | 'staff' | 'summary';
+    startDate?: Date;
+    endDate?: Date;
+    delimiter?: ',' | ';';
+  } = {}
+): Promise<{ filename: string; csv: string }> {
+  const { type = 'transactions', startDate, endDate, delimiter = ';' } = options;
+
+  const business = await prisma.business.findUnique({
+    where: { id: businessId },
+    select: { name: true, currency: true },
+  });
+  const businessName = business?.name || 'Naponi_Business';
+  const currency = business?.currency || 'TRY';
+
+  const dateFilter: any = {};
+  if (startDate) dateFilter.gte = startDate;
+  if (endDate) dateFilter.lte = endDate;
+
+  if (type === 'staff') {
+    const employees = await prisma.employee.findMany({
+      where: { business_id: businessId, deleted_at: null },
+      include: {
+        tips: {
+          where: {
+            payment_status: PaymentStatus.SUCCESS,
+            ...(Object.keys(dateFilter).length > 0 && { created_at: dateFilter }),
+          },
+          select: { amount: true },
+        },
+      },
+      orderBy: { first_name: 'asc' },
+    });
+
+    const headers = [
+      'Personel Adı',
+      'Pozisyon / Görev',
+      'Bahşiş Adedi',
+      `Toplam Tutar (${currency})`,
+      `Ortalama Bahşiş (${currency})`,
+    ];
+
+    const rows = employees.map((emp) => {
+      const count = emp.tips.length;
+      const total = emp.tips.reduce((sum, t) => sum + Number(t.amount), 0);
+      const avg = count > 0 ? (total / count).toFixed(2) : '0.00';
+      return [
+        `"${`${emp.first_name} ${emp.last_name || ''}`.trim()}"`,
+        `"${emp.position || 'Servis Ekibi'}"`,
+        count,
+        total.toFixed(2),
+        avg,
+      ].join(delimiter);
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(delimiter), ...rows].join('\r\n');
+    const safeBizName = businessName.replace(/[^a-zA-Z0-9_\u00C0-\u017F]/g, '_');
+    const filename = `${safeBizName}_Personel_Hakedis_${new Date().toISOString().slice(0, 10)}.csv`;
+    return { filename, csv: csvContent };
+  }
+
+  // Default: Detailed Transactions
+  const tips = await prisma.tip.findMany({
+    where: {
+      business_id: businessId,
+      payment_status: PaymentStatus.SUCCESS,
+      ...(Object.keys(dateFilter).length > 0 && { created_at: dateFilter }),
+    },
+    include: {
+      employee: { select: { first_name: true, last_name: true } },
+      table: { select: { name: true } },
+    },
+    orderBy: { created_at: 'desc' },
+  });
+
+  const headers = [
+    'İşlem ID',
+    'Tarih',
+    'Saat',
+    `Tutar (${currency})`,
+    'Para Birimi',
+    'Ödeme Yöntemi',
+    'Durum',
+    'Personel',
+    'Masa / Alan',
+    'Referans Kodu',
+  ];
+
+  const rows = tips.map((t) => {
+    const d = new Date(t.created_at);
+    const dateStr = d.toISOString().slice(0, 10);
+    const timeStr = d.toTimeString().slice(0, 5);
+    const empName = t.employee
+      ? `${t.employee.first_name} ${t.employee.last_name || ''}`.trim()
+      : 'İşletme Havuzu';
+    const tableName = t.table?.name || 'Genel';
+    const refCode = t.provider_transaction_id || '—';
+
+    return [
+      `"${t.id}"`,
+      `"${dateStr}"`,
+      `"${timeStr}"`,
+      Number(t.amount).toFixed(2),
+      `"${t.currency || currency}"`,
+      `"${t.payment_method}"`,
+      `"${t.payment_status}"`,
+      `"${empName}"`,
+      `"${tableName}"`,
+      `"${refCode}"`,
+    ].join(delimiter);
+  });
+
+  const csvContent = '\uFEFF' + [headers.join(delimiter), ...rows].join('\r\n');
+  const safeBizName = businessName.replace(/[^a-zA-Z0-9_\u00C0-\u017F]/g, '_');
+  const filename = `${safeBizName}_Bahsis_Islem_Raporu_${new Date().toISOString().slice(0, 10)}.csv`;
+  return { filename, csv: csvContent };
+}
+
 export const analyticsService = {
   getBusinessAnalytics,
   getEmployeeAnalytics,
+  exportTipsCsv,
 };
+

@@ -16,6 +16,10 @@ import {
   Calendar,
   Hash,
   Layers,
+  FileSpreadsheet,
+  Download,
+  ChevronDown,
+  Loader2,
 } from 'lucide-react';
 
 export const AnalyticsPage: React.FC = () => {
@@ -24,6 +28,8 @@ export const AnalyticsPage: React.FC = () => {
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   const loadData = useCallback(() => {
     setLoading(true);
@@ -41,6 +47,49 @@ export const AnalyticsPage: React.FC = () => {
     loadData();
   }, [loadData]);
 
+  // Click outside to close export menu
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('#export-menu-container')) {
+        setExportMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [exportMenuOpen]);
+
+  const handleExport = async (type: 'transactions' | 'staff') => {
+    try {
+      setIsExporting(true);
+      setExportMenuOpen(false);
+      const res = await api.get(`/business/export/tips?type=${type}`, {
+        responseType: 'blob',
+      });
+      const blob = new Blob([res.data], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+
+      const disposition = res.headers['content-disposition'];
+      let filename = type === 'staff' ? 'Personel_Hakedis_Raporu.csv' : 'Bahsis_Islem_Raporu.csv';
+      if (disposition && disposition.includes('filename=')) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) filename = match[1];
+      }
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed:', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   if (error) {
     return (
       <div className="page-wrapper">
@@ -53,12 +102,100 @@ export const AnalyticsPage: React.FC = () => {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 className="page-title">{t('business.analyticsTitle')}</h1>
           <p className="page-subtitle mb-0">
             {t('business.analyticsSubtitle')}
           </p>
+        </div>
+        <div id="export-menu-container" style={{ position: 'relative' }}>
+          <button
+            id="export-csv-menu-btn"
+            className="btn btn-secondary"
+            onClick={() => setExportMenuOpen(!exportMenuOpen)}
+            disabled={isExporting}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontWeight: 600,
+              padding: '0.6rem 1.1rem',
+              borderRadius: '10px',
+            }}
+          >
+            {isExporting ? <Loader2 size={18} className="spin" /> : <FileSpreadsheet size={18} />}
+            <span>{isExporting ? t('common.loading') : t('business.exportCsvBtn')}</span>
+            <ChevronDown size={16} style={{ transform: exportMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+          </button>
+
+          {exportMenuOpen && (
+            <div
+              className="glass-card"
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 'calc(100% + 8px)',
+                minWidth: '280px',
+                zIndex: 50,
+                padding: '0.5rem',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(16px)',
+              }}
+            >
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={() => handleExport('transactions')}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.7rem 1rem',
+                  borderRadius: '8px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                <Download size={16} />
+                <span>{t('business.exportTransactions')}</span>
+              </button>
+
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={() => handleExport('staff')}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.7rem 1rem',
+                  borderRadius: '8px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                <Download size={16} />
+                <span>{t('business.exportStaff')}</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

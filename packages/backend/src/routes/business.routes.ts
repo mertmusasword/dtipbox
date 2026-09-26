@@ -527,6 +527,29 @@ router.get('/analytics', async (req: AuthRequest, res, next) => {
   }
 });
 
+// --- Export CSV / Excel ---
+router.get('/export/tips', async (req: AuthRequest, res, next) => {
+  try {
+    const type = (req.query.type as any) || 'transactions';
+    const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
+    const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
+    const delimiter = req.query.delimiter === ',' ? ',' : ';';
+
+    const { filename, csv } = await analyticsService.exportTipsCsv(req.user!.businessId!, {
+      type,
+      startDate,
+      endDate,
+      delimiter,
+    });
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.status(200).send(csv);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // --- Audit Logs ---
 router.get('/audit-logs', async (req: AuthRequest, res, next) => {
   try {
