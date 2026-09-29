@@ -1,6 +1,6 @@
 /**
  * Static SEO Pre-rendering Generator
- * D-TIPBOX / Naponi Digital Tipping Platform
+ * Naponi Digital Tipping Platform
  *
  * Runs post-build to generate crawlable, static HTML files for:
  * - /index.html (Root homepage with semantic content & structured data)

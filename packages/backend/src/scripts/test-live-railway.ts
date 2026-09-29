@@ -59,7 +59,7 @@ async function waitAndTest() {
     const rootRes = await axios.get(`${LIVE_URL}/`);
     const loginRes = await axios.get(`${LIVE_URL}/login`);
 
-    const hasTitle = rootRes.data.includes('D-TIPBOX');
+    const hasTitle = rootRes.data.includes('Naponi');
     const hasRootDiv = rootRes.data.includes('id="root"');
     const loginFallback = loginRes.data.includes('id="root"');
 

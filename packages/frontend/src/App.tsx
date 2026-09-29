@@ -73,6 +73,7 @@ const AdminAgreementsPage = React.lazy(() => import('./pages/admin/AdminAgreemen
 const AdminCorporateApplicationsPage = React.lazy(() => import('./pages/admin/AdminCorporateApplicationsPage').then((m) => ({ default: m.AdminCorporateApplicationsPage })));
 const AdminPartnerApplicationsPage = React.lazy(() => import('./pages/admin/AdminPartnerApplicationsPage').then((m) => ({ default: m.AdminPartnerApplicationsPage })));
 const AdminSupportTicketsPage = React.lazy(() => import('./pages/admin/AdminSupportTicketsPage').then((m) => ({ default: m.AdminSupportTicketsPage })));
+const AdminStatisticsPage = React.lazy(() => import('./pages/admin/AdminStatisticsPage').then((m) => ({ default: m.AdminStatisticsPage })));
 const TechnologyPartnersPage = React.lazy(() => import('./pages/public/TechnologyPartnersPage').then((m) => ({ default: m.TechnologyPartnersPage })));
 
 // Page Loading Fallback Spinner
@@ -255,7 +256,7 @@ export const App: React.FC = () => {
                   <Route path="/admin/partner-applications" element={<AdminPartnerApplicationsPage />} />
                   <Route path="/admin/support-tickets" element={<AdminSupportTicketsPage />} />
                   <Route path="/admin/agreements" element={<AdminAgreementsPage />} />
-                  <Route path="/admin/statistics" element={<AdminDashboard />} />
+                  <Route path="/admin/statistics" element={<AdminStatisticsPage />} />
                   <Route path="/admin/audit" element={<AdminAuditPage />} />
                   <Route path="/admin/settings" element={<AdminSettingsPage />} />
                 </Route>

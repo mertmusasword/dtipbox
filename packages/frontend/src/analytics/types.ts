@@ -1,6 +1,6 @@
 /**
  * Google Analytics 4 (GA4) Types & Event Interfaces
- * D-TIPBOX / Naponi Digital Tipping Platform
+ * Naponi Digital Tipping Platform
  */
 
 export type GAEventName =

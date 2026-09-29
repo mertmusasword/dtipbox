@@ -28,7 +28,7 @@ async function runProductionSmokeTests() {
     const rootRes = await axios.get(`${BASE_URL}/`);
     const tipPageRes = await axios.get(`${BASE_URL}/tip/demo-general-qr`);
 
-    const hasTitle = rootRes.data.includes('D-TIPBOX');
+    const hasTitle = rootRes.data.includes('Naponi');
     const hasRootDiv = rootRes.data.includes('id="root"');
     const spaFallbackOk = tipPageRes.data.includes('id="root"');
 

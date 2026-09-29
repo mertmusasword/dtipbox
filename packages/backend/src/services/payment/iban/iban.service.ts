@@ -6,7 +6,7 @@ import { PaymentStatus } from '@prisma/client';
 export class IbanService {
   /**
    * Process IBAN / Bank Transfer flow.
-   * Master rule: Since D-TIPBOX does not automatically verify bank wire receipts,
+   * Master rule: Since Naponi does not automatically verify bank wire receipts,
    * IBAN transfers must ALWAYS be marked as UNVERIFIED (never auto SUCCESS).
    */
   async processIbanPayment(params: CreatePaymentIntentParams): Promise<PaymentIntentResult> {

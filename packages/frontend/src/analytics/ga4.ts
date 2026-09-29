@@ -1,7 +1,7 @@
 /**
  * Google Analytics 4 (GA4) Integration
  * Production-Ready, Privacy-Preserving, Non-blocking
- * D-TIPBOX / Naponi Digital Tipping Platform
+ * Naponi Digital Tipping Platform
  */
 
 import {

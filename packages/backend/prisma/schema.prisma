@@ -1,5 +1,5 @@
 // ======================
-// D-TIPBOX Prisma Schema
+// Naponi Prisma Schema
 // ======================
 
 generator client {
