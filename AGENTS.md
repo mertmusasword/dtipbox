@@ -62,9 +62,9 @@ d-tipbox (Monorepo)
 * **Venue Master QR:** Placed at cash registers, takeaway pickup, or hotel desks.
 
 ### 3.3. Multilingual System (i18n)
-* **Supported Languages (10):** English (`en`), Turkish (`tr`), German (`de`), Spanish (`es`), French (`fr`), Portuguese (`pt`), Arabic (`ar` - RTL), Chinese (`zh`), Japanese (`ja`), Indonesian (`id`).
+* **Supported Languages (11):** English (`en`), Turkish (`tr`), German (`de`), Spanish (`es`), French (`fr`), Portuguese (`pt`), Arabic (`ar` - RTL), Chinese (`zh`), Japanese (`ja`), Indonesian (`id`), Russian (`ru`).
 * **Routing / Detection:** URL query parameter `?lang=xx`, `localStorage`, and browser language fallback.
-* **Merchant Agreements:** Fully localized 10-language contracts stored in `packages/backend/src/templates/merchantAgreementText.ts`.
+* **Merchant Agreements:** Fully localized 11-language contracts stored in `packages/backend/src/templates/merchantAgreementText.ts`.
 
 ### 3.4. Transactional Email Infrastructure (LIVE & FULLY CONFIGURED)
 * **Dual-Engine Architecture:** Resend Cloud API (HTTPS Port 443, zero firewall blocking) + Nodemailer SMTP (Natro SMTP & standard TLS).
@@ -118,7 +118,7 @@ d-tipbox (Monorepo)
 * **Content Source:**
   * `packages/frontend/src/content/blog/posts.ts` (Core definitions & TR posts)
   * `packages/frontend/src/content/blog/posts-en.ts` (15 Full English articles)
-* **Total Live Articles:** **30 Articles** (15 Turkish + 15 English) spanning 10 strategic categories:
+* **Total Live Articles:** **30+ Articles** (15 Turkish + 15 English + regulatory guides) spanning 15 strategic categories:
   1. Digital Tipping (Pillar)
   2. QR Codes
   3. Restaurants
