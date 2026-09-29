@@ -23,6 +23,8 @@ import {
   X,
   Clock,
   Split,
+  Heart,
+  MessageSquareHeart,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
@@ -418,6 +420,8 @@ export const BusinessDashboard: React.FC = () => {
                   <tr>
                     <th>{t('common.time')}</th>
                     <th>{t('common.amount')}</th>
+                    <th>{language === 'tr' ? 'Personel / Masa' : 'Staff / Table'}</th>
+                    <th>{language === 'tr' ? 'Misafir Notu & Rozet' : 'Guest Note & Badge'}</th>
                     <th>{t('nav.paymentMethods')}</th>
                     <th>{t('common.status')}</th>
                     <th style={{ textAlign: 'right' }}>{t('common.actions')}</th>
@@ -431,6 +435,50 @@ export const BusinessDashboard: React.FC = () => {
                       </td>
                       <td style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>
                         {formatCurrency(Number(tip.amount), tip.currency || business?.currency || 'TRY')}
+                      </td>
+                      <td style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                        {tip.employee_name ? (
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{tip.employee_name}</span>
+                        ) : tip.table_name ? (
+                          <span style={{ color: 'var(--text-secondary)' }}>Masa: {tip.table_name}</span>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>İşletme Geneli</span>
+                        )}
+                      </td>
+                      <td>
+                        {tip.customer_message ? (
+                          <div>
+                            <div style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              background: 'rgba(236, 72, 153, 0.1)',
+                              color: '#ec4899',
+                              padding: '0.25rem 0.6rem',
+                              borderRadius: '8px',
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              maxWidth: '220px',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }} title={tip.customer_message}>
+                              <Heart size={12} style={{ fill: '#ec4899', flexShrink: 0 }} />
+                              <span>{tip.customer_message}</span>
+                            </div>
+                            {tip.customer_name && (
+                              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                                👤 {tip.customer_name}
+                              </div>
+                            )}
+                          </div>
+                        ) : tip.customer_name ? (
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                            👤 {tip.customer_name}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>
+                        )}
                       </td>
                       <td>
                         <span className="badge badge-neutral">
@@ -530,6 +578,37 @@ export const BusinessDashboard: React.FC = () => {
                       {formatTime(tip.created_at)}
                     </span>
                   </div>
+
+                  {(tip.employee_name || tip.table_name) && (
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
+                      {tip.employee_name ? `👤 ${tip.employee_name}` : ''}
+                      {tip.employee_name && tip.table_name ? ' • ' : ''}
+                      {tip.table_name ? `Masa: ${tip.table_name}` : ''}
+                    </div>
+                  )}
+
+                  {tip.customer_message && (
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      background: 'rgba(236, 72, 153, 0.1)',
+                      color: '#ec4899',
+                      padding: '0.35rem 0.65rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      marginTop: '0.45rem',
+                    }}>
+                      <Heart size={13} style={{ fill: '#ec4899', flexShrink: 0 }} />
+                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tip.customer_message}</span>
+                      {tip.customer_name && (
+                        <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: '0.72rem', flexShrink: 0 }}>
+                          — {tip.customer_name}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   {(tip.status === 'UNVERIFIED' || tip.status === 'PENDING') && (
                     <div className="mobile-tip-card-actions">

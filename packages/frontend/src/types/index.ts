@@ -352,13 +352,17 @@ export interface BusinessAnalytics {
   tablePerformance: Array<{ name: string; count: number; total: number }>;
   paymentMethodUsage: Array<{ method: string; count: number; total: number }>;
   qrUsage?: Array<{ token: string; label: string; table: string | null; count: number; total: number }>;
-    recentTips: Array<{
+  recentTips: Array<{
     id: string;
     amount: number;
     currency: string;
     payment_method: string;
     status?: string;
     created_at: string;
+    customer_name?: string | null;
+    customer_message?: string | null;
+    employee_name?: string | null;
+    table_name?: string | null;
   }>;
 }
 

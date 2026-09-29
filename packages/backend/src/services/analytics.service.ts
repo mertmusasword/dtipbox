@@ -41,6 +41,8 @@ export async function getBusinessAnalytics(businessId: string) {
         employee_id: true,
         table_id: true,
         created_at: true,
+        customer_name: true,
+        customer_message: true,
       },
       orderBy: { created_at: 'desc' },
     }),
@@ -191,13 +193,17 @@ export async function getBusinessAnalytics(businessId: string) {
         total: Number(total.toFixed(2)),
       };
     }),
-    recentTips: allTips.slice(0, 10).map((t) => ({
+    recentTips: allTips.slice(0, 15).map((t) => ({
       id: t.id,
       amount: Number(t.amount),
       currency: t.currency,
       payment_method: t.payment_method,
       status: t.payment_status,
       created_at: t.created_at,
+      customer_name: t.customer_name,
+      customer_message: t.customer_message,
+      employee_name: t.employee_id && employeeMap.has(t.employee_id) ? employeeMap.get(t.employee_id)!.name : null,
+      table_name: t.table_id && tableMap.has(t.table_id) ? tableMap.get(t.table_id)!.name : null,
     })),
   };
 }
