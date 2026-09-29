@@ -48,6 +48,7 @@ function writeStaticRoute(routePath: string, options: {
   modifiedTime?: string;
   authorName?: string;
   jsonLd?: any[];
+  lang?: string;
   alternateLanguages?: { lang: string; url: string }[];
   contentHtml: string;
 }) {
@@ -56,6 +57,17 @@ function writeStaticRoute(routePath: string, options: {
   const targetFile = path.join(targetDir, 'index.html');
 
   let html = templateHtml;
+
+  // 0. Update <html lang="..."> attribute based on route/option
+  const langAttr = options.lang || (
+    routePath === 'tr' || routePath.startsWith('tr/') || (options.canonicalUrl && options.canonicalUrl.includes('/tr'))
+      ? 'tr'
+      : (routePath === 'de' || routePath.startsWith('de/') || (options.canonicalUrl && options.canonicalUrl.includes('/de')) ? 'de'
+      : (routePath === 'fr' || routePath.startsWith('fr/') || (options.canonicalUrl && options.canonicalUrl.includes('/fr')) ? 'fr'
+      : (routePath === 'es' || routePath.startsWith('es/') || (options.canonicalUrl && options.canonicalUrl.includes('/es')) ? 'es'
+      : 'en')))
+  );
+  html = html.replace(/<html lang="[^"]*"/i, `<html lang="${langAttr}"`);
 
   // 1. Replace <title>
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${options.title}</title>`);
@@ -259,11 +271,6 @@ writeStaticRoute('', {
     { lang: 'de', url: 'https://www.naponi.com/de' },
     { lang: 'fr', url: 'https://www.naponi.com/fr' },
     { lang: 'es', url: 'https://www.naponi.com/es' },
-    { lang: 'zh', url: 'https://www.naponi.com/?lang=zh' },
-    { lang: 'ar', url: 'https://www.naponi.com/?lang=ar' },
-    { lang: 'pt', url: 'https://www.naponi.com/?lang=pt' },
-    { lang: 'id', url: 'https://www.naponi.com/?lang=id' },
-    { lang: 'ja', url: 'https://www.naponi.com/?lang=ja' },
   ],
   contentHtml: homepageSemanticContent,
   jsonLd: [
@@ -273,7 +280,10 @@ writeStaticRoute('', {
       name: 'Naponi',
       url: 'https://www.naponi.com',
       logo: 'https://www.naponi.com/logo.png',
-      sameAs: ['https://twitter.com/naponifin'],
+      sameAs: [
+        'https://x.com/naponicom',
+        'https://instagram.com/naponicom'
+      ],
       description: 'Global QR code digital tipping and service payments platform.',
     },
     {
@@ -1647,22 +1657,6 @@ ${posUrls}
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/trust" />
-  </url>
-
-  <!-- 8. Business Registration & Authentication -->
-  <url>
-    <loc>https://www.naponi.com/register</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/register" />
-  </url>
-  <url>
-    <loc>https://www.naponi.com/login</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/login" />
   </url>
 </urlset>
 `;

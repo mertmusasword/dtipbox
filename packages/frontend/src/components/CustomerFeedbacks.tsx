@@ -161,10 +161,10 @@ export const CustomerFeedbacks: React.FC = () => {
           disabled={loading}
           className="btn btn-secondary"
           style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem' }}
-          title={t('common.retry')}
+          title={t('common.refresh')}
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          <span>{t('common.retry')}</span>
+          <span>{t('common.refresh')}</span>
         </button>
       </div>
 
@@ -201,9 +201,7 @@ export const CustomerFeedbacks: React.FC = () => {
               </span>
             </div>
             <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
-              {isTr
-                ? '⭐ Masadan 5 yıldız veren misafirler doğrudan Google Haritalar profilinize yönlendirilir. 1-3 yıldız verenlerin olumsuz yorumları Google\'a gitmez, sadece bu panelde size özel kalır.'
-                : '⭐ Guests who rate 5 stars are routed to your Google Maps review page. 1-3 star feedback remains confidential in this manager inbox.'}
+              ⭐ {t('feedback.reputationShieldDesc')}
             </p>
           </div>
 

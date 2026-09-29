@@ -6,6 +6,7 @@ import { LoadingState, SkeletonCard } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useLanguage } from '../../i18n';
+import { usePageTitle } from '../../hooks/usePageTitle';
 import {
   DollarSign,
   TrendingUp,
@@ -24,6 +25,7 @@ import {
 
 export const AnalyticsPage: React.FC = () => {
   const { t, formatCurrency, formatNumber } = useLanguage();
+  usePageTitle(t('nav.analytics'));
   const [analytics, setAnalytics] = useState<BusinessAnalytics | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);

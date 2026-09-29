@@ -16,6 +16,8 @@ export interface SmartQrTranslations {
   copyReviewAndPost: string;
   post5Stars: string;
   reviewCopiedNotice: string;
+  googleReviewAlternativeNotice: string;
+  googleReviewGeneralAction: string;
 
   promoCode: string;
   copyCode: string;
@@ -67,6 +69,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Yorumu Kopyala & Google\'da Paylaş',
     post5Stars: 'Google\'da 5 Yıldız Ver',
     reviewCopiedNotice: '✓ Yorumunuz panoya kopyalandı! Google sayfasına yapıştırabilirsiniz.',
+    googleReviewAlternativeNotice: 'Dilerseniz deneyiminizi doğrudan Google Haritalar üzerinden de paylaşabilirsiniz:',
+    googleReviewGeneralAction: 'Google Haritalar\'da Değerlendir',
 
     promoCode: 'KAMPANYA KODU',
     copyCode: 'Kodu Al',
@@ -117,6 +121,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Copy Review & Post on Google',
     post5Stars: 'Post 5 Stars on Google',
     reviewCopiedNotice: '✓ Review copied to clipboard! Paste it on Google.',
+    googleReviewAlternativeNotice: 'You may also share your review directly on Google Maps:',
+    googleReviewGeneralAction: 'Review on Google Maps',
 
     promoCode: 'PROMO CODE',
     copyCode: 'Copy',
@@ -167,6 +173,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Скопировать и открыть Google Карты',
     post5Stars: 'Поставить 5 звезд в Google',
     reviewCopiedNotice: '✓ Текст скопирован! Вставьте его на странице Google.',
+    googleReviewAlternativeNotice: 'Вы также можете оставить отзыв прямо в Google Maps:',
+    googleReviewGeneralAction: 'Оставить отзыв в Google Maps',
 
     promoCode: 'ПРОМОКОД',
     copyCode: 'Скопировать',
@@ -217,6 +225,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Bewertung kopieren & auf Google teilen',
     post5Stars: '5 Sterne auf Google vergeben',
     reviewCopiedNotice: '✓ Bewertung kopiert! Fügen Sie sie auf Google ein.',
+    googleReviewAlternativeNotice: 'Sie können Ihre Erfahrung auch direkt auf Google Maps teilen:',
+    googleReviewGeneralAction: 'Auf Google Maps bewerten',
 
     promoCode: 'GUTSCHEINCODE',
     copyCode: 'Kopieren',
@@ -267,6 +277,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Copier l\'avis & Publier sur Google',
     post5Stars: 'Mettre 5 étoiles sur Google',
     reviewCopiedNotice: '✓ Avis copié ! Collez-le sur Google Maps.',
+    googleReviewAlternativeNotice: 'Vous pouvez également partager votre avis directement sur Google Maps :',
+    googleReviewGeneralAction: 'Donner votre avis sur Google Maps',
 
     promoCode: 'CODE PROMO',
     copyCode: 'Copier',
@@ -317,6 +329,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Copiar reseña y publicar en Google',
     post5Stars: 'Dar 5 estrellas en Google',
     reviewCopiedNotice: '✓ ¡Reseña copiada! Péguela en la página de Google.',
+    googleReviewAlternativeNotice: 'También puede compartir su opinión directamente en Google Maps:',
+    googleReviewGeneralAction: 'Opinar en Google Maps',
 
     promoCode: 'CÓDIGO PROMOCIONAL',
     copyCode: 'Copiar',
@@ -367,6 +381,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'نسخ التقييم والمشاركة على Google',
     post5Stars: 'إعطاء 5 نجوم على Google',
     reviewCopiedNotice: '✓ تم نسخ التقييم إلى الحافظة! يمكنك لصقه في صفحة Google.',
+    googleReviewAlternativeNotice: 'يمكنكم أيضاً مشاركة تقييمكم مباشرة على خرائط Google:',
+    googleReviewGeneralAction: 'تقييم على خرائط Google',
 
     promoCode: 'رمز الخصم',
     copyCode: 'نسخ الرمز',
@@ -417,6 +433,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: '复制好评并在谷歌发布',
     post5Stars: '在谷歌地图评5星',
     reviewCopiedNotice: '✓ 评语已复制至剪贴板！请前往谷歌页面粘贴。',
+    googleReviewAlternativeNotice: '您也可以直接在谷歌地图上分享您的评价：',
+    googleReviewGeneralAction: '在谷歌地图上评价',
 
     promoCode: '优惠码',
     copyCode: '复制',
@@ -467,6 +485,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Copiar Avaliação & Abrir Google',
     post5Stars: 'Dar 5 Estrelas no Google',
     reviewCopiedNotice: '✓ Avaliação copiada! Cole na página do Google.',
+    googleReviewAlternativeNotice: 'Você também pode compartilhar sua avaliação diretamente no Google Maps:',
+    googleReviewGeneralAction: 'Avaliar no Google Maps',
 
     promoCode: 'CÓDIGO PROMOCIONAL',
     copyCode: 'Copiar',
@@ -517,6 +537,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: 'Salin Ulasan & Buka Google',
     post5Stars: 'Beri Bintang 5 di Google',
     reviewCopiedNotice: '✓ Ulasan disalin! Tempel di halaman Google Maps.',
+    googleReviewAlternativeNotice: 'Anda juga dapat membagikan ulasan langsung di Google Maps:',
+    googleReviewGeneralAction: 'Beri Ulasan di Google Maps',
 
     promoCode: 'KODE PROMO',
     copyCode: 'Salin',
@@ -567,6 +589,8 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     copyReviewAndPost: '口コミをコピーしてGoogleで投稿',
     post5Stars: 'Googleで星5つをつける',
     reviewCopiedNotice: '✓ 口コミをコピーしました！Googleの投稿画面に貼り付けてください。',
+    googleReviewAlternativeNotice: 'Googleマップでも直接ご感想をご投稿いただけます：',
+    googleReviewGeneralAction: 'Googleマップで評価する',
 
     promoCode: 'クーポンコード',
     copyCode: 'コピー',

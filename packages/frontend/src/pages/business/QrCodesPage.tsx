@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../api/client';
 import { QrCode, Table, Business, CustomSocialLink } from '../../types';
 import { Modal } from '../../components/Modal';
@@ -12,6 +12,7 @@ import { downloadCsv } from '../../utils/csv';
 import {
   Plus,
   Trash2,
+  Edit2,
   Eye,
   QrCode as QrIcon,
   UtensilsCrossed,
@@ -42,6 +43,7 @@ import {
   Music,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 interface SmartQrConfig {
   id: string;
@@ -111,9 +113,29 @@ interface SmartAnalytics {
 export const QrCodesPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, formatDate, language } = useLanguage();
+  usePageTitle(t('nav.smartQr'));
 
-  // Active Tab
-  const [activeTab, setActiveTab] = useState<'qrcodes' | 'config' | 'campaigns' | 'leads' | 'analytics'>('qrcodes');
+  // URL Tab Support
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab');
+  const validTabs: Array<'qrcodes' | 'tables' | 'config' | 'campaigns' | 'leads' | 'analytics'> = [
+    'qrcodes', 'tables', 'config', 'campaigns', 'leads', 'analytics'
+  ];
+  const [activeTab, setActiveTab] = useState<'qrcodes' | 'tables' | 'config' | 'campaigns' | 'leads' | 'analytics'>(
+    validTabs.includes(initialTab as any) ? (initialTab as any) : 'qrcodes'
+  );
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && validTabs.includes(tabParam as any)) {
+      setActiveTab(tabParam as any);
+    }
+  }, [searchParams]);
+
+  const switchTab = (tab: 'qrcodes' | 'tables' | 'config' | 'campaigns' | 'leads' | 'analytics') => {
+    setActiveTab(tab);
+    setSearchParams(tab === 'qrcodes' ? {} : { tab });
+  };
 
   // Base QR State
   const [qrCodes, setQrCodes] = useState<QrCode[]>([]);
@@ -125,6 +147,15 @@ export const QrCodesPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string>('');
   const [selectedQr, setSelectedQr] = useState<QrCode | null>(null);
+
+  // Table Management State
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const [editingTable, setEditingTable] = useState<Table | null>(null);
+  const [tableFormName, setTableFormName] = useState('');
+  const [savingTable, setSavingTable] = useState(false);
+  const [deletingTable, setDeletingTable] = useState<Table | null>(null);
+  const [isDeletingTable, setIsDeletingTable] = useState(false);
+  const [generatingTableQrId, setGeneratingTableQrId] = useState<string | null>(null);
 
   // Smart QR Config State
   const [smartConfig, setSmartConfig] = useState<SmartQrConfig | null>(null);
@@ -372,6 +403,73 @@ export const QrCodesPage: React.FC = () => {
     }
   };
 
+  // Table Management Handlers
+  const openCreateTableModal = () => {
+    setEditingTable(null);
+    setTableFormName('');
+    setIsTableModalOpen(true);
+  };
+
+  const openEditTableModal = (table: Table) => {
+    setEditingTable(table);
+    setTableFormName(table.name);
+    setIsTableModalOpen(true);
+  };
+
+  const handleSaveTable = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tableFormName.trim()) return;
+    setSavingTable(true);
+    try {
+      if (editingTable) {
+        await api.put(`/business/tables/${editingTable.id}`, { name: tableFormName.trim() });
+        showToast(isTr ? `"${tableFormName}" masası güncellendi` : `Table "${tableFormName}" updated`);
+      } else {
+        await api.post('/business/tables', { name: tableFormName.trim() });
+        showToast(isTr ? `"${tableFormName}" masası eklendi` : `Table "${tableFormName}" created`);
+      }
+      setIsTableModalOpen(false);
+      setTableFormName('');
+      setEditingTable(null);
+      loadData();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || t('common.error'), 'error');
+    } finally {
+      setSavingTable(false);
+    }
+  };
+
+  const confirmDeleteTable = async () => {
+    if (!deletingTable) return;
+    setIsDeletingTable(true);
+    try {
+      await api.delete(`/business/tables/${deletingTable.id}`);
+      showToast(isTr ? `"${deletingTable.name}" masası silindi` : `Table "${deletingTable.name}" deleted`);
+      setDeletingTable(null);
+      loadData();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || t('common.error'), 'error');
+    } finally {
+      setIsDeletingTable(false);
+    }
+  };
+
+  const handleQuickGenerateQrForTable = async (tableId: string) => {
+    setGeneratingTableQrId(tableId);
+    try {
+      await api.post('/business/qr', {
+        table_id: tableId,
+        type: 'DTIPBOX',
+      });
+      showToast(isTr ? 'QR kod başarıyla oluşturuldu' : 'QR code generated successfully');
+      loadData();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || t('common.error'), 'error');
+    } finally {
+      setGeneratingTableQrId(null);
+    }
+  };
+
   return (
     <div className="page-wrapper">
       {/* Top Header */}
@@ -379,7 +477,7 @@ export const QrCodesPage: React.FC = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
             <h1 className="page-title" style={{ margin: 0 }}>
-              {isTr ? 'Smart QR & Masalar' : 'Smart QR & Tables'}
+              {isTr ? 'Masalar & QR Kodları' : 'Tables & QR Codes'}
             </h1>
             <span
               style={{
@@ -400,8 +498,8 @@ export const QrCodesPage: React.FC = () => {
           </div>
           <p className="page-subtitle mb-0">
             {isTr
-              ? 'Masadaki tek QR üzerinden bahşiş toplayın, misafir Wi-Fi paylaşın, indirim kuponları sunun ve sadık müşteri veritabanı oluşturun.'
-              : 'Turn table QR codes into a multi-service hospitality hub: collect tips, share guest Wi-Fi, run promos, and capture leads.'}
+              ? 'Masalarınızı yönetin, masaya özel veya genel QR kodlar oluşturun, misafir Wi-Fi ve kampanyaları tek merkezden kontrol edin.'
+              : 'Manage tables, generate table-specific or general QR codes, and run smart hospitality features from a single hub.'}
           </p>
         </div>
 
@@ -409,6 +507,14 @@ export const QrCodesPage: React.FC = () => {
           <div className="page-header-actions">
             <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
               <Plus size={16} /> {t('business.generateQrBtn')}
+            </button>
+          </div>
+        )}
+
+        {activeTab === 'tables' && (
+          <div className="page-header-actions">
+            <button className="btn btn-primary" onClick={openCreateTableModal}>
+              <Plus size={16} /> {isTr ? 'Yeni Masa Ekle' : 'Add Table'}
             </button>
           </div>
         )}
@@ -443,7 +549,7 @@ export const QrCodesPage: React.FC = () => {
       >
         <button
           type="button"
-          onClick={() => setActiveTab('qrcodes')}
+          onClick={() => switchTab('qrcodes')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -476,7 +582,40 @@ export const QrCodesPage: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => setActiveTab('config')}
+          onClick={() => switchTab('tables')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1.1rem',
+            background: activeTab === 'tables' ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+            color: activeTab === 'tables' ? '#fff' : 'var(--text-secondary)',
+            border: 'none',
+            borderBottom: activeTab === 'tables' ? '2px solid var(--accent-primary)' : '2px solid transparent',
+            fontWeight: 700,
+            fontSize: '0.92rem',
+            cursor: 'pointer',
+            borderRadius: '6px 6px 0 0',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <UtensilsCrossed size={16} />
+          <span>{t('smartQr.tabs.tables') || (isTr ? 'Masalarım' : 'My Tables')}</span>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              padding: '1px 6px',
+              borderRadius: '10px',
+              background: 'rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            {tables.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => switchTab('config')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -499,7 +638,7 @@ export const QrCodesPage: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => setActiveTab('campaigns')}
+          onClick={() => switchTab('campaigns')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -534,7 +673,7 @@ export const QrCodesPage: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => setActiveTab('leads')}
+          onClick={() => switchTab('leads')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -570,7 +709,7 @@ export const QrCodesPage: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => setActiveTab('analytics')}
+          onClick={() => switchTab('analytics')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -752,6 +891,197 @@ export const QrCodesPage: React.FC = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB: TABLES MANAGEMENT */}
+      {/* ========================================================================= */}
+      {activeTab === 'tables' && (
+        <div className="glass-card">
+          {loading ? (
+            <LoadingState compact message={t('common.loading')} />
+          ) : error ? (
+            <ErrorState message={error} onRetry={loadData} />
+          ) : tables.length === 0 ? (
+            <EmptyState
+              icon={<UtensilsCrossed size={28} />}
+              title={isTr ? 'Henüz masa eklenmedi' : 'No tables added yet'}
+              description={
+                isTr
+                  ? 'Salon, bahçe veya teras masalarınızı ekleyerek masaya özel QR kodlar oluşturabilirsiniz.'
+                  : 'Add your tables to generate table-specific QR codes for tips and digital menus.'
+              }
+              action={
+                <button className="btn btn-primary" onClick={openCreateTableModal}>
+                  <Plus size={16} /> {isTr ? 'Yeni Masa Ekle' : 'Add Table'}
+                </button>
+              }
+            />
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="desktop-view table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>{isTr ? 'Masa Adı / No' : 'Table Name'}</th>
+                      <th>{isTr ? 'QR Kod Durumu' : 'QR Code Status'}</th>
+                      <th>{isTr ? 'QR Token' : 'QR Token'}</th>
+                      <th>{t('common.date')}</th>
+                      <th className="text-right">{t('common.actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tables.map((tbl) => {
+                      const connectedQr = qrCodes.find((q) => q.table_id === tbl.id);
+                      return (
+                        <tr key={tbl.id}>
+                          <td className="font-bold">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                              <UtensilsCrossed size={16} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+                              <span style={{ fontSize: '0.98rem' }}>{tbl.name}</span>
+                            </div>
+                          </td>
+                          <td>
+                            {connectedQr ? (
+                              <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <CheckCircle2 size={12} /> {isTr ? 'QR Aktif' : 'QR Ready'}
+                              </span>
+                            ) : (
+                              <span className="badge" style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }}>
+                                {isTr ? 'QR Yok' : 'No QR'}
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            {connectedQr ? (
+                              <code className="code-tag">{connectedQr.public_token}</code>
+                            ) : (
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>—</span>
+                            )}
+                          </td>
+                          <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                            {formatDate(tbl.created_at)}
+                          </td>
+                          <td className="text-right" style={{ whiteSpace: 'nowrap' }}>
+                            <div className="inline-actions">
+                              {connectedQr ? (
+                                <button
+                                  className="btn btn-secondary btn-sm"
+                                  onClick={() => setSelectedQr(connectedQr)}
+                                  title={t('smartQr.table.designPrint')}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                >
+                                  <Eye size={14} /> <span>{t('smartQr.table.designPrint')}</span>
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn btn-primary btn-sm"
+                                  onClick={() => handleQuickGenerateQrForTable(tbl.id)}
+                                  disabled={generatingTableQrId === tbl.id}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                >
+                                  <QrIcon size={14} /> <span>{generatingTableQrId === tbl.id ? t('common.loading') : (isTr ? 'QR Oluştur' : 'Generate QR')}</span>
+                                </button>
+                              )}
+                              <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => openEditTableModal(tbl)}
+                                title={t('common.edit')}
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => setDeletingTable(tbl)}
+                                title={t('common.delete')}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card List View */}
+              <div className="mobile-cards-view">
+                {tables.map((tbl) => {
+                  const connectedQr = qrCodes.find((q) => q.table_id === tbl.id);
+                  return (
+                    <div key={tbl.id} className="mobile-card-item">
+                      <div className="mobile-card-header">
+                        <span className={`badge ${connectedQr ? 'badge-success' : ''}`} style={!connectedQr ? { background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' } : {}}>
+                          {connectedQr ? (isTr ? 'QR Aktif' : 'QR Ready') : (isTr ? 'QR Yok' : 'No QR')}
+                        </span>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                          {formatDate(tbl.created_at)}
+                        </span>
+                      </div>
+
+                      <div className="mobile-card-body">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <UtensilsCrossed size={18} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+                          <span className="font-bold" style={{ fontSize: '1.05rem', color: '#ffffff' }}>
+                            {tbl.name}
+                          </span>
+                        </div>
+                        {connectedQr && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.3rem' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Token:</span>
+                            <code className="code-tag" style={{ fontSize: '0.78rem' }}>{connectedQr.public_token}</code>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mobile-card-actions">
+                        {connectedQr ? (
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => setSelectedQr(connectedQr)}
+                          >
+                            <Eye size={16} />
+                            <span>{t('smartQr.table.designPrint')}</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => handleQuickGenerateQrForTable(tbl.id)}
+                            disabled={generatingTableQrId === tbl.id}
+                          >
+                            <QrIcon size={16} />
+                            <span>{generatingTableQrId === tbl.id ? t('common.loading') : (isTr ? 'QR Oluştur' : 'Generate QR')}</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-icon-only"
+                          onClick={() => openEditTableModal(tbl)}
+                          title={t('common.edit')}
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-icon-only"
+                          onClick={() => setDeletingTable(tbl)}
+                          title={t('common.delete')}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}
@@ -1117,7 +1447,7 @@ export const QrCodesPage: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.45rem' }}>
                     <Sparkles size={14} style={{ color: '#fbbf24' }} />
                     <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f8fafc' }}>
-                      {isTr ? 'Google Haritalar Yorum Linki (Akıllı İtibar Kalkanı)' : 'Google Maps Review URL (Smart Reputation Shield)'}
+                      {isTr ? 'Google Haritalar Yorum Linki (Google İtibar Yönetimi)' : 'Google Maps Review URL (Google Reputation Management)'}
                     </label>
                   </div>
                   <input
@@ -1129,9 +1459,7 @@ export const QrCodesPage: React.FC = () => {
                     style={{ fontSize: '0.85rem' }}
                   />
                   <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '0.45rem 0 0', lineHeight: 1.45 }}>
-                    {isTr
-                      ? '⭐ 5 yıldız veren misafirler tek tıkla doğrudan Google Haritalar profilinize yönlendirilir. 1-3 yıldız veren memnuniyetsiz misafirler ise Google\'a yansıtılmadan sadece panelinize özel geri bildirim olarak düşer.'
-                      : '⭐ Guests rating 5 stars are prompted to post verified Google reviews. Ratings of 1-3 stars are kept private and sent directly to your manager inbox.'}
+                    ⭐ {t('feedback.reputationShieldDesc')}
                   </p>
                 </div>
               )}
@@ -1853,6 +2181,78 @@ export const QrCodesPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Add / Edit Table Modal */}
+      {isTableModalOpen && (
+        <Modal
+          isOpen={isTableModalOpen}
+          onClose={() => setIsTableModalOpen(false)}
+          title={editingTable ? (isTr ? 'Masayı Düzenle' : 'Edit Table') : (isTr ? 'Yeni Masa Ekle' : 'Add New Table')}
+        >
+          <form onSubmit={handleSaveTable}>
+            <div className="form-group">
+              <label className="form-label">{isTr ? 'Masa Adı / No' : 'Table Name / Number'}</label>
+              <input
+                type="text"
+                className="input"
+                placeholder={isTr ? 'Örn: Masa 1, Bahçe 4, Teras 2' : 'e.g. Table 1, Patio 4'}
+                value={tableFormName}
+                onChange={(e) => setTableFormName(e.target.value)}
+                autoFocus
+                required
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.25rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsTableModalOpen(false)}
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={savingTable || !tableFormName.trim()}
+              >
+                {savingTable ? t('common.loading') : (editingTable ? (isTr ? 'Güncelle' : 'Update') : (isTr ? 'Masa Ekle' : 'Add Table'))}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Delete Table Confirmation Modal */}
+      {deletingTable && (
+        <Modal
+          isOpen={!!deletingTable}
+          onClose={() => setDeletingTable(null)}
+          title={isTr ? 'Masayı Sil' : 'Delete Table'}
+        >
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+            {isTr
+              ? `"${deletingTable.name}" masasını silmek istediğinize emin misiniz? Bu masaya bağlı QR kodlar ve veriler etkilenebilir.`
+              : `Are you sure you want to delete table "${deletingTable.name}"? QR codes attached to this table will be affected.`}
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setDeletingTable(null)}
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={confirmDeleteTable}
+              disabled={isDeletingTable}
+            >
+              {isDeletingTable ? t('common.loading') : (isTr ? 'Evet, Sil' : 'Yes, Delete')}
+            </button>
+          </div>
+        </Modal>
+      )}
 
       {/* View / Download / Customize QR Modal */}
       {selectedQr && business && (

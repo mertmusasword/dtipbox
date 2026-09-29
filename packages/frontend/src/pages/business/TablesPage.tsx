@@ -8,10 +8,12 @@ import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
 import { Plus, Trash2, Edit2, UtensilsCrossed } from 'lucide-react';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const TablesPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, formatNumber, language } = useLanguage();
+  usePageTitle(t('nav.tables'));
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

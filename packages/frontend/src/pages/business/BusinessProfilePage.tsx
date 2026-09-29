@@ -23,10 +23,14 @@ import {
   Camera,
   Trash2,
 } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const BusinessProfilePage: React.FC = () => {
   const { showToast } = useToast();
   const { t } = useLanguage();
+  usePageTitle(t('nav.profile'));
+  const { user } = useAuth();
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,22 +117,23 @@ export const BusinessProfilePage: React.FC = () => {
       .then((res) => {
         const data = res.data.data;
         setBusiness(data);
+        const isTr = data.country === 'TR' || !data.country;
         setFormData({
           name: data.name || '',
           logo: data.logo || '',
-          country: data.country || '',
-          currency: data.currency || '',
-          timezone: data.timezone || '',
-          locale: data.locale || '',
+          country: data.country || (isTr ? 'TR' : ''),
+          currency: data.currency || (isTr ? 'TRY' : ''),
+          timezone: data.timezone || (isTr ? 'Europe/Istanbul' : 'UTC'),
+          locale: data.locale || (isTr ? 'tr-TR' : 'en-US'),
           phone: data.phone || '',
-          email: data.email || '',
+          email: data.email || user?.email || '',
           address: data.address || '',
           description: data.description || '',
         });
       })
       .catch(() => setError('Failed to load business profile'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadBusiness();
@@ -151,15 +156,16 @@ export const BusinessProfilePage: React.FC = () => {
 
   const handleCancel = () => {
     if (business) {
+      const isTr = business.country === 'TR';
       setFormData({
         name: business.name || '',
         logo: business.logo || '',
-        country: business.country || '',
-        currency: business.currency || '',
-        timezone: business.timezone || '',
-        locale: business.locale || '',
+        country: business.country || (isTr ? 'TR' : ''),
+        currency: business.currency || (isTr ? 'TRY' : ''),
+        timezone: business.timezone || (isTr ? 'Europe/Istanbul' : ''),
+        locale: business.locale || (isTr ? 'tr-TR' : ''),
         phone: business.phone || '',
-        email: business.email || '',
+        email: business.email || user?.email || '',
         address: business.address || '',
         description: business.description || '',
       });
@@ -281,7 +287,7 @@ export const BusinessProfilePage: React.FC = () => {
           <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
             <div className="section-header">
               <Building2 size={20} className="section-icon" />
-              <h3 className="section-title">Brand & Identity</h3>
+              <h3 className="section-title">{t('business.brandIdentity')}</h3>
             </div>
 
             <div className="form-group">
@@ -480,12 +486,12 @@ export const BusinessProfilePage: React.FC = () => {
           <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
             <div className="section-header">
               <Phone size={20} className="section-icon" />
-              <h3 className="section-title">Contact Information</h3>
+              <h3 className="section-title">{t('business.contactInfo')}</h3>
             </div>
 
             <div className="form-grid form-grid-2">
               <div className="form-group mb-0">
-                <label className="form-label">Public Email</label>
+                <label className="form-label">{t('business.publicEmail')}</label>
                 <input
                   type="email"
                   value={formData.email}
@@ -495,7 +501,7 @@ export const BusinessProfilePage: React.FC = () => {
                 />
               </div>
               <div className="form-group mb-0">
-                <label className="form-label">Phone Number</label>
+                <label className="form-label">{t('common.phone')}</label>
                 <input
                   type="tel"
                   value={formData.phone}
@@ -507,7 +513,7 @@ export const BusinessProfilePage: React.FC = () => {
             </div>
 
             <div className="form-group mt-2 mb-0">
-              <label className="form-label">Physical Address</label>
+              <label className="form-label">{t('business.physicalAddress')}</label>
               <input
                 type="text"
                 value={formData.address}
@@ -522,11 +528,11 @@ export const BusinessProfilePage: React.FC = () => {
           <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
             <div className="section-header">
               <FileText size={20} className="section-icon" />
-              <h3 className="section-title">Description & Greeting</h3>
+              <h3 className="section-title">{t('business.descriptionGreeting')}</h3>
             </div>
 
             <div className="form-group mb-0">
-              <label className="form-label">Customer-Facing Description</label>
+              <label className="form-label">{t('business.customerDescription')}</label>
               <textarea
                 rows={4}
                 value={formData.description}
@@ -534,7 +540,7 @@ export const BusinessProfilePage: React.FC = () => {
                 className="form-textarea"
                 placeholder="A short description that customers see when they scan your QR code..."
               />
-              <div className="form-hint">This text is displayed on your public tip page</div>
+              <div className="form-hint">{t('business.tipPageNotice')}</div>
             </div>
           </div>
         </form>
@@ -544,12 +550,12 @@ export const BusinessProfilePage: React.FC = () => {
           <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
             <div className="section-header">
               <Phone size={20} className="section-icon" />
-              <h3 className="section-title">Contact & Location</h3>
+              <h3 className="section-title">{t('business.contactLocation')}</h3>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
-              <InfoItem icon={<Mail size={16} />} label="Email" value={business?.email || '—'} />
-              <InfoItem icon={<Phone size={16} />} label="Phone" value={business?.phone || '—'} />
-              <InfoItem icon={<MapPin size={16} />} label="Address" value={business?.address || '—'} />
+              <InfoItem icon={<Mail size={16} />} label={t('common.email')} value={business?.email || '—'} />
+              <InfoItem icon={<Phone size={16} />} label={t('common.phone')} value={business?.phone || '—'} />
+              <InfoItem icon={<MapPin size={16} />} label={t('common.address')} value={business?.address || '—'} />
               <InfoItem icon={<Globe size={16} />} label="Locale" value={business?.locale || 'en-US'} />
             </div>
           </div>
@@ -558,7 +564,7 @@ export const BusinessProfilePage: React.FC = () => {
             <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
               <div className="section-header">
                 <FileText size={20} className="section-icon" />
-                <h3 className="section-title">Customer Greeting</h3>
+                <h3 className="section-title">{t('business.descriptionGreeting')}</h3>
               </div>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '0.925rem' }}>
                 {business.description}
@@ -570,14 +576,14 @@ export const BusinessProfilePage: React.FC = () => {
           <div className="glass-card">
             <div className="section-header">
               <CheckCircle2 size={20} className="section-icon" />
-              <h3 className="section-title">Setup Completion</h3>
+              <h3 className="section-title">{t('business.setupCompletion')}</h3>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <SetupItem done label="Business Profile Created" />
-              <SetupItem done={!!business?.email} label="Contact Email Added" />
-              <SetupItem done={!!business?.address} label="Physical Address Added" />
-              <SetupItem done={!!business?.description} label="Customer Greeting Added" />
-              <SetupItem done={!!business?.payment_account} label="Payment Account Configured" />
+              <SetupItem done label={t('business.setupProfileCreated')} />
+              <SetupItem done={!!business?.email} label={t('business.setupEmailAdded')} />
+              <SetupItem done={!!business?.address} label={t('business.setupAddressAdded')} />
+              <SetupItem done={!!business?.description} label={t('business.setupGreetingAdded')} />
+              <SetupItem done={!!business?.payment_account} label={t('business.setupPaymentConfigured')} />
             </div>
           </div>
         </>

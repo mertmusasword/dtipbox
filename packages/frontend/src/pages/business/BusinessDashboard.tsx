@@ -29,9 +29,11 @@ import { useLanguage } from '../../i18n';
 import { AgreementModal } from '../../components/AgreementModal';
 import { CustomerFeedbacks } from '../../components/CustomerFeedbacks';
 import { TipPoolSettlementModal } from '../../components/TipPoolSettlementModal';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const BusinessDashboard: React.FC = () => {
   const { t, formatCurrency, formatTime, language } = useLanguage();
+  usePageTitle(t('nav.dashboard'));
   const [analytics, setAnalytics] = useState<BusinessAnalytics | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
@@ -205,6 +207,127 @@ export const BusinessDashboard: React.FC = () => {
         </div>
       )}
 
+      {/* Quick Setup & Activation Guide */}
+      {!loading &&
+        (() => {
+          const s1 = (analytics?.activePaymentMethodsCount || 0) > 0;
+          const s2 = (analytics?.employeeCount || 0) > 0;
+          const s3 = (analytics?.tableCount || 0) > 0;
+          const s4 = (analytics?.qrCount || 0) > 0;
+          const allCompleted = s1 && s2 && s3 && s4;
+
+          if (allCompleted) return null;
+
+          const completedCount = [s1, s2, s3, s4].filter(Boolean).length;
+
+          return (
+            <div
+              className="glass-card"
+              style={{
+                marginBottom: '1.5rem',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  flexWrap: 'wrap',
+                  gap: '1rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <Sparkles size={18} color="var(--accent-primary)" />
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
+                      {t('business.activationTitle')}
+                    </h3>
+                    <span className="badge badge-accent" style={{ fontSize: '0.72rem' }}>
+                      {completedCount} / 4
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    {t('business.activationDesc')}
+                  </p>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '0.75rem',
+                }}
+              >
+                {[
+                  { title: t('business.activationStep1'), done: s1, link: '/business/payment-settings' },
+                  { title: t('business.activationStep2'), done: s2, link: '/business/employees' },
+                  { title: t('business.activationStep3'), done: s3, link: '/business/qr?tab=tables' },
+                  { title: t('business.activationStep4'), done: s4, link: '/business/qr' },
+                ].map((step, idx) => (
+                  <Link
+                    key={idx}
+                    to={step.link}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.75rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      background: step.done ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                      border: step.done
+                        ? '1px solid rgba(16, 185, 129, 0.25)'
+                        : '1px solid rgba(255, 255, 255, 0.08)',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <div
+                        style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: step.done ? 'var(--success-bg)' : 'rgba(255, 255, 255, 0.08)',
+                          color: step.done ? '#34d399' : 'var(--text-muted)',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {step.done ? <Check size={13} /> : idx + 1}
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.825rem',
+                          fontWeight: 600,
+                          color: step.done ? 'var(--text-primary)' : 'var(--text-secondary)',
+                        }}
+                      >
+                        {step.title}
+                      </span>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: step.done ? '#34d399' : 'var(--accent-primary)',
+                      }}
+                    >
+                      {step.done ? t('business.activationDone') : t('business.activationAction')}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
       {/* Financial Metrics */}
       {loading ? (
         <SkeletonCard count={4} />
@@ -214,19 +337,19 @@ export const BusinessDashboard: React.FC = () => {
             label={t('business.todayTips')}
             value={formatCurrency(analytics?.todayTips || 0, currency)}
             icon={<DollarSign size={24} />}
-            subtitle="Today"
+            subtitle={t('business.today')}
           />
           <MetricCard
             label={t('business.weeklyTips')}
             value={formatCurrency(analytics?.weeklyTips || 0, currency)}
             icon={<TrendingUp size={24} />}
-            subtitle="Last 7 days"
+            subtitle={t('business.last7Days')}
           />
           <MetricCard
             label={t('business.monthlyTips')}
             value={formatCurrency(analytics?.monthlyTips || 0, currency)}
             icon={<Calendar size={24} />}
-            subtitle="This month"
+            subtitle={t('business.thisMonth')}
           />
           <MetricCard
             label={t('business.totalTips')}
@@ -234,7 +357,7 @@ export const BusinessDashboard: React.FC = () => {
             icon={<Layers size={24} />}
             subtitle={
               analytics?.pendingTipCount && analytics.pendingTipCount > 0
-                ? `${analytics.tipCount || 0} ${t('business.tipCount')} (${analytics.pendingTipCount} onay bekliyor)`
+                ? `${analytics.tipCount || 0} ${t('business.tipCount')} (${analytics.pendingTipCount} ${t('tip.statusPending')})`
                 : `${analytics?.tipCount || 0} ${t('business.tipCount')}`
             }
           />

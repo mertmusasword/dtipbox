@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { ArrowRight, Lock, Mail } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackLogin } from '../../analytics';
+import { SeoHead } from '../../components/SeoHead';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -60,6 +61,12 @@ export const LoginPage: React.FC = () => {
       padding: '4.5rem 1.5rem 2.5rem',
       position: 'relative'
     }}>
+      <SeoHead
+        title={`${t('nav.login')} | Naponi`}
+        description={t('auth.loginSubtitle')}
+        canonicalUrl="https://www.naponi.com/login"
+        noindex={true}
+      />
       <div style={{
         position: 'fixed',
         top: '1.25rem',

@@ -9,10 +9,12 @@ import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
 import { uploadImageToServer } from '../../utils/upload';
 import { Plus, Trash2, Edit2, UserCheck, UserX, Users, Upload, Camera } from 'lucide-react';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const EmployeesPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, formatNumber } = useLanguage();
+  usePageTitle(t('nav.employees'));
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

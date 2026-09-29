@@ -4,6 +4,7 @@ import QRCode from 'qrcode';
 import { api } from '../../api/client';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
+import { usePageTitle } from '../../hooks/usePageTitle';
 import {
   Award,
   QrCode as QrIcon,
@@ -55,6 +56,7 @@ interface LoyaltyStats {
 export const BusinessLoyaltyPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, formatDate, language } = useLanguage();
+  usePageTitle(t('nav.loyalty'));
   const isTr = language === 'tr';
 
   const [program, setProgram] = useState<LoyaltyProgramData | null>(null);

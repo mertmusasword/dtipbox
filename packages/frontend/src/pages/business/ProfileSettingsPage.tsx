@@ -8,11 +8,13 @@ import { useLanguage } from '../../i18n';
 import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe, Split, Users, User, Scale, Percent, CheckCircle, Info, Award } from 'lucide-react';
 import { AgreementModal } from '../../components/AgreementModal';
 import { TipDistributionMode, PosFeePayer } from '../../types';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const ProfileSettingsPage: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { t, language } = useLanguage();
+  usePageTitle(t('nav.settings'));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
@@ -635,17 +637,17 @@ export const ProfileSettingsPage: React.FC = () => {
       <div className="glass-card" style={{ borderColor: 'rgba(239, 68, 68, 0.2)' }}>
         <div className="section-header">
           <AlertTriangle size={20} style={{ color: 'var(--danger)' }} />
-          <h3 className="section-title" style={{ color: '#f87171' }}>Danger Zone</h3>
+          <h3 className="section-title" style={{ color: '#f87171' }}>{t('profile.dangerZone')}</h3>
         </div>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: 1.6 }}>
-          These actions are permanent and cannot be reversed. Contact support if you need to deactivate your business or export all data before deletion.
+          {t('profile.dangerZoneDesc')}
         </p>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           <button className="btn btn-danger" disabled>
-            Deactivate Business
+            {t('profile.deactivateBusiness')}
           </button>
           <button className="btn btn-danger" disabled>
-            Delete Account
+            {t('profile.deleteAccount')}
           </button>
         </div>
       </div>

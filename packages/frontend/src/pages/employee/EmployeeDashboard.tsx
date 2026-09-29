@@ -5,9 +5,11 @@ import { EmployeeAnalytics } from '../../types';
 import { MetricCard } from '../../components/MetricCard';
 import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star, Split, CheckCircle2, Award } from 'lucide-react';
 import { useLanguage } from '../../i18n';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const EmployeeDashboard: React.FC = () => {
   const { t, formatTime, formatCurrency } = useLanguage();
+  usePageTitle(t('nav.myTipsStats'));
   const [data, setData] = useState<{ profile: any; stats: EmployeeAnalytics; feedbacks?: any; poolShares?: any[] } | null>(null);
   const [loading, setLoading] = useState(true);
 

@@ -5,7 +5,7 @@
 ## Core Capabilities & Architecture
 - **Zero Friction for Customers**: Guests simply scan a tabletop or staff QR code using their native smartphone camera.
 - **Payment Methods Supported**: Apple Pay, Google Pay, Credit/Debit Cards, and local instant bank transfers.
-- **Instant Settlement**: Direct-to-bank settlement (non-custodial architecture). Tips go directly to business or employee bank accounts (IBAN, SEPA, Swift).
+- **Direct Settlement**: Direct-to-account settlement via non-custodial gateway architecture (Naponi operates as an unhosted technology provider, never holding customer funds in custody). Tips transfer directly to business or employee bank accounts/licensed PSPs (IBAN, SEPA, Swift, licensed payment gateway).
 - **Flexible Attribution Models**:
   - Venue-wide pooled tipping (with customizable end-of-shift distribution algorithms).
   - Staff-specific individual QR codes.

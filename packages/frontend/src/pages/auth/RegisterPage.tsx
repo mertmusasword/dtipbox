@@ -6,6 +6,7 @@ import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted, trackBusinessRegistered, trackFounderSignupStarted, trackFounderSignupCompleted } from '../../analytics';
 import { AgreementModal } from '../../components/AgreementModal';
 import { CorporateApplicationModal } from '../../components/CorporateApplicationModal';
+import { SeoHead } from '../../components/SeoHead';
 
 const LANGUAGE_COUNTRY_DEFAULTS: Record<string, { country: string; currency: string; timezone: string }> = {
   tr: { country: 'TR', currency: 'TRY', timezone: 'Europe/Istanbul' },
@@ -123,6 +124,12 @@ export const RegisterPage: React.FC = () => {
       padding: '4.5rem 1.5rem 2.5rem',
       position: 'relative'
     }}>
+      <SeoHead
+        title={`${t('auth.registerTitle')} | Naponi`}
+        description={t('auth.registerSubtitle')}
+        canonicalUrl="https://www.naponi.com/register"
+        noindex={true}
+      />
       <div style={{
         position: 'fixed',
         top: '1.25rem',

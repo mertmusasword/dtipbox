@@ -213,8 +213,8 @@ export const HomePage: React.FC = () => {
         topic: isTr ? 'Google Puanı' : 'Google Rating',
         ordinary: isTr ? 'Bahşiş sisteminden bağımsız.' : 'Isolated from reviews & rating.',
         naponi: isTr
-          ? 'Google İtibar Kalkanı: Olumlu deneyimi Google\'a yönlendirir, olumsuz geri bildirimi işletme içinde karşılar.'
-          : 'Google Reputation Shield: 5-star guests route to Google Maps; critical feedback stays private in-house.',
+          ? 'Google İtibar Yönetimi: Memnun misafirleri Google Haritalar profilinize teşvik eder, geri bildirimleri anında çözmeniz için size ulaştırır.'
+          : 'Google Reputation Management: Promotes Google Maps reviews while delivering guest feedback directly to management.',
       },
       {
         topic: isTr ? 'Bahşiş Kaynakları' : 'Tip Sources',

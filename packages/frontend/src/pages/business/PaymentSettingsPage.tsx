@@ -14,11 +14,13 @@ import {
 import { useLanguage } from '../../i18n';
 import { useAuth } from '../../contexts/AuthContext';
 import { AgreementModal } from '../../components/AgreementModal';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const PaymentSettingsPage: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { t, language } = useLanguage();
+  usePageTitle(t('nav.paymentSettings'));
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

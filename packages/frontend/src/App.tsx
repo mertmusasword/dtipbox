@@ -218,7 +218,7 @@ export const App: React.FC = () => {
                   <Route path="/business/dashboard" element={<BusinessDashboard />} />
                   <Route path="/business/profile" element={<BusinessProfilePage />} />
                   <Route path="/business/employees" element={<EmployeesPage />} />
-                  <Route path="/business/tables" element={<TablesPage />} />
+                  <Route path="/business/tables" element={<Navigate to="/business/qr?tab=tables" replace />} />
                   <Route path="/business/menu" element={<MenuManagementPage />} />
                   <Route path="/business/qr" element={<QrCodesPage />} />
                   <Route path="/business/payment-settings" element={<PaymentSettingsPage />} />

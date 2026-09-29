@@ -9,6 +9,7 @@ import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
 import { uploadImageToServer } from '../../utils/upload';
 import { ALLERGEN_CATALOG, getAllergenLabel, getAllergenIcon, getAllergenDetail } from '../../constants/allergens';
+import { usePageTitle } from '../../hooks/usePageTitle';
 import {
   UtensilsCrossed,
   Plus,
@@ -121,6 +122,7 @@ const MENU_THEMES: Array<{
 export const MenuManagementPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, formatCurrency, language } = useLanguage();
+  usePageTitle(t('nav.menu'));
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
