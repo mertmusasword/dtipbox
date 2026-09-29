@@ -22,6 +22,7 @@ import {
   Upload,
   Camera,
   Trash2,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
@@ -51,6 +52,9 @@ export const BusinessProfilePage: React.FC = () => {
     email: '',
     address: '',
     description: '',
+    legal_title: '',
+    tax_office: '',
+    tax_number: '',
   });
 
   const handleLogoUpload = (file: File) => {
@@ -129,6 +133,9 @@ export const BusinessProfilePage: React.FC = () => {
           email: data.email || user?.email || '',
           address: data.address || '',
           description: data.description || '',
+          legal_title: (data as any).legal_title || '',
+          tax_office: (data as any).tax_office || '',
+          tax_number: (data as any).tax_number || '',
         });
       })
       .catch(() => setError('Failed to load business profile'))
@@ -168,6 +175,9 @@ export const BusinessProfilePage: React.FC = () => {
         email: business.email || user?.email || '',
         address: business.address || '',
         description: business.description || '',
+        legal_title: (business as any).legal_title || '',
+        tax_office: (business as any).tax_office || '',
+        tax_number: (business as any).tax_number || '',
       });
     }
     setEditing(false);
@@ -524,6 +534,49 @@ export const BusinessProfilePage: React.FC = () => {
             </div>
           </div>
 
+          {/* Legal Title & Tax Information */}
+          <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
+            <div className="section-header">
+              <Building2 size={20} className="section-icon" />
+              <h3 className="section-title">Kurumsal & Fatura Bilgileri</h3>
+            </div>
+
+            <div className="form-group mb-2">
+              <label className="form-label">Şirket Resmi / Ticari Unvanı</label>
+              <input
+                type="text"
+                value={formData.legal_title}
+                onChange={(e) => handleChange('legal_title', e.target.value)}
+                className="form-input"
+                placeholder="Örn: Naponi Turizm Gıda ve Ticaret A.Ş."
+              />
+              <div className="form-hint">Resmi fatura ve ödeme mutabakatlarında kullanılacak tüzel kişilik adı</div>
+            </div>
+
+            <div className="form-grid form-grid-2">
+              <div className="form-group mb-0">
+                <label className="form-label">Vergi Dairesi</label>
+                <input
+                  type="text"
+                  value={formData.tax_office}
+                  onChange={(e) => handleChange('tax_office', e.target.value)}
+                  className="form-input"
+                  placeholder="Örn: Beşiktaş Vergi Dairesi"
+                />
+              </div>
+              <div className="form-group mb-0">
+                <label className="form-label">Vergi Kimlik No / TCKN</label>
+                <input
+                  type="text"
+                  value={formData.tax_number}
+                  onChange={(e) => handleChange('tax_number', e.target.value)}
+                  className="form-input"
+                  placeholder="10 haneli VKN veya 11 haneli TCKN"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Description */}
           <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
             <div className="section-header">
@@ -557,6 +610,19 @@ export const BusinessProfilePage: React.FC = () => {
               <InfoItem icon={<Phone size={16} />} label={t('common.phone')} value={business?.phone || '—'} />
               <InfoItem icon={<MapPin size={16} />} label={t('common.address')} value={business?.address || '—'} />
               <InfoItem icon={<Globe size={16} />} label="Locale" value={business?.locale || 'en-US'} />
+            </div>
+          </div>
+
+          {/* Read-only Legal & Tax Section */}
+          <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
+            <div className="section-header">
+              <Building2 size={20} className="section-icon" />
+              <h3 className="section-title">Kurumsal & Fatura Bilgileri</h3>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+              <InfoItem icon={<Building2 size={16} />} label="Şirket Ticari Unvanı" value={(business as any)?.legal_title || '—'} />
+              <InfoItem icon={<FileText size={16} />} label="Vergi Dairesi" value={(business as any)?.tax_office || '—'} />
+              <InfoItem icon={<ShieldCheck size={16} />} label="Vergi Kimlik No / TCKN" value={(business as any)?.tax_number || '—'} />
             </div>
           </div>
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { EmployeeAnalytics } from '../../types';
 import { MetricCard } from '../../components/MetricCard';
-import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star, Split, CheckCircle2, Award } from 'lucide-react';
+import { DollarSign, TrendingUp, Calendar, Layers, Sparkles, MessageSquareHeart, Star, Split, CheckCircle2, Award, Volume2, VolumeX, Bell } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
@@ -13,13 +13,72 @@ export const EmployeeDashboard: React.FC = () => {
   const [data, setData] = useState<{ profile: any; stats: EmployeeAnalytics; feedbacks?: any; poolShares?: any[] } | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('waiter_sound_enabled') !== 'false';
+  });
+  const prevTipsRef = React.useRef<number | null>(null);
+
+  const playChimeSound = () => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      
+      const playTone = (freq: number, start: number, duration: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+        gain.gain.setValueAtTime(0, ctx.currentTime + start);
+        gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + start + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + duration);
+      };
+
+      // Pleasant high-pitched cash register chime (E6 -> G#6 -> B6)
+      playTone(1318.51, 0, 0.25);
+      playTone(1661.22, 0.12, 0.35);
+      playTone(1975.53, 0.24, 0.5);
+    } catch (e) {
+      console.warn('Audio chime could not play:', e);
+    }
+  };
+
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    localStorage.setItem('waiter_sound_enabled', String(next));
+    if (next) {
+      playChimeSound();
+    }
+  };
+
   useEffect(() => {
-    api
-      .get('/employee/dashboard')
-      .then((res) => setData(res.data.data))
-      .catch((err) => console.error('Failed to load employee dashboard:', err))
-      .finally(() => setLoading(false));
-  }, []);
+    const fetchDashboard = (isInterval = false) => {
+      api
+        .get('/employee/dashboard')
+        .then((res) => {
+          const newData = res.data.data;
+          const currentTotal = Number(newData?.stats?.todayTips || 0);
+          if (isInterval && soundEnabled && prevTipsRef.current !== null && currentTotal > prevTipsRef.current) {
+            playChimeSound();
+          }
+          prevTipsRef.current = currentTotal;
+          setData(newData);
+        })
+        .catch((err) => console.error('Failed to load employee dashboard:', err))
+        .finally(() => {
+          if (!isInterval) setLoading(false);
+        });
+    };
+
+    fetchDashboard(false);
+    const timer = setInterval(() => fetchDashboard(true), 25000);
+    return () => clearInterval(timer);
+  }, [soundEnabled]);
 
   if (loading) {
     return (
@@ -37,7 +96,7 @@ export const EmployeeDashboard: React.FC = () => {
 
   return (
     <div className="page-wrapper">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
         {profile?.avatar ? (
           <img
             src={profile.avatar}
@@ -84,6 +143,89 @@ export const EmployeeDashboard: React.FC = () => {
               </span>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Live Today's Earnings & Sound Alert Hero Bar */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%)',
+        border: '1px solid rgba(16, 185, 129, 0.3)',
+        borderRadius: '16px',
+        padding: '1.25rem 1.5rem',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+          }}>
+            <DollarSign size={26} />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.82rem', color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                ⚡ CANLI KAZANÇ DURUMU
+              </span>
+              <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }} />
+            </div>
+            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#fff', lineHeight: 1.2, marginTop: '2px' }}>
+              {formatCurrency(stats?.todayTips || 0, currency)}
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+              Bugün kazanılan bahşiş toplamı
+            </div>
+          </div>
+        </div>
+
+        {/* Audio Notification Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={toggleSound}
+            className="btn btn-secondary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              fontSize: '0.85rem',
+              borderRadius: '10px',
+              borderColor: soundEnabled ? 'rgba(16, 185, 129, 0.4)' : undefined,
+              color: soundEnabled ? '#10b981' : 'var(--text-secondary)',
+            }}
+          >
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            <span>{soundEnabled ? 'Sesli Bildirim Açık' : 'Sesli Bildirim Kapalı'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={playChimeSound}
+            className="btn btn-secondary"
+            title="Bahşiş bildirim sesini dinle"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.5rem 0.85rem',
+              fontSize: '0.85rem',
+              borderRadius: '10px',
+            }}
+          >
+            <Bell size={15} />
+            <span>Zili Test Et</span>
+          </button>
         </div>
       </div>
 

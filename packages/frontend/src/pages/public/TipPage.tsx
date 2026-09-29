@@ -126,6 +126,12 @@ export const TipPage: React.FC = () => {
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [copiedReviewText, setCopiedReviewText] = useState(false);
 
+  // Digital E-Receipt State
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [receiptEmail, setReceiptEmail] = useState('');
+  const [receiptSent, setReceiptSent] = useState(false);
+  const [selectedQuickBadge, setSelectedQuickBadge] = useState<string | null>(null);
+
   const safeCopy = (text: string): Promise<void> => {
     if (navigator?.clipboard?.writeText) {
       return navigator.clipboard.writeText(text);
@@ -766,6 +772,51 @@ export const TipPage: React.FC = () => {
             >
               {t('tip.completePaymentBtn')} <ArrowRight size={16} />
             </a>
+          )}
+
+          {/* Digital E-Receipt Card (Post-Tip) */}
+          {(isSuccess || isUnverified) && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(5, 150, 105, 0.06), rgba(2, 132, 199, 0.06))',
+              border: '1.5px solid rgba(5, 150, 105, 0.25)',
+              borderRadius: '16px',
+              padding: '1.15rem 1.25rem',
+              marginBottom: '1.25rem',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              flexWrap: 'wrap'
+            }}>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1C1917', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span>🧾</span>
+                  <span>{language === 'tr' ? 'Dijital Makbuz & Fiş' : 'Digital E-Receipt'}</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#78716C', marginTop: '0.2rem' }}>
+                  {language === 'tr' ? 'Masraflarınız veya kayıtlarınız için anında görüntüleyin.' : 'Instantly view or download your verified tip receipt.'}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowReceiptModal(true)}
+                className="btn btn-secondary btn-sm"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  background: '#FFFFFF',
+                  borderColor: '#059669',
+                  color: '#059669',
+                }}
+              >
+                <span>{language === 'tr' ? 'Fişi Görüntüle' : 'View Receipt'}</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
           )}
 
           {/* Customer Feedback Card (Post-Tip) */}
@@ -2247,6 +2298,70 @@ export const TipPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Step 2.5: Compliments & Customer Note */}
+            <div className="glass-card" style={{ padding: '1.25rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#78716C', display: 'block', marginBottom: '0.65rem' }}>
+                {language === 'tr' ? 'Garsona Teşekkür Rozeti & Not (İsteğe Bağlı)' : 'Compliment & Note (Optional)'}
+              </span>
+
+              {/* Quick Compliment Badges */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginBottom: '0.85rem' }}>
+                {[
+                  { id: 'fast', label: language === 'tr' ? '⚡ Hızlı Servis' : '⚡ Fast Service' },
+                  { id: 'friendly', label: language === 'tr' ? '😊 Güler Yüz' : '😊 Friendly' },
+                  { id: 'delicious', label: language === 'tr' ? '🍲 Harika Lezzet' : '🍲 Delicious' },
+                  { id: 'attentive', label: language === 'tr' ? '⭐ Süper İlgi' : '⭐ Attentive' },
+                ].map((b) => {
+                  const isBadgeSelected = selectedQuickBadge === b.id;
+                  return (
+                    <button
+                      key={b.id}
+                      type="button"
+                      onClick={() => {
+                        if (isBadgeSelected) {
+                          setSelectedQuickBadge(null);
+                          setCustomerMessage((prev) => prev.replace(b.label, '').trim());
+                        } else {
+                          setSelectedQuickBadge(b.id);
+                          setCustomerMessage((prev) => prev ? `${b.label} - ${prev}` : b.label);
+                        }
+                      }}
+                      style={{
+                        padding: '0.4rem 0.75rem',
+                        borderRadius: '999px',
+                        border: `1px solid ${isBadgeSelected ? '#059669' : '#E7E5E4'}`,
+                        background: isBadgeSelected ? 'rgba(5, 150, 105, 0.12)' : '#F5F5F4',
+                        color: isBadgeSelected ? '#059669' : '#57534E',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {b.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <input
+                type="text"
+                placeholder={language === 'tr' ? 'Eklemek istediğiniz teşekkür notu...' : 'Add a kind note to the team...'}
+                value={customerMessage}
+                onChange={(e) => setCustomerMessage(e.target.value.slice(0, 150))}
+                className="input"
+                style={{ fontSize: '0.88rem', background: '#F5F5F4', border: '1px solid #E7E5E4', color: '#1C1917', borderRadius: '10px', marginBottom: '0.5rem' }}
+              />
+
+              <input
+                type="text"
+                placeholder={language === 'tr' ? 'İsminiz (İsteğe bağlı)' : 'Your Name (Optional)'}
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value.slice(0, 50))}
+                className="input"
+                style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', color: '#1C1917', borderRadius: '10px' }}
+              />
+            </div>
 
             {/* Step 3: Payment Method */}
             {(() => {
@@ -2459,6 +2574,125 @@ export const TipPage: React.FC = () => {
           </div>
         )}
 
+        {/* Digital E-Receipt Modal */}
+        {showReceiptModal && (
+          <div className="smart-sheet-overlay" onClick={() => setShowReceiptModal(false)}>
+            <div
+              className="smart-sheet-content"
+              style={{
+                background: '#FFFFFF',
+                border: '1px solid rgba(0, 0, 0, 0.08)',
+                color: '#1C1917',
+                maxWidth: '460px',
+                margin: '0 auto',
+                padding: '1.75rem',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.25rem' }}>🧾</span>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#1C1917' }}>
+                    {language === 'tr' ? 'Dijital Bahşiş Makbuzu' : 'Digital Tip Receipt'}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowReceiptModal(false)}
+                  style={{ background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Receipt Body */}
+              <div style={{ background: '#FAF9F6', border: '1px dashed #D6D3D1', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
+                <div style={{ textAlign: 'center', marginBottom: '1rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1C1917' }}>{details.business?.name}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#78716C', marginTop: '0.15rem' }}>
+                    {details.business?.country} • {details.business?.currency}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Referans No:' : 'Reference No:'}</span>
+                    <strong style={{ fontFamily: 'monospace', color: '#059669' }}>
+                      {paymentResult?.payment?.ibanDetails?.referenceCode || paymentResult?.tip?.id ? `TIP-${(paymentResult.payment?.ibanDetails?.referenceCode || paymentResult.tip?.id).substring(0, 8).toUpperCase()}` : 'TIP-NAPONI'}
+                    </strong>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Tarih & Saat:' : 'Date & Time:'}</span>
+                    <span>{new Date().toLocaleString()}</span>
+                  </div>
+
+                  {details.table && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Masa:' : 'Table:'}</span>
+                      <span>{details.table.name}</span>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Ödeme Türü:' : 'Payment Type:'}</span>
+                    <span>{paymentResult?.tip?.payment_method === 'IBAN_TRANSFER' ? 'Doğrudan Havale / IBAN' : 'Kart / Online Ödeme'}</span>
+                  </div>
+
+                  <div style={{ borderTop: '1px dashed #D6D3D1', paddingTop: '0.75rem', marginTop: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{language === 'tr' ? 'Bahşiş Tutarı:' : 'Tip Total:'}</span>
+                    <span style={{ fontWeight: 800, fontSize: '1.35rem', color: '#059669' }}>
+                      {formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details.business?.currency)}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem', color: '#78716C' }}>
+                  ✓ Naponi Smart QR Platformu Tarafından Doğrulanmış Dijital Fiş
+                </div>
+              </div>
+
+              {/* Email Send & Print Actions */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {receiptSent ? (
+                  <div style={{ padding: '0.75rem', background: 'rgba(5, 150, 105, 0.1)', color: '#059669', borderRadius: '10px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600 }}>
+                    ✓ {language === 'tr' ? 'Dijital fişiniz e-posta adresinize gönderildi!' : 'Digital receipt sent to your email!'}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      type="email"
+                      placeholder={language === 'tr' ? 'E-posta adresiniz...' : 'your@email.com'}
+                      value={receiptEmail}
+                      onChange={(e) => setReceiptEmail(e.target.value)}
+                      className="input"
+                      style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      disabled={!receiptEmail || !receiptEmail.includes('@')}
+                      onClick={() => setReceiptSent(true)}
+                      className="btn btn-primary btn-sm"
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
+                    >
+                      {language === 'tr' ? 'Gönder' : 'Send'}
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="btn btn-secondary btn-sm"
+                  style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+                >
+                  <span>🖨️</span>
+                  <span>{language === 'tr' ? 'Makbuzu Yazdır / PDF İndir' : 'Print / Save PDF'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <img src="/naponi-brand-dark.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.95 }} />
