@@ -291,3 +291,19 @@ d-tipbox (Monorepo)
 1. **Cross-border Payment Compliance (MASAK/TCMB KYC):** Required when international business registrations reach 50.
 2. **KVKK Article 9 — International Data Transfer Notice:** Required when using overseas cloud infrastructure at scale (50+ international businesses).
 3. **POS Live Sync:** Currently an assistance request service; automated real-time POS synchronization is a future milestone.
+4. **Homepage & Conversion Optimizations (Item 4):** Postponed for future iteration per business preference.
+
+---
+
+## 9. Recent Releases & UX Enhancements (2026-09-29)
+
+- **Customer Tipping Experience:**
+  - Quick compliment badges (`⚡ Hızlı Servis`, `😊 Güler Yüz`, `🍲 Harika Lezzet`, `⭐ Süper İlgi`) & custom thank-you note inputs.
+  - Digital E-Receipt modal with unique reference codes (`TIP-XXXXXX`), print/save PDF action, and direct email delivery flow.
+- **Business Administration:**
+  - Corporate Invoice & Tax information fields (Commercial title, Tax office, Tax ID / VKN) with verified status badge.
+  - Live activity table enhanced with Staff/Table attribution and Guest Compliment & Note badges.
+- **Waiter / Staff Experience:**
+  - Live Today's Earnings hero card on `EmployeeDashboard.tsx`.
+  - In-browser Web Audio API chime bell notification (`playChimeSound`) with toggle switch and test button.
+
