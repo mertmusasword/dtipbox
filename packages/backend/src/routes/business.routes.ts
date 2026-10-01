@@ -16,6 +16,7 @@ import { planGuardService } from '../services/plan-guard.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType, TipDistributionMode, PosFeePayer } from '@prisma/client';
 import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
 import { AppError } from '../middleware/errorHandler';
+import { emailService } from '../services/email.service';
 import prisma from '../utils/prisma';
 
 const router = Router();
@@ -637,11 +638,135 @@ router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
       },
     });
 
+    // Automatically send verified receipt email if customer requested it
+    let autoReceiptSent = false;
+    let recipientEmail: string | null = null;
+    try {
+      const pendingReceiptLog = await prisma.auditLog.findFirst({
+        where: {
+          entity_type: 'TIP',
+          entity_id: tip.id,
+          action: 'RECEIPT_EMAIL_REQUESTED',
+        },
+        orderBy: { created_at: 'desc' },
+      });
+
+      if (pendingReceiptLog && pendingReceiptLog.metadata) {
+        const meta = pendingReceiptLog.metadata as any;
+        const targetEmail = meta.email;
+        const lang = meta.language || 'tr';
+        if (targetEmail && typeof targetEmail === 'string' && targetEmail.includes('@')) {
+          recipientEmail = targetEmail;
+          const fullTip = await prisma.tip.findUnique({
+            where: { id: tip.id },
+            include: { business: true, table: true, employee: true },
+          });
+
+          if (fullTip) {
+            const refCode = meta.referenceCode || `TIP-${fullTip.id.slice(0, 8).toUpperCase()}`;
+            const staffName = fullTip.employee ? `${fullTip.employee.first_name} ${fullTip.employee.last_name}`.trim() : null;
+            const isIban = (fullTip.payment_method || '').toUpperCase().includes('IBAN') || (fullTip.payment_method || '').toUpperCase().includes('BANK');
+            const paymentMethodLabel = isIban
+              ? (lang === 'tr' ? 'Doğrudan Havale / IBAN' : 'Bank Transfer / IBAN')
+              : (lang === 'tr' ? 'Kart / Online Ödeme' : 'Credit Card / Online Payment');
+
+            await emailService.sendDigitalReceiptEmail({
+              to: targetEmail.trim(),
+              businessName: fullTip.business.name,
+              referenceNo: refCode,
+              amount: Number(fullTip.amount),
+              currency: fullTip.currency || fullTip.business.currency || 'TRY',
+              paymentMethod: paymentMethodLabel,
+              dateStr: new Date(fullTip.created_at).toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US'),
+              tableName: fullTip.table?.name || null,
+              staffName,
+              lang,
+            });
+
+            await auditService.createAuditLog({
+              actorUserId: req.user?.id,
+              businessId,
+              action: 'RECEIPT_EMAIL_AUTO_SENT',
+              entityType: 'TIP',
+              entityId: tip.id,
+              metadata: {
+                recipientEmail: targetEmail.trim(),
+                sentAt: new Date().toISOString(),
+              },
+            });
+            autoReceiptSent = true;
+          }
+        }
+      }
+    } catch (receiptErr) {
+      console.warn('Auto receipt dispatch warning on tip verify:', receiptErr);
+    }
+
     res.json({
       success: true,
       data: updatedTip,
-      message: 'Banka transferi başarıyla onaylandı ve kesinleştirildi.',
+      receiptSent: autoReceiptSent,
+      recipientEmail,
+      message: autoReceiptSent
+        ? 'Banka transferi onaylandı ve müşteriye resmi makbuz e-posta ile iletildi.'
+        : 'Banka transferi başarıyla onaylandı ve kesinleştirildi.',
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Send Receipt for Verified Tip (Manual trigger from venue dashboard) ---
+router.post('/tips/:id/send-receipt', async (req: AuthRequest, res, next) => {
+  try {
+    const tipId = req.params.id as string;
+    const businessId = req.user!.businessId!;
+    const { email, language } = req.body;
+
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      res.status(400).json({ success: false, error: 'Geçerli bir e-posta adresi giriniz.' });
+      return;
+    }
+
+    const tip = await prisma.tip.findFirst({
+      where: { id: tipId, business_id: businessId },
+      include: { business: true, table: true, employee: true },
+    });
+
+    if (!tip) {
+      res.status(404).json({ success: false, error: 'Bahşiş kaydı bulunamadı.' });
+      return;
+    }
+
+    if (tip.payment_status !== 'SUCCESS') {
+      res.status(400).json({
+        success: false,
+        error: 'Havale henüz onaylanmamış. Doğrulanmış makbuz göndermek için lütfen önce havaleyi onaylayınız.',
+      });
+      return;
+    }
+
+    const refCode = `TIP-${tip.id.slice(0, 8).toUpperCase()}`;
+    const staffName = tip.employee ? `${tip.employee.first_name} ${tip.employee.last_name}`.trim() : null;
+    const isIban = (tip.payment_method || '').toUpperCase().includes('IBAN') || (tip.payment_method || '').toUpperCase().includes('BANK');
+    const paymentMethodLabel = isIban
+      ? (language === 'tr' ? 'Doğrudan Havale / IBAN' : 'Bank Transfer / IBAN')
+      : (language === 'tr' ? 'Kart / Online Ödeme' : 'Credit Card / Online Payment');
+
+    await emailService.sendDigitalReceiptEmail({
+      to: email.trim(),
+      businessName: tip.business.name,
+      referenceNo: refCode,
+      amount: Number(tip.amount),
+      currency: tip.currency || tip.business.currency || 'TRY',
+      paymentMethod: paymentMethodLabel,
+      dateStr: new Date(tip.created_at).toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US'),
+      tableName: tip.table?.name || null,
+      staffName,
+      lang: language || 'tr',
+    });
+
+    res.json({ success: true, message: 'Doğrulanmış makbuz müşteriye başarıyla iletildi.' });
   } catch (error) {
     next(error);
   }

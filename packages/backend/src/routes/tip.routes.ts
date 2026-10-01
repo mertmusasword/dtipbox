@@ -192,6 +192,32 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
       ? (language === 'tr' ? 'Doğrudan Havale / IBAN' : 'Bank Transfer / IBAN')
       : (language === 'tr' ? 'Kart / Online Ödeme' : 'Credit Card / Online Payment');
 
+    // If tip is not yet confirmed by the venue (Havale / IBAN transfer pending verification)
+    if (tip.payment_status !== 'SUCCESS') {
+      const auditService = await import('../services/audit.service');
+      await auditService.createAuditLog({
+        businessId: tip.business_id,
+        action: 'RECEIPT_EMAIL_REQUESTED',
+        entityType: 'TIP',
+        entityId: tip.id,
+        metadata: {
+          email: email.trim(),
+          referenceCode: refCode,
+          language: language || 'tr',
+          requestedAt: new Date().toISOString(),
+        },
+      });
+
+      res.json({
+        success: true,
+        pendingApproval: true,
+        message: language === 'tr'
+          ? 'E-posta adresiniz kaydedildi. İşletme havalenizi onayladığı anda doğrulanmış resmi makbuzunuz e-postanıza otomatik olarak iletilecektir.'
+          : 'Email recorded. Once the venue confirms your transfer, your verified digital receipt will be automatically sent to your email.',
+      });
+      return;
+    }
+
     try {
       await emailService.sendDigitalReceiptEmail({
         to: email.trim(),
@@ -209,7 +235,13 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
       console.warn('Digital receipt email dispatch warning:', mailErr);
     }
 
-    res.json({ success: true, message: 'Makbuz e-posta adresinize başarıyla gönderildi.' });
+    res.json({
+      success: true,
+      pendingApproval: false,
+      message: language === 'tr'
+        ? 'Doğrulanmış dijital makbuz e-posta adresinize başarıyla gönderildi.'
+        : 'Verified digital receipt has been sent to your email.',
+    });
   } catch (error) {
     next(error);
   }

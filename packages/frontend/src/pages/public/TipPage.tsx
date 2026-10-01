@@ -849,6 +849,10 @@ export const TipPage: React.FC = () => {
       ? (ibanRef.toUpperCase().startsWith('TIP-') ? ibanRef.toUpperCase() : `TIP-${ibanRef.toUpperCase()}`)
       : (rawTipId ? `TIP-${rawTipId.substring(0, 8).toUpperCase()}` : 'TIP-NAPONI');
     const amountStr = formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details?.business?.currency);
+    const isPendingVerification =
+      paymentResult?.tip?.payment_method === 'IBAN_TRANSFER' ||
+      (paymentResult?.tip?.payment_status && paymentResult.tip.payment_status !== 'SUCCESS') ||
+      (paymentResult?.payment?.status && paymentResult.payment.status !== 'SUCCESS');
     const paymentMethodStr = paymentResult?.tip?.payment_method === 'IBAN_TRANSFER'
       ? rt.directTransfer
       : rt.onlineCard;
@@ -1077,16 +1081,21 @@ export const TipPage: React.FC = () => {
       if (!receiptEmail || !receiptEmail.includes('@') || receiptSending) return;
       setReceiptSending(true);
       try {
-        await api.post(`/tip/${publicToken}/send-receipt`, {
+        const res = await api.post(`/tip/${publicToken}/send-receipt`, {
           email: receiptEmail.trim(),
           tipId: paymentResult?.tip?.id,
           referenceCode: refCode,
           language,
         });
         setReceiptSent(true);
-        showToast(rt.sentSuccess, 'success');
+        showToast(
+          res.data?.message || (isPendingVerification
+            ? (language === 'tr' ? 'E-posta adresiniz kaydedildi. İşletme havalenizi onayladığı anda makbuzunuz iletilecektir.' : 'Email saved. Receipt will be sent upon venue approval.')
+            : rt.sentSuccess),
+          'success'
+        );
       } catch (err: any) {
-        showToast(err?.response?.data?.error || (language === 'tr' ? 'Makbuz gönderilemedi, lütfen tekrar deneyin.' : 'Failed to send receipt.'), 'error');
+        showToast(err?.response?.data?.error || (language === 'tr' ? 'Makbuz işlemi gerçekleştirilemedi, lütfen tekrar deneyin.' : 'Failed to process receipt request.'), 'error');
       } finally {
         setReceiptSending(false);
       }
@@ -1180,8 +1189,22 @@ export const TipPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem', color: '#78716C' }}>
-              ✓ {rt.verifiedBadge}
+            <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem' }}>
+              {isPendingVerification ? (
+                <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#b45309', padding: '8px 12px', borderRadius: '10px', fontWeight: 600 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '0.78rem' }}>
+                    <span>⏳</span>
+                    <span>{language === 'tr' ? 'HAVALE BİLDİRİMİ — İŞLETME ONAYI BEKLENİYOR' : 'TRANSFER PENDING — VENUE APPROVAL REQUIRED'}</span>
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: '#78716c', fontWeight: 400, marginTop: '3px' }}>
+                    {language === 'tr' ? 'İşletme banka transferini teyit ettiğinde doğrulanmış resmi makbuzunuz aktifleşecektir.' : 'Your official verified receipt will activate once the venue verifies the funds.'}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ color: '#059669', fontWeight: 600 }}>
+                  ✓ {rt.verifiedBadge}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1257,28 +1280,43 @@ export const TipPage: React.FC = () => {
             {/* Email Send Input */}
             <div style={{ marginTop: '0.5rem', borderTop: '1px solid #E7E5E4', paddingTop: '0.75rem' }}>
               {receiptSent ? (
-                <div style={{ padding: '0.75rem', background: 'rgba(5, 150, 105, 0.1)', color: '#059669', borderRadius: '10px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600 }}>
-                  ✓ {rt.sentSuccess}
+                <div style={{ padding: '0.75rem', background: isPendingVerification ? 'rgba(245, 158, 11, 0.1)' : 'rgba(5, 150, 105, 0.1)', color: isPendingVerification ? '#b45309' : '#059669', border: isPendingVerification ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(5, 150, 105, 0.2)', borderRadius: '10px', textAlign: 'center', fontSize: '0.82rem', fontWeight: 600 }}>
+                  {isPendingVerification
+                    ? (language === 'tr' ? '✓ E-posta adresiniz kaydedildi. İşletme havalenizi onayladığı anda makbuzunuz otomatik olarak iletilecektir.' : '✓ Email recorded. Receipt will be sent automatically once verified by the venue.')
+                    : `✓ ${rt.sentSuccess}`}
                 </div>
               ) : (
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input
-                    type="email"
-                    placeholder={rt.emailPlaceholder}
-                    value={receiptEmail}
-                    onChange={(e) => setReceiptEmail(e.target.value)}
-                    className="input"
-                    style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
-                  />
-                  <button
-                    type="button"
-                    disabled={!receiptEmail || !receiptEmail.includes('@') || receiptSending}
-                    onClick={handleSendReceiptEmail}
-                    className="btn btn-primary btn-sm"
-                    style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
-                  >
-                    {receiptSending ? '...' : rt.send}
-                  </button>
+                <div>
+                  {isPendingVerification && (
+                    <div style={{ fontSize: '0.75rem', color: '#78716c', marginBottom: '0.4rem', textAlign: 'center' }}>
+                      {language === 'tr' ? '💡 Havale işletme tarafından onaylandığında makbuzun mailinize gelmesi için e-posta girin:' : '💡 Enter email to receive receipt automatically when transfer is confirmed:'}
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      type="email"
+                      placeholder={isPendingVerification ? (language === 'tr' ? 'Onaylanınca gönderilecek e-posta...' : 'Email for verified receipt...') : rt.emailPlaceholder}
+                      value={receiptEmail}
+                      onChange={(e) => setReceiptEmail(e.target.value)}
+                      className="input"
+                      style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      disabled={!receiptEmail || !receiptEmail.includes('@') || receiptSending}
+                      onClick={handleSendReceiptEmail}
+                      className="btn btn-primary btn-sm"
+                      style={{
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.82rem',
+                        background: isPendingVerification ? '#d97706' : '#059669',
+                        borderColor: isPendingVerification ? '#d97706' : '#059669',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {receiptSending ? '...' : (isPendingVerification ? (language === 'tr' ? 'Onaylanınca Gönder' : 'Send on Verify') : rt.send)}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
