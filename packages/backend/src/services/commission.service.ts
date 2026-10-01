@@ -333,7 +333,7 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
       taxNumber: '6290887123',
       bankName: 'QNB Finansbank / Garanti BBVA',
       iban: 'TR56 0006 2000 0001 2990 0000 01',
-      fastAddress: 'muhasebe@naponi.com',
+      fastAddress: 'info@naponi.com',
       paymentReference: `NAP-${business.id.slice(0, 8).toUpperCase()}`,
     },
   };

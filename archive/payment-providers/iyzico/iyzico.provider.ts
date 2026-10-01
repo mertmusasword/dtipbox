@@ -121,7 +121,7 @@ export class IyzicoProvider implements IPaymentProvider {
             id: `BUYER_${params.tipId}`,
             name: 'Naponi',
             surname: 'Customer',
-            email: 'customer@naponi.com',
+            email: 'info@naponi.com',
             identityNumber: '11111111111',
             registrationAddress: 'Istanbul, Turkey',
             ip: '85.90.0.1',

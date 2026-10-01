@@ -74,7 +74,7 @@ export const TrustCenterPage: React.FC = () => {
             <Link to="/register" className="home-btn-primary home-btn-hero-large">
               {isEn ? 'Create Verified Business Account' : 'Doğrulanmış İşletme Hesabı Aç'} <ArrowRight size={18} />
             </Link>
-            <a href="mailto:security@naponi.com" className="home-btn-secondary">
+            <a href="mailto:info@naponi.com" className="home-btn-secondary">
               {isEn ? 'Contact Security Team' : 'Güvenlik Ekibine Ulaşın'}
             </a>
           </div>

@@ -55,7 +55,7 @@ export class PayTrProvider implements IPaymentProvider {
     try {
       const userIp = '85.90.0.1';
       const merchantOid = `test_oid_${Date.now()}`;
-      const email = 'verify@naponi.com';
+      const email = 'info@naponi.com';
       const paymentAmount = 100; // 1.00 TL in kuruş
       const userBasket = Buffer.from(JSON.stringify([['Test Doğrulama', '1.00', 1]])).toString('base64');
       const noInstallment = '1';
@@ -160,7 +160,7 @@ export class PayTrProvider implements IPaymentProvider {
     if (merchantId && merchantKey && merchantSalt) {
       try {
         const userIp = '85.90.0.1';
-        const email = 'customer@naponi.com';
+        const email = 'info@naponi.com';
         const userBasket = Buffer.from(
           JSON.stringify([['Bahşiş / Gratuity', params.amount.toFixed(2), 1]])
         ).toString('base64');
