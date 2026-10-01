@@ -57,6 +57,7 @@ import {
   Play,
   Youtube,
   Instagram,
+  Linkedin,
   LogIn,
   Truck,
   Tent,
@@ -1741,6 +1742,16 @@ export const HomePage: React.FC = () => {
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/mert-kilic-39847a221/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Mert Kılıç LinkedIn"
+                  className="home-social-btn linkedin"
+                  title="Mert Kılıç | LinkedIn"
+                >
+                  <Linkedin size={19} />
                 </a>
                 <a
                   href="https://www.tiktok.com/@naponicom"

@@ -2801,6 +2801,13 @@ body:has(.home-mobile-menu) .support-floating-btn {
   box-shadow: -2px -2px 10px rgba(0, 242, 254, 0.3), 2px 2px 10px rgba(254, 44, 85, 0.35);
 }
 
+.home-social-btn.linkedin:hover {
+  color: #0a66c2;
+  border-color: rgba(10, 102, 194, 0.45);
+  background: rgba(10, 102, 194, 0.12);
+  box-shadow: 0 0 15px rgba(10, 102, 194, 0.25);
+}
+
 /* ==========================================================================
    Naponi Farkı (Comparison Section)
    ========================================================================== */

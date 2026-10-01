@@ -2203,23 +2203,26 @@ h1, h2, h3, h4, h5, h6,
 
   /* Hide background web app elements */
   nav, .navbar, .sidebar, .page-wrapper, .app-header, .toast-container,
-  .footer, .legal-links, button, .btn {
+  .footer, .legal-links, button, .btn, .receipt-no-print {
     display: none !important;
   }
 
-  /* Reset modal containers so they don't break across multiple empty pages */
+  /* Reset modal and smart-sheet containers so they don't break on mobile / across empty pages */
+  .smart-sheet-overlay,
   .tip-pool-modal-overlay {
     position: static !important;
     inset: auto !important;
     background: transparent !important;
     backdrop-filter: none !important;
     padding: 0 !important;
+    margin: 0 !important;
     display: block !important;
     height: auto !important;
     overflow: visible !important;
     width: 100% !important;
   }
 
+  .smart-sheet-content,
   .tip-pool-modal-card {
     position: static !important;
     max-width: 100% !important;
@@ -2231,6 +2234,33 @@ h1, h2, h3, h4, h5, h6,
     color: #111827 !important;
     display: block !important;
     width: 100% !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+  }
+
+  /* Digital Receipt print isolation */
+  body.printing-receipt .glass-card,
+  body.printing-receipt .language-selector,
+  body.printing-receipt .app-header,
+  body.printing-receipt nav,
+  body.printing-receipt footer {
+    display: none !important;
+  }
+
+  #naponi-digital-receipt {
+    position: static !important;
+    display: block !important;
+    max-width: 440px !important;
+    margin: 5mm auto !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    border: 1.5px solid #111827 !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    color: #111827 !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .tip-pool-modal-header-actions,

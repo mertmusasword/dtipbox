@@ -25,6 +25,9 @@ import {
   Send,
   Lock,
   X,
+  Printer,
+  Download,
+  Share2,
   UtensilsCrossed,
   ExternalLink,
   Instagram,
@@ -607,6 +610,396 @@ export const TipPage: React.FC = () => {
   // --- Digital E-Receipt Modal Renderer ---
   const renderReceiptModal = () => {
     if (!showReceiptModal) return null;
+
+    const receiptLocales: Record<string, {
+      title: string;
+      verifiedBadge: string;
+      referenceNo: string;
+      dateTime: string;
+      table: string;
+      staff: string;
+      paymentType: string;
+      directTransfer: string;
+      onlineCard: string;
+      tipTotal: string;
+      sentSuccess: string;
+      emailPlaceholder: string;
+      send: string;
+      printPdf: string;
+      downloadImage: string;
+      shareReceipt: string;
+      close: string;
+    }> = {
+      tr: {
+        title: 'Dijital Bahşiş Makbuzu',
+        verifiedBadge: 'Naponi Smart QR Platformu Tarafından Doğrulanmış Dijital Fiş',
+        referenceNo: 'Referans No:',
+        dateTime: 'Tarih & Saat:',
+        table: 'Masa:',
+        staff: 'Personel:',
+        paymentType: 'Ödeme Türü:',
+        directTransfer: 'Doğrudan Havale / IBAN',
+        onlineCard: 'Kart / Online Ödeme',
+        tipTotal: 'Bahşiş Tutarı:',
+        sentSuccess: 'Dijital fişiniz e-posta adresinize gönderildi!',
+        emailPlaceholder: 'E-posta adresiniz...',
+        send: 'Gönder',
+        printPdf: 'Makbuzu Yazdır / PDF İndir',
+        downloadImage: 'Görsel Olarak İndir (PNG)',
+        shareReceipt: 'Makbuzu Paylaş',
+        close: 'Kapat',
+      },
+      en: {
+        title: 'Digital Tip Receipt',
+        verifiedBadge: 'Digital Receipt Verified by Naponi Smart QR Platform',
+        referenceNo: 'Reference No:',
+        dateTime: 'Date & Time:',
+        table: 'Table:',
+        staff: 'Staff:',
+        paymentType: 'Payment Type:',
+        directTransfer: 'Direct Bank Transfer / IBAN',
+        onlineCard: 'Credit Card / Online Payment',
+        tipTotal: 'Tip Total:',
+        sentSuccess: 'Digital receipt sent to your email!',
+        emailPlaceholder: 'your@email.com',
+        send: 'Send',
+        printPdf: 'Print / Save PDF',
+        downloadImage: 'Download as Image (PNG)',
+        shareReceipt: 'Share Receipt',
+        close: 'Close',
+      },
+      de: {
+        title: 'Digitaler Trinkgeldbeleg',
+        verifiedBadge: 'Verifizierter digitaler Beleg von Naponi Smart QR Platform',
+        referenceNo: 'Referenz-Nr.:',
+        dateTime: 'Datum & Uhrzeit:',
+        table: 'Tisch:',
+        staff: 'Mitarbeiter:',
+        paymentType: 'Zahlungsart:',
+        directTransfer: 'Banküberweisung / IBAN',
+        onlineCard: 'Karte / Online-Zahlung',
+        tipTotal: 'Trinkgeldbetrag:',
+        sentSuccess: 'Ihr digitaler Beleg wurde an Ihre E-Mail gesendet!',
+        emailPlaceholder: 'ihre@email.de',
+        send: 'Senden',
+        printPdf: 'Drucken / PDF speichern',
+        downloadImage: 'Als Bild herunterladen (PNG)',
+        shareReceipt: 'Beleg teilen',
+        close: 'Schließen',
+      },
+      es: {
+        title: 'Recibo Digital de Propina',
+        verifiedBadge: 'Recibo digital verificado por Naponi Smart QR Platform',
+        referenceNo: 'Núm. de Referencia:',
+        dateTime: 'Fecha y Hora:',
+        table: 'Mesa:',
+        staff: 'Personal:',
+        paymentType: 'Tipo de Pago:',
+        directTransfer: 'Transferencia Bancaria / IBAN',
+        onlineCard: 'Tarjeta / Pago Online',
+        tipTotal: 'Total de Propina:',
+        sentSuccess: '¡Recibo digital enviado a su correo electrónico!',
+        emailPlaceholder: 'su@correo.com',
+        send: 'Enviar',
+        printPdf: 'Imprimir / Guardar PDF',
+        downloadImage: 'Descargar como Imagen (PNG)',
+        shareReceipt: 'Compartir Recibo',
+        close: 'Cerrar',
+      },
+      fr: {
+        title: 'Reçu Numérique de Pourboire',
+        verifiedBadge: 'Reçu numérique certifié par Naponi Smart QR Platform',
+        referenceNo: 'N° de Référence :',
+        dateTime: 'Date et Heure :',
+        table: 'Table :',
+        staff: 'Personnel :',
+        paymentType: 'Mode de Paiement :',
+        directTransfer: 'Virement bancaire direct / IBAN',
+        onlineCard: 'Carte / Paiement en ligne',
+        tipTotal: 'Total Pourboire :',
+        sentSuccess: 'Reçu numérique envoyé à votre adresse e-mail !',
+        emailPlaceholder: 'votre@email.fr',
+        send: 'Envoyer',
+        printPdf: 'Imprimer / Enregistrer PDF',
+        downloadImage: 'Télécharger en Image (PNG)',
+        shareReceipt: 'Partager le reçu',
+        close: 'Fermer',
+      },
+      pt: {
+        title: 'Recibo Digital de Gorjeta',
+        verifiedBadge: 'Recibo digital verificado pela plataforma Naponi Smart QR',
+        referenceNo: 'Nº de Referência:',
+        dateTime: 'Data e Hora:',
+        table: 'Mesa:',
+        staff: 'Funcionário:',
+        paymentType: 'Tipo de Pagamento:',
+        directTransfer: 'Transferência Bancária / IBAN',
+        onlineCard: 'Cartão / Pagamento Online',
+        tipTotal: 'Total da Gorjeta:',
+        sentSuccess: 'Recibo digital enviado para o seu e-mail!',
+        emailPlaceholder: 'seu@email.com',
+        send: 'Enviar',
+        printPdf: 'Imprimir / Salvar PDF',
+        downloadImage: 'Baixar como Imagem (PNG)',
+        shareReceipt: 'Compartilhar Recibo',
+        close: 'Fechar',
+      },
+      ar: {
+        title: 'إيصال إكرامية رقمي',
+        verifiedBadge: 'إيصال رقمي تم التحقق منه بواسطة منصة نابوني سمارت QR',
+        referenceNo: 'رقم المرجع:',
+        dateTime: 'التاريخ والوقت:',
+        table: 'الطاولة:',
+        staff: 'الموظف:',
+        paymentType: 'طريقة الدفع:',
+        directTransfer: 'تحويل بنكي مباشر / IBAN',
+        onlineCard: 'بطاقة / دفع إلكتروني',
+        tipTotal: 'إجمالي الإكرامية:',
+        sentSuccess: 'تم إرسال إيصالك الرقمي إلى بريدك الإلكتروني!',
+        emailPlaceholder: 'بريدك@الإلكتروني',
+        send: 'إرسال',
+        printPdf: 'طباعة / حفظ PDF',
+        downloadImage: 'تنزيل كصورة (PNG)',
+        shareReceipt: 'مشاركة الإيصال',
+        close: 'إغلاق',
+      },
+      zh: {
+        title: '小费电子收据',
+        verifiedBadge: '由 Naponi Smart QR 平台验证的电子收据',
+        referenceNo: '参考单号:',
+        dateTime: '日期与时间:',
+        table: '桌号:',
+        staff: '员工:',
+        paymentType: '支付方式:',
+        directTransfer: '银行转账 / IBAN',
+        onlineCard: '银行卡 / 在线支付',
+        tipTotal: '小费总额:',
+        sentSuccess: '电子收据已发送至您的电子邮箱！',
+        emailPlaceholder: 'your@email.com',
+        send: '发送',
+        printPdf: '打印 / 存为 PDF',
+        downloadImage: '下载为图片 (PNG)',
+        shareReceipt: '分享收据',
+        close: '关闭',
+      },
+      ja: {
+        title: 'チップ電子領収書',
+        verifiedBadge: 'Naponi Smart QR プラットフォーム認証済デジタル領収書',
+        referenceNo: '照会番号:',
+        dateTime: '日時:',
+        table: 'テーブル:',
+        staff: 'スタッフ:',
+        paymentType: '決済方法:',
+        directTransfer: '銀行振込 / IBAN',
+        onlineCard: 'カード / オンライン決済',
+        tipTotal: 'チップ合計:',
+        sentSuccess: '領収書をご登録のメールアドレスに送信しました！',
+        emailPlaceholder: 'your@email.com',
+        send: '送信',
+        printPdf: '印刷 / PDF保存',
+        downloadImage: '画像としてダウンロード (PNG)',
+        shareReceipt: '領収書を共有',
+        close: '閉じる',
+      },
+      id: {
+        title: 'Tanda Terima Tip Digital',
+        verifiedBadge: 'Tanda terima digital diverifikasi oleh Platform Naponi Smart QR',
+        referenceNo: 'No. Referensi:',
+        dateTime: 'Tanggal & Waktu:',
+        table: 'Meja:',
+        staff: 'Staf:',
+        paymentType: 'Jenis Pembayaran:',
+        directTransfer: 'Transfer Bank Langsung / IBAN',
+        onlineCard: 'Kartu / Pembayaran Online',
+        tipTotal: 'Total Tip:',
+        sentSuccess: 'Tanda terima digital telah dikirim ke email Anda!',
+        emailPlaceholder: 'email@anda.com',
+        send: 'Kirim',
+        printPdf: 'Cetak / Simpan PDF',
+        downloadImage: 'Unduh Gambar (PNG)',
+        shareReceipt: 'Bagikan Tanda Terima',
+        close: 'Tutup',
+      },
+      ru: {
+        title: 'Электронный чек чаевых',
+        verifiedBadge: 'Электронный чек верифицирован платформой Naponi Smart QR',
+        referenceNo: 'Номер операции:',
+        dateTime: 'Дата и время:',
+        table: 'Стол:',
+        staff: 'Сотрудник:',
+        paymentType: 'Способ оплаты:',
+        directTransfer: 'Банковский перевод / IBAN',
+        onlineCard: 'Карта / Онлайн-оплата',
+        tipTotal: 'Сумма чаевых:',
+        sentSuccess: 'Электронный чек отправлен на вашу почту!',
+        emailPlaceholder: 'vash@email.ru',
+        send: 'Отправить',
+        printPdf: 'Печать / Сохранить в PDF',
+        downloadImage: 'Скачать изображение (PNG)',
+        shareReceipt: 'Поделиться чеком',
+        close: 'Закрыть',
+      },
+    };
+
+    const rt = receiptLocales[language] || receiptLocales.tr;
+    const refCode = paymentResult?.payment?.ibanDetails?.referenceCode || paymentResult?.tip?.id
+      ? `TIP-${(paymentResult.payment?.ibanDetails?.referenceCode || paymentResult.tip?.id).substring(0, 8).toUpperCase()}`
+      : 'TIP-NAPONI';
+    const amountStr = formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details?.business?.currency);
+    const paymentMethodStr = paymentResult?.tip?.payment_method === 'IBAN_TRANSFER'
+      ? rt.directTransfer
+      : rt.onlineCard;
+    const dateStr = new Date().toLocaleString();
+    const selectedEmployee = details?.employees?.find((e) => e.id === selectedEmployeeId);
+    const staffName = selectedEmployee ? `${selectedEmployee.first_name} ${selectedEmployee.last_name}`.trim() : null;
+
+    // 1. Mobile & Desktop Print Action
+    const handlePrintReceipt = () => {
+      document.body.classList.add('printing-receipt');
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove('printing-receipt');
+        }, 1200);
+      }, 60);
+    };
+
+    // 2. High-Resolution Canvas PNG Download Action (100% reliable across all mobile phones)
+    const handleDownloadReceiptImage = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 860;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Background
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 640, 860);
+
+        // Outer border
+        ctx.strokeStyle = '#E5E7EB';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(16, 16, 608, 828);
+
+        // Header Emerald Banner
+        ctx.fillStyle = '#059669';
+        ctx.fillRect(16, 16, 608, 100);
+
+        // Title text in banner
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('NAPONI DIGITAL RECEIPT', 320, 58);
+
+        ctx.font = '14px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillText(rt.title, 320, 88);
+
+        // Business Name
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 26px system-ui, -apple-system, sans-serif';
+        ctx.fillText(details?.business?.name || 'Naponi Business', 320, 168);
+
+        ctx.fillStyle = '#6B7280';
+        ctx.font = '15px system-ui, -apple-system, sans-serif';
+        ctx.fillText(`${details?.business?.country || ''} • ${details?.business?.currency || 'TRY'}`, 320, 198);
+
+        // Dashed divider line
+        ctx.strokeStyle = '#D1D5DB';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(50, 230);
+        ctx.lineTo(590, 230);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Receipt Details rows
+        const rows: { label: string; val: string; isRef?: boolean }[] = [
+          { label: rt.referenceNo, val: refCode, isRef: true },
+          { label: rt.dateTime, val: dateStr },
+          ...(details?.table ? [{ label: rt.table, val: details.table.name }] : []),
+          ...(staffName ? [{ label: rt.staff, val: staffName }] : []),
+          { label: rt.paymentType, val: paymentMethodStr },
+        ];
+
+        let curY = 275;
+        rows.forEach((r) => {
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#6B7280';
+          ctx.font = '16px system-ui, -apple-system, sans-serif';
+          ctx.fillText(r.label, 50, curY);
+
+          ctx.textAlign = 'right';
+          ctx.fillStyle = r.isRef ? '#059669' : '#111827';
+          ctx.font = r.isRef ? 'bold 18px monospace, sans-serif' : '600 16px system-ui, -apple-system, sans-serif';
+          ctx.fillText(r.val, 590, curY);
+
+          curY += 46;
+        });
+
+        // Dashed divider line before total
+        ctx.strokeStyle = '#D1D5DB';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(50, curY + 10);
+        ctx.lineTo(590, curY + 10);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Total Amount Row
+        curY += 60;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
+        ctx.fillText(rt.tipTotal, 50, curY);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#059669';
+        ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
+        ctx.fillText(amountStr, 590, curY);
+
+        // Verification Footer Box
+        curY += 65;
+        ctx.fillStyle = '#F3F4F6';
+        ctx.fillRect(50, curY, 540, 60);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#059669';
+        ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
+        ctx.fillText(`✓ ${rt.verifiedBadge}`, 320, curY + 36);
+
+        // Download trigger
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `naponi-makbuz-${refCode}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (e) {
+        console.error('Failed to download receipt image:', e);
+      }
+    };
+
+    // 3. Web Share API Action (WhatsApp, Files, Notes, etc.)
+    const canShare = typeof navigator !== 'undefined' && Boolean(navigator.share);
+    const handleShareReceipt = async () => {
+      if (!canShare) return;
+      try {
+        await navigator.share({
+          title: `${details?.business?.name || 'Naponi'} - ${rt.title}`,
+          text: `${details?.business?.name || 'Naponi'}\n${rt.referenceNo} ${refCode}\n${rt.dateTime} ${dateStr}\n${rt.tipTotal} ${amountStr}\n✓ ${rt.verifiedBadge}`,
+          url: window.location.href,
+        });
+      } catch {
+        // User cancelled share dialog
+      }
+    };
+
     return (
       <div className="smart-sheet-overlay" onClick={() => setShowReceiptModal(false)} style={{ zIndex: 9999 }}>
         <div
@@ -624,106 +1017,179 @@ export const TipPage: React.FC = () => {
           }}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ fontSize: '1.25rem' }}>🧾</span>
               <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#1C1917' }}>
-                {language === 'tr' ? 'Dijital Bahşiş Makbuzu' : 'Digital Tip Receipt'}
+                {rt.title}
               </h3>
             </div>
             <button
               type="button"
               onClick={() => setShowReceiptModal(false)}
+              className="receipt-no-print"
               style={{ background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <X size={16} />
             </button>
           </div>
 
-          {/* Receipt Body */}
-          <div style={{ background: '#FAF9F6', border: '1px dashed #D6D3D1', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
+          {/* Printable Receipt Body Card */}
+          <div
+            id="naponi-digital-receipt"
+            className="naponi-receipt-card"
+            style={{ background: '#FAF9F6', border: '1px dashed #D6D3D1', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}
+          >
             <div style={{ textAlign: 'center', marginBottom: '1rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
-              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1C1917' }}>{details.business?.name}</div>
+              <div style={{ fontWeight: 800, fontSize: '1.15rem', color: '#1C1917' }}>{details?.business?.name}</div>
               <div style={{ fontSize: '0.78rem', color: '#78716C', marginTop: '0.15rem' }}>
-                {details.business?.country} • {details.business?.currency}
+                {details?.business?.country} • {details?.business?.currency}
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.85rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Referans No:' : 'Reference No:'}</span>
+                <span style={{ color: '#78716C' }}>{rt.referenceNo}</span>
                 <strong style={{ fontFamily: 'monospace', color: '#059669' }}>
-                  {paymentResult?.payment?.ibanDetails?.referenceCode || paymentResult?.tip?.id ? `TIP-${(paymentResult.payment?.ibanDetails?.referenceCode || paymentResult.tip?.id).substring(0, 8).toUpperCase()}` : 'TIP-NAPONI'}
+                  {refCode}
                 </strong>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Tarih & Saat:' : 'Date & Time:'}</span>
-                <span>{new Date().toLocaleString()}</span>
+                <span style={{ color: '#78716C' }}>{rt.dateTime}</span>
+                <span>{dateStr}</span>
               </div>
 
-              {details.table && (
+              {details?.table && (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Masa:' : 'Table:'}</span>
+                  <span style={{ color: '#78716C' }}>{rt.table}</span>
                   <span>{details.table.name}</span>
                 </div>
               )}
 
+              {staffName && (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#78716C' }}>{rt.staff}</span>
+                  <span>{staffName}</span>
+                </div>
+              )}
+
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Ödeme Türü:' : 'Payment Type:'}</span>
-                <span>{paymentResult?.tip?.payment_method === 'IBAN_TRANSFER' ? (language === 'tr' ? 'Doğrudan Havale / IBAN' : 'Direct Bank Transfer / IBAN') : (language === 'tr' ? 'Kart / Online Ödeme' : 'Credit Card / Online Payment')}</span>
+                <span style={{ color: '#78716C' }}>{rt.paymentType}</span>
+                <span>{paymentMethodStr}</span>
               </div>
 
               <div style={{ borderTop: '1px dashed #D6D3D1', paddingTop: '0.75rem', marginTop: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{language === 'tr' ? 'Bahşiş Tutarı:' : 'Tip Total:'}</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{rt.tipTotal}</span>
                 <span style={{ fontWeight: 800, fontSize: '1.35rem', color: '#059669' }}>
-                  {formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details.business?.currency)}
+                  {amountStr}
                 </span>
               </div>
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem', color: '#78716C' }}>
-              ✓ {language === 'tr' ? 'Naponi Smart QR Platformu Tarafından Doğrulanmış Dijital Fiş' : 'Digital Receipt Verified by Naponi Smart QR Platform'}
+              ✓ {rt.verifiedBadge}
             </div>
           </div>
 
-          {/* Email Send & Print Actions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {receiptSent ? (
-              <div style={{ padding: '0.75rem', background: 'rgba(5, 150, 105, 0.1)', color: '#059669', borderRadius: '10px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600 }}>
-                ✓ {language === 'tr' ? 'Dijital fişiniz e-posta adresinize gönderildi!' : 'Digital receipt sent to your email!'}
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  type="email"
-                  placeholder={language === 'tr' ? 'E-posta adresiniz...' : 'your@email.com'}
-                  value={receiptEmail}
-                  onChange={(e) => setReceiptEmail(e.target.value)}
-                  className="input"
-                  style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
-                />
-                <button
-                  type="button"
-                  disabled={!receiptEmail || !receiptEmail.includes('@')}
-                  onClick={() => setReceiptSent(true)}
-                  className="btn btn-primary btn-sm"
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
-                >
-                  {language === 'tr' ? 'Gönder' : 'Send'}
-                </button>
-              </div>
-            )}
-
+          {/* Action Buttons: Print / PDF, Download PNG Image, Share */}
+          <div className="receipt-no-print" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <button
               type="button"
-              onClick={() => window.print()}
-              className="btn btn-secondary btn-sm"
-              style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+              onClick={handlePrintReceipt}
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                fontSize: '0.88rem',
+                fontWeight: 700,
+                background: '#059669',
+                borderColor: '#059669',
+                boxShadow: '0 4px 12px rgba(5, 150, 105, 0.25)',
+              }}
             >
-              <span>🖨️</span>
-              <span>{language === 'tr' ? 'Makbuzu Yazdır / PDF İndir' : 'Print / Save PDF'}</span>
+              <Printer size={16} />
+              <span>{rt.printPdf}</span>
             </button>
+
+            <div style={{ display: 'grid', gridTemplateColumns: canShare ? '1fr 1fr' : '1fr', gap: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={handleDownloadReceiptImage}
+                className="btn btn-secondary btn-sm"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  background: '#F5F5F4',
+                  border: '1px solid #E7E5E4',
+                  color: '#1C1917',
+                  padding: '0.65rem 0.75rem',
+                }}
+              >
+                <Download size={15} />
+                <span>{rt.downloadImage}</span>
+              </button>
+
+              {canShare && (
+                <button
+                  type="button"
+                  onClick={handleShareReceipt}
+                  className="btn btn-secondary btn-sm"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    background: '#F5F5F4',
+                    border: '1px solid #E7E5E4',
+                    color: '#1C1917',
+                    padding: '0.65rem 0.75rem',
+                  }}
+                >
+                  <Share2 size={15} />
+                  <span>{rt.shareReceipt}</span>
+                </button>
+              )}
+            </div>
+
+            {/* Email Send Input */}
+            <div style={{ marginTop: '0.5rem', borderTop: '1px solid #E7E5E4', paddingTop: '0.75rem' }}>
+              {receiptSent ? (
+                <div style={{ padding: '0.75rem', background: 'rgba(5, 150, 105, 0.1)', color: '#059669', borderRadius: '10px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600 }}>
+                  ✓ {rt.sentSuccess}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    type="email"
+                    placeholder={rt.emailPlaceholder}
+                    value={receiptEmail}
+                    onChange={(e) => setReceiptEmail(e.target.value)}
+                    className="input"
+                    style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    disabled={!receiptEmail || !receiptEmail.includes('@')}
+                    onClick={() => setReceiptSent(true)}
+                    className="btn btn-primary btn-sm"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
+                  >
+                    {rt.send}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
