@@ -765,7 +765,20 @@ export const id = {
     "card4Desc": "Tanpa biaya tersembunyi, tanpa tagihan mendadak. Semua bisnis yang terdaftar sebelum akhir 2026 dilindungi secara permanen.",
     "disclaimer": "Bisnis berhak menggunakan platform inti gratis seumur hidup. Tidak termasuk biaya gateway pembayaran dan perangkat fisik.",
     "ctaBottom": "Bergabung sebagai Anggota Founder",
-    "deadlineNotice": "Batas akhir: 31 Desember 2026 pukul 23:59:59"
+    "deadlineNotice": "Batas akhir: 31 Desember 2026 pukul 23:59:59",
+    "dashboardBannerTitle": "Hak Istimewa Anggota Founder 2026 Aktif",
+    "dashboardBannerSubtitle": "Karena Anda bergabung sebelum 31 Desember 2026, bisnis Anda menikmati fitur utama platform Naponi gratis seumur hidup tanpa biaya langganan.",
+    "perk1Title": "Langganan 0 Rp Seumur Hidup",
+    "perk1Desc": "Bebas selamanya dari biaya langganan bulanan SaaS yang akan berlaku mulai 2027.",
+    "perk2Title": "Staf & Meja Tanpa Batas",
+    "perk2Desc": "Tambahkan staf pelayan dan kode QR meja sebanyak yang Anda perlukan tanpa batas.",
+    "perk3Title": "Termasuk Tip Pool & Smart QR",
+    "perk3Desc": "Akses penuh ke pembagian tip, menu QR, ulasan pelanggan, dan hub Wi-Fi tamu.",
+    "perk4Title": "Status Founder Permanen",
+    "perk4Desc": "Lencana emas founder terverifikasi di profil bisnis Anda dan dukungan prioritas.",
+    "viewBenefits": "Lihat Keuntungan Founder",
+    "hideDetails": "Sembunyikan Rincian",
+    "showDetails": "Tampilkan Rincian"
   },
   "menu": {
     "title": "Menu QR Asli & Manajemen Alergen",

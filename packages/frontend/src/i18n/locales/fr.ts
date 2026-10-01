@@ -765,7 +765,20 @@ export const fr = {
     "card4Desc": "Aucun frais caché ni mauvaise surprise. Chaque établissement inscrit avant fin 2026 est protégé de manière irrévocable.",
     "disclaimer": "Les établissements bénéficient de la plateforme centrale à vie. Hors frais bancaires et matériels personnalisés.",
     "ctaBottom": "Devenir Membre Fondateur",
-    "deadlineNotice": "Date limite : 31 décembre 2026, 23:59:59"
+    "deadlineNotice": "Date limite : 31 décembre 2026, 23:59:59",
+    "dashboardBannerTitle": "Privilège Membre Fondateur 2026 Actif",
+    "dashboardBannerSubtitle": "Inscrit avant le 31 décembre 2026, votre établissement bénéficie à vie des fonctionnalités Naponi sans aucun abonnement.",
+    "perk1Title": "Abonnement à 0 € à vie",
+    "perk1Desc": "Dispensé à tout jamais des futurs frais d'abonnement mensuels SaaS de 2027.",
+    "perk2Title": "Personnel et Tables Illimités",
+    "perk2Desc": "Ajoutez autant de serveurs, collaborateurs et QR codes de table que nécessaire.",
+    "perk3Title": "Pool de Pourboires & Smart QR Inclus",
+    "perk3Desc": "Accès complet au partage de pourboires, menu QR, avis clients et borne Wi-Fi.",
+    "perk4Title": "Statut Fondateur Permanent",
+    "perk4Desc": "Badge doré de fondateur vérifié sur votre profil et assistance prioritaire.",
+    "viewBenefits": "Voir les Avantages Fondateur",
+    "hideDetails": "Masquer les Détails",
+    "showDetails": "Afficher les Détails"
   },
   "menu": {
     "title": "Menu QR natif & Gestion des allergènes",

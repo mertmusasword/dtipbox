@@ -765,7 +765,20 @@ export const tr = {
     "card4Desc": "Gizli aidat yok, sonradan sürpriz ücret yok. 2026 yılı sonuna kadar kaydolan her işletmenin hakkı sistemimizde güvence altındadır.",
     "disclaimer": "31 Aralık 2026 tarihine kadar Naponi'ye katılan uygun işletmeler, Naponi platformunun temel kullanımını ömür boyu ücretsiz kullanma hakkına sahiptir. Ödeme kuruluşu komisyonları, fiziksel ürünler, üçüncü taraf servis ücretleri ve ayrıca sunulabilecek premium/kurumsal hizmetler bu kapsama dahil değildir.",
     "ctaBottom": "Hemen Kurucu Üye Olun",
-    "deadlineNotice": "Son Kayıt Tarihi: 31 Aralık 2026 23:59:59"
+    "deadlineNotice": "Son Kayıt Tarihi: 31 Aralık 2026 23:59:59",
+    "dashboardBannerTitle": "2026 Kurucu Üyelik Ayrıcalığınız Aktif",
+    "dashboardBannerSubtitle": "31 Aralık 2026'ya kadar üye olduğunuz için temel Naponi platform özelliklerini ömür boyu hiçbir abonelik ücreti ödemeden kullanacaksınız.",
+    "perk1Title": "Ömür Boyu 0₺ Abonelik",
+    "perk1Desc": "2027'de devreye girecek aylık 299₺-999₺ SaaS abonelik ücretlerinden muafsınız.",
+    "perk2Title": "Sınırsız Personel & Masa",
+    "perk2Desc": "İşletmenize dilediğiniz kadar garson, personel ve masa QR kodu ekleyebilirsiniz.",
+    "perk3Title": "Tip Pool & Smart QR Dahil",
+    "perk3Desc": "Bahşiş havuzlama, QR menü, misafir değerlendirme ve Wi-Fi paylaşım modülleri açık.",
+    "perk4Title": "Kalıcı Kurucu Statüsü",
+    "perk4Desc": "Profilinizde altın onaylı kurucu rozeti ve öncelikli teknik destek hakkı.",
+    "viewBenefits": "Kurucu Üye Avantajlarını Gör",
+    "hideDetails": "Detayları Gizle",
+    "showDetails": "Detayları Göster"
   },
   "menu": {
     "title": "Native QR Menü & Alerjen Yönetimi",

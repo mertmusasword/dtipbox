@@ -765,7 +765,20 @@ export const en = {
     "card4Desc": "No hidden dues, no surprise charges. Every business registered before year-end 2026 is permanently grandfathered in our database.",
     "disclaimer": "Eligible businesses joining Naponi by December 31, 2026 are entitled to lifetime free use of the core Naponi platform. Payment processor fees, physical merchandise, third-party service fees, and optional custom enterprise features are not included.",
     "ctaBottom": "Join as a Founder Member",
-    "deadlineNotice": "Deadline: December 31, 2026 23:59:59"
+    "deadlineNotice": "Deadline: December 31, 2026 23:59:59",
+    "dashboardBannerTitle": "2026 Founder Member Privilege Active",
+    "dashboardBannerSubtitle": "Because you joined before December 31, 2026, your business enjoys core Naponi platform features with zero subscription fees for life.",
+    "perk1Title": "Lifetime $0 Subscription",
+    "perk1Desc": "Exempt forever from upcoming 2027 monthly SaaS subscription plans.",
+    "perk2Title": "Unlimited Staff & Tables",
+    "perk2Desc": "Add as many servers, staff members, and table QR codes as you need.",
+    "perk3Title": "Tip Pool & Smart QR Included",
+    "perk3Desc": "Full access to pooled tipping, digital menu, guest feedback, and Wi-Fi hub.",
+    "perk4Title": "Permanent Founder Status",
+    "perk4Desc": "Verified gold founder badge on your venue profile and priority assistance.",
+    "viewBenefits": "View Founder Benefits",
+    "hideDetails": "Hide Details",
+    "showDetails": "Show Details"
   },
   "menu": {
     "title": "Native QR Menu & Allergen Management",

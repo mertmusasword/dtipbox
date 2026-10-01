@@ -765,7 +765,20 @@ export const zh = {
     "card4Desc": "绝无隐形费用。2026年底前注册的所有商家永久享受特权。",
     "disclaimer": "合规商家终身免费使用核心平台。不含支付渠道费及定制硬件费用。",
     "ctaBottom": "立即加入创始会员",
-    "deadlineNotice": "截止时间：2026年12月31日 23:59:59"
+    "deadlineNotice": "截止时间：2026年12月31日 23:59:59",
+    "dashboardBannerTitle": "2026年创始会员特权已激活",
+    "dashboardBannerSubtitle": "由于您在2026年12月31日前加入，您的企业将终身免费使用Naponi平台核心功能，无需支付任何订阅年费。",
+    "perk1Title": "终身0元订阅费",
+    "perk1Desc": "永久免除2027年即将推行的SaaS月度订阅服务费。",
+    "perk2Title": "不限员工与餐桌数量",
+    "perk2Desc": "可自由添加任意数量的服务员、团队成员及餐桌专属QR码。",
+    "perk3Title": "包含小费池与智能QR模块",
+    "perk3Desc": "完整开放小费集中分配、数字菜单、顾客评价与访客Wi-Fi功能。",
+    "perk4Title": "永久创始成员荣誉认证",
+    "perk4Desc": "企业资料页展示专属金色创设认证徽章，尊享VIP优先客服通道。",
+    "viewBenefits": "查看创始会员全部权益",
+    "hideDetails": "收起详情",
+    "showDetails": "展开详情"
   },
   "menu": {
     "title": "原生QR菜单与过敏原管理",

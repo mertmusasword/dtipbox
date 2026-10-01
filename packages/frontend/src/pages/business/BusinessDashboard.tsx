@@ -25,6 +25,11 @@ import {
   Split,
   Heart,
   MessageSquareHeart,
+  Award,
+  Crown,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
@@ -43,6 +48,13 @@ export const BusinessDashboard: React.FC = () => {
   const [agreementAccepted, setAgreementAccepted] = useState<boolean>(true);
   const [showAgreementModal, setShowAgreementModal] = useState<boolean>(false);
   const [showSettlementModal, setShowSettlementModal] = useState<boolean>(false);
+  const [founderCardCollapsed, setFounderCardCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('naponi_founder_card_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   const loadData = useCallback(() => {
     setLoading(true);
@@ -134,20 +146,23 @@ export const BusinessDashboard: React.FC = () => {
                 {loading ? t('business.dashboardTitle') : `${business?.name || t('business.dashboardTitle')}`}
               </h1>
               {business?.is_founder_member && (
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(99, 102, 241, 0.16) 100%)',
-                  border: '1px solid rgba(245, 158, 11, 0.45)',
-                  color: '#fbbf24',
-                  padding: '2px 10px',
-                  borderRadius: '20px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  boxShadow: '0 2px 8px rgba(245, 158, 11, 0.15)',
-                }}>
-                  <span>🏆</span>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.15) 100%)',
+                    border: '1px solid rgba(245, 158, 11, 0.5)',
+                    color: '#fef3c7',
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    boxShadow: '0 2px 12px rgba(245, 158, 11, 0.25)',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  <Award size={15} style={{ color: '#fbbf24' }} />
                   <span>{t('auth.founderActiveBadge')}</span>
                 </div>
               )}
@@ -183,6 +198,221 @@ export const BusinessDashboard: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {/* 2026 Founder Member Privilege Banner */}
+      {!loading && business?.is_founder_member && (
+        <div
+          className="glass-card"
+          style={{
+            marginBottom: '1.5rem',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(30, 27, 75, 0.3) 100%)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(245, 158, 11, 0.2)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Subtle gold decorative glow */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-60px',
+              right: '-60px',
+              width: '180px',
+              height: '180px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              marginBottom: founderCardCollapsed ? '0' : '1.25rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 14px rgba(245, 158, 11, 0.35)',
+                  flexShrink: 0,
+                }}
+              >
+                <Crown size={22} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#fef3c7', letterSpacing: '-0.01em' }}>
+                    {t('founder.dashboardBannerTitle')}
+                  </h3>
+                  <span
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                      color: '#fbbf24',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    2026 VIP
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.84rem', color: '#cbd5e1', margin: '0.2rem 0 0', lineHeight: 1.4 }}>
+                  {t('founder.dashboardBannerSubtitle')}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  const nextState = !founderCardCollapsed;
+                  setFounderCardCollapsed(nextState);
+                  try {
+                    localStorage.setItem('naponi_founder_card_collapsed', String(nextState));
+                  } catch {}
+                }}
+                className="btn btn-secondary"
+                style={{
+                  fontSize: '0.78rem',
+                  padding: '6px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  borderColor: 'rgba(245, 158, 11, 0.3)',
+                  color: '#fbbf24',
+                  background: 'rgba(245, 158, 11, 0.08)',
+                }}
+              >
+                {founderCardCollapsed ? (
+                  <>
+                    <ChevronDown size={14} /> {t('founder.showDetails')}
+                  </>
+                ) : (
+                  <>
+                    <ChevronUp size={14} /> {t('founder.hideDetails')}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {!founderCardCollapsed && (
+            <>
+              {/* 4 Feature Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '0.85rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.07)',
+                    borderRadius: '12px',
+                    padding: '0.9rem 1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.3rem' }}>
+                    <CheckCircle2 size={16} />
+                    <span>{t('founder.perk1Title')}</span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+                    {t('founder.perk1Desc')}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.07)',
+                    borderRadius: '12px',
+                    padding: '0.9rem 1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.3rem' }}>
+                    <CheckCircle2 size={16} />
+                    <span>{t('founder.perk2Title')}</span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+                    {t('founder.perk2Desc')}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.07)',
+                    borderRadius: '12px',
+                    padding: '0.9rem 1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.3rem' }}>
+                    <CheckCircle2 size={16} />
+                    <span>{t('founder.perk3Title')}</span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+                    {t('founder.perk3Desc')}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.07)',
+                    borderRadius: '12px',
+                    padding: '0.9rem 1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.3rem' }}>
+                    <CheckCircle2 size={16} />
+                    <span>{t('founder.perk4Title')}</span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+                    {t('founder.perk4Desc')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Notice */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem',
+                  paddingTop: '0.75rem',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  fontSize: '0.76rem',
+                  color: '#94a3b8',
+                }}
+              >
+                <span>🛡️ {t('founder.disclaimer')}</span>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Agreement Status Banner */}
       {!loading && !agreementAccepted && (

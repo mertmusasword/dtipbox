@@ -765,7 +765,20 @@ export const es = {
     "card4Desc": "Sin cuotas ocultas ni sorpresas. Cada negocio registrado antes de fin de año 2026 queda protegido de forma permanente.",
     "disclaimer": "Los comercios disfrutan de la plataforma central gratis de por vida. No incluye tasas de procesamiento de pagos ni servicios de terceros.",
     "ctaBottom": "Unirse como Miembro Fundador",
-    "deadlineNotice": "Fecha límite: 31 de diciembre de 2026, 23:59:59"
+    "deadlineNotice": "Fecha límite: 31 de diciembre de 2026, 23:59:59",
+    "dashboardBannerTitle": "Privilegio de Miembro Fundador 2026 Activo",
+    "dashboardBannerSubtitle": "Al haberse registrado antes del 31 de diciembre de 2026, su establecimiento disfruta de las funciones de Naponi de por vida sin cuotas de suscripción.",
+    "perk1Title": "Suscripción a 0€ de por vida",
+    "perk1Desc": "Exento para siempre de las tarifas mensuales de suscripción SaaS que entrarán en 2027.",
+    "perk2Title": "Personal y Mesas Ilimitados",
+    "perk2Desc": "Añada tantos camareros, empleados y códigos QR de mesa como necesite.",
+    "perk3Title": "Bote de Propinas y Smart QR Incluidos",
+    "perk3Desc": "Acceso total a pooling de propinas, menú digital, reseñas y Wi-Fi para clientes.",
+    "perk4Title": "Estatus de Fundador Permanente",
+    "perk4Desc": "Insignia dorada de fundador verificada en su perfil y atención prioritaria.",
+    "viewBenefits": "Ver Ventajas de Fundador",
+    "hideDetails": "Ocultar Detalles",
+    "showDetails": "Mostrar Detalles"
   },
   "menu": {
     "title": "Menú QR Nativo y Gestión de Alérgenos",

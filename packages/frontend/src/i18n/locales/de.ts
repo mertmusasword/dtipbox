@@ -765,7 +765,20 @@ export const de = {
     "card4Desc": "Keine versteckten Gebühren. Alle vor Jahresende 2026 registrierten Betriebe bleiben dauerhaft befreit.",
     "disclaimer": "Berechtigte Betriebe nutzen die Kernplattform lebenslang kostenlos. Gebühren von Drittanbietern und optionale Sonderanfertigungen sind ausgeschlossen.",
     "ctaBottom": "Jetzt als Gründer-Mitglied beitreten",
-    "deadlineNotice": "Frist: 31. Dezember 2026 um 23:59:59 Uhr"
+    "deadlineNotice": "Frist: 31. Dezember 2026 um 23:59:59 Uhr",
+    "dashboardBannerTitle": "2026 Gründungsmitglied-Vorteil Aktiv",
+    "dashboardBannerSubtitle": "Da Sie vor dem 31. Dezember 2026 beigetreten sind, nutzt Ihr Betrieb alle Naponi-Kernfunktionen lebenslang ohne jegliche Abogebühr.",
+    "perk1Title": "Lebenslang 0 € Abonnement",
+    "perk1Desc": "Dauerhaft befreit von den ab 2027 geltenden monatlichen SaaS-Gebühren.",
+    "perk2Title": "Unbegrenzt Personal & Tische",
+    "perk2Desc": "Fügen Sie beliebig viele Servicekräfte und Tisch-QR-Codes hinzu.",
+    "perk3Title": "Trinkgeld-Pool & Smart QR inklusive",
+    "perk3Desc": "Voller Zugriff auf Trinkgeld-Pool, QR-Speisekarte, Gästefeedback und Wi-Fi.",
+    "perk4Title": "Dauerhafter Gründer-Status",
+    "perk4Desc": "Verifiziertes goldenes Gründer-Abzeichen und vorrangiger Support.",
+    "viewBenefits": "Gründer-Vorteile ansehen",
+    "hideDetails": "Details ausblenden",
+    "showDetails": "Details anzeigen"
   },
   "menu": {
     "title": "Integrierte QR-Speisekarte & Allergenverwaltung",
