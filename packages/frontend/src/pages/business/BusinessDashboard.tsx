@@ -30,12 +30,14 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle2,
+  ShieldCheck,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import { AgreementModal } from '../../components/AgreementModal';
 import { CustomerFeedbacks } from '../../components/CustomerFeedbacks';
 import { TipPoolSettlementModal } from '../../components/TipPoolSettlementModal';
+import { PlanGuardStatusModal } from '../../components/business/PlanGuardStatusModal';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
 export const BusinessDashboard: React.FC = () => {
@@ -48,6 +50,7 @@ export const BusinessDashboard: React.FC = () => {
   const [agreementAccepted, setAgreementAccepted] = useState<boolean>(true);
   const [showAgreementModal, setShowAgreementModal] = useState<boolean>(false);
   const [showSettlementModal, setShowSettlementModal] = useState<boolean>(false);
+  const [showPlanGuardModal, setShowPlanGuardModal] = useState<boolean>(false);
   const [founderCardCollapsed, setFounderCardCollapsed] = useState<boolean>(() => {
     try {
       return localStorage.getItem('naponi_founder_card_collapsed') === 'true';
@@ -146,7 +149,9 @@ export const BusinessDashboard: React.FC = () => {
                 {loading ? t('business.dashboardTitle') : `${business?.name || t('business.dashboardTitle')}`}
               </h1>
               {business?.is_founder_member && (
-                <div
+                <button
+                  type="button"
+                  onClick={() => setShowPlanGuardModal(true)}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -160,11 +165,14 @@ export const BusinessDashboard: React.FC = () => {
                     fontWeight: 700,
                     boxShadow: '0 2px 12px rgba(245, 158, 11, 0.25)',
                     letterSpacing: '0.02em',
+                    cursor: 'pointer',
+                    transition: 'transform 0.15s ease',
                   }}
+                  title={language === 'tr' ? 'Plan ve Kurucu Ayrıcalıklarını Görüntüle' : 'View Plan and Founder Privileges'}
                 >
                   <Award size={15} style={{ color: '#fbbf24' }} />
                   <span>{t('auth.founderActiveBadge')}</span>
-                </div>
+                </button>
               )}
             </div>
             <p className="page-subtitle mb-0" style={{ marginTop: '0.35rem' }}>
@@ -278,7 +286,25 @@ export const BusinessDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setShowPlanGuardModal(true)}
+                className="btn btn-secondary"
+                style={{
+                  fontSize: '0.78rem',
+                  padding: '6px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  borderColor: 'rgba(245, 158, 11, 0.4)',
+                  color: '#fbbf24',
+                  background: 'rgba(245, 158, 11, 0.12)',
+                }}
+              >
+                <ShieldCheck size={14} />
+                <span>{language === 'tr' ? 'Plan & Kapasite' : 'Plan & Quotas'}</span>
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -411,6 +437,82 @@ export const BusinessDashboard: React.FC = () => {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* Post-2026 / Standard Member Plan Guard Banner */}
+      {!loading && !business?.is_founder_member && (
+        <div
+          className="glass-card"
+          style={{
+            marginBottom: '1.5rem',
+            border: '1px solid rgba(59, 130, 246, 0.35)',
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 27, 75, 0.3) 100%)',
+            padding: '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '12px',
+                background: 'rgba(59, 130, 246, 0.15)',
+                color: '#60a5fa',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                  {language === 'tr' ? 'Standart Üyelik Planı (Kotalı)' : 'Standard Membership Plan (Quota Capped)'}
+                </h3>
+                <span
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.15)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    color: '#60a5fa',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                  }}
+                >
+                  Standard
+                </span>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0' }}>
+                {language === 'tr'
+                  ? 'Maksimum 10 masa ve 5 personel sınırı devrededir. Sınırsız kapasite ve POS entegrasyonu için detayları inceleyin.'
+                  : 'Limited to 10 tables and 5 staff. View plan details for unlimited capacity and POS integrations.'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowPlanGuardModal(true)}
+            className="btn btn-secondary btn-sm"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              borderColor: 'rgba(59, 130, 246, 0.4)',
+              color: '#60a5fa',
+            }}
+          >
+            <ShieldCheck size={15} />
+            <span>{language === 'tr' ? 'Kapasiteyi İncele' : 'View Quotas'}</span>
+          </button>
         </div>
       )}
 
@@ -900,6 +1002,11 @@ export const BusinessDashboard: React.FC = () => {
         currency={currency}
         businessName={business?.name}
         onSettled={loadData}
+      />
+
+      <PlanGuardStatusModal
+        isOpen={showPlanGuardModal}
+        onClose={() => setShowPlanGuardModal(false)}
       />
     </div>
   );

@@ -12,6 +12,7 @@ import * as analyticsService from '../services/analytics.service';
 import * as commissionService from '../services/commission.service';
 import * as auditService from '../services/audit.service';
 import * as tipPoolService from '../services/tipPool.service';
+import { planGuardService } from '../services/plan-guard.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType, TipDistributionMode, PosFeePayer } from '@prisma/client';
 import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
 import { AppError } from '../middleware/errorHandler';
@@ -198,6 +199,7 @@ const createTableSchema = {
 
 router.post('/tables', validate(createTableSchema), async (req: AuthRequest, res, next) => {
   try {
+    await planGuardService.assertCanAddTable(req.user!.businessId!);
     const table = await tableService.createTable(
       req.user!.businessId!,
       req.user!.id,
@@ -865,6 +867,16 @@ router.put('/tip-pool/distributions/:id/pay-all', async (req: AuthRequest, res, 
       req.params.id as string
     );
     res.json({ success: true, data: updated, message: 'Tüm personel payları ödendi olarak işaretlendi.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Membership & Plan Capabilities Guard ---
+router.get('/plan-status', async (req: AuthRequest, res, next) => {
+  try {
+    const status = await planGuardService.getBusinessPlanStatus(req.user!.businessId!);
+    res.json({ success: true, data: status });
   } catch (error) {
     next(error);
   }
