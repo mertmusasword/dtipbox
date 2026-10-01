@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { ArrowRight, FileText, ShieldCheck, Building2, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, FileText, ShieldCheck, Building2, CheckCircle2, Crown, Sparkles, Clock, X, ChevronRight, Award } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted, trackBusinessRegistered, trackFounderSignupStarted, trackFounderSignupCompleted } from '../../analytics';
 import { AgreementModal } from '../../components/AgreementModal';
@@ -27,6 +27,8 @@ export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
   const { t, dir, language } = useLanguage();
 
+  const daysLeft = Math.max(1, Math.ceil((new Date('2026-12-31T23:59:59.999Z').getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+
   const defaultRegion = LANGUAGE_COUNTRY_DEFAULTS[language] || {
     country: 'US',
     currency: 'USD',
@@ -47,6 +49,7 @@ export const RegisterPage: React.FC = () => {
   const [acceptedAgreement, setAcceptedAgreement] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [showCorporateModal, setShowCorporateModal] = useState(false);
+  const [showFounderModal, setShowFounderModal] = useState(false);
 
   const countries = [
     { code: 'US', name: 'United States', currency: 'USD', timezone: 'America/New_York' },
@@ -164,51 +167,108 @@ export const RegisterPage: React.FC = () => {
 
         {/* 2026 Founder Membership Callout */}
         <div style={{
-          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(99, 102, 241, 0.12) 100%)',
-          border: '1px solid rgba(245, 158, 11, 0.35)',
-          borderRadius: '12px',
-          padding: '1rem 1.15rem',
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(99, 102, 241, 0.14) 100%)',
+          border: '1px solid rgba(245, 158, 11, 0.45)',
+          borderRadius: '14px',
+          padding: '1.15rem 1.25rem',
           marginBottom: '1.5rem',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-          display: 'flex',
-          gap: '0.85rem',
-          alignItems: 'flex-start',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(245, 158, 11, 0.2)',
+          position: 'relative',
+          overflow: 'hidden',
         }}>
+          {/* Top highlight glow */}
           <div style={{
-            width: 38,
-            height: 38,
-            borderRadius: 10,
-            background: 'rgba(245, 158, 11, 0.2)',
-            border: '1px solid rgba(245, 158, 11, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.2rem',
-            flexShrink: 0,
-            marginTop: '2px',
-          }}>
-            🏆
-          </div>
-          <div style={{ flex: 1, minWidth: 0, textAlign: dir === 'rtl' ? 'right' : 'left' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <span style={{ color: '#fbbf24', fontWeight: 800, fontSize: '0.9rem', letterSpacing: '-0.01em' }}>
-                {t('auth.founderTitle')}
-              </span>
-              <span style={{
-                background: 'rgba(245, 158, 11, 0.2)',
-                color: '#fef08a',
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                padding: '2px 8px',
-                borderRadius: '6px',
-                border: '1px solid rgba(245, 158, 11, 0.4)',
-              }}>
-                {t('auth.untilDec31')}
-              </span>
+            position: 'absolute',
+            top: '-40px',
+            right: '-40px',
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }} />
+
+          <div style={{ display: 'flex', gap: '0.9rem', alignItems: 'flex-start' }}>
+            <div style={{
+              width: 42,
+              height: 42,
+              borderRadius: 12,
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 14px rgba(245, 158, 11, 0.35)',
+              flexShrink: 0,
+              marginTop: '1px',
+            }}>
+              <Crown size={22} />
             </div>
-            <p style={{ color: '#e2e8f0', fontSize: '0.82rem', marginTop: '0.35rem', lineHeight: 1.45, marginBottom: 0 }}>
-              {t('auth.founderSubtitle')}
-            </p>
+            <div style={{ flex: 1, minWidth: 0, textAlign: dir === 'rtl' ? 'right' : 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span style={{ color: '#fef08a', fontWeight: 800, fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
+                  {t('auth.founderJoiningAs')}
+                </span>
+                <span style={{
+                  background: 'rgba(245, 158, 11, 0.25)',
+                  color: '#fbbf24',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 9px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(245, 158, 11, 0.45)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                }}>
+                  <Clock size={12} />
+                  {t('auth.founderDaysLeft', { days: String(daysLeft) })}
+                </span>
+              </div>
+              <p style={{ color: '#e2e8f0', fontSize: '0.82rem', marginTop: '0.35rem', lineHeight: 1.45, marginBottom: '0.65rem' }}>
+                {t('auth.founderSubtitle')}
+              </p>
+
+              {/* 3 Perks Checkmarks */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.78rem', color: '#cbd5e1' }}>
+                  <CheckCircle2 size={14} style={{ color: '#fbbf24', flexShrink: 0 }} />
+                  <span>{t('auth.founderPill1')}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.78rem', color: '#cbd5e1' }}>
+                  <CheckCircle2 size={14} style={{ color: '#fbbf24', flexShrink: 0 }} />
+                  <span>{t('auth.founderPill2')}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.78rem', color: '#cbd5e1' }}>
+                  <CheckCircle2 size={14} style={{ color: '#fbbf24', flexShrink: 0 }} />
+                  <span>{t('auth.founderPill3')}</span>
+                </div>
+              </div>
+
+              {/* View Perks Trigger */}
+              <button
+                type="button"
+                onClick={() => setShowFounderModal(true)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  color: '#fbbf24',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '3px',
+                }}
+              >
+                <Sparkles size={13} />
+                <span>{t('auth.founderViewPerks')}</span>
+                <ChevronRight size={13} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -513,6 +573,147 @@ export const RegisterPage: React.FC = () => {
           defaultCompanyName={formData.businessName}
           defaultEmail={formData.email}
         />
+
+        {/* Founder Member Perks Modal */}
+        {showFounderModal && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.75)',
+              backdropFilter: 'blur(8px)',
+              zIndex: 999999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1.25rem',
+            }}
+            onClick={() => setShowFounderModal(false)}
+          >
+            <div
+              style={{
+                background: '#0f172a',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                borderRadius: '20px',
+                maxWidth: '560px',
+                width: '100%',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                padding: '1.75rem',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+                color: '#ffffff',
+                position: 'relative',
+                textAlign: dir === 'rtl' ? 'right' : 'left',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowFounderModal(false)}
+                style={{
+                  position: 'absolute',
+                  top: '1.25rem',
+                  right: dir === 'rtl' ? 'auto' : '1.25rem',
+                  left: dir === 'rtl' ? '1.25rem' : 'auto',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: 32,
+                  height: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#cbd5e1',
+                  cursor: 'pointer',
+                }}
+              >
+                <X size={18} />
+              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1rem' }}>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.35)',
+                }}>
+                  <Crown size={22} color="#fff" />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#fef08a' }}>
+                    {t('founder.sectionTitle')}
+                  </h3>
+                  <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+                    {t('founder.deadlineNotice')}
+                  </span>
+                </div>
+              </div>
+
+              <p style={{ fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+                {t('founder.sectionSubtitle')}
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
+                <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '0.85rem 1rem' }}>
+                  <div style={{ fontWeight: 700, color: '#fbbf24', fontSize: '0.86rem', marginBottom: '0.2rem' }}>
+                    ✓ {t('founder.card1Title')}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                    {t('founder.card1Desc')}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '0.85rem 1rem' }}>
+                  <div style={{ fontWeight: 700, color: '#fbbf24', fontSize: '0.86rem', marginBottom: '0.2rem' }}>
+                    ✓ {t('founder.card2Title')}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                    {t('founder.card2Desc')}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '0.85rem 1rem' }}>
+                  <div style={{ fontWeight: 700, color: '#fbbf24', fontSize: '0.86rem', marginBottom: '0.2rem' }}>
+                    ✓ {t('founder.card3Title')}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                    {t('founder.card3Desc')}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '0.85rem 1rem' }}>
+                  <div style={{ fontWeight: 700, color: '#fbbf24', fontSize: '0.86rem', marginBottom: '0.2rem' }}>
+                    ✓ {t('founder.card4Title')}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                    {t('founder.card4Desc')}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ fontSize: '0.72rem', color: '#64748b', lineHeight: 1.4, marginBottom: '1.25rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '0.75rem' }}>
+                ℹ️ {t('founder.disclaimer')}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowFounderModal(false)}
+                className="btn btn-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                {t('common.close')}
+              </button>
+            </div>
+          </div>
+        )}
 
         <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           {t('auth.haveAccountPrompt')}{' '}
