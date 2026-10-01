@@ -127,7 +127,16 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     const amt = Number(tip.amount);
     const fee = Number(tip.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
     const method = (tip.payment_method || '').toUpperCase();
-    const isBank = method === 'BANK_TRANSFER' || method === 'IBAN' || method === 'FAST';
+    const isBank =
+      method === 'BANK_TRANSFER' ||
+      method === 'IBAN' ||
+      method === 'IBAN_TRANSFER' ||
+      method === 'FAST' ||
+      method === 'HAVALE' ||
+      method === 'EFT' ||
+      method.includes('IBAN') ||
+      method.includes('BANK') ||
+      method.includes('HAVALE');
     const isCash = method === 'CASH';
     const isCard = !isBank && !isCash;
 
@@ -287,7 +296,7 @@ export async function settleCommission(
 ) {
   const whereClause: any = {
     business_id: businessId,
-    payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST'] },
+    payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST', 'IBAN_TRANSFER', 'HAVALE', 'EFT'] },
     is_settled: false,
   };
 

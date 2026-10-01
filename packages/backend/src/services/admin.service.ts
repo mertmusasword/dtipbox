@@ -234,7 +234,16 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
     const amt = Number(t.amount);
     const fee = Number(t.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
     const method = (t.payment_method || '').toUpperCase();
-    const isBank = method === 'BANK_TRANSFER' || method === 'IBAN' || method === 'FAST';
+    const isBank =
+      method === 'BANK_TRANSFER' ||
+      method === 'IBAN' ||
+      method === 'IBAN_TRANSFER' ||
+      method === 'FAST' ||
+      method === 'HAVALE' ||
+      method === 'EFT' ||
+      method.includes('IBAN') ||
+      method.includes('BANK') ||
+      method.includes('HAVALE');
     const isCash = method === 'CASH';
     const isCard = !isBank && !isCash;
 
@@ -371,7 +380,7 @@ export async function confirmAdminVenueSettlement(businessId: string, adminUserI
   const result = await prisma.tip.updateMany({
     where: {
       business_id: businessId,
-      payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST'] },
+      payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST', 'IBAN_TRANSFER', 'HAVALE', 'EFT'] },
       is_settled: false,
     },
     data: { is_settled: true },
