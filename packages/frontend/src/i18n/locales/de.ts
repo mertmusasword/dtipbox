@@ -784,7 +784,13 @@ export const de = {
     "perk4Desc": "Verifiziertes goldenes Gründer-Abzeichen und vorrangiger Support.",
     "viewBenefits": "Gründer-Vorteile ansehen",
     "hideDetails": "Details ausblenden",
-    "showDetails": "Details anzeigen"
+    "showDetails": "Details anzeigen",
+    "countdownDays": "TAGE",
+    "countdownHours": "STUNDEN",
+    "countdownMinutes": "MINUTEN",
+    "countdownSeconds": "SEKUNDEN",
+    "heroCountdownLabel": "Verbleibende Zeit für das Gründer-Programm 2026:",
+    "heroCountdownDesc": "Betriebe, die bis zum 31. Dezember 2026 beitreten, sichern sich dauerhaft 0 € Softwaregebühren & verifizierten VIP-Gründerstatus."
   },
   "menu": {
     "title": "Integrierte QR-Speisekarte & Allergenverwaltung",

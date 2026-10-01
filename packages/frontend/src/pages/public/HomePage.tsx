@@ -41,6 +41,7 @@ import {
   Sliders,
   Download,
   Award,
+  Crown,
   CheckCheck,
   LayoutDashboard,
   Coins,
@@ -95,6 +96,30 @@ export const HomePage: React.FC = () => {
 
   // Business Suite Mockup active tab ('analytics' | 'pooling' | 'qr')
   const [suiteTab, setSuiteTab] = useState<'analytics' | 'pooling' | 'qr'>('analytics');
+
+  // 2026 Founder Program Live Countdown Timer (Target: Dec 31, 2026 23:59:59 GMT+3)
+  const [founderTimeLeft, setFounderTimeLeft] = useState<{
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const targetDate = new Date('2026-12-31T23:59:59+03:00').getTime();
+    const updateCountdown = () => {
+      const now = Date.now();
+      const diff = Math.max(0, targetDate - now);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      setFounderTimeLeft({ days, hours, minutes, seconds });
+    };
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Adaptive phone simulator configs based on active language
   const simConfig = useMemo(() => {
@@ -348,6 +373,51 @@ export const HomePage: React.FC = () => {
           <div className="home-hero-grid">
             {/* Left Hero Column */}
             <div className="home-hero-content">
+              {/* 2026 Founder Program Live Countdown Hero Card */}
+              <div className="home-hero-founder-banner">
+                <div className="home-hero-founder-header">
+                  <div className="home-hero-founder-badge">
+                    <Crown size={14} />
+                    <span>{t('founder.sectionTag')}</span>
+                  </div>
+                  <div className="home-countdown-grid">
+                    <div className="home-countdown-tile">
+                      <span className="home-countdown-value">{founderTimeLeft.days}</span>
+                      <span className="home-countdown-unit">{t('founder.countdownDays')}</span>
+                    </div>
+                    <span className="home-countdown-separator">:</span>
+                    <div className="home-countdown-tile">
+                      <span className="home-countdown-value">{String(founderTimeLeft.hours).padStart(2, '0')}</span>
+                      <span className="home-countdown-unit">{t('founder.countdownHours')}</span>
+                    </div>
+                    <span className="home-countdown-separator">:</span>
+                    <div className="home-countdown-tile">
+                      <span className="home-countdown-value">{String(founderTimeLeft.minutes).padStart(2, '0')}</span>
+                      <span className="home-countdown-unit">{t('founder.countdownMinutes')}</span>
+                    </div>
+                    <span className="home-countdown-separator">:</span>
+                    <div className="home-countdown-tile">
+                      <span className="home-countdown-value">{String(founderTimeLeft.seconds).padStart(2, '0')}</span>
+                      <span className="home-countdown-unit">{t('founder.countdownSeconds')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="home-hero-founder-action-wrap">
+                  <p className="home-hero-founder-desc">
+                    <strong style={{ color: '#fde047' }}>{t('founder.heroCountdownLabel')}</strong> {t('founder.heroCountdownDesc')}
+                  </p>
+                  <Link
+                    to="/register"
+                    className="home-hero-founder-cta"
+                    onClick={() => trackFounderCtaClicked('hero_founder_banner')}
+                  >
+                    <span>{t('founder.ctaButton')}</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
                 <div className="home-hero-badge" style={{ margin: 0, background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}>
                   <Sparkles size={13} />
@@ -1348,6 +1418,158 @@ export const HomePage: React.FC = () => {
                   <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>{t('home.corpPill4Desc')}</div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          2026 FOUNDER MEMBER PROGRAM SHOWCASE SECTION
+          ==================================================================== */}
+      <section className="home-section" id="founder-program">
+        <div className="home-container">
+          <div className="home-founder-card">
+            <div className="home-section-header" style={{ marginBottom: '1.75rem' }}>
+              <span
+                className="home-section-tag"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  background: 'rgba(234, 179, 8, 0.15)',
+                  border: '1px solid rgba(234, 179, 8, 0.4)',
+                  color: '#fde047',
+                  padding: '0.4rem 1.1rem',
+                  borderRadius: '9999px',
+                }}
+              >
+                <Crown size={14} />
+                <span>{t('founder.sectionTag')}</span>
+              </span>
+              <h2 className="home-section-title" style={{ maxWidth: '850px' }}>
+                {t('founder.sectionTitle')}
+              </h2>
+              <p className="home-section-desc" style={{ maxWidth: '800px' }}>
+                {t('founder.sectionSubtitle')}
+              </p>
+            </div>
+
+            {/* Live Countdown Card inside Section */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                margin: '1.5rem auto 2.5rem auto',
+                padding: '1.25rem 2rem',
+                background: 'rgba(15, 23, 42, 0.65)',
+                border: '1px solid rgba(234, 179, 8, 0.25)',
+                borderRadius: '16px',
+                maxWidth: '650px',
+                width: '100%',
+              }}
+            >
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fde047', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Clock size={16} />
+                <span>{t('founder.deadlineNotice')}</span>
+              </div>
+              <div className="home-countdown-grid">
+                <div className="home-countdown-tile">
+                  <span className="home-countdown-value">{founderTimeLeft.days}</span>
+                  <span className="home-countdown-unit">{t('founder.countdownDays')}</span>
+                </div>
+                <span className="home-countdown-separator">:</span>
+                <div className="home-countdown-tile">
+                  <span className="home-countdown-value">{String(founderTimeLeft.hours).padStart(2, '0')}</span>
+                  <span className="home-countdown-unit">{t('founder.countdownHours')}</span>
+                </div>
+                <span className="home-countdown-separator">:</span>
+                <div className="home-countdown-tile">
+                  <span className="home-countdown-value">{String(founderTimeLeft.minutes).padStart(2, '0')}</span>
+                  <span className="home-countdown-unit">{t('founder.countdownMinutes')}</span>
+                </div>
+                <span className="home-countdown-separator">:</span>
+                <div className="home-countdown-tile">
+                  <span className="home-countdown-value">{String(founderTimeLeft.seconds).padStart(2, '0')}</span>
+                  <span className="home-countdown-unit">{t('founder.countdownSeconds')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Feature Perk Cards */}
+            <div className="home-founder-perks-grid">
+              <div className="home-founder-perk-card">
+                <div className="home-founder-perk-icon-wrap">
+                  <Percent size={22} />
+                </div>
+                <h3 className="home-founder-perk-title">{t('founder.card1Title')}</h3>
+                <p className="home-founder-perk-desc">{t('founder.card1Desc')}</p>
+              </div>
+
+              <div className="home-founder-perk-card">
+                <div className="home-founder-perk-icon-wrap">
+                  <Crown size={22} />
+                </div>
+                <h3 className="home-founder-perk-title">{t('founder.card2Title')}</h3>
+                <p className="home-founder-perk-desc">{t('founder.card2Desc')}</p>
+              </div>
+
+              <div className="home-founder-perk-card">
+                <div className="home-founder-perk-icon-wrap">
+                  <Sparkles size={22} />
+                </div>
+                <h3 className="home-founder-perk-title">{t('founder.card3Title')}</h3>
+                <p className="home-founder-perk-desc">{t('founder.card3Desc')}</p>
+              </div>
+
+              <div className="home-founder-perk-card">
+                <div className="home-founder-perk-icon-wrap">
+                  <ShieldCheck size={22} />
+                </div>
+                <h3 className="home-founder-perk-title">{t('founder.card4Title')}</h3>
+                <p className="home-founder-perk-desc">{t('founder.card4Desc')}</p>
+              </div>
+            </div>
+
+            {/* Disclaimer */}
+            <div
+              style={{
+                fontSize: '0.78rem',
+                color: '#94a3b8',
+                lineHeight: 1.5,
+                background: 'rgba(0, 0, 0, 0.3)',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '10px',
+                marginBottom: '1.75rem',
+                borderLeft: '3px solid rgba(234, 179, 8, 0.5)',
+              }}
+            >
+              {t('founder.disclaimer')}
+            </div>
+
+            {/* CTA Box */}
+            <div className="home-founder-cta-box">
+              <div className="home-founder-cta-text">
+                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.25rem' }}>
+                  {t('founder.sectionTitle')}
+                </div>
+                <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
+                  {t('founder.heroCountdownDesc')}
+                </div>
+              </div>
+              <Link
+                to="/register"
+                className="home-founder-cta-btn"
+                onClick={() => {
+                  trackFounderCtaClicked('founder_section_cta');
+                  trackBusinessRegisterStarted('founder_section_cta');
+                }}
+              >
+                <span>{t('founder.ctaBottom')}</span>
+                <ArrowRight size={18} />
+              </Link>
             </div>
           </div>
         </div>

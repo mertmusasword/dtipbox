@@ -784,7 +784,13 @@ export const en = {
     "perk4Desc": "Verified gold founder badge on your venue profile and priority assistance.",
     "viewBenefits": "View Founder Benefits",
     "hideDetails": "Hide Details",
-    "showDetails": "Show Details"
+    "showDetails": "Show Details",
+    "countdownDays": "DAYS",
+    "countdownHours": "HOURS",
+    "countdownMinutes": "MINS",
+    "countdownSeconds": "SECS",
+    "heroCountdownLabel": "Time Remaining for 2026 Founder Membership Program:",
+    "heroCountdownDesc": "Venues joining before Dec 31, 2026 lock in lifetime 0₺ subscription & verified VIP Founder Member status."
   },
   "menu": {
     "title": "Native QR Menu & Allergen Management",

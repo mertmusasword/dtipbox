@@ -784,7 +784,13 @@ export const ja = {
     "perk4Desc": "店舗プロフィールに認定ゴールドバッジを表示し、優先サポートを適用。",
     "viewBenefits": "ファウンダー特典一覧を見る",
     "hideDetails": "詳細を隠す",
-    "showDetails": "詳細を表示"
+    "showDetails": "詳細を表示",
+    "countdownDays": "日",
+    "countdownHours": "時間",
+    "countdownMinutes": "分",
+    "countdownSeconds": "秒",
+    "heroCountdownLabel": "2026年ファウンダー会員プログラム終了まで：",
+    "heroCountdownDesc": "2026年12月31日までにご登録の店舗は、月額利用料が生涯0円＆認証済みVIPファウンダー会員ステータスが付与されます。"
   },
   "menu": {
     "title": "ネイティブQRメニュー＆アレルゲン管理",

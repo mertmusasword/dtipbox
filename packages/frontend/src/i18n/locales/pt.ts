@@ -784,7 +784,13 @@ export const pt = {
     "perk4Desc": "Distintivo dourado de fundador no seu perfil e suporte técnico prioritário.",
     "viewBenefits": "Ver Vantagens de Fundador",
     "hideDetails": "Ocultar Detalhes",
-    "showDetails": "Mostrar Detalhes"
+    "showDetails": "Mostrar Detalhes",
+    "countdownDays": "DIAS",
+    "countdownHours": "HORAS",
+    "countdownMinutes": "MINUTOS",
+    "countdownSeconds": "SEGUNDOS",
+    "heroCountdownLabel": "Tempo restante para o Programa de Membros Fundadores 2026:",
+    "heroCountdownDesc": "Locais cadastrados até 31 de dez. de 2026 garantem assinatura a 0€ vitalícia e status VIP de Membro Fundador verificado."
   },
   "menu": {
     "title": "Cardápio QR Nativo e Gestão de Alérgenos",

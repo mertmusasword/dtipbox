@@ -784,7 +784,13 @@ export const fr = {
     "perk4Desc": "Badge doré de fondateur vérifié sur votre profil et assistance prioritaire.",
     "viewBenefits": "Voir les Avantages Fondateur",
     "hideDetails": "Masquer les Détails",
-    "showDetails": "Afficher les Détails"
+    "showDetails": "Afficher les Détails",
+    "countdownDays": "JOURS",
+    "countdownHours": "HEURES",
+    "countdownMinutes": "MINUTES",
+    "countdownSeconds": "SECONDES",
+    "heroCountdownLabel": "Temps restant pour le Programme Membres Fondateurs 2026 :",
+    "heroCountdownDesc": "Les établissements inscrits avant le 31 déc. 2026 bénéficient d'un abonnement à 0€ à vie et du statut VIP Fondateur vérifié."
   },
   "menu": {
     "title": "Menu QR natif & Gestion des allergènes",

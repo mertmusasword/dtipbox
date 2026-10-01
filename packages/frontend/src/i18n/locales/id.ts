@@ -784,7 +784,13 @@ export const id = {
     "perk4Desc": "Lencana emas founder terverifikasi di profil bisnis Anda dan dukungan prioritas.",
     "viewBenefits": "Lihat Keuntungan Founder",
     "hideDetails": "Sembunyikan Rincian",
-    "showDetails": "Tampilkan Rincian"
+    "showDetails": "Tampilkan Rincian",
+    "countdownDays": "HARI",
+    "countdownHours": "JAM",
+    "countdownMinutes": "MENIT",
+    "countdownSeconds": "DETIK",
+    "heroCountdownLabel": "Waktu Tersisa untuk Program Anggota Founder 2026:",
+    "heroCountdownDesc": "Bisnis yang bergabung sebelum 31 Des 2026 mengunci biaya langganan Rp 0 seumur hidup & status VIP Anggota Founder terverifikasi."
   },
   "menu": {
     "title": "Menu QR Asli & Manajemen Alergen",

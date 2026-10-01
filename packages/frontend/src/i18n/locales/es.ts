@@ -784,7 +784,13 @@ export const es = {
     "perk4Desc": "Insignia dorada de fundador verificada en su perfil y atención prioritaria.",
     "viewBenefits": "Ver Ventajas de Fundador",
     "hideDetails": "Ocultar Detalles",
-    "showDetails": "Mostrar Detalles"
+    "showDetails": "Mostrar Detalles",
+    "countdownDays": "DÍAS",
+    "countdownHours": "HORAS",
+    "countdownMinutes": "MINUTOS",
+    "countdownSeconds": "SEGUNDOS",
+    "heroCountdownLabel": "Tiempo restante para el Programa de Miembros Fundadores 2026:",
+    "heroCountdownDesc": "Los locales registrados antes del 31 de dic. de 2026 obtienen suscripción a 0€ de por vida y estatus VIP de Fundador verificado."
   },
   "menu": {
     "title": "Menú QR Nativo y Gestión de Alérgenos",

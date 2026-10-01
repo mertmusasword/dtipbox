@@ -784,7 +784,13 @@ export const tr = {
     "perk4Desc": "Profilinizde altın onaylı kurucu rozeti ve öncelikli teknik destek hakkı.",
     "viewBenefits": "Kurucu Üye Avantajlarını Gör",
     "hideDetails": "Detayları Gizle",
-    "showDetails": "Detayları Göster"
+    "showDetails": "Detayları Göster",
+    "countdownDays": "GÜN",
+    "countdownHours": "SAAT",
+    "countdownMinutes": "DAKİKA",
+    "countdownSeconds": "SANİYE",
+    "heroCountdownLabel": "2026 Kurucu Üyelik Programı Bitişine Kalan Süre:",
+    "heroCountdownDesc": "31 Aralık 2026'ya kadar katılan işletmelere ömür boyu 0₺ yazılım aboneliği ve VIP Kurucu Üye statüsü."
   },
   "menu": {
     "title": "Native QR Menü & Alerjen Yönetimi",

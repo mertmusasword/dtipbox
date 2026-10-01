@@ -3136,10 +3136,227 @@ body:has(.home-mobile-menu) .support-floating-btn {
 }
 
 /* ==========================================================================
-   Founder Program (2026 Kurucu Üyelik)
+   Founder Program & Hero Countdown Banner (2026 Kurucu Üyelik)
    ========================================================================== */
+.home-hero-founder-banner {
+  background: linear-gradient(135deg, rgba(24, 20, 48, 0.95) 0%, rgba(45, 23, 72, 0.85) 50%, rgba(18, 14, 38, 0.95) 100%);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.25), 0 0 20px rgba(168, 85, 247, 0.15);
+  border-radius: 18px;
+  padding: 1.15rem 1.4rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: heroFounderGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes heroFounderGlow {
+  0% {
+    border-color: rgba(234, 179, 8, 0.3);
+    box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.2), 0 0 15px rgba(168, 85, 247, 0.1);
+  }
+  100% {
+    border-color: rgba(234, 179, 8, 0.55);
+    box-shadow: 0 12px 36px -8px rgba(234, 179, 8, 0.35), 0 0 25px rgba(168, 85, 247, 0.25);
+  }
+}
+
+.home-hero-founder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.home-hero-founder-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #fde047;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.home-hero-founder-desc {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.home-countdown-grid {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-countdown-tile {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 10px;
+  padding: 0.45rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.home-countdown-value {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fbbf24;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.home-countdown-unit {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.home-countdown-separator {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: rgba(234, 179, 8, 0.5);
+  margin-top: -8px;
+}
+
+.home-hero-founder-action-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-hero-founder-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+  border: 1px solid rgba(254, 240, 138, 0.6);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.home-hero-founder-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
+}
+
 .home-founder-card {
   padding: 3rem 2.5rem;
+  background: linear-gradient(135deg, rgba(20, 15, 38, 0.9) 0%, rgba(36, 17, 60, 0.85) 50%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(234, 179, 8, 0.12);
+}
+
+.home-founder-perks-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin: 2.25rem 0;
+}
+
+@media (max-width: 1024px) {
+  .home-founder-perks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-founder-perks-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-countdown-grid {
+    gap: 0.35rem;
+  }
+  .home-countdown-tile {
+    min-width: 44px;
+    padding: 0.35rem 0.5rem;
+  }
+  .home-countdown-value {
+    font-size: 1.05rem;
+  }
+  .home-hero-founder-action-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .home-hero-founder-cta {
+    justify-content: center;
+  }
+}
+
+.home-founder-perk-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.25s ease;
+}
+
+.home-founder-perk-card:hover {
+  border-color: rgba(234, 179, 8, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(234, 179, 8, 0.1);
+}
+
+.home-founder-perk-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-founder-perk-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.home-founder-perk-desc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .home-founder-cta-box {
@@ -3148,6 +3365,9 @@ body:has(.home-mobile-menu) .support-floating-btn {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 16px;
 }
 
 .home-founder-cta-btn {

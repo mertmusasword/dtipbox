@@ -784,7 +784,13 @@ export const ar = {
     "perk4Desc": "شارة ذهبية موثقة لصفة المؤسس في ملفكم التعريفي مع أولوية الدعم الفني.",
     "viewBenefits": "عرض مزايا العضو المؤسس",
     "hideDetails": "إخفاء التفاصيل",
-    "showDetails": "عرض التفاصيل"
+    "showDetails": "عرض التفاصيل",
+    "countdownDays": "أيام",
+    "countdownHours": "ساعات",
+    "countdownMinutes": "دقائق",
+    "countdownSeconds": "ثواني",
+    "heroCountdownLabel": "الوقت المتبقي لبرنامج العضوية التأسيسية 2026:",
+    "heroCountdownDesc": "الأماكن المنضمة قبل 31 ديسمبر 2026 تضمن اشتراكاً مجانياً مدى الحياة وحالة العضو المؤسس VIP المعتمدة."
   },
   "menu": {
     "title": "قائمة الطعام الرقمية وإدارة مسببات الحساسية",

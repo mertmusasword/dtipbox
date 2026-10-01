@@ -784,7 +784,13 @@ export const zh = {
     "perk4Desc": "企业资料页展示专属金色创设认证徽章，尊享VIP优先客服通道。",
     "viewBenefits": "查看创始会员全部权益",
     "hideDetails": "收起详情",
-    "showDetails": "展开详情"
+    "showDetails": "展开详情",
+    "countdownDays": "天",
+    "countdownHours": "小时",
+    "countdownMinutes": "分钟",
+    "countdownSeconds": "秒",
+    "heroCountdownLabel": "2026年创始会员计划剩余时间：",
+    "heroCountdownDesc": "在2026年12月31日之前加入的商家，锁定终身0元软件订阅与认证VIP创始会员身份。"
   },
   "menu": {
     "title": "原生QR菜单与过敏原管理",
