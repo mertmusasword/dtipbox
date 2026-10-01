@@ -31,6 +31,7 @@ import {
   ChevronUp,
   CheckCircle2,
   ShieldCheck,
+  Mail,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
@@ -105,6 +106,47 @@ export const BusinessDashboard: React.FC = () => {
       alert(t('common.error'));
     } finally {
       setRejectingId(null);
+    }
+  };
+
+  // Receipt Modal State & Action
+  const [receiptModalTip, setReceiptModalTip] = useState<any | null>(null);
+  const [receiptEmail, setReceiptEmail] = useState('');
+  const [isSendingReceipt, setIsSendingReceipt] = useState(false);
+  const [receiptStatus, setReceiptStatus] = useState<{ success: boolean; message: string } | null>(null);
+
+  const handleOpenReceiptModal = (tip: any) => {
+    setReceiptModalTip(tip);
+    setReceiptEmail(tip.customer_email || '');
+    setReceiptStatus(null);
+  };
+
+  const handleSendReceipt = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!receiptModalTip || !receiptEmail.trim()) return;
+
+    try {
+      setIsSendingReceipt(true);
+      setReceiptStatus(null);
+      const res = await api.post(`/business/tips/${receiptModalTip.id}/send-receipt`, {
+        email: receiptEmail.trim(),
+        language,
+      });
+      setReceiptStatus({
+        success: true,
+        message: res.data.message || (language === 'tr' ? 'Makbuz başarıyla iletildi.' : 'Receipt sent successfully.'),
+      });
+      setTimeout(() => {
+        setReceiptModalTip(null);
+        setReceiptStatus(null);
+      }, 2000);
+    } catch (err: any) {
+      setReceiptStatus({
+        success: false,
+        message: err.response?.data?.error || (language === 'tr' ? 'Makbuz gönderilirken bir hata oluştu.' : 'Failed to send receipt.'),
+      });
+    } finally {
+      setIsSendingReceipt(false);
     }
   };
 
@@ -866,6 +908,27 @@ export const BusinessDashboard: React.FC = () => {
                               <span>{rejectingId === tip.id ? '...' : t('business.rejectTransferBtn')}</span>
                             </button>
                           </div>
+                        ) : tip.status === 'SUCCESS' ? (
+                          <div className="inline-actions" style={{ justifyContent: 'flex-end', gap: '0.4rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenReceiptModal(tip)}
+                              className="btn btn-secondary"
+                              style={{
+                                fontSize: '0.75rem',
+                                padding: '0.3rem 0.65rem',
+                                whiteSpace: 'nowrap',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                color: 'var(--text-primary)',
+                              }}
+                              title={language === 'tr' ? 'Müşteriye Resmi Makbuz Gönder' : 'Send Official Receipt to Customer'}
+                            >
+                              <Mail size={13} style={{ color: '#10b981' }} />
+                              <span>{language === 'tr' ? 'Makbuz Gönder' : 'Send Receipt'}</span>
+                            </button>
+                          </div>
                         ) : (
                           <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>
                         )}
@@ -966,6 +1029,28 @@ export const BusinessDashboard: React.FC = () => {
                       </button>
                     </div>
                   )}
+
+                  {tip.status === 'SUCCESS' && (
+                    <div className="mobile-tip-card-actions" style={{ marginTop: '0.55rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenReceiptModal(tip)}
+                        className="btn btn-secondary"
+                        style={{
+                          width: '100%',
+                          fontSize: '0.82rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.45rem',
+                          padding: '0.5rem',
+                        }}
+                      >
+                        <Mail size={15} style={{ color: '#10b981' }} />
+                        <span>{language === 'tr' ? 'Müşteriye Makbuz Gönder' : 'Send Receipt to Customer'}</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -1008,6 +1093,188 @@ export const BusinessDashboard: React.FC = () => {
         isOpen={showPlanGuardModal}
         onClose={() => setShowPlanGuardModal(false)}
       />
+
+      {/* Manual Digital Receipt Modal */}
+      {receiptModalTip && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem',
+          }}
+          onClick={() => !isSendingReceipt && setReceiptModalTip(null)}
+        >
+          <div
+            className="glass-card"
+            style={{
+              width: '100%',
+              maxWidth: '440px',
+              padding: '1.75rem',
+              borderRadius: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+              background: 'var(--bg-card, #1c1917)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '10px',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#10b981',
+                  }}
+                >
+                  <Mail size={18} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
+                    {language === 'tr' ? 'Dijital Makbuz Gönder' : 'Send Digital Receipt'}
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    TIP-{receiptModalTip.id.slice(0, 8).toUpperCase()}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReceiptModalTip(null)}
+                disabled={isSendingReceipt}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  borderRadius: '6px',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Tip Summary Badge */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '12px',
+                padding: '0.9rem 1.1rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '2px' }}>
+                  {language === 'tr' ? 'Bahşiş Tutarı' : 'Tip Amount'}
+                </div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#10b981' }}>
+                  {formatCurrency(Number(receiptModalTip.amount), receiptModalTip.currency || business?.currency || 'TRY')}
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+                  {receiptModalTip.payment_method?.replace(/_/g, ' ')}
+                </span>
+                {receiptModalTip.employee_name && (
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                    👤 {receiptModalTip.employee_name}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {receiptStatus && (
+              <div
+                style={{
+                  padding: '0.75rem 1rem',
+                  borderRadius: '10px',
+                  marginBottom: '1.25rem',
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: receiptStatus.success ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  border: `1px solid ${receiptStatus.success ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                  color: receiptStatus.success ? '#10b981' : '#f87171',
+                }}
+              >
+                {receiptStatus.success ? <CheckCircle2 size={16} /> : <ShieldAlert size={16} />}
+                <span>{receiptStatus.message}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSendReceipt}>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label
+                  htmlFor="customer-receipt-email"
+                  style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}
+                >
+                  {language === 'tr' ? 'Müşteri E-Posta Adresi' : 'Customer Email Address'}
+                </label>
+                <input
+                  id="customer-receipt-email"
+                  type="email"
+                  required
+                  placeholder="ornek@musteri.com"
+                  value={receiptEmail}
+                  onChange={(e) => setReceiptEmail(e.target.value)}
+                  disabled={isSendingReceipt}
+                  className="input"
+                  style={{ width: '100%', fontSize: '0.9rem', padding: '0.65rem 0.85rem' }}
+                  autoFocus
+                />
+                <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                  {language === 'tr'
+                    ? 'Bu e-postaya işletmenizin adına resmi doğrulanmış dijital bahşiş fişi iletilecektir.'
+                    : 'An official verified digital tip receipt will be sent to this email on behalf of your venue.'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setReceiptModalTip(null)}
+                  disabled={isSendingReceipt}
+                  className="btn btn-secondary"
+                  style={{ flex: 1 }}
+                >
+                  {language === 'tr' ? 'Vazgeç' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSendingReceipt || !receiptEmail.trim()}
+                  className="btn btn-primary"
+                  style={{ flex: 1.5, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  {isSendingReceipt ? (
+                    <span>{language === 'tr' ? 'Gönderiliyor...' : 'Sending...'}</span>
+                  ) : (
+                    <>
+                      <Mail size={15} />
+                      <span>{language === 'tr' ? 'Makbuzu Gönder' : 'Send Receipt'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
