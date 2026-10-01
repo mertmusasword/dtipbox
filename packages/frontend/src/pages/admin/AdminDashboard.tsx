@@ -126,10 +126,10 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div>
             <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span>{t('admin.commissionsTab') || 'Gelir & Komisyonlar'}</span>
+              <span>{t('admin.commissionsTab')}</span>
               <Crown size={14} color="#f59e0b" />
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#fbbf24', fontWeight: 600 }}>%0.5 Komisyon & 2026 Kurucular</div>
+            <div style={{ fontSize: '0.8rem', color: '#fbbf24', fontWeight: 600 }}>{t('admin.commissionsSubtitle')}</div>
           </div>
         </Link>
       </div>

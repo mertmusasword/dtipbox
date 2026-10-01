@@ -628,6 +628,8 @@ export const en = {
     "updateStatusBtn": "Update Status",
     "globalOverview": "Global Platform Overview",
     "dashboardSubtitle": "Naponi SaaS administration, tenant health, and aggregate volumes",
+    "commissionsTab": "Revenue & Commissions",
+    "commissionsSubtitle": "%0.5 Commission & 2026 Founders",
     "totalBusinesses": "Total Businesses",
     "currentlyActive": "currently active",
     "registeredStaff": "Registered Staff",
