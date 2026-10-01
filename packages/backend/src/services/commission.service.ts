@@ -17,7 +17,7 @@ export interface MonthlySettlementPeriod {
   bankCommissionTotal: number;
   bankCommissionSettled: number;
   bankCommissionPending: number;
-  status: 'CURRENT_OPEN' | 'PENDING_PAYMENT' | 'SETTLED';
+  status: 'CURRENT_OPEN' | 'PENDING_PAYMENT' | 'PENDING_VERIFICATION' | 'SETTLED';
   dueDate: string; // e.g. '2026-11-15'
 }
 
@@ -43,6 +43,13 @@ export interface BusinessCommissionsReport {
     bankPlatformFeeSettled: number;
     bankPlatformFeePending: number;
     currency: string;
+    hasPendingDeclaration: boolean;
+    pendingDeclarationDetails?: {
+      declaredAt: string | Date;
+      note?: string;
+      declaredAmount: number;
+      periodKey?: string;
+    } | null;
   };
   monthlyPeriods: MonthlySettlementPeriod[];
   settlementIbanInfo: {
@@ -206,6 +213,21 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     });
   }
 
+  // Fetch settlement declaration status from audit logs
+  const settlementLogs = await prisma.auditLog.findMany({
+    where: {
+      business_id: businessId,
+      entity_type: 'COMMISSION_SETTLEMENT',
+    },
+    orderBy: { created_at: 'desc' },
+    take: 5,
+  });
+
+  const latestLog = settlementLogs[0];
+  const hasPendingDeclaration =
+    Boolean(latestLog) && latestLog.action === 'COMMISSION_SETTLEMENT_DECLARED';
+  const declarationMetadata = hasPendingDeclaration && latestLog.metadata ? (latestLog.metadata as any) : null;
+
   const sortedPeriodKeys = Array.from(monthMap.keys()).sort().reverse();
   const monthlyPeriods: MonthlySettlementPeriod[] = sortedPeriodKeys.map((pKey) => {
     const data = monthMap.get(pKey)!;
@@ -218,8 +240,14 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     const nextYear = month === 12 ? year + 1 : year;
     const dueDate = `${nextYear}-${String(nextMonth).padStart(2, '0')}-15`;
 
-    let status: 'CURRENT_OPEN' | 'PENDING_PAYMENT' | 'SETTLED' = 'SETTLED';
-    if (pKey === currentPeriodKey) {
+    let status: 'CURRENT_OPEN' | 'PENDING_PAYMENT' | 'PENDING_VERIFICATION' | 'SETTLED' = 'SETTLED';
+    const isPeriodDeclared =
+      hasPendingDeclaration &&
+      (declarationMetadata?.periodKey === pKey || declarationMetadata?.periodKey === 'ALL_PENDING' || !declarationMetadata?.periodKey);
+
+    if (data.bankCommissionPending > 0.05 && isPeriodDeclared) {
+      status = 'PENDING_VERIFICATION';
+    } else if (pKey === currentPeriodKey) {
       status = 'CURRENT_OPEN';
     } else if (data.bankCommissionPending > 0.05) {
       status = 'PENDING_PAYMENT';
@@ -269,6 +297,15 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
       bankPlatformFeeSettled: Number(bankPlatformFeeSettled.toFixed(2)),
       bankPlatformFeePending: Number(bankPlatformFeePending.toFixed(2)),
       currency: business.currency || 'TRY',
+      hasPendingDeclaration,
+      pendingDeclarationDetails: hasPendingDeclaration
+        ? {
+            declaredAt: latestLog.created_at,
+            note: declarationMetadata?.note || '',
+            declaredAmount: declarationMetadata?.declaredAmount || Number(bankPlatformFeePending.toFixed(2)),
+            periodKey: declarationMetadata?.periodKey || 'ALL_PENDING',
+          }
+        : null,
     },
     monthlyPeriods,
     settlementIbanInfo: {
@@ -284,9 +321,9 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
 }
 
 /**
- * Record settlement confirmation for wire transfer commissions
+ * Venue declares that they sent the wire transfer payment (Pending founder / admin verification)
  */
-export async function settleCommission(
+export async function declareBusinessSettlement(
   businessId: string,
   input: {
     periodKey?: string;
@@ -300,8 +337,67 @@ export async function settleCommission(
     is_settled: false,
   };
 
-  if (input.periodKey) {
+  if (input.periodKey && input.periodKey !== 'ALL_PENDING') {
     const [yStr, mStr] = input.periodKey.split('-');
+    const year = parseInt(yStr, 10);
+    const month = parseInt(mStr, 10);
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
+    whereClause.created_at = { gte: startDate, lt: endDate };
+  }
+
+  const unsettledTips = await prisma.tip.findMany({
+    where: whereClause,
+    select: { amount: true, platform_fee_amount: true },
+  });
+
+  let declaredAmount = 0;
+  for (const t of unsettledTips) {
+    const amt = Number(t.amount);
+    const fee = Number(t.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
+    declaredAmount += fee;
+  }
+  declaredAmount = Number(declaredAmount.toFixed(2));
+
+  await createAuditLog({
+    actorUserId: input.actorUserId,
+    businessId,
+    action: 'COMMISSION_SETTLEMENT_DECLARED',
+    entityType: 'COMMISSION_SETTLEMENT',
+    metadata: {
+      periodKey: input.periodKey || 'ALL_PENDING',
+      declaredAmount,
+      note: input.note || '',
+      status: 'PENDING_ADMIN_VERIFICATION',
+      declaredAt: new Date().toISOString(),
+    },
+  });
+
+  return {
+    success: true,
+    status: 'PENDING_VERIFICATION',
+    declaredAmount,
+    periodKey: input.periodKey || 'ALL_PENDING',
+    message: 'Havale bildirimi alındı. Kurucu / Finans doğrulaması bekleniyor.',
+  };
+}
+
+/**
+ * Super Admin confirms venue settlement after verifying corporate bank account
+ */
+export async function confirmAdminVenueSettlement(
+  businessId: string,
+  adminUserId: string,
+  periodKey?: string
+) {
+  const whereClause: any = {
+    business_id: businessId,
+    payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST', 'IBAN_TRANSFER', 'HAVALE', 'EFT'] },
+    is_settled: false,
+  };
+
+  if (periodKey && periodKey !== 'ALL_PENDING') {
+    const [yStr, mStr] = periodKey.split('-');
     const year = parseInt(yStr, 10);
     const month = parseInt(mStr, 10);
     const startDate = new Date(year, month - 1, 1);
@@ -315,20 +411,48 @@ export async function settleCommission(
   });
 
   await createAuditLog({
-    actorUserId: input.actorUserId,
+    actorUserId: adminUserId,
     businessId,
-    action: 'COMMISSION_SETTLEMENT_RECORDED',
-    entityType: 'TIP_COMMISSION',
+    action: 'COMMISSION_SETTLEMENT_CONFIRMED',
+    entityType: 'COMMISSION_SETTLEMENT',
     metadata: {
-      periodKey: input.periodKey || 'ALL_PENDING',
-      updatedCount: result.count,
-      note: input.note,
+      periodKey: periodKey || 'ALL_PENDING',
+      settledCount: result.count,
+      confirmedAt: new Date().toISOString(),
     },
   });
 
   return {
     success: true,
     settledCount: result.count,
-    periodKey: input.periodKey || 'ALL_PENDING',
+    periodKey: periodKey || 'ALL_PENDING',
   };
 }
+
+/**
+ * Super Admin rejects venue settlement declaration if transfer not received
+ */
+export async function rejectAdminVenueSettlement(
+  businessId: string,
+  adminUserId: string,
+  reason?: string
+) {
+  await createAuditLog({
+    actorUserId: adminUserId,
+    businessId,
+    action: 'COMMISSION_SETTLEMENT_REJECTED',
+    entityType: 'COMMISSION_SETTLEMENT',
+    metadata: {
+      reason: reason || 'Banka hesabında eşleşen havale transferi tespit edilemedi.',
+      rejectedAt: new Date().toISOString(),
+    },
+  });
+
+  return {
+    success: true,
+    message: 'Havale bildirimi reddedildi.',
+  };
+}
+
+// Backward compatibility alias: settleCommission now declares settlement for verification
+export const settleCommission = declareBusinessSettlement;

@@ -314,6 +314,30 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
     prisma.business.count(),
   ]);
 
+  // Fetch active settlement declarations from audit logs
+  const businessIds = businesses.map((b) => b.id);
+  const declarationLogs = await prisma.auditLog.findMany({
+    where: {
+      business_id: { in: businessIds },
+      entity_type: 'COMMISSION_SETTLEMENT',
+    },
+    orderBy: { created_at: 'desc' },
+  });
+
+  const declarationMap = new Map<string, any>();
+  for (const log of declarationLogs) {
+    if (!declarationMap.has(log.business_id!)) {
+      if (log.action === 'COMMISSION_SETTLEMENT_DECLARED') {
+        declarationMap.set(log.business_id!, {
+          declaredAt: log.created_at,
+          ...(log.metadata as any || {}),
+        });
+      } else {
+        declarationMap.set(log.business_id!, null);
+      }
+    }
+  }
+
   const venueRows = businesses.map((b) => {
     const stats = venueStatsMap.get(b.id) || {
       totalVolume: 0,
@@ -327,6 +351,14 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
       bankCommissionSettled: 0,
       bankCommissionPending: 0,
     };
+
+    const pendingDecl = declarationMap.get(b.id);
+    let settlementStatus: 'PENDING' | 'PENDING_VERIFICATION' | 'SETTLED' = 'SETTLED';
+    if (pendingDecl) {
+      settlementStatus = 'PENDING_VERIFICATION';
+    } else if (stats.bankCommissionPending > 0.05) {
+      settlementStatus = 'PENDING';
+    }
 
     return {
       id: b.id,
@@ -347,7 +379,9 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
       cardCommission: Number(stats.cardCommission.toFixed(2)),
       bankCommissionPending: Number(stats.bankCommissionPending.toFixed(2)),
       bankCommissionSettled: Number(stats.bankCommissionSettled.toFixed(2)),
-      settlementStatus: stats.bankCommissionPending > 0.05 ? 'PENDING' : 'SETTLED',
+      settlementStatus,
+      hasPendingDeclaration: Boolean(pendingDecl),
+      pendingDeclaration: pendingDecl || null,
     };
   });
 
@@ -389,14 +423,31 @@ export async function confirmAdminVenueSettlement(businessId: string, adminUserI
   await createAuditLog({
     actorUserId: adminUserId,
     businessId,
-    action: 'ADMIN_VENUE_SETTLEMENT_CONFIRMED',
-    entityType: 'BUSINESS_SETTLEMENT',
+    action: 'COMMISSION_SETTLEMENT_CONFIRMED',
+    entityType: 'COMMISSION_SETTLEMENT',
     metadata: {
-      updatedTipsCount: result.count,
+      action: 'ADMIN_VENUE_SETTLEMENT_CONFIRMED',
+      settledCount: result.count,
+      confirmedAt: new Date().toISOString(),
     },
   });
 
   return { success: true, count: result.count };
+}
+
+export async function rejectAdminVenueSettlement(businessId: string, adminUserId: string, reason?: string) {
+  await createAuditLog({
+    actorUserId: adminUserId,
+    businessId,
+    action: 'COMMISSION_SETTLEMENT_REJECTED',
+    entityType: 'COMMISSION_SETTLEMENT',
+    metadata: {
+      reason: reason || 'Banka hesabında eşleşen havale transferi tespit edilemedi.',
+      rejectedAt: new Date().toISOString(),
+    },
+  });
+
+  return { success: true, message: 'Havale bildirimi reddedildi.' };
 }
 
 export const adminService = {
@@ -411,4 +462,5 @@ export const adminService = {
   getAdminQrs,
   getAdminCommissionsAndRevenue,
   confirmAdminVenueSettlement,
+  rejectAdminVenueSettlement,
 };

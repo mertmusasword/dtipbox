@@ -37,7 +37,14 @@ interface VenueRevenueRow {
   cardCommission: number;
   bankCommissionPending: number;
   bankCommissionSettled: number;
-  settlementStatus: 'PENDING' | 'SETTLED';
+  settlementStatus: 'PENDING' | 'PENDING_VERIFICATION' | 'SETTLED';
+  hasPendingDeclaration?: boolean;
+  pendingDeclaration?: {
+    declaredAt: string;
+    note?: string;
+    declaredAmount?: number;
+    periodKey?: string;
+  } | null;
 }
 
 interface AdminRevenueData {
@@ -128,6 +135,23 @@ export const AdminCommissionsPage: React.FC = () => {
       setIsSubmitting(true);
       await api.post(`/admin/commissions/${selectedVenue.id}/settle`);
       showToast(art.confirmSuccess);
+      setConfirmModalOpen(false);
+      loadData();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || art.confirmError, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRejectSettlement = async () => {
+    if (!selectedVenue) return;
+    try {
+      setIsSubmitting(true);
+      await api.post(`/admin/commissions/${selectedVenue.id}/reject`, {
+        reason: 'Banka hesabında eşleşen havale transferi tespit edilemedi.',
+      });
+      showToast(language === 'tr' ? 'Havale bildirimi reddedildi.' : 'Settlement declaration rejected.', 'info');
       setConfirmModalOpen(false);
       loadData();
     } catch (err: any) {
@@ -360,7 +384,11 @@ export const AdminCommissionsPage: React.FC = () => {
                         )}
                       </td>
                       <td>
-                        {isPending ? (
+                        {v.hasPendingDeclaration ? (
+                          <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#fde047', border: '1px solid rgba(245, 158, 11, 0.5)' }}>
+                            <Clock size={11} style={{ marginRight: '4px' }} /> {language === 'tr' ? 'Havale Bildirildi ⚡' : 'Transfer Reported ⚡'}
+                          </span>
+                        ) : isPending ? (
                           <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
                             <AlertTriangle size={11} style={{ marginRight: '4px' }} /> {art.statusPending}
                           </span>
@@ -371,7 +399,26 @@ export const AdminCommissionsPage: React.FC = () => {
                         )}
                       </td>
                       <td style={{ textAlign: 'right' }}>
-                        {v.bankCommissionPending > 0 ? (
+                        {v.hasPendingDeclaration ? (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenConfirm(v)}
+                            className="btn btn-primary"
+                            style={{
+                              padding: '4px 10px',
+                              fontSize: '0.78rem',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              background: '#f59e0b',
+                              borderColor: '#d97706',
+                              color: '#0f172a',
+                              fontWeight: 700,
+                            }}
+                          >
+                            <Clock size={13} /> {language === 'tr' ? 'Ödemeyi Doğrula & Onayla' : 'Verify & Settle'}
+                          </button>
+                        ) : v.bankCommissionPending > 0 ? (
                           <button
                             type="button"
                             onClick={() => handleOpenConfirm(v)}
@@ -447,6 +494,34 @@ export const AdminCommissionsPage: React.FC = () => {
               {art.confirmModalDesc}
             </p>
 
+            {selectedVenue.hasPendingDeclaration && (
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  border: '1px solid rgba(245, 158, 11, 0.35)',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  marginBottom: '1.25rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fde047', fontWeight: 700, fontSize: '0.88rem', marginBottom: '0.4rem' }}>
+                  <Clock size={16} />
+                  <span>İşletme Tarafından Havale Gönderildi Bildirimi Yapıldı</span>
+                </div>
+                <div style={{ fontSize: '0.82rem', color: '#cbd5e1' }}>
+                  <strong>Bildirim Tarihi:</strong> {new Date(selectedVenue.pendingDeclaration?.declaredAt || '').toLocaleString()}
+                </div>
+                {selectedVenue.pendingDeclaration?.note && (
+                  <div style={{ marginTop: '0.4rem', fontSize: '0.84rem', color: '#fef08a' }}>
+                    <strong>İşletme Notu:</strong> {selectedVenue.pendingDeclaration.note}
+                  </div>
+                )}
+                <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: '#94a3b8' }}>
+                  ⚠️ Lütfen kurumsal banka hesabınıza (QNB Finansbank / Garanti BBVA) tutarın ulaşıp ulaşmadığını kontrol ettikten sonra onaylayınız.
+                </div>
+              </div>
+            )}
+
             <div
               style={{
                 background: 'rgba(16, 185, 129, 0.08)',
@@ -459,28 +534,39 @@ export const AdminCommissionsPage: React.FC = () => {
                 alignItems: 'center',
               }}
             >
-              <span style={{ fontSize: '0.85rem', color: '#6ee7b7' }}>Tahsil Edilen Tutar:</span>
+              <span style={{ fontSize: '0.85rem', color: '#6ee7b7' }}>Tahsil Edilecek Bedel:</span>
               <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#10b981' }}>
                 {formatCurrency(selectedVenue.bankCommissionPending, selectedVenue.currency)}
               </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleConfirmSettlement}
                 className="btn btn-primary"
-                style={{ flex: 1, padding: '0.7rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                style={{ flex: 1, minWidth: '180px', padding: '0.7rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: '#10b981', borderColor: '#059669' }}
               >
                 <CheckCircle2 size={16} />
-                {isSubmitting ? 'İşleniyor...' : art.confirmBtn}
+                {isSubmitting ? 'İşleniyor...' : 'Bankaya Geldi, Onayla'}
               </button>
+              {selectedVenue.hasPendingDeclaration && (
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={handleRejectSettlement}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.7rem 1rem', color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                >
+                  Ödeme Gelmedi (Reddet)
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => setConfirmModalOpen(false)}
                 className="btn btn-secondary"
-                style={{ padding: '0.7rem 1.25rem' }}
+                style={{ padding: '0.7rem 1rem' }}
               >
                 {art.cancelBtn}
               </button>

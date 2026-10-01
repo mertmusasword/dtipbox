@@ -36,7 +36,7 @@ interface SettlementPeriod {
   bankCommissionTotal: number;
   bankCommissionSettled: number;
   bankCommissionPending: number;
-  status: 'CURRENT_OPEN' | 'PENDING_PAYMENT' | 'SETTLED';
+  status: 'CURRENT_OPEN' | 'PENDING_PAYMENT' | 'PENDING_VERIFICATION' | 'SETTLED';
   dueDate: string;
 }
 
@@ -61,6 +61,13 @@ interface CommissionReport {
     bankPlatformFeeSettled: number;
     bankPlatformFeePending: number;
     currency: string;
+    hasPendingDeclaration?: boolean;
+    pendingDeclarationDetails?: {
+      declaredAt: string | Date;
+      note?: string;
+      declaredAmount: number;
+      periodKey?: string;
+    } | null;
   };
   monthlyPeriods: SettlementPeriod[];
   settlementIbanInfo: {
@@ -89,6 +96,7 @@ export const CommissionSettlementTab: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettling, setIsSettling] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [settlementNote, setSettlementNote] = useState('');
 
   const loadData = useCallback(async () => {
     try {
@@ -121,6 +129,7 @@ export const CommissionSettlementTab: React.FC = () => {
 
   const handleOpenSettlement = (period?: SettlementPeriod) => {
     setSelectedPeriod(period || null);
+    setSettlementNote('');
     setIsModalOpen(true);
   };
 
@@ -129,7 +138,7 @@ export const CommissionSettlementTab: React.FC = () => {
       setIsSettling(true);
       await api.post('/business/commissions/settle', {
         periodKey: selectedPeriod ? selectedPeriod.periodKey : undefined,
-        note: `Manual settlement confirmed via dashboard by venue owner for ${selectedPeriod ? selectedPeriod.periodKey : 'all periods'}`,
+        note: settlementNote.trim() || undefined,
       });
       showToast(ct.settleSuccess);
       setIsModalOpen(false);
@@ -221,6 +230,68 @@ export const CommissionSettlementTab: React.FC = () => {
         </div>
       </div>
 
+      {/* PENDING VERIFICATION BANNER */}
+      {summary.hasPendingDeclaration && (
+        <div
+          style={{
+            background: 'radial-gradient(ellipse at top left, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%)',
+            border: '1.5px solid rgba(245, 158, 11, 0.45)',
+            borderRadius: '16px',
+            padding: '1.25rem 1.5rem',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '1rem',
+            boxShadow: '0 4px 20px rgba(245, 158, 11, 0.15)',
+          }}
+        >
+          <div
+            style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '12px',
+              background: 'rgba(245, 158, 11, 0.2)',
+              border: '1px solid rgba(245, 158, 11, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#f59e0b',
+              flexShrink: 0,
+            }}
+          >
+            <Clock size={22} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+              <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#fef08a' }}>
+                {ct.pendingVerificationBannerTitle || 'Havale Bildirimi Alındı — Kurucu Onayı Bekleniyor'}
+              </h4>
+              <span
+                style={{
+                  background: 'rgba(245, 158, 11, 0.2)',
+                  border: '1px solid rgba(245, 158, 11, 0.5)',
+                  color: '#fde047',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '20px',
+                }}
+              >
+                {ct.statusPendingVerification || 'Kurucu Onayı Bekleniyor'}
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.55 }}>
+              {ct.pendingVerificationBannerDesc ||
+                'Havaleyi gerçekleştirdiğinizi ilettiniz. Kurucu ve finans ekibimiz şirket banka hesabına geçen tutarı teyit ettikten sonra mutabakatınız onaylanacak ve borç bakiyesi sıfırlanacaktır.'}
+            </p>
+            {summary.pendingDeclarationDetails?.note && (
+              <div style={{ marginTop: '0.65rem', fontSize: '0.82rem', color: '#fef08a', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.25)', padding: '5px 12px', borderRadius: '8px', display: 'inline-block' }}>
+                💬 <strong>İlettiğiniz Not:</strong> {summary.pendingDeclarationDetails.note}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* 2. SUMMARY METRIC CARDS GRID */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
         {/* Total Tips Volume */}
@@ -271,21 +342,51 @@ export const CommissionSettlementTab: React.FC = () => {
           style={{
             padding: '1.25rem',
             borderRadius: '14px',
-            background: summary.bankPlatformFeePending > 0 ? 'rgba(239, 68, 68, 0.07)' : 'rgba(16, 185, 129, 0.07)',
-            border: summary.bankPlatformFeePending > 0 ? '1.5px solid rgba(239, 68, 68, 0.35)' : '1.5px solid rgba(16, 185, 129, 0.35)',
+            background: summary.hasPendingDeclaration
+              ? 'rgba(245, 158, 11, 0.08)'
+              : summary.bankPlatformFeePending > 0
+              ? 'rgba(239, 68, 68, 0.07)'
+              : 'rgba(16, 185, 129, 0.07)',
+            border: summary.hasPendingDeclaration
+              ? '1.5px solid rgba(245, 158, 11, 0.45)'
+              : summary.bankPlatformFeePending > 0
+              ? '1.5px solid rgba(239, 68, 68, 0.35)'
+              : '1.5px solid rgba(16, 185, 129, 0.35)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.82rem', color: summary.bankPlatformFeePending > 0 ? '#fca5a5' : '#86efac', fontWeight: 700 }}>
+            <span
+              style={{
+                fontSize: '0.82rem',
+                color: summary.hasPendingDeclaration ? '#fde047' : summary.bankPlatformFeePending > 0 ? '#fca5a5' : '#86efac',
+                fontWeight: 700,
+              }}
+            >
               {ct.bankCommissionPending}
             </span>
-            <Clock size={18} style={{ color: summary.bankPlatformFeePending > 0 ? '#f87171' : '#34d399' }} />
+            <Clock
+              size={18}
+              style={{
+                color: summary.hasPendingDeclaration ? '#f59e0b' : summary.bankPlatformFeePending > 0 ? '#f87171' : '#34d399',
+              }}
+            />
           </div>
-          <div style={{ fontSize: '1.65rem', fontWeight: 800, color: summary.bankPlatformFeePending > 0 ? '#f87171' : '#34d399', letterSpacing: '-0.02em' }}>
+          <div
+            style={{
+              fontSize: '1.65rem',
+              fontWeight: 800,
+              color: summary.hasPendingDeclaration ? '#fde047' : summary.bankPlatformFeePending > 0 ? '#f87171' : '#34d399',
+              letterSpacing: '-0.02em',
+            }}
+          >
             {formatCurrency(summary.bankPlatformFeePending, currency)}
           </div>
           <div style={{ marginTop: '0.5rem' }}>
-            {summary.bankPlatformFeePending > 0 ? (
+            {summary.hasPendingDeclaration ? (
+              <span style={{ fontSize: '0.78rem', color: '#f59e0b', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <Clock size={13} /> {ct.btnReportedPending || 'İncelemede / Onay Bekleniyor ⏳'}
+              </span>
+            ) : summary.bankPlatformFeePending > 0 ? (
               <button
                 type="button"
                 onClick={() => handleOpenSettlement()}
@@ -407,24 +508,38 @@ export const CommissionSettlementTab: React.FC = () => {
                         {period.dueDate}
                       </td>
                       <td style={{ padding: '0.85rem 0.75rem' }}>
-                        {isCurrent && (
+                        {period.status === 'PENDING_VERIFICATION' && (
+                          <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
+                            <Clock size={11} style={{ marginRight: '4px' }} /> {ct.statusPendingVerification || 'Kurucu Onayı Bekleniyor'}
+                          </span>
+                        )}
+                        {isCurrent && period.status !== 'PENDING_VERIFICATION' && (
                           <span className="badge badge-neutral" style={{ color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}>
                             <Clock size={11} style={{ marginRight: '4px' }} /> {ct.statusCurrent}
                           </span>
                         )}
-                        {isPending && (
+                        {isPending && period.status !== 'PENDING_VERIFICATION' && (
                           <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
                             <AlertTriangle size={11} style={{ marginRight: '4px' }} /> {ct.statusPending}
                           </span>
                         )}
-                        {isSettled && (
+                        {isSettled && period.status !== 'PENDING_VERIFICATION' && (
                           <span className="badge badge-success">
                             <CheckCircle2 size={11} style={{ marginRight: '4px' }} /> {ct.statusSettled}
                           </span>
                         )}
                       </td>
                       <td style={{ padding: '0.85rem 0.75rem', textAlign: 'right' }}>
-                        {period.bankCommissionPending > 0.01 ? (
+                        {period.status === 'PENDING_VERIFICATION' ? (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenSettlement(period)}
+                            className="btn btn-secondary"
+                            style={{ padding: '4px 10px', fontSize: '0.78rem', color: '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                          >
+                            ⏳ {ct.btnReportedPending || 'İnceleniyor'}
+                          </button>
+                        ) : period.bankCommissionPending > 0.01 ? (
                           <button
                             type="button"
                             onClick={() => handleOpenSettlement(period)}
@@ -614,6 +729,29 @@ export const CommissionSettlementTab: React.FC = () => {
                   </button>
                 </div>
               </div>
+            </div>
+
+            {/* Settlement Note / Reference input */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.4rem', fontWeight: 600 }}>
+                {ct.settlementNoteLabel || 'Ödeme Notu / Dekont Referansı (Opsiyonel)'}
+              </label>
+              <input
+                type="text"
+                value={settlementNote}
+                onChange={(e) => setSettlementNote(e.target.value)}
+                placeholder={ct.settlementNotePlaceholder || 'Örn: Gönderen banka, dekont referans no...'}
+                className="input"
+                style={{
+                  width: '100%',
+                  fontSize: '0.85rem',
+                  background: 'rgba(15, 23, 42, 0.6)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '10px',
+                  padding: '0.65rem 0.85rem',
+                  color: '#f8fafc',
+                }}
+              />
             </div>
 
             {/* Actions */}

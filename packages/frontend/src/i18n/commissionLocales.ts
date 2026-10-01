@@ -37,6 +37,12 @@ export interface CommissionTranslations {
   statusCurrent: string;
   statusPending: string;
   statusSettled: string;
+  statusPendingVerification?: string;
+  pendingVerificationBannerTitle?: string;
+  pendingVerificationBannerDesc?: string;
+  btnReportedPending?: string;
+  settlementNoteLabel?: string;
+  settlementNotePlaceholder?: string;
 
   // Actions & Buttons
   btnPaySettle: string;
@@ -684,6 +690,109 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
   },
 };
 
+const VERIFICATION_EXTENSIONS: Record<string, {
+  statusPendingVerification: string;
+  pendingVerificationBannerTitle: string;
+  pendingVerificationBannerDesc: string;
+  btnReportedPending: string;
+  settlementNoteLabel: string;
+  settlementNotePlaceholder: string;
+}> = {
+  tr: {
+    statusPendingVerification: 'Kurucu Onayı Bekleniyor',
+    pendingVerificationBannerTitle: 'Havale Bildirimi Alındı — Kurucu Onayı Bekleniyor',
+    pendingVerificationBannerDesc: 'Havaleyi gönderdiğinizi ilettiniz. Kurucu ve finans ekibimiz şirket banka hesabına geçen tutarı teyit ettikten sonra mutabakatınız onaylanacak ve borç bakiyesi sıfırlanacaktır.',
+    btnReportedPending: 'İncelemede / Onay Bekleniyor ⏳',
+    settlementNoteLabel: 'Ödeme Notu / Dekont Referansı (Opsiyonel)',
+    settlementNotePlaceholder: 'Örn: Yapı Kredi havalesi yapıldı, dekont ref: 12345',
+  },
+  en: {
+    statusPendingVerification: 'Pending Founder Verification',
+    pendingVerificationBannerTitle: 'Wire Transfer Reported — Pending Founder Verification',
+    pendingVerificationBannerDesc: 'You reported that the wire transfer was sent. Once our founder/finance team verifies the funds in our corporate account, your settlement will be approved and cleared.',
+    btnReportedPending: 'Under Review / Pending Approval ⏳',
+    settlementNoteLabel: 'Payment Note / Receipt Reference (Optional)',
+    settlementNotePlaceholder: 'e.g. Sent from Chase Bank, ref: 12345',
+  },
+  de: {
+    statusPendingVerification: 'Gründer-Überprüfung ausstehend',
+    pendingVerificationBannerTitle: 'Überweisung gemeldet — Gründer-Überprüfung ausstehend',
+    pendingVerificationBannerDesc: 'Sie haben die Überweisung gemeldet. Sobald unser Gründer-/Finanzteam den Eingang auf unserem Geschäftskonto bestätigt, wird der Saldo freigegeben.',
+    btnReportedPending: 'In Prüfung / Ausstehend ⏳',
+    settlementNoteLabel: 'Zahlungshinweis / Belegnummer (Optional)',
+    settlementNotePlaceholder: 'z.B. Überweisung von Deutsche Bank, Ref: 12345',
+  },
+  es: {
+    statusPendingVerification: 'Verificación del fundador pendiente',
+    pendingVerificationBannerTitle: 'Transferencia notificada — Verificación pendiente',
+    pendingVerificationBannerDesc: 'Ha notificado que la transferencia ha sido enviada. Una vez que nuestro equipo verifique la recepción en la cuenta bancaria, se aprobará y liquidará.',
+    btnReportedPending: 'En revisión / Pendiente ⏳',
+    settlementNoteLabel: 'Nota de pago / Referencia (Opcional)',
+    settlementNotePlaceholder: 'ej. Enviado desde Santander, ref: 12345',
+  },
+  fr: {
+    statusPendingVerification: 'Validation fondateur en attente',
+    pendingVerificationBannerTitle: 'Virement déclaré — Validation fondateur en attente',
+    pendingVerificationBannerDesc: 'Vous avez déclaré avoir effectué le virement. Dès que notre équipe valide la réception sur le compte bancaire, le règlement sera approuvé et le solde remis à zéro.',
+    btnReportedPending: 'En cours d\'examen / En attente ⏳',
+    settlementNoteLabel: 'Note de paiement / Référence (Facultatif)',
+    settlementNotePlaceholder: 'ex. Virement BNP Paribas, réf: 12345',
+  },
+  pt: {
+    statusPendingVerification: 'Aguardando verificação do fundador',
+    pendingVerificationBannerTitle: 'Transferência informada — Aguardando validação',
+    pendingVerificationBannerDesc: 'Você informou que a transferência foi feita. Assim que a equipe verificar o crédito na conta bancária, a liquidação será aprovada e o saldo zerado.',
+    btnReportedPending: 'Em análise / Pendente ⏳',
+    settlementNoteLabel: 'Nota de pagamento / Referência (Opcional)',
+    settlementNotePlaceholder: 'ex. PIX / Transferência Itaú, ref: 12345',
+  },
+  ar: {
+    statusPendingVerification: 'بانتظار تأكيد المؤسس',
+    pendingVerificationBannerTitle: 'تم الإبلاغ عن التحويل — بانتظار التحقق',
+    pendingVerificationBannerDesc: 'لقد قمت بالإبلاغ عن إرسال الحوالة. بمجرد قيام فريق الإدارة بالتحقق من وصول المبلغ إلى الحساب البنكي، سيتم اعتماد التسوية وتصفير الرصيد.',
+    btnReportedPending: 'قيد المراجعة / بانتظار الاعتماد ⏳',
+    settlementNoteLabel: 'ملاحظة الدفع / رقم الإشعار (اختياري)',
+    settlementNotePlaceholder: 'مثال: تم التحويل بنجاح، المرجع: 12345',
+  },
+  zh: {
+    statusPendingVerification: '等待创始人核准',
+    pendingVerificationBannerTitle: '已提交转账汇款报告 — 等待创始人审核',
+    pendingVerificationBannerDesc: '您已提交汇款报告。创始人及财务团队核实对公账户入账后，将正式核销并清零结算余额。',
+    btnReportedPending: '审核中 / 等待批准 ⏳',
+    settlementNoteLabel: '付款备注 / 凭证单号（选填）',
+    settlementNotePlaceholder: '例如：招商银行汇款，单号：12345',
+  },
+  ja: {
+    statusPendingVerification: '創設者の確認待ち',
+    pendingVerificationBannerTitle: '送金報告を受信 — 創設者の確認待ち',
+    pendingVerificationBannerDesc: '銀行振込の完了を報告しました。当社の管理チームが法人口座への入金を確認次第、決済が完了し残高がクリアされます。',
+    btnReportedPending: '確認中 / 承認待ち ⏳',
+    settlementNoteLabel: '支払いメモ / 送金番号（任意）',
+    settlementNotePlaceholder: '例：三菱UFJ銀行より振込、照会番号：12345',
+  },
+  id: {
+    statusPendingVerification: 'Menunggu Verifikasi Founder',
+    pendingVerificationBannerTitle: 'Laporan Transfer Diterima — Menunggu Verifikasi Founder',
+    pendingVerificationBannerDesc: 'Anda telah melaporkan bahwa transfer bank telah dikirim. Setelah tim founder/keuangan memverifikasi dana di rekening bank, penyelesaian akan disetujui dan saldo dibersihkan.',
+    btnReportedPending: 'Sedang Ditinjau / Menunggu ⏳',
+    settlementNoteLabel: 'Catatan Pembayaran / Nomor Resi (Opsional)',
+    settlementNotePlaceholder: 'Contoh: Transfer BCA, ref: 12345',
+  },
+  ru: {
+    statusPendingVerification: 'Ожидает подтверждения основателя',
+    pendingVerificationBannerTitle: 'Уведомление о переводе получено — ожидает подтверждения',
+    pendingVerificationBannerDesc: 'Вы сообщили об отправке банковского перевода. Как только команда проверит поступление средств на корпоративный счет, расчет будет подтвержден, а баланс обнулен.',
+    btnReportedPending: 'На рассмотрении / Ожидает ⏳',
+    settlementNoteLabel: 'Примечание к платежу / Номер квитанции (необязательно)',
+    settlementNotePlaceholder: 'Пример: Сбербанк перевод, реф: 12345',
+  },
+};
+
 export function getCommissionText(lang: string): CommissionTranslations {
-  return COMMISSION_LOCALES[lang] || COMMISSION_LOCALES.en;
+  const base = COMMISSION_LOCALES[lang] || COMMISSION_LOCALES.en;
+  const ext = VERIFICATION_EXTENSIONS[lang] || VERIFICATION_EXTENSIONS.en;
+  return {
+    ...base,
+    ...ext,
+  };
 }
