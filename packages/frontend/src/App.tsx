@@ -27,6 +27,7 @@ const ComparisonDetailPage = React.lazy(() => import('./pages/public/comparisons
 const NaponiCatalogPage = React.lazy(() => import('./pages/public/NaponiCatalogPage').then((m) => ({ default: m.NaponiCatalogPage })));
 const PosIntegrationDetailPage = React.lazy(() => import('./pages/public/integrations/PosIntegrationDetailPage').then((m) => ({ default: m.PosIntegrationDetailPage })));
 const TrustCenterPage = React.lazy(() => import('./pages/public/TrustCenterPage').then((m) => ({ default: m.TrustCenterPage })));
+const FounderProgramPage = React.lazy(() => import('./pages/public/FounderProgramPage').then((m) => ({ default: m.FounderProgramPage })));
 
 
 // Loyalty Public Pages
@@ -198,6 +199,11 @@ export const App: React.FC = () => {
                 <Route path="/trust" element={<TrustCenterPage />} />
                 <Route path="/security" element={<TrustCenterPage />} />
                 <Route path="/guvenlik" element={<Navigate to="/trust" replace />} />
+
+                {/* Public 2026 Founder Member Program Landing Pages */}
+                <Route path="/founder" element={<FounderProgramPage />} />
+                <Route path="/kurucu-uye" element={<FounderProgramPage />} />
+                <Route path="/kurucu" element={<Navigate to="/founder" replace />} />
 
                 {/* Public Customer Tip & Menu Routes */}
                 <Route path="/tip/:publicToken" element={<TipPage />} />

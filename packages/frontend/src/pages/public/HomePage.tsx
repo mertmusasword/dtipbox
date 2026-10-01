@@ -1559,17 +1559,40 @@ export const HomePage: React.FC = () => {
                   {t('founder.heroCountdownDesc')}
                 </div>
               </div>
-              <Link
-                to="/register"
-                className="home-founder-cta-btn"
-                onClick={() => {
-                  trackFounderCtaClicked('founder_section_cta');
-                  trackBusinessRegisterStarted('founder_section_cta');
-                }}
-              >
-                <span>{t('founder.ctaBottom')}</span>
-                <ArrowRight size={18} />
-              </Link>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <Link
+                  to="/founder"
+                  style={{
+                    color: '#fde047',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    textDecoration: 'none',
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '9999px',
+                    border: '1px solid rgba(234, 179, 8, 0.4)',
+                    background: 'rgba(234, 179, 8, 0.1)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onClick={() => trackFounderCtaClicked('founder_section_view_program')}
+                >
+                  <span>{t('founder.viewBenefits')}</span>
+                  <ArrowRight size={14} />
+                </Link>
+                <Link
+                  to="/register"
+                  className="home-founder-cta-btn"
+                  onClick={() => {
+                    trackFounderCtaClicked('founder_section_cta');
+                    trackBusinessRegisterStarted('founder_section_cta');
+                  }}
+                >
+                  <span>{t('founder.ctaBottom')}</span>
+                  <ArrowRight size={18} />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

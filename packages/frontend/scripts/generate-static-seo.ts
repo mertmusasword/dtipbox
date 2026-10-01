@@ -1444,6 +1444,74 @@ writeStaticRoute('trust', {
 });
 
 // =============================================================================
+// 4H. PRE-RENDER 2026 FOUNDER MEMBER PROGRAM (EN + TR)
+// =============================================================================
+writeStaticRoute('founder', {
+  title: '2026 Founder Membership Program — Lifetime Free Core Platform | Naponi',
+  description: 'Businesses joining Naponi before Dec 31, 2026 lock in lifetime $0 software subscriptions, verified gold badge, and 14 VIP privileges.',
+  canonicalUrl: 'https://www.naponi.com/founder',
+  keywords: ['naponi founder membership', 'lifetime free digital tipping', 'hospitality qr founder', 'zero subscription hospitality software'],
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/founder' },
+    { lang: 'en', url: 'https://www.naponi.com/founder' },
+    { lang: 'tr', url: 'https://www.naponi.com/kurucu-uye' },
+  ],
+  contentHtml: `
+    <main class="home-wrapper" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <div class="home-container" style="max-width: 850px; margin: 0 auto; text-align: center;">
+        <span class="home-section-tag">2026 Founder Membership Program</span>
+        <h1 class="home-hero-title">Exclusive for Businesses Joining in 2026: Lifetime Free Naponi</h1>
+        <p class="home-hero-desc">All businesses registering before December 31, 2026 at 23:59 receive lifetime free access to core Naponi platform features with zero monthly or annual SaaS subscription fees.</p>
+        <div style="margin: 3rem 0; text-align: left;">
+          <h2>14 Permanent Founder Privileges</h2>
+          <ul>
+            <li><strong>Lifetime $0 Subscription:</strong> Permanently exempt from future 2027 SaaS subscription plans.</li>
+            <li><strong>Verified Gold Founder Badge:</strong> Official partner status on your venue profile and dashboard.</li>
+            <li><strong>Unlimited Staff & Tables:</strong> Add as many team members and dynamic table QR codes as needed.</li>
+            <li><strong>Smart QR Suite Included:</strong> Menu, Wi-Fi sharing, Google reputation management, and tip pooling.</li>
+            <li><strong>Zero Held Funds:</strong> Direct settlement into your verified merchant gateway or bank account.</li>
+          </ul>
+        </div>
+        <a href="/register" class="home-btn-primary">Register as a Founder Member &rarr;</a>
+      </div>
+    </main>
+  `,
+});
+
+writeStaticRoute('kurucu-uye', {
+  title: '2026 Kurucu Üyelik Programı — Ömür Boyu 0₺ Naponi Platformu | Naponi',
+  description: "31 Aralık 2026'ya kadar Naponi'ye katılan işletmelere ömür boyu 0₺ yazılım aboneliği, onaylı altın rozet ve 14 VIP ayrıcalık.",
+  canonicalUrl: 'https://www.naponi.com/kurucu-uye',
+  lang: 'tr',
+  keywords: ['naponi kurucu üyelik', 'ömür boyu ücretsiz dijital bahşiş', 'akıllı qr kurucu üye programı'],
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/founder' },
+    { lang: 'tr', url: 'https://www.naponi.com/kurucu-uye' },
+    { lang: 'en', url: 'https://www.naponi.com/founder' },
+  ],
+  contentHtml: `
+    <main class="home-wrapper" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <div class="home-container" style="max-width: 850px; margin: 0 auto; text-align: center;">
+        <span class="home-section-tag">2026 Kurucu Üyelik Programı</span>
+        <h1 class="home-hero-title">2026 Yılında Katılan İşletmelere Özel: Ömür Boyu 0₺ Naponi</h1>
+        <p class="home-hero-desc">31 Aralık 2026 saat 23:59'a kadar sistemimize katılan tüm işletmeler; Naponi temel özelliklerinden ömür boyu hiçbir aylık veya yıllık yazılım abonelik ücreti ödemeden yararlanır.</p>
+        <div style="margin: 3rem 0; text-align: left;">
+          <h2>14 Kalıcı Kurucu Ayrıcalığı</h2>
+          <ul>
+            <li><strong>Ömür Boyu 0₺ Yazılım Bedeli:</strong> 2027 SaaS abonelik ücretlerinden kalıcı muafiyet.</li>
+            <li><strong>Onaylı Altın Kurucu Rozeti:</strong> Profilinizde ve yönetim panelinizde tescilli rozet.</li>
+            <li><strong>Sınırsız Personel ve Masa:</strong> Sınırsız sayıda ekip üyesi ve dinamik masa QR kodu.</li>
+            <li><strong>Smart QR Paketi Dahil:</strong> Menü, Wi-Fi paylaşımı, Google itibar yönetimi ve bahşiş havuzu.</li>
+            <li><strong>Sıfır Bloke & Doğrudan Tahsilat:</strong> Ödemeler doğrudan kendi POS veya banka hesabınıza geçer.</li>
+          </ul>
+        </div>
+        <a href="/register" class="home-btn-primary">Kurucu Üye Olarak Başla &rarr;</a>
+      </div>
+    </main>
+  `,
+});
+
+// =============================================================================
 // 5. DYNAMIC SITEMAP GENERATION WITH COMPLETE GLOBAL HREFLANG
 
 // =============================================================================
@@ -1657,6 +1725,26 @@ ${posUrls}
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/trust" />
+  </url>
+
+  <!-- 7F. 2026 Founder Member Program -->
+  <url>
+    <loc>https://www.naponi.com/founder</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/founder" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/founder" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/kurucu-uye" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/kurucu-uye</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/founder" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/kurucu-uye" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/founder" />
   </url>
 </urlset>
 `;

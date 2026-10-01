@@ -69,6 +69,11 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
             <li><a href={posHref} className="home-nav-link">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
             <li><a href={diffHref} className="home-nav-link">{ht('whyNaponi')}</a></li>
             <li><a href={indHref} className="home-nav-link">{isTr ? 'Sektörler' : 'Industries'}</a></li>
+            <li>
+              <Link to="/founder" className="home-nav-link" style={{ color: '#fde047', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <span>👑 {isTr ? 'Kurucu Üyelik' : 'Founder'}</span>
+              </Link>
+            </li>
           </ul>
 
           <div className="home-nav-actions">
@@ -106,6 +111,9 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           />
 
           <div className="home-mobile-menu-links">
+            <Link to="/founder" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fde047', fontWeight: 700 }}>
+              <span>👑 {isTr ? '2026 Kurucu Üyelik (0₺)' : '2026 Founder Program ($0)'}</span>
+            </Link>
             <a href={howItWorksHref} className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
               <span>{isTr ? 'Nasıl Çalışır?' : 'How It Works'}</span>
             </a>
