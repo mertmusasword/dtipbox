@@ -48,7 +48,7 @@ export const env = {
   SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASS: process.env.SMTP_PASS || '',
-  SMTP_FROM: process.env.SMTP_FROM || 'Naponi <noreply@naponi.com>',
+  SMTP_FROM: process.env.SMTP_FROM || 'Naponi <info@naponi.com>',
   SMTP_SECURE: process.env.SMTP_SECURE === 'true',
 
   // 2026 Founder Membership Campaign Deadline (ISO string)

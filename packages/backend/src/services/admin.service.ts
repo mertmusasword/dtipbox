@@ -190,7 +190,7 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
 
   const [allTips, totalVenues, founderVenuesCount] = await Promise.all([
     prisma.tip.findMany({
-      where: { payment_status: { in: ['SUCCESS', 'UNVERIFIED', 'PENDING'] } },
+      where: { payment_status: 'SUCCESS' },
       select: {
         id: true,
         business_id: true,

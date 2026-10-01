@@ -54,6 +54,8 @@ interface CommissionReport {
     bankTipsVolume: number;
     cashTipsVolume: number;
     totalTipsCount: number;
+    unverifiedTipsVolume?: number;
+    unverifiedTipsCount?: number;
     platformFeeRate: number;
     totalPlatformFee: number;
     cardPlatformFee: number;
@@ -334,6 +336,11 @@ export const CommissionSettlementTab: React.FC = () => {
           <div style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '0.35rem' }}>
             %0.50 {ct.bankCommissionAccrued}: {formatCurrency(summary.bankPlatformFeeTotal, currency)}
           </div>
+          {Boolean(summary.unverifiedTipsCount && summary.unverifiedTipsCount > 0) && (
+            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.3rem', background: 'rgba(255, 255, 255, 0.04)', padding: '2px 6px', borderRadius: '6px' }}>
+              ⏳ {summary.unverifiedTipsCount} {language === 'tr' ? 'onay bekleyen transfer (Onaylanana kadar komisyon yansıtılmaz)' : 'pending verification (No fee until verified)'}
+            </div>
+          )}
         </div>
 
         {/* Current Pending Wire Commission Due */}

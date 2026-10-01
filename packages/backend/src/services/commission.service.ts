@@ -36,6 +36,8 @@ export interface BusinessCommissionsReport {
     bankTipsVolume: number;
     cashTipsVolume: number;
     totalTipsCount: number;
+    unverifiedTipsVolume: number;
+    unverifiedTipsCount: number;
     platformFeeRate: number; // 0.50
     totalPlatformFee: number;
     cardPlatformFee: number;
@@ -107,6 +109,9 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
   let cardTipsVolume = 0;
   let bankTipsVolume = 0;
   let cashTipsVolume = 0;
+  let totalTipsCount = 0;
+  let unverifiedTipsVolume = 0;
+  let unverifiedTipsCount = 0;
   let totalPlatformFee = 0;
   let cardPlatformFee = 0;
   let bankPlatformFeeTotal = 0;
@@ -132,7 +137,6 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
 
   for (const tip of tips) {
     const amt = Number(tip.amount);
-    const fee = Number(tip.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
     const method = (tip.payment_method || '').toUpperCase();
     const isBank =
       method === 'BANK_TRANSFER' ||
@@ -147,7 +151,20 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     const isCash = method === 'CASH';
     const isCard = !isBank && !isCash;
 
+    // CRITICAL BUSINESS RULE:
+    // Platform fee (commission) applies ONLY to tips that have been successfully received and verified!
+    // If an incoming tip is UNVERIFIED or PENDING, the venue has NOT verified receipt of funds yet.
+    // Zero commission is accrued until the venue confirms the payment from their dashboard.
+    if (tip.payment_status !== PaymentStatus.SUCCESS) {
+      unverifiedTipsVolume += amt;
+      unverifiedTipsCount += 1;
+      continue;
+    }
+
+    const fee = Number(tip.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
+
     totalTipsVolume += amt;
+    totalTipsCount += 1;
     totalPlatformFee += fee;
 
     const createdAt = new Date(tip.created_at);
@@ -289,7 +306,9 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
       cardTipsVolume: Number(cardTipsVolume.toFixed(2)),
       bankTipsVolume: Number(bankTipsVolume.toFixed(2)),
       cashTipsVolume: Number(cashTipsVolume.toFixed(2)),
-      totalTipsCount: tips.length,
+      totalTipsCount,
+      unverifiedTipsVolume: Number(unverifiedTipsVolume.toFixed(2)),
+      unverifiedTipsCount,
       platformFeeRate: 0.50,
       totalPlatformFee: Number(totalPlatformFee.toFixed(2)),
       cardPlatformFee: Number(cardPlatformFee.toFixed(2)),
@@ -335,6 +354,7 @@ export async function declareBusinessSettlement(
     business_id: businessId,
     payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST', 'IBAN_TRANSFER', 'HAVALE', 'EFT'] },
     is_settled: false,
+    payment_status: PaymentStatus.SUCCESS,
   };
 
   if (input.periodKey && input.periodKey !== 'ALL_PENDING') {
@@ -394,6 +414,7 @@ export async function confirmAdminVenueSettlement(
     business_id: businessId,
     payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST', 'IBAN_TRANSFER', 'HAVALE', 'EFT'] },
     is_settled: false,
+    payment_status: PaymentStatus.SUCCESS,
   };
 
   if (periodKey && periodKey !== 'ALL_PENDING') {

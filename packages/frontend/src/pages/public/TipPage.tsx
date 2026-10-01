@@ -133,6 +133,7 @@ export const TipPage: React.FC = () => {
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [receiptEmail, setReceiptEmail] = useState('');
   const [receiptSent, setReceiptSent] = useState(false);
+  const [receiptSending, setReceiptSending] = useState(false);
   const [selectedQuickBadge, setSelectedQuickBadge] = useState<string | null>(null);
 
   const safeCopy = (text: string): Promise<void> => {
@@ -853,8 +854,77 @@ export const TipPage: React.FC = () => {
     const selectedEmployee = details?.employees?.find((e) => e.id === selectedEmployeeId);
     const staffName = selectedEmployee ? `${selectedEmployee.first_name} ${selectedEmployee.last_name}`.trim() : null;
 
-    // 1. Mobile & Desktop Print Action
+    // 1. Mobile & Desktop Print Action via isolated print frame
     const handlePrintReceipt = () => {
+      try {
+        const receiptEl = document.getElementById('naponi-digital-receipt');
+        if (receiptEl) {
+          let printFrame = document.getElementById('naponi-print-frame') as HTMLIFrameElement | null;
+          if (!printFrame) {
+            printFrame = document.createElement('iframe');
+            printFrame.id = 'naponi-print-frame';
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+          }
+
+          const frameDoc = printFrame.contentWindow?.document || printFrame.contentDocument;
+          if (frameDoc && printFrame.contentWindow) {
+            frameDoc.open();
+            frameDoc.write(`
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <title>${rt.title} - ${details?.business?.name || 'Naponi'}</title>
+                  <style>
+                    @page { size: auto; margin: 10mm; }
+                    body {
+                      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                      background: #ffffff;
+                      color: #111827;
+                      margin: 0;
+                      padding: 16px;
+                      display: flex;
+                      justify-content: center;
+                    }
+                    .receipt-container {
+                      width: 100%;
+                      max-width: 440px;
+                      border: 1.5px solid #111827;
+                      border-radius: 16px;
+                      padding: 24px;
+                      background: #FAF9F6;
+                      box-sizing: border-box;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <div class="receipt-container">
+                    ${receiptEl.innerHTML}
+                  </div>
+                </body>
+              </html>
+            `);
+            frameDoc.close();
+
+            setTimeout(() => {
+              printFrame?.contentWindow?.focus();
+              printFrame?.contentWindow?.print();
+            }, 250);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Iframe printing fallback to window.print:', err);
+      }
+
+      // Fallback
       document.body.classList.add('printing-receipt');
       setTimeout(() => {
         window.print();
@@ -997,6 +1067,25 @@ export const TipPage: React.FC = () => {
         });
       } catch {
         // User cancelled share dialog
+      }
+    };
+
+    // 4. Send Receipt to Customer Email Action
+    const handleSendReceiptEmail = async () => {
+      if (!receiptEmail || !receiptEmail.includes('@') || receiptSending) return;
+      setReceiptSending(true);
+      try {
+        await api.post(`/tips/${publicToken}/send-receipt`, {
+          email: receiptEmail.trim(),
+          tipId: paymentResult?.tip?.id,
+          language,
+        });
+        setReceiptSent(true);
+        showToast(rt.sentSuccess, 'success');
+      } catch (err: any) {
+        showToast(err?.response?.data?.error || (language === 'tr' ? 'Makbuz gönderilemedi, lütfen tekrar deneyin.' : 'Failed to send receipt.'), 'error');
+      } finally {
+        setReceiptSending(false);
       }
     };
 
@@ -1180,12 +1269,12 @@ export const TipPage: React.FC = () => {
                   />
                   <button
                     type="button"
-                    disabled={!receiptEmail || !receiptEmail.includes('@')}
-                    onClick={() => setReceiptSent(true)}
+                    disabled={!receiptEmail || !receiptEmail.includes('@') || receiptSending}
+                    onClick={handleSendReceiptEmail}
                     className="btn btn-primary btn-sm"
                     style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
                   >
-                    {rt.send}
+                    {receiptSending ? '...' : rt.send}
                   </button>
                 </div>
               )}
