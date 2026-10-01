@@ -843,9 +843,11 @@ export const TipPage: React.FC = () => {
     };
 
     const rt = receiptLocales[language] || receiptLocales.tr;
-    const refCode = paymentResult?.payment?.ibanDetails?.referenceCode || paymentResult?.tip?.id
-      ? `TIP-${(paymentResult.payment?.ibanDetails?.referenceCode || paymentResult.tip?.id).substring(0, 8).toUpperCase()}`
-      : 'TIP-NAPONI';
+    const ibanRef = paymentResult?.payment?.ibanDetails?.referenceCode;
+    const rawTipId = paymentResult?.tip?.id;
+    const refCode = ibanRef
+      ? (ibanRef.toUpperCase().startsWith('TIP-') ? ibanRef.toUpperCase() : `TIP-${ibanRef.toUpperCase()}`)
+      : (rawTipId ? `TIP-${rawTipId.substring(0, 8).toUpperCase()}` : 'TIP-NAPONI');
     const amountStr = formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details?.business?.currency);
     const paymentMethodStr = paymentResult?.tip?.payment_method === 'IBAN_TRANSFER'
       ? rt.directTransfer
@@ -1075,9 +1077,10 @@ export const TipPage: React.FC = () => {
       if (!receiptEmail || !receiptEmail.includes('@') || receiptSending) return;
       setReceiptSending(true);
       try {
-        await api.post(`/tips/${publicToken}/send-receipt`, {
+        await api.post(`/tip/${publicToken}/send-receipt`, {
           email: receiptEmail.trim(),
           tipId: paymentResult?.tip?.id,
+          referenceCode: refCode,
           language,
         });
         setReceiptSent(true);

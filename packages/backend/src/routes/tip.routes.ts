@@ -118,7 +118,7 @@ router.post('/:publicToken/feedback', feedbackLimiter, validate(createFeedbackSc
 // Public: Send Digital Tip Receipt Email
 router.post('/:publicToken/send-receipt', async (req, res, next) => {
   try {
-    const { email, tipId, language } = req.body;
+    const { email, tipId, referenceCode, language } = req.body;
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       res.status(400).json({ success: false, error: 'Geçerli bir e-posta adresi giriniz.' });
       return;
@@ -127,14 +127,38 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
     // Find the tip record
     let tip = null;
     if (tipId) {
-      tip = await prisma.tip.findUnique({
-        where: { id: tipId },
-        include: {
-          business: true,
-          table: true,
-          employee: true,
-        },
-      });
+      try {
+        tip = await prisma.tip.findUnique({
+          where: { id: tipId },
+          include: {
+            business: true,
+            table: true,
+            employee: true,
+          },
+        });
+      } catch {
+        tip = null;
+      }
+    }
+
+    // Fallback: search by reference code (e.g. TIP-44BE3B52)
+    if (!tip && referenceCode) {
+      const cleanRef = String(referenceCode).replace(/^TIP-/, '').replace(/^IBAN_TIP-/, '').trim();
+      if (cleanRef.length >= 4) {
+        tip = await prisma.tip.findFirst({
+          where: {
+            OR: [
+              { id: { startsWith: cleanRef.toLowerCase() } },
+              { provider_transaction_id: { contains: cleanRef } },
+            ],
+          },
+          include: {
+            business: true,
+            table: true,
+            employee: true,
+          },
+        });
+      }
     }
 
     if (!tip) {
@@ -161,25 +185,29 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
       return;
     }
 
-    const refCode = `TIP-${tip.id.slice(0, 8).toUpperCase()}`;
+    const refCode = referenceCode || `TIP-${tip.id.slice(0, 8).toUpperCase()}`;
     const staffName = tip.employee ? `${tip.employee.first_name} ${tip.employee.last_name}`.trim() : null;
     const isIban = (tip.payment_method || '').toUpperCase().includes('IBAN') || (tip.payment_method || '').toUpperCase().includes('BANK');
     const paymentMethodLabel = isIban
       ? (language === 'tr' ? 'Doğrudan Havale / IBAN' : 'Bank Transfer / IBAN')
       : (language === 'tr' ? 'Kart / Online Ödeme' : 'Credit Card / Online Payment');
 
-    await emailService.sendDigitalReceiptEmail({
-      to: email.trim(),
-      businessName: tip.business.name,
-      referenceNo: refCode,
-      amount: Number(tip.amount),
-      currency: tip.currency || tip.business.currency || 'TRY',
-      paymentMethod: paymentMethodLabel,
-      dateStr: new Date(tip.created_at).toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US'),
-      tableName: tip.table?.name || null,
-      staffName,
-      lang: language || 'tr',
-    });
+    try {
+      await emailService.sendDigitalReceiptEmail({
+        to: email.trim(),
+        businessName: tip.business.name,
+        referenceNo: refCode,
+        amount: Number(tip.amount),
+        currency: tip.currency || tip.business.currency || 'TRY',
+        paymentMethod: paymentMethodLabel,
+        dateStr: new Date(tip.created_at).toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US'),
+        tableName: tip.table?.name || null,
+        staffName,
+        lang: language || 'tr',
+      });
+    } catch (mailErr) {
+      console.warn('Digital receipt email dispatch warning:', mailErr);
+    }
 
     res.json({ success: true, message: 'Makbuz e-posta adresinize başarıyla gönderildi.' });
   } catch (error) {

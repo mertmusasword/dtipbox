@@ -44,6 +44,7 @@ apiRouter.use('/business', businessRoutes);
 apiRouter.use('/business/menu', menuRoutes);
 apiRouter.use('/employee', employeeRoutes);
 apiRouter.use('/tip', tipRoutes);
+apiRouter.use('/tips', tipRoutes);
 apiRouter.use('/menu', menuRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/payment/webhook', webhookRoutes);
