@@ -604,6 +604,132 @@ export const TipPage: React.FC = () => {
     );
   }
 
+  // --- Digital E-Receipt Modal Renderer ---
+  const renderReceiptModal = () => {
+    if (!showReceiptModal) return null;
+    return (
+      <div className="smart-sheet-overlay" onClick={() => setShowReceiptModal(false)} style={{ zIndex: 9999 }}>
+        <div
+          className="smart-sheet-content"
+          style={{
+            background: '#FFFFFF',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            color: '#1C1917',
+            maxWidth: '460px',
+            margin: '0 auto',
+            padding: '1.75rem',
+            borderRadius: '24px',
+            textAlign: dir === 'rtl' ? 'right' : 'left',
+            direction: dir === 'rtl' ? 'rtl' : 'ltr',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.25rem' }}>🧾</span>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#1C1917' }}>
+                {language === 'tr' ? 'Dijital Bahşiş Makbuzu' : 'Digital Tip Receipt'}
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowReceiptModal(false)}
+              style={{ background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Receipt Body */}
+          <div style={{ background: '#FAF9F6', border: '1px dashed #D6D3D1', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '1rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
+              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1C1917' }}>{details.business?.name}</div>
+              <div style={{ fontSize: '0.78rem', color: '#78716C', marginTop: '0.15rem' }}>
+                {details.business?.country} • {details.business?.currency}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Referans No:' : 'Reference No:'}</span>
+                <strong style={{ fontFamily: 'monospace', color: '#059669' }}>
+                  {paymentResult?.payment?.ibanDetails?.referenceCode || paymentResult?.tip?.id ? `TIP-${(paymentResult.payment?.ibanDetails?.referenceCode || paymentResult.tip?.id).substring(0, 8).toUpperCase()}` : 'TIP-NAPONI'}
+                </strong>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Tarih & Saat:' : 'Date & Time:'}</span>
+                <span>{new Date().toLocaleString()}</span>
+              </div>
+
+              {details.table && (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Masa:' : 'Table:'}</span>
+                  <span>{details.table.name}</span>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Ödeme Türü:' : 'Payment Type:'}</span>
+                <span>{paymentResult?.tip?.payment_method === 'IBAN_TRANSFER' ? (language === 'tr' ? 'Doğrudan Havale / IBAN' : 'Direct Bank Transfer / IBAN') : (language === 'tr' ? 'Kart / Online Ödeme' : 'Credit Card / Online Payment')}</span>
+              </div>
+
+              <div style={{ borderTop: '1px dashed #D6D3D1', paddingTop: '0.75rem', marginTop: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{language === 'tr' ? 'Bahşiş Tutarı:' : 'Tip Total:'}</span>
+                <span style={{ fontWeight: 800, fontSize: '1.35rem', color: '#059669' }}>
+                  {formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details.business?.currency)}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem', color: '#78716C' }}>
+              ✓ {language === 'tr' ? 'Naponi Smart QR Platformu Tarafından Doğrulanmış Dijital Fiş' : 'Digital Receipt Verified by Naponi Smart QR Platform'}
+            </div>
+          </div>
+
+          {/* Email Send & Print Actions */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {receiptSent ? (
+              <div style={{ padding: '0.75rem', background: 'rgba(5, 150, 105, 0.1)', color: '#059669', borderRadius: '10px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600 }}>
+                ✓ {language === 'tr' ? 'Dijital fişiniz e-posta adresinize gönderildi!' : 'Digital receipt sent to your email!'}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input
+                  type="email"
+                  placeholder={language === 'tr' ? 'E-posta adresiniz...' : 'your@email.com'}
+                  value={receiptEmail}
+                  onChange={(e) => setReceiptEmail(e.target.value)}
+                  className="input"
+                  style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
+                />
+                <button
+                  type="button"
+                  disabled={!receiptEmail || !receiptEmail.includes('@')}
+                  onClick={() => setReceiptSent(true)}
+                  className="btn btn-primary btn-sm"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
+                >
+                  {language === 'tr' ? 'Gönder' : 'Send'}
+                </button>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="btn btn-secondary btn-sm"
+              style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+            >
+              <span>🖨️</span>
+              <span>{language === 'tr' ? 'Makbuzu Yazdır / PDF İndir' : 'Print / Save PDF'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // --- Payment Confirmation Screen ---
   if (paymentResult) {
     const isIban =
@@ -1075,6 +1201,7 @@ export const TipPage: React.FC = () => {
           </button>
 
         </div>
+        {renderReceiptModal()}
       </div>
     );
   }
@@ -2575,124 +2702,7 @@ export const TipPage: React.FC = () => {
         )}
 
         {/* Digital E-Receipt Modal */}
-        {showReceiptModal && (
-          <div className="smart-sheet-overlay" onClick={() => setShowReceiptModal(false)}>
-            <div
-              className="smart-sheet-content"
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
-                color: '#1C1917',
-                maxWidth: '460px',
-                margin: '0 auto',
-                padding: '1.75rem',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '1.25rem' }}>🧾</span>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#1C1917' }}>
-                    {language === 'tr' ? 'Dijital Bahşiş Makbuzu' : 'Digital Tip Receipt'}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowReceiptModal(false)}
-                  style={{ background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Receipt Body */}
-              <div style={{ background: '#FAF9F6', border: '1px dashed #D6D3D1', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.25rem' }}>
-                <div style={{ textAlign: 'center', marginBottom: '1rem', borderBottom: '1px solid #E7E5E4', paddingBottom: '0.75rem' }}>
-                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1C1917' }}>{details.business?.name}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#78716C', marginTop: '0.15rem' }}>
-                    {details.business?.country} • {details.business?.currency}
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Referans No:' : 'Reference No:'}</span>
-                    <strong style={{ fontFamily: 'monospace', color: '#059669' }}>
-                      {paymentResult?.payment?.ibanDetails?.referenceCode || paymentResult?.tip?.id ? `TIP-${(paymentResult.payment?.ibanDetails?.referenceCode || paymentResult.tip?.id).substring(0, 8).toUpperCase()}` : 'TIP-NAPONI'}
-                    </strong>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Tarih & Saat:' : 'Date & Time:'}</span>
-                    <span>{new Date().toLocaleString()}</span>
-                  </div>
-
-                  {details.table && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Masa:' : 'Table:'}</span>
-                      <span>{details.table.name}</span>
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#78716C' }}>{language === 'tr' ? 'Ödeme Türü:' : 'Payment Type:'}</span>
-                    <span>{paymentResult?.tip?.payment_method === 'IBAN_TRANSFER' ? 'Doğrudan Havale / IBAN' : 'Kart / Online Ödeme'}</span>
-                  </div>
-
-                  <div style={{ borderTop: '1px dashed #D6D3D1', paddingTop: '0.75rem', marginTop: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{language === 'tr' ? 'Bahşiş Tutarı:' : 'Tip Total:'}</span>
-                    <span style={{ fontWeight: 800, fontSize: '1.35rem', color: '#059669' }}>
-                      {formatCurrency(paymentResult?.tip?.amount || selectedAmount || 0, details.business?.currency)}
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem', color: '#78716C' }}>
-                  ✓ Naponi Smart QR Platformu Tarafından Doğrulanmış Dijital Fiş
-                </div>
-              </div>
-
-              {/* Email Send & Print Actions */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {receiptSent ? (
-                  <div style={{ padding: '0.75rem', background: 'rgba(5, 150, 105, 0.1)', color: '#059669', borderRadius: '10px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600 }}>
-                    ✓ {language === 'tr' ? 'Dijital fişiniz e-posta adresinize gönderildi!' : 'Digital receipt sent to your email!'}
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <input
-                      type="email"
-                      placeholder={language === 'tr' ? 'E-posta adresiniz...' : 'your@email.com'}
-                      value={receiptEmail}
-                      onChange={(e) => setReceiptEmail(e.target.value)}
-                      className="input"
-                      style={{ fontSize: '0.85rem', background: '#F5F5F4', border: '1px solid #E7E5E4', borderRadius: '10px', flex: 1 }}
-                    />
-                    <button
-                      type="button"
-                      disabled={!receiptEmail || !receiptEmail.includes('@')}
-                      onClick={() => setReceiptSent(true)}
-                      className="btn btn-primary btn-sm"
-                      style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
-                    >
-                      {language === 'tr' ? 'Gönder' : 'Send'}
-                    </button>
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="btn btn-secondary btn-sm"
-                  style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
-                >
-                  <span>🖨️</span>
-                  <span>{language === 'tr' ? 'Makbuzu Yazdır / PDF İndir' : 'Print / Save PDF'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {renderReceiptModal()}
 
         <div style={{ textAlign: 'center', marginTop: '2.25rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <img src="/naponi-brand-dark.svg" alt="Naponi" style={{ height: '28px', width: 'auto', opacity: 0.95 }} />
