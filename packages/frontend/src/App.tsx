@@ -68,6 +68,7 @@ const AdminBusinessesPage = React.lazy(() => import('./pages/admin/AdminBusiness
 const AdminEmployeesPage = React.lazy(() => import('./pages/admin/AdminEmployeesPage').then((m) => ({ default: m.AdminEmployeesPage })));
 const AdminQrsPage = React.lazy(() => import('./pages/admin/AdminQrsPage').then((m) => ({ default: m.AdminQrsPage })));
 const AdminPaymentsPage = React.lazy(() => import('./pages/admin/AdminPaymentsPage').then((m) => ({ default: m.AdminPaymentsPage })));
+const AdminCommissionsPage = React.lazy(() => import('./pages/admin/AdminCommissionsPage').then((m) => ({ default: m.AdminCommissionsPage })));
 const AdminPaymentProvidersPage = React.lazy(() => import('./pages/admin/AdminPaymentProvidersPage').then((m) => ({ default: m.AdminPaymentProvidersPage })));
 const AdminAuditPage = React.lazy(() => import('./pages/admin/AdminAuditPage').then((m) => ({ default: m.AdminAuditPage })));
 const AdminSettingsPage = React.lazy(() => import('./pages/admin/AdminSettingsPage').then((m) => ({ default: m.AdminSettingsPage })));
@@ -263,6 +264,8 @@ export const App: React.FC = () => {
                   <Route path="/admin/employees" element={<AdminEmployeesPage />} />
                   <Route path="/admin/qr" element={<AdminQrsPage />} />
                   <Route path="/admin/payments" element={<AdminPaymentsPage />} />
+                  <Route path="/admin/commissions" element={<AdminCommissionsPage />} />
+                  <Route path="/admin/revenue" element={<Navigate to="/admin/commissions" replace />} />
                   <Route path="/admin/payment-providers" element={<AdminPaymentProvidersPage />} />
                   <Route path="/admin/corporate-applications" element={<AdminCorporateApplicationsPage />} />
                   <Route path="/admin/partner-applications" element={<AdminPartnerApplicationsPage />} />

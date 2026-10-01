@@ -102,6 +102,29 @@ router.get('/payments', async (req, res, next) => {
   }
 });
 
+// --- Super Admin Platform Revenue & Founder Commission Tracking ---
+router.get('/commissions', async (req, res, next) => {
+  try {
+    const { page, limit } = parsePagination(req.query, 30);
+    const data = await adminService.getAdminCommissionsAndRevenue(page, limit);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/commissions/:businessId/settle', async (req: AuthRequest, res, next) => {
+  try {
+    const data = await adminService.confirmAdminVenueSettlement(
+      req.params.businessId as string,
+      req.user!.id
+    );
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/audit-logs', async (req, res, next) => {
   try {
     const { page, limit } = parsePagination(req.query, 50);

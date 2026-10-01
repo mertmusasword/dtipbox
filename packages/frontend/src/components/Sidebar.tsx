@@ -24,13 +24,14 @@ import {
   Award,
   Cpu,
   BookOpen,
+  Coins,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
 
@@ -136,6 +137,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/admin/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
               <NavItem to="/admin/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
               <NavItem to="/admin/payments" icon={<CreditCard size={18} />} label={t('nav.payments')} onClick={closeMobile} />
+              <NavItem to="/admin/commissions" icon={<Coins size={18} />} label={language === 'tr' ? 'Gelir & Kurucu Takip' : 'Revenue & Founders'} onClick={closeMobile} />
               <NavItem to="/admin/payment-providers" icon={<Layers size={18} />} label={t('nav.paymentProviders')} onClick={closeMobile} />
               <NavItem to="/admin/agreements" icon={<FileText size={18} />} label={t('nav.agreements')} onClick={closeMobile} />
               <NavItem to="/admin/statistics" icon={<BarChart3 size={18} />} label={t('nav.platformStats')} onClick={closeMobile} />

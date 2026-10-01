@@ -12,7 +12,9 @@ import {
   TrendingUp,
   CreditCard,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  Coins,
+  Crown
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -115,6 +117,19 @@ export const AdminDashboard: React.FC = () => {
           <div>
             <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{t('nav.auditLogs')}</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Compliance Trail</div>
+          </div>
+        </Link>
+
+        <Link to="/admin/commissions" className="glass-card" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem', transition: 'transform 0.15s ease', border: '1px solid rgba(245, 158, 11, 0.35)', background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.03))' }}>
+          <div style={{ padding: '0.75rem', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24' }}>
+            <Coins size={22} />
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <span>{t('admin.commissionsTab') || 'Gelir & Komisyonlar'}</span>
+              <Crown size={14} color="#f59e0b" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#fbbf24', fontWeight: 600 }}>%0.5 Komisyon & 2026 Kurucular</div>
           </div>
         </Link>
       </div>
