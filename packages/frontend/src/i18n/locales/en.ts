@@ -792,7 +792,7 @@ export const en = {
     "countdownMinutes": "MINS",
     "countdownSeconds": "SECS",
     "heroCountdownLabel": "Time Remaining for 2026 Founder Membership Program:",
-    "heroCountdownDesc": "Venues joining before Dec 31, 2026 lock in lifetime 0₺ subscription & verified VIP Founder Member status."
+    "heroCountdownDesc": "Venues joining before Dec 31, 2026 lock in lifetime $0 subscription & verified VIP Founder Member status."
   },
   "menu": {
     "title": "Native QR Menu & Allergen Management",

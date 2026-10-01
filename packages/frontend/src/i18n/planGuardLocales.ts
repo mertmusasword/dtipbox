@@ -191,7 +191,7 @@ export const planGuardTranslations: Record<SupportedLanguage, PlanGuardTranslati
     standardBadge: 'عضو قياسي (2027+)',
     founderStatusDesc: 'انضمت منشأتك قبل 31 ديسمبر 2026، مما يمنحها إعفاءً مدى الحياة من الرسوم الثابتة واستخداماً غير محدود.',
     standardStatusDesc: 'تخضع منشأتك للحصص القياسية. ترقية الباقة مطلوبة للاستفادة من المزايا غير المحدودة.',
-    lifetimeExemption: 'إعفاء دائم مدى الحياة من الرسوم الثابتة (0 ₺)',
+    lifetimeExemption: 'إعفاء دائم مدى الحياة من الرسوم الثابتة ($0)',
     guaranteedUntil: 'مضمون ومسجل حتى 31 ديسمبر 2026',
     active: 'نشط',
     unlimited: 'غير محدود',
