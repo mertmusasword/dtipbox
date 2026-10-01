@@ -1189,6 +1189,178 @@ export const BLOG_POSTS_TR: BlogPost[] = [
       </div>
     `,
   },
+  // ===========================================================================
+  // 16. 2026 Kurucu Üyelik Programı: Dijital Bahşişte 0₺ Devri
+  // ===========================================================================
+  {
+    slug: '2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri',
+    title: '2026 Kurucu Üyelik Programı: Dijital Bahşişte 0₺ Devri ve Restoranlar İçin Geleceğin Bahşiş Modeli',
+    excerpt: '31 Aralık 2026 tarihine kadar Naponi ailesine katılan işletmelerin ömür boyu sahip olacağı 0₺ sabit aidat, öncelikli POS entegrasyonu ve VIP kurucu avantajlarını tüm detaylarıyla inceleyin.',
+    featuredImage: '/naponi-brand.svg',
+    imageAlt: 'Restoran ve oteller için Naponi 2026 Kurucu Üye Programı altın VIP rozeti ve QR bahşiş kartı',
+    author: DEFAULT_AUTHOR,
+    category: 'İşletme Rehberi',
+    tags: ['Kurucu Üyelik', 'Dijital Bahşiş', 'Restoranlar', 'İşletme Rehberi', 'Fiyatlandırma'],
+    targetKeyword: '2026 kurucu üyelik programı',
+    secondaryKeywords: [
+      'dijital bahşiş komisyon oranları',
+      'ücretsiz dijital bahşiş sistemi',
+      'restoran bahşiş sistemi maliyeti',
+      'kurucu üye avantajları',
+      'havale ile bahşiş komisyonu',
+    ],
+    searchIntent: 'Commercial',
+    metaTitle: '2026 Kurucu Üyelik Programı: Dijital Bahşişte 0₺ Devri — Naponi',
+    metaDescription: '31 Aralık 2026 tarihine kadar Naponi\'ye katılan işletmeler ömür boyu 0₺ sabit aidat, öncelikli API/POS entegrasyonu ve 14 VIP kurucu avantajından faydalanıyor.',
+    canonicalUrl: 'https://www.naponi.com/blog/2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri',
+    language: 'tr',
+    status: 'published',
+    datePublished: '2026-10-01',
+    dateModified: '2026-10-01',
+    readingTime: '8 dk okuma',
+    isFeatured: true,
+    relatedSlugs: [
+      'dijital-bahsis-nedir-isletmeler-icin-rehber',
+      'restoranlarda-dijital-bahsis-sistemi-nasil-kurulur',
+      'isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz',
+      'calisan-bahsislerini-yonetmenin-yollari',
+    ],
+    faq: [
+      {
+        question: '2026 Kurucu Üyelik Programı nedir ve kimler katılabilir?',
+        answer: '2026 Kurucu Üyelik Programı, 31 Aralık 2026 saat 23:59\'a kadar Naponi platformuna kayıt olan tüm restoran, kafe, otel, kuaför ve hizmet işletmelerine ömür boyu geçerli 14 VIP ayrıcalık sağlayan özel bir büyüme programıdır.',
+      },
+      {
+        question: '2026\'dan sonra katılan işletmeler için sistem nasıl ücretlendirilecek?',
+        answer: '2027 yılı itibarıyla platforma yeni katılacak işletmeler için aylık 499 ₺ sabit yazılım lisans bedeli ve gelişmiş modüller için ek ücret tarifesi uygulanacaktır. 2026 Kurucu Üyeleri ise bu sabit aidatlardan ömür boyu tamamen muaftır.',
+      },
+      {
+        question: 'Bahşiş işlemlerinde alınan %0.50 platform komisyonu nasıl çalışır?',
+        answer: 'Naponi, kartlı veya FAST/havale ile gönderilen her bahşiş işleminde yalnızca %0.50 adil platform hizmet bedeli alır. Kredi kartı ödemelerinde bu bedel anında otomatik tahsil edilir; doğrudan işletme/personel IBAN\'ına yapılan havale/FAST transferlerinde ise aylık şeffaf ekstre ile mutabakat sağlanır.',
+      },
+      {
+        question: 'Kurucu üye olmak için herhangi bir ek ücret veya gizli taahhüt var mı?',
+        answer: 'Hayır. Kurulum ücreti, donanım satın alma zorunluluğu, cayma bedeli veya yıllık taahhüt bulunmamaktadır. 5 dakikada kayıt olup QR kodlarınızı hemen masalara yerleştirebilirsiniz.',
+      },
+      {
+        question: 'Kurucu üyelik statüsü kaç şube için geçerlidir?',
+        answer: '2026 yılı içerisinde açtığınız ana işletme hesabına bağlı tüm şube ve masalarınız kurucu üyelik koruma kalkanı altında ömür boyu sabit aidatsız olarak devam eder.',
+      },
+    ],
+    content: `
+      <h2>Dijital Bahşiş Ekosisteminde Yeni Bir Çağ: 2026 Kurucu Üyelik</h2>
+      <p>
+        Nakit kullanımının neredeyse tamamen terk edildiği, temassız ve mobil ödemelerin yeme-içme ve konaklama sektörünün standardı haline geldiği günümüzde, hizmet çalışanlarının en önemli gelir kaynaklarından biri olan bahşişler büyük bir dönüşüm geçiriyor.
+      </p>
+      <p>
+        Geleneksel pos cihazları üzerinden bahşiş almak; restoran işletmecileri için yüksek komisyon kesintileri, karmaşık fatura ayrıştırma süreçleri ve çalışanlar için haftalar süren gecikmeli ödemeler anlamına gelmektedir. <strong>Naponi</strong>, bu sorunu kökten çözmek ve hizmet sektörünü şeffaf bir dijital finans altyapısıyla buluşturmak amacıyla <strong>2026 Kurucu Üyelik Programı</strong>'nı hayata geçirdi.
+      </p>
+
+      <h2>2026 Kurucu Üye Programı Nedir?</h2>
+      <p>
+        <strong>31 Aralık 2026 saat 23:59</strong> tarihine kadar Naponi'ye katılan tüm işletmeler (restoranlar, kafeler, oteller, plaj işletmeleri, barlar, berberler ve vale firmaları), otomatik olarak <em>"Kurucu Üye (Founder Member)"</em> statüsü kazanır.
+      </p>
+      <p>
+        Bu statü, işletmenize yalnızca bugünün değil geleceğin de en avantajlı finansal şartlarını taahhüt eder. 2027 yılından itibaren sisteme katılacak olan yeni işletmeler aylık sabit lisans bedelleri (499 ₺/ay) ve modül başına ek ücretler öderken; <strong>2026 Kurucu Üyeleri bu sabit aidatların tamamından ÖMÜR BOYU muaf tutulur.</strong>
+      </p>
+
+      <h2>14 Maddelik Kurucu Üye Ayrıcalıkları</h2>
+      <p>
+        Kurucu Üye statüsü, işletmenizin operasyonel verimliliğini ve kârlılığını maksimize etmek üzere tasarlanmış 14 ayrıcalıktan oluşur:
+      </p>
+      <ol>
+        <li><strong>Ömür Boyu 0₺ Sabit Aidat:</strong> Aylık ya da yıllık abonelik ücreti, lisans yenileme bedeli asla ödemezsiniz.</li>
+        <li><strong>Sınırsız QR Kod ve Masa Yönetimi:</strong> İşletmenizin büyüklüğü ne olursa olsun istediğiniz kadar masa ve personel QR kodu oluşturabilirsiniz.</li>
+        <li><strong>Doğrudan Banka Transferi (Havale / FAST):</strong> Bahşişler üçüncü taraf emanet havuzlarında beklemeden doğrudan sizin veya çalışanlarınızın banka hesabına ulaşır.</li>
+        <li><strong>Kartlı Ödeme Desteği:</strong> Kredi ve banka kartlarıyla saniyeler içinde temassız bahşiş alma imkanı.</li>
+        <li><strong>Öncelikli POS ve Adisyon Entegrasyonu:</strong> Gelecek dönemde devreye girecek olan POS ve otomasyon entegrasyonlarına ilk erişim hakkı.</li>
+        <li><strong>Kurucu Üye Altın Rozeti:</strong> İşletme yönetim panelinizde ve misafir ödeme ekranlarında prestijli kurucu üye rozeti.</li>
+        <li><strong>Detaylı Personel ve Vardiya Analitiği:</strong> Hangi vardiyada, hangi masadan ne kadar bahşiş toplandığını anlık gösteren analitik araçları.</li>
+        <li><strong>Çoklu Para Birimi Desteği:</strong> Turistik işletmeler için TRY, USD, EUR ve GBP ile dövizli bahşiş kabulü.</li>
+        <li><strong>11 Dilde Müşteri Deneyimi:</strong> Yabancı misafirlerin telefon diline göre otomatik uyarlanan 11 dilde bahşiş arayüzü.</li>
+        <li><strong>7/24 Öncelikli VIP Destek:</strong> Olası soru ve taleplerinizde doğrudan teknik ekibimize ulaşabileceğiniz öncelikli destek kanalı.</li>
+        <li><strong>Özelleştirilebilir Masa ve Personel Temaları:</strong> Logonuz, kurumsal renkleriniz ve özel teşekkür mesajlarınızla markalı deneyim.</li>
+        <li><strong>Departman ve Havuz (Tip Pool) Dağıtımı:</strong> Mutfak, servis ve bar ekipleri arasında esnek yüzdelerle adil havuz paylaştırma sistemi.</li>
+        <li><strong>Google Yorum ve Değerlendirme Yönlendirmesi:</strong> 5 yıldız veren memnun müşterileri doğrudan Google Maps yorum sayfasına yönlendirme özelliği.</li>
+        <li><strong>Toplu Ödeme ve Bordro Dışa Aktarma:</strong> Muhasebe departmanınız için tek tıkla Excel ve CSV formatında yasal uyumlu döküm alma.</li>
+      </ol>
+
+      <h2>Şeffaf Maliyet Modeli: Sadece %0.50 Platform Hizmet Bedeli</h2>
+      <p>
+        Naponi'nin iş modeli gizli masraflara değil, şeffaf ve sürdürülebilir bir ortaklığa dayanır. İşletmenizden kurulum ücreti, donanım kira bedeli veya minimum ciro taahhüdü talep edilmez.
+      </p>
+      <ul>
+        <li><strong>Kredi Kartı İşlemleri:</strong> Yapılan bahşiş ödemesi üzerinden sadece %0.50 platform hizmet bedeli otomatik olarak ayrıştırılır.</li>
+        <li><strong>Havale / FAST / IBAN İşlemleri:</strong> Para doğrudan işletmenin veya garsonun hesabına geçtiği için, aylık periyotlarla üretilen şeffaf mutabakat ekstresi üzerinden %0.50 platform bedeli ödenir.</li>
+      </ul>
+      <p>
+        Örneğin 100 ₺'lik bir bahşiş işleminde platform bedeli yalnızca <strong>0.50 ₺</strong>'dir. Kalan 99.50 ₺ eksiksiz olarak servis personeline veya işletme havuzuna kalır.
+      </p>
+
+      <h2>Kurucu Üyelik ile Standart Üyelik (2027+) Karşılaştırması</h2>
+      <div style="overflow-x: auto; margin: 1.5rem 0;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03);">
+              <th style="padding: 12px 16px;">Özellik & Koşul</th>
+              <th style="padding: 12px 16px; color: #fbbf24; font-weight: 700;">2026 Kurucu Üyelik</th>
+              <th style="padding: 12px 16px; color: #94a3b8;">Standart Üyelik (2027+)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <td style="padding: 12px 16px; font-weight: 600;">Sabit Yazılım Aidatı</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">Ömür Boyu 0 ₺</td>
+              <td style="padding: 12px 16px;">499 ₺ / Ay</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <td style="padding: 12px 16px; font-weight: 600;">İşlem Başına Platform Komisyonu</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">%0.50 (Sabit)</td>
+              <td style="padding: 12px 16px;">%0.50 + Ek Modül Ücreti</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <td style="padding: 12px 16px; font-weight: 600;">Masa ve QR Kod Sınırı</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">Sınırsız</td>
+              <td style="padding: 12px 16px;">Plan Bazlı Kotalı</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <td style="padding: 12px 16px; font-weight: 600;">POS Entegrasyon Modülü</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">Ücretsiz & Öncelikli</td>
+              <td style="padding: 12px 16px;">Ek Lisans Bedeline Tabi</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <td style="padding: 12px 16px; font-weight: 600;">VIP Kurucu Rozeti & Öncelikli Destek</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">Dahil (Ömür Boyu)</td>
+              <td style="padding: 12px 16px;">Dahil Değil</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>İşletmenizi 5 Dakikada Sisteme Nasıl Dahil Edebilirsiniz?</h2>
+      <p>
+        Naponi'de hesap açmak ve masalarınızı dijital bahşişe hazır hale getirmek son derece pratiktir:
+      </p>
+      <ol>
+        <li><a href="/register" style="color: #60a5fa; font-weight: 600;">Kayıt Sayfası</a>'na giderek işletme adı, yetkili iletişim bilgisi ve e-posta adresinizi girin.</li>
+        <li>Yönetim panelinizden masalarınızı veya servis personellerinizi tanımlayın.</li>
+        <li>Sistem tarafından otomatik üretilen yüksek çözünürlüklü QR kodları indirin ve akrilik stantlarınıza ya da hesap sümenlerinize yerleştirin.</li>
+        <li>Banka hesap (IBAN) veya sanal POS bilgilerinizi tanımlayarak ilk günden itibaren güvenle bahşiş almaya başlayın.</li>
+      </ol>
+
+      <div class="blog-cta-box" style="margin-top: 2.5rem; padding: 2rem; border-radius: 16px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05)); border: 1px solid rgba(245, 158, 11, 0.3);">
+        <h3 style="color: #fbbf24; margin-bottom: 0.5rem;">2026 Kurucu Üyesi Olarak Yerinizi Hemen Alın</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.25rem;">
+          31 Aralık 2026'ya kadar kayıt olarak ömür boyu 0 ₺ sabit aidat garantisi kazanın. Kredi kartı gerekmez, kurulum masrafı yoktur.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="/register" class="blog-btn-cta" style="background: #f59e0b; color: #000; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none;">Ücretsiz Kurucu Üye Ol &rarr;</a>
+          <a href="/kurucu-uye" style="display: inline-flex; align-items: center; color: #fbbf24; font-weight: 600; text-decoration: none; padding: 0.75rem 1rem;">Kurucu Programını İncele &rarr;</a>
+          <a href="/fiyatlandirma" style="display: inline-flex; align-items: center; color: var(--text-secondary); font-weight: 600; text-decoration: none; padding: 0.75rem 1rem;">Fiyatlandırmayı Gör &rarr;</a>
+        </div>
+      </div>
+    `,
+  },
 ];
 
 import { BLOG_POSTS_EN, BLOG_CATEGORIES_EN, DEFAULT_AUTHOR_EN } from './posts-en';
@@ -1210,6 +1382,7 @@ const TRANSLATION_MAP_TR_EN: Record<string, string> = {
   'restoranlar-icin-dijitallesme-rehberi': 'digital-transformation-guide-for-modern-restaurants',
   'isletmeler-icin-qr-kodlu-odeme-ve-bahsis-sistemleri': 'qr-payments-and-tipping-systems-for-businesses',
   'isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz': 'how-to-choose-the-right-digital-tipping-platform',
+  '2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri': '2026-founder-membership-program-zero-cost-era-in-digital-tipping',
 };
 
 BLOG_POSTS_TR.forEach((p) => {

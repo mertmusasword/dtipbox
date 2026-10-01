@@ -75,7 +75,7 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog" />
   </url>
 
-  <!-- 3. Dynamic Blog Articles (33 posts) -->
+  <!-- 3. Dynamic Blog Articles (35 posts) -->
   <url>
     <loc>https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber</loc>
     <lastmod>2026-03-11</lastmod>
@@ -210,6 +210,15 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/isletmeniz-icin-dijital-bahsis-sistemini-secerken-nelere-dikkat-etmelisiniz" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-choose-the-right-digital-tipping-platform" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping" />
   </url>
   <url>
     <loc>https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses</loc>
@@ -366,6 +375,15 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/german-tax-free-tips-gastronomie-estg-guide" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping" />
   </url>
 
   <!-- 4. Global Sector Solutions (6 sectors) -->
