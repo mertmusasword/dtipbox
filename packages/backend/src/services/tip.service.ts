@@ -368,6 +368,8 @@ export async function createTip(data: CreateTipRequest) {
     }
 
     let tip: any;
+    const PLATFORM_FEE_RATE = 0.50; // %0.5
+    const platformFeeAmount = Math.round(data.amount * PLATFORM_FEE_RATE) / 100; // amount * 0.50 / 100
     try {
       tip = await prisma.tip.create({
         data: {
@@ -381,6 +383,8 @@ export async function createTip(data: CreateTipRequest) {
           customer_name: cleanName || null,
           customer_message: cleanMessage || null,
           idempotency_key: data.idempotencyKey || null,
+          platform_fee_rate: new Prisma.Decimal(PLATFORM_FEE_RATE),
+          platform_fee_amount: new Prisma.Decimal(platformFeeAmount),
         },
       });
     } catch (err: any) {

@@ -417,6 +417,10 @@ model Tip {
   customer_message        String?
   idempotency_key         String?       @unique
 
+  // Platform fee tracking (Naponi %0.5 commission)
+  platform_fee_rate       Decimal       @default(0.50) @db.Decimal(5, 2)  // Percentage e.g. 0.50 = %0.5
+  platform_fee_amount     Decimal       @default(0.00) @db.Decimal(10, 2) // Calculated: amount * rate / 100
+
   // Pool distribution settlement tracking
   is_settled                 Boolean       @default(false)
   tip_pool_distribution_id   String?
