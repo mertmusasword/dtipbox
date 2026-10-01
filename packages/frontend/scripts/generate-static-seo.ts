@@ -1511,6 +1511,76 @@ writeStaticRoute('kurucu-uye', {
   `,
 });
 
+writeStaticRoute('pricing', {
+  title: 'Pricing & Transparent Commission — 2026 Founder Program | Naponi',
+  description: 'Naponi transparent pricing: 2026 Founder Members get lifetime $0 SaaS subscription. Transparent 0.50% platform fee on digital card & wire transfer tipping.',
+  canonicalUrl: 'https://www.naponi.com/pricing',
+  lang: 'en',
+  keywords: ['naponi pricing', 'digital tipping fees', 'hospitality qr pricing', 'founder member free'],
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/pricing' },
+    { lang: 'en', url: 'https://www.naponi.com/pricing' },
+    { lang: 'tr', url: 'https://www.naponi.com/fiyatlandirma' },
+  ],
+  contentHtml: `
+    <main class="home-wrapper" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <div class="home-container" style="max-width: 900px; margin: 0 auto; text-align: center;">
+        <span class="home-section-tag">Transparent Pricing & Monetization</span>
+        <h1 class="home-hero-title">Simple, Honest Pricing Built for Hospitality Growth</h1>
+        <p class="home-hero-desc">2026 Founder Members enjoy permanent lifetime $0 SaaS software fees. Fair, ultra-low 0.50% platform fee on processed tipping.</p>
+        <div style="margin: 3rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; text-align: left;">
+          <div style="background: rgba(16, 185, 129, 0.05); border: 2px solid #10b981; border-radius: 16px; padding: 2rem;">
+            <div style="color: #10b981; font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">2026 Founder VIP</div>
+            <h2 style="font-size: 2.2rem; margin: 0.5rem 0;">0₺ / mo</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Lifetime 100% Free SaaS software access for businesses registering before Dec 31, 2026.</p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 2rem;">
+            <div style="color: #38bdf8; font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Platform Processing</div>
+            <h2 style="font-size: 2.2rem; margin: 0.5rem 0;">%0.50</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Fair micro-fee on card and wire transfer tips. 0₺ cash tip fee. Directly covers high-availability infrastructure.</p>
+          </div>
+        </div>
+        <a href="/register" class="home-btn-primary">Claim 2026 Founder Free Status &rarr;</a>
+      </div>
+    </main>
+  `,
+});
+
+writeStaticRoute('fiyatlandirma', {
+  title: 'Fiyatlandırma ve Şeffaf Komisyon — 2026 Kurucu Üye Programı | Naponi',
+  description: 'Naponi şeffaf fiyatlandırma: 2026 Kurucu Üyeleri ömür boyu 0₺ yazılım aboneliğine sahip olur. Kart ve havalede %0.50 adil platform hizmet bedeli.',
+  canonicalUrl: 'https://www.naponi.com/fiyatlandirma',
+  lang: 'tr',
+  keywords: ['naponi fiyatlandırma', 'dijital bahşiş komisyon oranları', 'akıllı qr fiyatları', 'kurucu üye 0 tl'],
+  alternateLanguages: [
+    { lang: 'x-default', url: 'https://www.naponi.com/pricing' },
+    { lang: 'tr', url: 'https://www.naponi.com/fiyatlandirma' },
+    { lang: 'en', url: 'https://www.naponi.com/pricing' },
+  ],
+  contentHtml: `
+    <main class="home-wrapper" style="padding-top: 5rem; padding-bottom: 5rem;">
+      <div class="home-container" style="max-width: 900px; margin: 0 auto; text-align: center;">
+        <span class="home-section-tag">Şeffaf Fiyatlandırma & Gelir Modeli</span>
+        <h1 class="home-hero-title">Restoran ve Oteller İçin Basit, Adil ve Şeffaf Fiyatlandırma</h1>
+        <p class="home-hero-desc">2026 Kurucu Üyeleri ömür boyu 0₺ yazılım aboneliğinden yararlanır. Başarılı bahşiş tahsilatlarında sadece %0.50 platform hizmet bedeli.</p>
+        <div style="margin: 3rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; text-align: left;">
+          <div style="background: rgba(16, 185, 129, 0.05); border: 2px solid #10b981; border-radius: 16px; padding: 2rem;">
+            <div style="color: #10b981; font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">2026 Kurucu Üyelik</div>
+            <h2 style="font-size: 2.2rem; margin: 0.5rem 0;">0₺ / ay</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem;">31 Aralık 2026'ya kadar katılan işletmelere ömür boyu 0₺ yazılım aboneliği ve kalıcı muafiyet.</p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 2rem;">
+            <div style="color: #38bdf8; font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Platform Hizmet Bedeli</div>
+            <h2 style="font-size: 2.2rem; margin: 0.5rem 0;">%0.50</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Kart ve havale/FAST ödemelerinde adil mikro komisyon. Nakit bahşiş kaydında 0₺ komisyon.</p>
+          </div>
+        </div>
+        <a href="/register" class="home-btn-primary">Kurucu Üye Olarak 0₺ Başla &rarr;</a>
+      </div>
+    </main>
+  `,
+});
+
 // =============================================================================
 // 5. DYNAMIC SITEMAP GENERATION WITH COMPLETE GLOBAL HREFLANG
 
@@ -1745,6 +1815,26 @@ ${posUrls}
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/founder" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/kurucu-uye" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/founder" />
+  </url>
+
+  <!-- 7G. Pricing & Commission Overview -->
+  <url>
+    <loc>https://www.naponi.com/pricing</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/fiyatlandirma" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/fiyatlandirma</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/fiyatlandirma" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/pricing" />
   </url>
 </urlset>
 `;

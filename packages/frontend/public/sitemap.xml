@@ -658,4 +658,24 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/kurucu-uye" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/founder" />
   </url>
+
+  <!-- 7G. Pricing & Commission Overview -->
+  <url>
+    <loc>https://www.naponi.com/pricing</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/fiyatlandirma" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/fiyatlandirma</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/fiyatlandirma" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/pricing" />
+  </url>
 </urlset>

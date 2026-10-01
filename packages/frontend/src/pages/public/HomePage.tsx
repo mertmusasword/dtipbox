@@ -1760,6 +1760,8 @@ export const HomePage: React.FC = () => {
             <div>
               <h4 className="home-footer-col-title">{t('home.footerProduct')}</h4>
               <ul className="home-footer-links">
+                <li><Link to="/founder" style={{ color: '#fde047', fontWeight: 600 }}>👑 {language === 'tr' ? '2026 Kurucu Üyelik (0₺)' : '2026 Founder Program ($0)'}</Link></li>
+                <li><Link to="/pricing" style={{ color: '#38bdf8', fontWeight: 600 }}>💳 {language === 'tr' ? 'Fiyatlandırma & Komisyon' : 'Pricing & Commission'}</Link></li>
                 <li><a href="#how-it-works">{t('nav.features')}</a></li>
                 <li><a href="#pos-integrations">{isTr ? 'POS Katmanı' : 'POS Layer'}</a></li>
                 <li><a href="#naponi-farki">{ht('whyNaponi')}</a></li>

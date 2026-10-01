@@ -74,6 +74,11 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 <span>👑 {isTr ? 'Kurucu Üyelik' : 'Founder'}</span>
               </Link>
             </li>
+            <li>
+              <Link to="/pricing" className="home-nav-link">
+                {isTr ? 'Fiyatlandırma' : 'Pricing'}
+              </Link>
+            </li>
           </ul>
 
           <div className="home-nav-actions">
@@ -113,6 +118,9 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           <div className="home-mobile-menu-links">
             <Link to="/founder" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fde047', fontWeight: 700 }}>
               <span>👑 {isTr ? '2026 Kurucu Üyelik (0₺)' : '2026 Founder Program ($0)'}</span>
+            </Link>
+            <Link to="/pricing" className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <span>💳 {isTr ? 'Fiyatlandırma & Komisyon' : 'Pricing & Commission'}</span>
             </Link>
             <a href={howItWorksHref} className="home-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
               <span>{isTr ? 'Nasıl Çalışır?' : 'How It Works'}</span>
