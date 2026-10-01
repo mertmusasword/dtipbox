@@ -9,6 +9,7 @@ import * as qrService from '../services/qr.service';
 import * as paymentMethodService from '../services/paymentMethod.service';
 import * as providerService from '../services/payment/provider.service';
 import * as analyticsService from '../services/analytics.service';
+import * as commissionService from '../services/commission.service';
 import * as auditService from '../services/audit.service';
 import * as tipPoolService from '../services/tipPool.service';
 import { PaymentMethodType, PaymentMethodStatus, QrType, TipDistributionMode, PosFeePayer } from '@prisma/client';
@@ -522,6 +523,30 @@ router.get('/analytics', async (req: AuthRequest, res, next) => {
   try {
     const analytics = await analyticsService.getBusinessAnalytics(req.user!.businessId!);
     res.json({ success: true, data: analytics });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Platform Commissions & Wire Transfer Settlement ---
+router.get('/commissions', async (req: AuthRequest, res, next) => {
+  try {
+    const report = await commissionService.getBusinessCommissionsReport(req.user!.businessId!);
+    res.json({ success: true, data: report });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/commissions/settle', async (req: AuthRequest, res, next) => {
+  try {
+    const { periodKey, note } = req.body || {};
+    const result = await commissionService.settleCommission(req.user!.businessId!, {
+      periodKey,
+      note,
+      actorUserId: req.user!.id,
+    });
+    res.json({ success: true, data: result });
   } catch (error) {
     next(error);
   }

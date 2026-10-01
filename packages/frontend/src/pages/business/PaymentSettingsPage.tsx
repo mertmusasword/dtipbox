@@ -3,6 +3,7 @@ import { api } from '../../api/client';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { useToast } from '../../components/Toast';
+import { useSearchParams } from 'react-router-dom';
 import {
   Link2,
   Building2,
@@ -10,17 +11,25 @@ import {
   CheckCircle2,
   ExternalLink,
   Save,
+  CreditCard,
+  Receipt,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n';
 import { useAuth } from '../../contexts/AuthContext';
 import { AgreementModal } from '../../components/AgreementModal';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { CommissionSettlementTab } from '../../components/business/CommissionSettlementTab';
+import { getCommissionText } from '../../i18n/commissionLocales';
 
 export const PaymentSettingsPage: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { t, language } = useLanguage();
   usePageTitle(t('nav.paymentSettings'));
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') === 'commissions' ? 'commissions' : 'settings';
+  const ct = getCommissionText(language);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -189,16 +198,76 @@ export const PaymentSettingsPage: React.FC = () => {
       {/* Page Header */}
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
         <div>
-          <h1 className="page-title">{t('payments.pageTitle')}</h1>
+          <h1 className="page-title">{activeTab === 'commissions' ? ct.pageTitle : t('payments.pageTitle')}</h1>
           <p className="page-subtitle mb-0">
-            {t('payments.pageSubtitle')}
+            {activeTab === 'commissions' ? ct.pageSubtitle : t('payments.pageSubtitle')}
           </p>
         </div>
       </div>
 
-      {/* CORE REASSURANCE / ARCHITECTURE BANNER */}
+      {/* TABS SWITCHER */}
       <div
-        className="glass-card"
+        style={{
+          display: 'flex',
+          gap: '0.75rem',
+          marginBottom: '1.75rem',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          paddingBottom: '0.75rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setSearchParams({ tab: 'settings' })}
+          style={{
+            padding: '8px 18px',
+            borderRadius: '10px',
+            border: activeTab === 'settings' ? '1px solid rgba(99, 102, 241, 0.5)' : '1px solid transparent',
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            background: activeTab === 'settings' ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255, 255, 255, 0.03)',
+            color: activeTab === 'settings' ? '#818cf8' : '#94a3b8',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <CreditCard size={17} />
+          {ct.tabSettings}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSearchParams({ tab: 'commissions' })}
+          style={{
+            padding: '8px 18px',
+            borderRadius: '10px',
+            border: activeTab === 'commissions' ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid transparent',
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            background: activeTab === 'commissions' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.03)',
+            color: activeTab === 'commissions' ? '#f59e0b' : '#94a3b8',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <Receipt size={17} />
+          {ct.tabCommissions}
+        </button>
+      </div>
+
+      {activeTab === 'commissions' ? (
+        <CommissionSettlementTab />
+      ) : (
+        <>
+          {/* CORE REASSURANCE / ARCHITECTURE BANNER */}
+          <div
+            className="glass-card"
         style={{
           background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%)',
           border: '1.5px solid rgba(99, 102, 241, 0.25)',
@@ -444,6 +513,8 @@ export const PaymentSettingsPage: React.FC = () => {
           </form>
         </div>
       </div>
+      </>
+      )}
 
       <AgreementModal
         isOpen={showAgreementModal}

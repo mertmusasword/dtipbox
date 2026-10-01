@@ -7,6 +7,7 @@ import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useLanguage } from '../../i18n';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { Link } from 'react-router-dom';
 import {
   DollarSign,
   TrendingUp,
@@ -21,6 +22,7 @@ import {
   Download,
   ChevronDown,
   Loader2,
+  Receipt,
 } from 'lucide-react';
 
 export const AnalyticsPage: React.FC = () => {
@@ -111,7 +113,27 @@ export const AnalyticsPage: React.FC = () => {
             {t('business.analyticsSubtitle')}
           </p>
         </div>
-        <div id="export-menu-container" style={{ position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <Link
+            to="/business/payment-settings?tab=commissions"
+            className="btn btn-secondary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontWeight: 600,
+              padding: '0.6rem 1.1rem',
+              borderRadius: '10px',
+              color: '#f59e0b',
+              borderColor: 'rgba(245, 158, 11, 0.35)',
+              background: 'rgba(245, 158, 11, 0.08)',
+            }}
+          >
+            <Receipt size={17} />
+            <span>%0.5 Komisyon & Mutabakat</span>
+          </Link>
+
+          <div id="export-menu-container" style={{ position: 'relative' }}>
           <button
             id="export-csv-menu-btn"
             className="btn btn-secondary"
@@ -200,6 +222,7 @@ export const AnalyticsPage: React.FC = () => {
           )}
         </div>
       </div>
+    </div>
 
       {/* Summary Metrics: Daily, Weekly, Monthly, Total, Average, Count */}
       {loading ? (
