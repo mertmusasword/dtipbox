@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import * as supportService from '../services/support.service';
 import { authenticate } from '../middleware/auth';
+import { verifyTurnstileToken } from '../utils/turnstile';
 
 const router = Router();
 
@@ -36,6 +37,7 @@ const createSupportTicketSchema = {
     ]).optional(),
     subject: z.string().trim().min(2, 'Konu başlığı en az 2 karakter olmalıdır').max(200),
     message: z.string().trim().min(5, 'Mesajınız en az 5 karakter olmalıdır').max(3000),
+    turnstileToken: z.string().optional(),
     // Bot honeypot traps
     website_url_hp: z.string().max(0).optional(),
     _hp: z.string().max(0).optional(),
@@ -68,6 +70,18 @@ router.post(
       }
 
       const ipAddress = req.ip || req.headers['x-forwarded-for']?.toString();
+
+      // Cloudflare Turnstile Verification (if unauthenticated public request)
+      if (req.body.turnstileToken && !req.user) {
+        const turnstileCheck = await verifyTurnstileToken(req.body.turnstileToken, ipAddress);
+        if (!turnstileCheck.success) {
+          return res.status(403).json({
+            success: false,
+            error: 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyiniz.',
+          });
+        }
+      }
+
       const userId = req.user?.id || undefined;
       const businessId = req.user?.business?.id || undefined;
 

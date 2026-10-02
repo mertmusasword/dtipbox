@@ -3,6 +3,7 @@ import { Headphones, X, CheckCircle2, Send } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../api/client';
+import { TurnstileWidget } from './TurnstileWidget';
 import '../styles/home.css';
 
 export type SupportCategory =
@@ -42,6 +43,7 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
 
   const [form, setForm] = useState({
     name: defaultName || (user ? user.email.split('@')[0] : ''),
@@ -91,6 +93,7 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
         category: form.category,
         subject: form.subject.trim(),
         message: form.message.trim(),
+        turnstileToken: turnstileToken || undefined,
         website_url_hp: form._hp || undefined,
       });
 
@@ -346,6 +349,9 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
                   />
                 </div>
               </div>
+
+              {/* Cloudflare Turnstile Invisible / Managed Bot Protection */}
+              {!user && <TurnstileWidget onSuccess={setTurnstileToken} />}
 
               <button
                 type="submit"

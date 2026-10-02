@@ -5,6 +5,7 @@ import { validate } from '../middleware/validation';
 import * as corporateService from '../services/corporate.service';
 import { validateEmailQuality } from '../utils/emailValidator';
 import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
+import { verifyTurnstileToken } from '../utils/turnstile';
 
 const router = Router();
 
@@ -45,6 +46,7 @@ const createCorporateApplicationSchema = {
     branchCount: z.union([z.string(), z.number()]).optional(),
     branch_count: z.union([z.string(), z.number()]).optional(),
     message: z.string().trim().max(2000).optional(),
+    turnstileToken: z.string().optional(),
     // Bot honeypot traps
     website_url_hp: z.string().max(0).optional(),
     _hp: z.string().max(0).optional(),
@@ -73,6 +75,18 @@ router.post(
       }
 
       const ipAddress = req.ip || req.headers['x-forwarded-for']?.toString();
+
+      // Cloudflare Turnstile Verification
+      if (req.body.turnstileToken) {
+        const turnstileCheck = await verifyTurnstileToken(req.body.turnstileToken, ipAddress);
+        if (!turnstileCheck.success) {
+          return res.status(403).json({
+            success: false,
+            error: 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyiniz.',
+          });
+        }
+      }
+
       const application = await corporateService.createCorporateApplication({
         ...req.body,
         ipAddress,

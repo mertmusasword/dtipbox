@@ -37,6 +37,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { LegalModal, LegalTab } from '../../components/LegalModal';
+import { TurnstileWidget } from '../../components/TurnstileWidget';
 import { api } from '../../api/client';
 import {
   PARTNER_COMPANY_TYPES,
@@ -83,6 +84,7 @@ export const TechnologyPartnersPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -153,6 +155,7 @@ export const TechnologyPartnersPage: React.FC = () => {
         integrationIdea: formData.integrationIdea.trim() || undefined,
         message: formData.message.trim() || undefined,
         website_url_hp: formData.website_url_hp || undefined,
+        turnstileToken: turnstileToken || undefined,
       });
 
       if (res.data?.success) {
@@ -915,6 +918,9 @@ export const TechnologyPartnersPage: React.FC = () => {
                     </span>
                   </label>
                 </div>
+
+                {/* Cloudflare Turnstile Bot Protection */}
+                <TurnstileWidget onSuccess={setTurnstileToken} />
 
                 {/* Submit Button */}
                 <button

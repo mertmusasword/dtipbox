@@ -3,6 +3,7 @@ import { Building2, X, CheckCircle2, Send } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { validateEmailClient } from '../utils/emailValidator';
 import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
+import { TurnstileWidget } from './TurnstileWidget';
 import '../styles/home.css';
 
 interface CorporateApplicationModalProps {
@@ -24,6 +25,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [form, setForm] = useState({
     company_name: defaultCompanyName,
     contact_name: '',
@@ -75,6 +77,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
           sector: form.sector.trim(),
           branch_count: Number(form.branch_count) || 1,
           message: form.message.trim() || undefined,
+          turnstileToken: turnstileToken || undefined,
           website_url_hp: form._hp || undefined,
         }),
       });
@@ -281,6 +284,9 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                   />
                 </div>
               </div>
+
+              {/* Cloudflare Turnstile Invisible / Managed Bot Protection */}
+              <TurnstileWidget onSuccess={setTurnstileToken} />
 
               <button
                 type="submit"
