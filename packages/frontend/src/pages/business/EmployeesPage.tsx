@@ -249,15 +249,31 @@ export const EmployeesPage: React.FC = () => {
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                         <div style={{ fontWeight: 600 }}>{emp.position || emp.role_title || '—'}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px', flexWrap: 'wrap' }}>
                           {emp.role_title && (
                             <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                               {emp.role_title}
                             </span>
                           )}
-                          <span className="badge badge-accent" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', fontWeight: 600 }}>
-                            🎯 {Number(emp.share_weight || 1.0).toFixed(2)}x Pay
-                          </span>
+                          {Number(emp.share_weight) === 0 ? (
+                            <span
+                              className="badge"
+                              style={{
+                                fontSize: '0.7rem',
+                                padding: '0.15rem 0.45rem',
+                                fontWeight: 700,
+                                background: 'rgba(245, 158, 11, 0.15)',
+                                color: '#d97706',
+                                border: '1px solid rgba(245, 158, 11, 0.3)',
+                              }}
+                            >
+                              🛡️ Havuz Muaf (FLSA)
+                            </span>
+                          ) : (
+                            <span className="badge badge-accent" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', fontWeight: 600 }}>
+                              🎯 {Number(emp.share_weight || 1.0).toFixed(2)}x Pay
+                            </span>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -357,40 +373,48 @@ export const EmployeesPage: React.FC = () => {
                   fontSize: '0.8rem',
                   padding: '0.3rem 0.75rem',
                   fontWeight: 700,
-                  background: Number(formData.share_weight) === 1.0
+                  background: Number(formData.share_weight) === 0
+                    ? 'rgba(245, 158, 11, 0.15)'
+                    : Number(formData.share_weight) === 1.0
                     ? 'rgba(34, 197, 94, 0.15)'
                     : Number(formData.share_weight) === 0.75
                     ? 'rgba(99, 102, 241, 0.15)'
                     : 'rgba(245, 158, 11, 0.15)',
-                  color: Number(formData.share_weight) === 1.0
+                  color: Number(formData.share_weight) === 0
+                    ? '#d97706'
+                    : Number(formData.share_weight) === 1.0
                     ? '#4ade80'
                     : Number(formData.share_weight) === 0.75
                     ? '#818cf8'
                     : '#fbbf24',
-                  borderColor: Number(formData.share_weight) === 1.0
+                  borderColor: Number(formData.share_weight) === 0
+                    ? 'rgba(245, 158, 11, 0.3)'
+                    : Number(formData.share_weight) === 1.0
                     ? 'rgba(34, 197, 94, 0.3)'
                     : Number(formData.share_weight) === 0.75
                     ? 'rgba(99, 102, 241, 0.3)'
                     : 'rgba(245, 158, 11, 0.3)',
                 }}
               >
+                {Number(formData.share_weight) === 0 && '🛡️ Havuz Muaf (0.00x)'}
                 {Number(formData.share_weight) === 1.0 && `🎯 ${t('employees.fullShare')}`}
                 {Number(formData.share_weight) === 0.75 && '🎯 3/4 Pay (0.75x)'}
                 {Number(formData.share_weight) === 0.5 && `🎯 ${t('employees.halfShare')}`}
-                {![1.0, 0.75, 0.5].includes(Number(formData.share_weight)) && `🎯 (${Number(formData.share_weight).toFixed(2)}x)`}
+                {![0, 1.0, 0.75, 0.5].includes(Number(formData.share_weight)) && `🎯 (${Number(formData.share_weight).toFixed(2)}x)`}
               </span>
             </div>
 
-            {/* 3 Hızlı Adım Butonları */}
+            {/* 4 Hızlı Adım Butonları: Muaf (0x - Yönetici / FLSA), Yarım Pay, Standart, Tam Pay */}
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr 1fr',
-                gap: '0.5rem',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '0.45rem',
                 marginBottom: '1rem',
               }}
             >
               {[
+                { label: '🛡️ Havuz Muaf', sub: 'Müdür (FLSA)', weight: 0.0 },
                 { label: 'Yarım Pay', sub: 'Komi, Bulaşık', weight: 0.5 },
                 { label: 'Standart Pay', sub: 'Barmen, Mutfak', weight: 0.75 },
                 { label: 'Tam Pay', sub: 'Garson, Servis', weight: 1.0 },
@@ -402,7 +426,7 @@ export const EmployeesPage: React.FC = () => {
                     type="button"
                     onClick={() => setFormData({ ...formData, share_weight: step.weight })}
                     style={{
-                      padding: '0.6rem 0.4rem',
+                      padding: '0.6rem 0.35rem',
                       borderRadius: '8px',
                       border: isSelected ? '1.5px solid var(--primary)' : '1px solid rgba(255, 255, 255, 0.08)',
                       background: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.02)',
@@ -411,11 +435,11 @@ export const EmployeesPage: React.FC = () => {
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? 'var(--primary)' : 'var(--text-primary)' }}>
+                    <div style={{ fontSize: '0.78rem', fontWeight: 700, color: isSelected ? 'var(--primary)' : 'var(--text-primary)' }}>
                       {step.label}
                     </div>
-                    <div style={{ fontSize: '0.68rem', color: isSelected ? 'var(--primary)' : 'var(--text-muted)', marginTop: '2px' }}>
-                      %{step.weight * 100} • {step.sub}
+                    <div style={{ fontSize: '0.65rem', color: isSelected ? 'var(--primary)' : 'var(--text-muted)', marginTop: '2px' }}>
+                      {step.weight === 0 ? '0x Pay' : `%${step.weight * 100}`} • {step.sub}
                     </div>
                   </button>
                 );
@@ -426,11 +450,11 @@ export const EmployeesPage: React.FC = () => {
             <div style={{ padding: '0.25rem 0.2rem' }}>
               <input
                 type="range"
-                min="0.25"
+                min="0.00"
                 max="1.50"
                 step="0.05"
                 value={formData.share_weight}
-                onChange={(e) => setFormData({ ...formData, share_weight: parseFloat(e.target.value) || 1.0 })}
+                onChange={(e) => setFormData({ ...formData, share_weight: parseFloat(e.target.value) || 0 })}
                 style={{
                   width: '100%',
                   cursor: 'pointer',
@@ -446,12 +470,28 @@ export const EmployeesPage: React.FC = () => {
                   marginTop: '0.35rem',
                 }}
               >
-                <span>%25 (Destek)</span>
+                <span>%0 (Muaf)</span>
                 <span>%50 (Yarım)</span>
                 <span>%75 (Orta)</span>
                 <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>%100 (Tam)</span>
                 <span>%150 (Kıdemli)</span>
               </div>
+            </div>
+
+            {/* FLSA 2021 ve Hukuki Uyum Notu */}
+            <div
+              style={{
+                marginTop: '0.85rem',
+                padding: '0.65rem 0.85rem',
+                background: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.2)',
+                borderRadius: '8px',
+                fontSize: '0.72rem',
+                color: '#d97706',
+                lineHeight: 1.45,
+              }}
+            >
+              <strong>🛡️ ABD FLSA 2021 & Uluslararası Uyum Kuralı:</strong> Restoran müdürleri, şefler ve idari personelin çalışan bahşiş havuzundan pay alması yasa gereği yasaktır. Bu personel için <strong>Havuz Muaf (0x)</strong> seçildiğinde havuzdan pay almaz; yalnızca doğrudan kendisine verilen bireysel bahşişleri alabilir.
             </div>
           </div>
 

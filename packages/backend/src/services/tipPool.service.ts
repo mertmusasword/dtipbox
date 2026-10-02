@@ -244,45 +244,55 @@ export async function getTipPoolSimulation(
       digitalShare: 0,
     }));
   } else if (mode === 'EQUAL_POOL') {
-    // Equal distribution among active participating employees
-    const count = participatingEmployees.length;
-    const grossPerPerson = Number((grossAmount / count).toFixed(2));
-    const netPerPerson = Number((netDistributedAmount / count).toFixed(2));
-    const posPerPerson = Number((posFeeAmount / count).toFixed(2));
-    const taxPerPerson = Number((taxFeeAmount / count).toFixed(2));
-    const cashPerPerson = Number((netCashPool / count).toFixed(2));
-    const digitalPerPerson = Number((netPerPerson - cashPerPerson).toFixed(2));
+    // Equal distribution among eligible active participating employees (FLSA: share_weight > 0)
+    const eligibleEmployees = participatingEmployees.filter(
+      (emp) => Number(emp.share_weight ?? 1.0) > 0
+    );
+    const count = eligibleEmployees.length;
+    const grossPerPerson = count > 0 ? Number((grossAmount / count).toFixed(2)) : 0;
+    const netPerPerson = count > 0 ? Number((netDistributedAmount / count).toFixed(2)) : 0;
+    const posPerPerson = count > 0 ? Number((posFeeAmount / count).toFixed(2)) : 0;
+    const taxPerPerson = count > 0 ? Number((taxFeeAmount / count).toFixed(2)) : 0;
+    const cashPerPerson = count > 0 ? Number((netCashPool / count).toFixed(2)) : 0;
+    const digitalPerPerson = count > 0 ? Number((netPerPerson - cashPerPerson).toFixed(2)) : 0;
 
-    employeeShares = participatingEmployees.map((emp) => ({
-      employeeId: emp.id,
-      employeeName: `${emp.first_name} ${emp.last_name}`.trim(),
-      position: emp.position,
-      roleTitle: emp.role_title,
-      shareWeight: 1.0,
-      grossShare: grossPerPerson,
-      posFeeShare: posPerPerson,
-      taxFeeShare: taxPerPerson,
-      netShare: netPerPerson,
-      cashShare: cashPerPerson,
-      digitalShare: digitalPerPerson,
-    }));
+    employeeShares = participatingEmployees.map((emp) => {
+      const isEligible = Number(emp.share_weight ?? 1.0) > 0;
+      return {
+        employeeId: emp.id,
+        employeeName: `${emp.first_name} ${emp.last_name}`.trim(),
+        position: emp.position,
+        roleTitle: emp.role_title,
+        shareWeight: Number(emp.share_weight ?? 1.0),
+        grossShare: isEligible ? grossPerPerson : 0,
+        posFeeShare: isEligible ? posPerPerson : 0,
+        taxFeeShare: isEligible ? taxPerPerson : 0,
+        netShare: isEligible ? netPerPerson : 0,
+        cashShare: isEligible ? cashPerPerson : 0,
+        digitalShare: isEligible ? digitalPerPerson : 0,
+      };
+    });
   } else if (mode === 'POINT_POOL') {
-    // Weighted point/share distribution
-    const totalPoints = participatingEmployees.reduce(
-      (sum, emp) => sum + Math.max(0.1, Number(emp.share_weight || 1.0)),
+    // Weighted point/share distribution among eligible employees (FLSA: share_weight > 0)
+    const eligibleEmployees = participatingEmployees.filter(
+      (emp) => Number(emp.share_weight ?? 1.0) > 0
+    );
+    const totalPoints = eligibleEmployees.reduce(
+      (sum, emp) => sum + Number(emp.share_weight ?? 1.0),
       0
     );
 
     employeeShares = participatingEmployees.map((emp) => {
-      const weight = Math.max(0.1, Number(emp.share_weight || 1.0));
-      const ratio = weight / totalPoints;
+      const weight = Number(emp.share_weight ?? 1.0);
+      const isEligible = weight > 0 && totalPoints > 0;
+      const ratio = isEligible ? weight / totalPoints : 0;
 
-      const empGross = Number((grossAmount * ratio).toFixed(2));
-      const empNet = Number((netDistributedAmount * ratio).toFixed(2));
-      const empPos = Number((posFeeAmount * ratio).toFixed(2));
-      const empTax = Number((taxFeeAmount * ratio).toFixed(2));
-      const empCash = Number((netCashPool * ratio).toFixed(2));
-      const empDigital = Number((empNet - empCash).toFixed(2));
+      const empGross = isEligible ? Number((grossAmount * ratio).toFixed(2)) : 0;
+      const empNet = isEligible ? Number((netDistributedAmount * ratio).toFixed(2)) : 0;
+      const empPos = isEligible ? Number((posFeeAmount * ratio).toFixed(2)) : 0;
+      const empTax = isEligible ? Number((taxFeeAmount * ratio).toFixed(2)) : 0;
+      const empCash = isEligible ? Number((netCashPool * ratio).toFixed(2)) : 0;
+      const empDigital = isEligible ? Number((empNet - empCash).toFixed(2)) : 0;
 
       return {
         employeeId: emp.id,
@@ -299,7 +309,7 @@ export async function getTipPoolSimulation(
       };
     });
   } else {
-    // INDIVIDUAL: Direct tips to each employee + remainder distributed
+    // INDIVIDUAL: Direct tips to each employee + unassigned remainder distributed among eligible staff
     const empGrossMap = new Map<string, number>();
     let unassignedGross = manualCashAmount + manualPosAmount;
 
@@ -312,12 +322,16 @@ export async function getTipPoolSimulation(
       }
     }
 
-    const extraPerPerson = participatingEmployees.length > 0 ? unassignedGross / participatingEmployees.length : 0;
+    const eligibleEmployees = participatingEmployees.filter(
+      (emp) => Number(emp.share_weight ?? 1.0) > 0
+    );
+    const extraPerPerson = eligibleEmployees.length > 0 ? unassignedGross / eligibleEmployees.length : 0;
     const deductionRatio = grossAmount > 0 ? netDistributedAmount / grossAmount : 1;
 
     employeeShares = participatingEmployees.map((emp) => {
+      const isEligible = Number(emp.share_weight ?? 1.0) > 0;
       const directGross = empGrossMap.get(emp.id) || 0;
-      const empGross = Number((directGross + extraPerPerson).toFixed(2));
+      const empGross = Number((directGross + (isEligible ? extraPerPerson : 0)).toFixed(2));
       const empNet = Number((empGross * deductionRatio).toFixed(2));
       const empDeduction = Number((empGross - empNet).toFixed(2));
       const cashRatio = netDistributedAmount > 0 ? netCashPool / netDistributedAmount : 0;

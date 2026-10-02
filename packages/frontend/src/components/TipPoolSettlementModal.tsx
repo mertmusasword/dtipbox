@@ -22,6 +22,7 @@ import { api } from '../api/client';
 import { useLanguage } from '../i18n';
 import { useToast } from './Toast';
 import { TipPoolSimulation, TipPoolDistribution } from '../types';
+import { UkTroncPolicyModal } from './business/UkTroncPolicyModal';
 
 interface TipPoolSettlementModalProps {
   isOpen: boolean;
@@ -42,6 +43,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<'simulate' | 'history'>('simulate');
+  const [showUkPolicy, setShowUkPolicy] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
   const [settling, setSettling] = useState(false);
@@ -712,6 +714,15 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
               >
                 <History size={13} /> Geçmiş Kapanışlar
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowUkPolicy(true)}
+                className="btn btn-secondary btn-sm"
+                style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem', borderColor: 'rgba(0, 36, 125, 0.3)' }}
+                title="UK Employment (Allocation of Tips) Act 2023 Compliant Policy Document"
+              >
+                🇬🇧 UK Tronc Policy
               </button>
             </div>
 
@@ -1410,6 +1421,14 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
           )}
         </div>
       </div>
+
+      {/* UK Tronc & Tipping Policy Document Generator */}
+      <UkTroncPolicyModal
+        isOpen={showUkPolicy}
+        onClose={() => setShowUkPolicy(false)}
+        businessName={businessName}
+        distributionMode={simulation?.settings?.mode || 'EQUAL_POOL'}
+      />
     </div>
   );
 };

@@ -5,8 +5,9 @@ import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { useToast } from '../../components/Toast';
 import { useLanguage } from '../../i18n';
-import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe, Split, Users, User, Scale, Percent, CheckCircle, Info, Award } from 'lucide-react';
+import { Settings as SettingsIcon, Lock, Shield, AlertTriangle, Globe, Split, Users, User, Scale, Percent, CheckCircle, Info, Award, Printer } from 'lucide-react';
 import { AgreementModal } from '../../components/AgreementModal';
+import { UkTroncPolicyModal } from '../../components/business/UkTroncPolicyModal';
 import { TipDistributionMode, PosFeePayer } from '../../types';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
@@ -18,6 +19,7 @@ export const ProfileSettingsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [showUkPolicyModal, setShowUkPolicyModal] = useState(false);
   const [businessData, setBusinessData] = useState<any | null>(null);
 
   // Account settings
@@ -370,6 +372,47 @@ export const ProfileSettingsPage: React.FC = () => {
           </div>
         </div>
 
+        {/* UK & Global Legal Compliance Banner (Allocation of Tips Act 2023) */}
+        <div
+          style={{
+            background: 'rgba(0, 36, 125, 0.05)',
+            border: '1px solid rgba(0, 36, 125, 0.2)',
+            borderRadius: '12px',
+            padding: '1rem 1.25rem',
+            marginBottom: '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: '240px', flex: 1 }}>
+            <span style={{ fontSize: '1.6rem' }}>🇬🇧</span>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
+                {language === 'tr'
+                  ? 'İngiltere Resmi "Tronc & Tipping Policy" Belgesi'
+                  : 'UK Written Tipping & Tronc Policy (Allocation of Tips Act 2023)'}
+              </div>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                {language === 'tr'
+                  ? 'Ekim 2024 UK mevzuatına tam uyumlu, personelinize veya denetim makamlarına sunabileceğiniz tek tıkla resmi PDF şablonu.'
+                  : 'Statutory Code of Practice compliant written policy for staff and UK employment tribunals.'}
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowUkPolicyModal(true)}
+            className="btn btn-secondary btn-sm"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
+          >
+            <Printer size={15} />
+            <span>{language === 'tr' ? 'Politika Belgesini Görüntüle & Yazdır' : 'Generate & Print Policy'}</span>
+          </button>
+        </div>
+
         {/* POS ve Muhasebe Kesintileri Grid */}
         <div style={{ background: 'var(--bg-input)', padding: '1.25rem', borderRadius: '12px', marginBottom: '1.25rem' }}>
           <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -651,6 +694,14 @@ export const ProfileSettingsPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* UK Tronc & Tipping Policy Modal */}
+      <UkTroncPolicyModal
+        isOpen={showUkPolicyModal}
+        onClose={() => setShowUkPolicyModal(false)}
+        businessName={businessData?.name || 'Our Venue'}
+        distributionMode={tipSettings.tip_distribution_mode}
+      />
     </div>
   );
 };
