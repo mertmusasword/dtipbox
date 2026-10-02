@@ -42,6 +42,16 @@ import { useToast } from '../../components/Toast';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { getSmartQrText } from './tip/smartQrI18n';
 import {
+  ApplePayBadge,
+  GooglePayBadge,
+  VisaBadge,
+  MastercardBadge,
+  TroyBadge,
+  AmexBadge,
+  PaymentMethodsRow,
+  PaymentTrustGuarantee,
+} from '../../components/PaymentBadges';
+import {
   trackQrScanned,
   trackTipFlowStarted,
   trackTipAmountSelected,
@@ -3147,32 +3157,73 @@ export const TipPage: React.FC = () => {
                             onClick={() => setSelectedPaymentMethod('CARD')}
                             style={{
                               display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              padding: '1rem 1.1rem',
-                              borderRadius: '12px',
+                              flexDirection: 'column',
+                              gap: '0.65rem',
+                              padding: '1.1rem',
+                              borderRadius: '14px',
                               background: selectedPaymentMethod === 'CARD' ? 'rgba(5, 150, 105, 0.08)' : '#F5F5F4',
                               border: selectedPaymentMethod === 'CARD' ? '2px solid #059669' : '1px solid #E7E5E4',
                               cursor: 'pointer',
                               transition: 'all 0.15s ease',
+                              boxShadow: selectedPaymentMethod === 'CARD' ? '0 4px 14px rgba(5, 150, 105, 0.12)' : 'none',
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                              <span style={{ color: selectedPaymentMethod === 'CARD' ? '#059669' : '#78716C' }}>
-                                <ExternalLink size={20} />
-                              </span>
-                              <div>
-                                <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#1C1917' }}>
-                                  {t('tip.externalPayment')}
-                                </div>
-                                <div style={{ fontSize: '0.76rem', color: '#78716C', marginTop: '0.1rem' }}>
-                                  {t('tip.externalPaymentDesc')}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                                <span style={{
+                                  color: selectedPaymentMethod === 'CARD' ? '#059669' : '#78716C',
+                                  background: selectedPaymentMethod === 'CARD' ? 'rgba(5, 150, 105, 0.12)' : '#E7E5E4',
+                                  padding: '7px',
+                                  borderRadius: '10px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                  <CreditCard size={20} />
+                                </span>
+                                <div>
+                                  <div style={{ fontWeight: 700, fontSize: '0.94rem', color: '#1C1917' }}>
+                                    {t('tip.externalPayment')}
+                                  </div>
+                                  <div style={{ fontSize: '0.76rem', color: '#78716C', marginTop: '0.1rem' }}>
+                                    {t('tip.externalPaymentDesc')}
+                                  </div>
                                 </div>
                               </div>
+                              <div>
+                                <span style={{
+                                  color: selectedPaymentMethod === 'CARD' ? '#059669' : '#78716C',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: selectedPaymentMethod === 'CARD' ? 'rgba(5, 150, 105, 0.12)' : '#E7E5E4',
+                                  padding: '3px 8px',
+                                  borderRadius: '999px',
+                                }}>
+                                  {selectedPaymentMethod === 'CARD' ? '● ' + t('common.active') : t('common.select')}
+                                </span>
+                              </div>
                             </div>
-                            <div>
-                              <span style={{ color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>
-                                🟢 {t('common.active')}
+
+                            {/* Accepted Payment Badges */}
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              paddingTop: '0.55rem',
+                              borderTop: `1px solid ${selectedPaymentMethod === 'CARD' ? 'rgba(5, 150, 105, 0.18)' : '#E7E5E4'}`,
+                              flexWrap: 'wrap',
+                              gap: '0.4rem',
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+                                <ApplePayBadge height={22} />
+                                <GooglePayBadge height={22} />
+                                <VisaBadge height={22} />
+                                <MastercardBadge height={22} />
+                                <TroyBadge height={22} />
+                                <AmexBadge height={22} />
+                              </div>
+                              <span style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                                <ShieldCheck size={13} /> 3D Secure
                               </span>
                             </div>
                           </div>
@@ -3240,6 +3291,11 @@ export const TipPage: React.FC = () => {
                       </>
                     )}
                   </button>
+
+                  {/* Payment Security & Trust Guarantee */}
+                  {hasExternalPayment && (
+                    <PaymentTrustGuarantee language={language} />
+                  )}
                 </>
               );
             })()}

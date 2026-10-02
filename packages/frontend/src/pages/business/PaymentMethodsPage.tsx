@@ -40,6 +40,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import { SupportTicketModal } from '../../components/SupportTicketModal';
+import { PaymentMethodsRow } from '../../components/PaymentBadges';
 
 export const PaymentMethodsPage: React.FC = () => {
   const { showToast } = useToast();
@@ -411,6 +412,12 @@ export const PaymentMethodsPage: React.FC = () => {
                   ? 'Naponi emanetçi olmayan (non-custodial) bir yapıda çalışır; paranız Naponi havuzunda beklemez ve asla komisyon kesilmez. Stripe Payment Link, PayTR Link, Shopier veya kendi sanal POS linkinizi kaydederek müşterilerinizin kredi kartı, Apple Pay veya Google Pay ile doğrudan kendi hesabınıza bahşiş göndermesini sağlayın.'
                   : 'Naponi operates non-custodially: your money is never held in an intermediary pool and zero commission is deducted. Connect your Stripe Payment Link, PayTR, Shopier, or hosted POS checkout link so guests can tip directly into your account.'}
               </p>
+              <div style={{ marginTop: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.76rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  {language === 'tr' ? 'Müşteri Ödeme Ekranında Desteklenen Rozetler:' : 'Supported Badges on Customer Screen:'}
+                </span>
+                <PaymentMethodsRow height={20} gap="5px" />
+              </div>
             </div>
           </div>
 
