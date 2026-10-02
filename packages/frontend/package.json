@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@sentry/react": "^11.2.0",
     "axios": "^1.7.0",
     "lucide-react": "^0.460.0",
     "qrcode": "^1.5.4",
