@@ -560,25 +560,88 @@ export const BusinessDashboard: React.FC = () => {
 
       {/* Agreement Status Banner */}
       {!loading && !agreementAccepted && (
-        <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-              <ShieldAlert className="w-5 h-5" />
+        <div
+          className="glass-card"
+          style={{
+            marginBottom: '1.5rem',
+            padding: '1.25rem 1.5rem',
+            borderRadius: '16px',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1.25rem',
+            flexWrap: 'wrap',
+            boxShadow: '0 4px 20px rgba(245, 158, 11, 0.06)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '280px', flex: 1 }}>
+            <div
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: 'rgba(245, 158, 11, 0.15)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                color: '#f59e0b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <ShieldAlert size={22} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200">
-                {t('business.agreementPendingTitle')}
-              </h3>
-              <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-0.5">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '0.98rem', fontWeight: 700, margin: 0, color: '#fef3c7' }}>
+                  {t('business.agreementPendingTitle')}
+                </h3>
+                <span
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.35)',
+                    color: '#fbbf24',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {t('common.pending') || 'Onay Bekliyor'}
+                </span>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: '#cbd5e1', margin: '0.25rem 0 0', lineHeight: 1.45 }}>
                 {t('business.agreementPendingDesc')}
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={() => setShowAgreementModal(true)}
-            className="btn btn-primary bg-amber-600 hover:bg-amber-700 text-white text-xs whitespace-nowrap shrink-0 flex items-center gap-1.5 shadow-sm"
+            className="btn btn-primary"
+            style={{
+              padding: '0.65rem 1.25rem',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              border: 'none',
+              color: '#ffffff',
+              boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)',
+              flexShrink: 0,
+              cursor: 'pointer',
+              borderRadius: '10px',
+              transition: 'all 0.2s ease',
+            }}
           >
-            <FileText size={14} /> {t('business.reviewAgreementBtn')}
+            <FileText size={16} />
+            <span>{t('business.reviewAgreementBtn')}</span>
           </button>
         </div>
       )}
