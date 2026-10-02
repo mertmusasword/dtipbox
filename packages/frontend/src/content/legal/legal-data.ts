@@ -116,8 +116,12 @@ const legalTR: LegalBundle = {
         content: 'Naponi, yeme-içme ve konaklama sektöründe misafirlerin servis personeline gönüllü olarak bahşiş bırakmasını sağlayan bir teknoloji arayüzüdür. Naponi bir banka veya kredi kuruluşu değildir; kullanıcı fonlarını kendi hesaplarında mevduat olarak tutmaz. Bahşişler doğrudan anlaşmalı ödeme geçidi üzerinden ilgililere aktarılır.',
       },
       {
-        heading: '3. Bahşişlerin Gönüllülüğü ve İade Şartları',
-        content: 'Bahşiş ödemeleri tamamen müşterinin serbest iradesine dayalı, verilen hizmete teşekkür niteliğinde gönüllü ödemelerdir. Hatalı tutar çekimleri veya mükerrer işlemler durumunda, müşteriler 24 saat içinde info@naponi.com üzerinden başvuru yaparak inceleme talep edebilir.',
+        heading: '3. Bahşişlerin Gönüllülüğü, İade Şartları ve Nakit İade Yasağı (AML Koruması)',
+        content: [
+          'Bahşiş ödemeleri tamamen müşterinin serbest iradesine dayalı, sunulan hizmete teşekkür niteliğinde gönüllü ödemelerdir.',
+          'Nakit İade Yasağı (Kara Para Aklama Önleme): 5549 sayılı Kanun ve uluslararası AML (Anti-Money Laundering) mevzuatı gereğince; platform üzerinden dijital olarak (kredi kartı, banka kartı, Apple Pay, Google Pay veya FAST/IBAN) gönderilen hiçbir bahşiş işletme veya çalışanlar tarafından elden fiziki nakit olarak iade edilemez.',
+          'Mükerrer çekim, hatalı tutar veya haksız işlemler durumunda iadeler, yalnızca ve doğrudan ödemenin tahsil edildiği orijinal finansal araca (kart hesabına ters işlem/chargeback veya gönderici banka hesabına havale) yapılır. İnceleme talepleri 24 saat içinde info@naponi.com adresine iletilmelidir.',
+        ],
       },
       {
         heading: '4. Fikri Mülkiyet Hakları',
@@ -241,8 +245,12 @@ const legalEN: LegalBundle = {
         content: 'Naponi provides a software interface facilitating direct, voluntary digital tipping from hospitality guests to frontline service staff. Naponi is not a bank, depository, or money transmitter. Customer funds bypass proprietary custody and transfer directly to authorized merchant or employee accounts.',
       },
       {
-        heading: '3. Voluntary Gratuities & Refund Policies',
-        content: 'Tips are discretionary expressions of guest appreciation. In cases of demonstrated technical duplication or unauthorized card use, refund inquiries must be submitted within 24 hours to info@naponi.com for gateway clearing review.',
+        heading: '3. Voluntary Gratuities, Refund Policies & Anti-Money Laundering (AML) Rules',
+        content: [
+          'Gratuities paid through the platform are strictly voluntary tokens of appreciation based on guest discretion.',
+          'Physical Cash Refund Prohibition (AML Compliance): Under international Anti-Money Laundering (AML) regulations and financial compliance standards, gratuities processed digitally (via Credit/Debit Card, Apple Pay, Google Pay, or direct Bank Transfer/IBAN) CANNOT be refunded in physical cash by the venue or staff under any circumstances.',
+          'In cases of verified technical duplication or erroneous amounts, refunds are strictly and exclusively remitted back to the original funding source (credit card charge reversal or original sender bank account). Inquiries must be submitted within 24 hours to info@naponi.com for clearing review.',
+        ],
       },
       {
         heading: '4. Intellectual Property',

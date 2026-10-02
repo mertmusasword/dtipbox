@@ -1684,6 +1684,12 @@ ${cardUrl}
           <!-- Footer Information -->
           <tr>
             <td style="background-color: #faf9f6; padding: 20px 32px; text-align: center; border-top: 1px solid #e7e5e4;">
+              <div style="background-color: #f5f5f4; border: 1px solid #e7e5e4; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 11px; color: #57534e; text-align: left; line-height: 1.4;">
+                <strong style="color: #059669;">🛡️ ${isTr ? 'Güvenlik & Nakit İade Yasağı (AML):' : 'Security & AML Refund Policy:'}</strong>
+                ${isTr
+                  ? 'Dijital bahşişler mevzuat gereğince işletme veya personel tarafından elden nakit olarak iade edilemez. İadeler münhasıran orijinal ödeme kanalına (kart veya banka hesabına) yapılabilir.'
+                  : 'Under financial compliance & AML regulations, digital gratuities cannot be refunded in physical cash. Approved refunds are issued strictly to the original funding source.'}
+              </div>
               <p style="margin: 0 0 6px 0; font-size: 11.5px; color: #78716c;">
                 ${isTr
                   ? 'Bu dijital makbuz, Naponi Smart QR Platformu üzerinden otomatik olarak iletilmiştir.'

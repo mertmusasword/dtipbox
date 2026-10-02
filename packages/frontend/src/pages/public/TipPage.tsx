@@ -629,6 +629,7 @@ export const TipPage: React.FC = () => {
       printPdf: string;
       downloadImage: string;
       shareReceipt: string;
+      antiFraudNotice: string;
       close: string;
     }> = {
       tr: {
@@ -648,6 +649,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Makbuzu Yazdır / PDF İndir',
         downloadImage: 'Görsel Olarak İndir (PNG)',
         shareReceipt: 'Makbuzu Paylaş',
+        antiFraudNotice: 'Nakit İade Yasağı (AML): Dijital bahşişler elden nakit iade edilemez. İadeler münhasıran orijinal ödeme kanalına yapılır.',
         close: 'Kapat',
       },
       en: {
@@ -667,6 +669,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Print / Save PDF',
         downloadImage: 'Download as Image (PNG)',
         shareReceipt: 'Share Receipt',
+        antiFraudNotice: 'No Cash Refund Policy (AML): Digital tips cannot be refunded in physical cash. Approved refunds are issued strictly to original payment source.',
         close: 'Close',
       },
       de: {
@@ -686,6 +689,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Drucken / PDF speichern',
         downloadImage: 'Als Bild herunterladen (PNG)',
         shareReceipt: 'Beleg teilen',
+        antiFraudNotice: 'Keine Barauszahlung (Geldwäscheschutz): Digitale Trinkgelder können nicht bar erstattet werden. Rückerstattung nur über die ursprüngliche Zahlungsart.',
         close: 'Schließen',
       },
       es: {
@@ -705,6 +709,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Imprimir / Guardar PDF',
         downloadImage: 'Descargar como Imagen (PNG)',
         shareReceipt: 'Compartir Recibo',
+        antiFraudNotice: 'Prohibición de Reembolso en Efectivo (AML): Las propinas digitales no se reembolsan en efectivo; solo al método de pago original.',
         close: 'Cerrar',
       },
       fr: {
@@ -724,6 +729,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Imprimer / Enregistrer PDF',
         downloadImage: 'Télécharger en Image (PNG)',
         shareReceipt: 'Partager le reçu',
+        antiFraudNotice: 'Non remboursable en espèces (LCB-FT) : Les pourboires numériques ne sont pas remboursables en espèces ; uniquement via le moyen initial.',
         close: 'Fermer',
       },
       pt: {
@@ -743,6 +749,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Imprimir / Salvar PDF',
         downloadImage: 'Baixar como Imagem (PNG)',
         shareReceipt: 'Compartilhar Recibo',
+        antiFraudNotice: 'Proibição de Reembolso em Dinheiro (AML): Gorjetas digitais não são reembolsadas em espécie; apenas pela forma original de pagamento.',
         close: 'Fechar',
       },
       ar: {
@@ -762,6 +769,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'طباعة / حفظ PDF',
         downloadImage: 'تنزيل كصورة (PNG)',
         shareReceipt: 'مشاركة الإيصال',
+        antiFraudNotice: 'حظر الاسترداد النقدي (AML): لا يمكن استرداد الإكراميات الرقمية نقداً، بل حصراً عبر وسيلة الدفع الأصلية.',
         close: 'إغلاق',
       },
       zh: {
@@ -781,6 +789,7 @@ export const TipPage: React.FC = () => {
         printPdf: '打印 / 存为 PDF',
         downloadImage: '下载为图片 (PNG)',
         shareReceipt: '分享收据',
+        antiFraudNotice: '禁止现金退款（反洗钱规定）：数字小费不可通过现金退还；所有退款均原路退回至原始支付方式。',
         close: '关闭',
       },
       ja: {
@@ -800,6 +809,7 @@ export const TipPage: React.FC = () => {
         printPdf: '印刷 / PDF保存',
         downloadImage: '画像としてダウンロード (PNG)',
         shareReceipt: '領収書を共有',
+        antiFraudNotice: '現金返金不可（AML規定）：デジタルチップは現金での返金不可。元の決済方法へのみ返金されます。',
         close: '閉じる',
       },
       id: {
@@ -819,6 +829,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Cetak / Simpan PDF',
         downloadImage: 'Unduh Gambar (PNG)',
         shareReceipt: 'Bagikan Tanda Terima',
+        antiFraudNotice: 'Larangan Pengembalian Tunai (AML): Tip digital tidak dapat dikembalikan secara tunai; hanya ke metode pembayaran asal.',
         close: 'Tutup',
       },
       ru: {
@@ -838,6 +849,7 @@ export const TipPage: React.FC = () => {
         printPdf: 'Печать / Сохранить в PDF',
         downloadImage: 'Скачать изображение (PNG)',
         shareReceipt: 'Поделиться чеком',
+        antiFraudNotice: 'Запрет возврата наличными (AML): Цифровые чаевые не возвращаются наличными; возврат возможен только исходным методом.',
         close: 'Закрыть',
       },
     };
@@ -1041,12 +1053,19 @@ export const TipPage: React.FC = () => {
         // Verification Footer Box
         curY += 65;
         ctx.fillStyle = '#F3F4F6';
-        ctx.fillRect(50, curY, 540, 60);
+        ctx.fillRect(50, curY, 540, 48);
 
         ctx.textAlign = 'center';
         ctx.fillStyle = '#059669';
-        ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
-        ctx.fillText(`✓ ${rt.verifiedBadge}`, 320, curY + 36);
+        ctx.font = 'bold 13px system-ui, -apple-system, sans-serif';
+        ctx.fillText(`✓ ${rt.verifiedBadge}`, 320, curY + 30);
+
+        // Anti-Fraud & AML Notice on Image
+        curY += 68;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#6B7280';
+        ctx.font = '11px system-ui, -apple-system, sans-serif';
+        ctx.fillText(rt.antiFraudNotice, 320, curY);
 
         // Download trigger
         const dataUrl = canvas.toDataURL('image/png');
@@ -1189,7 +1208,15 @@ export const TipPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem' }}>
+            {/* Anti-Money Laundering & Non-Cash Refund Policy Notice */}
+            <div style={{ marginTop: '0.9rem', padding: '0.55rem 0.75rem', borderRadius: '10px', background: '#F5F5F4', border: '1px solid #E7E5E4', display: 'flex', alignItems: 'flex-start', gap: '0.45rem', textAlign: 'left' }}>
+              <ShieldCheck size={15} style={{ color: '#059669', flexShrink: 0, marginTop: '1px' }} />
+              <div style={{ fontSize: '0.68rem', color: '#57534E', lineHeight: 1.35, fontWeight: 500 }}>
+                {rt.antiFraudNotice}
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '0.65rem', borderTop: '1px solid #E7E5E4', fontSize: '0.72rem' }}>
               {isPendingVerification ? (
                 <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#b45309', padding: '8px 12px', borderRadius: '10px', fontWeight: 600 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '0.78rem' }}>

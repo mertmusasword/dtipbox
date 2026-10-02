@@ -94,7 +94,8 @@ Naponi ve İşletme münferiden "**Taraf**", müştereken "**Taraflar**" olarak 
    - Müşteri veya kart hamili tarafından yapılan harcama itirazlarında (chargeback/ters ibraz), ÖHS kuralları geçerli olur.  
    - Sahte işlem, çalıntı kart veya hileli işlem iddiasıyla iptal edilen ya da bloke edilen tutarlardan ve ÖHS tarafından yansıtılan ceza/komisyon bedellerinden doğrudan İşletme sorumludur.  
    - Naponi, ters ibraz durumunda ÖHS'den gelen resmi bildirimleri İşletme'ye iletir ve gerekli inceleme tamamlanana kadar ilgili bakiyeyi veya hesabı risk yönetimi kapsamında askıya alma hakkına sahiptir.  
-4.4. **Kayıtların Saklanması:** Naponi, işlem güvenliğini sağlamak, uyuşmazlıkları çözmek ve yasal mercilere bilgi sunabilmek amacıyla tüm işlem ve yönlendirme kayıtlarını güvenli veri tabanında loglar.
+4.4. **Kayıtların Saklanması:** Naponi, işlem güvenliğini sağlamak, uyuşmazlıkları çözmek ve yasal mercilere bilgi sunabilmek amacıyla tüm işlem ve yönlendirme kayıtlarını güvenli veri tabanında loglar.  
+4.5. **Nakit İade Yasağı ve AML Koruması:** 5549 sayılı Kanun ve uluslararası suç gelirlerinin aklanmasını önleme (AML) mevzuatı uyarınca; İşletme ve personeli, Müşteriler tarafından kart, dijital cüzdan veya IBAN/FAST ile iletilen bahşiş tutarlarını hiçbir surette elden fiziki nakit olarak iade edemez. Hatalı işlem veya haklı itiraz hallerinde iadeler, yalnızca ve doğrudan ödemenin tahsil edildiği orijinal finansal araç (ilgili kart hesabına ters ibraz/iptal veya gönderici banka hesabına havale) üzerinden gerçekleştirilir.
 
 ---
 
@@ -140,7 +141,8 @@ c) Yasa dışı bahis, kumar veya şans oyunlarına aracılık etme,
 d) Sahte, hayali veya gerçekte bir hizmet sunulmaksızın kart nakit çekimi (tefecilik/finansman sağlama) amaçlı işlem üretme,  
 e) Başka bir tüzel veya gerçek kişinin kimliğini, unvanını veya ticari itibarını taklit etme,  
 f) Çalıntı veya yetkisiz ödeme araçlarıyla işlem gerçekleştirme,  
-g) Platform'un yazılım kodlarına müdahale etme, tersine mühendislik yapma, güvenlik açıklarını suistimal etme veya aşırı yükleme (DDoS) oluşturma.
+g) Platform'un yazılım kodlarına müdahale etme, tersine mühendislik yapma, güvenlik açıklarını suistimal etme veya aşırı yükleme (DDoS) oluşturma,  
+h) Dijital olarak tahsil edilen bahşiş veya ödemelerin müşteriye elden fiziki nakit olarak iade edilmesi (Nakit iade yasağı ve mikro kara para aklama suiistimali).
 
 Yasaklı kullanım tespiti halinde Naponi, tek taraflı olarak derhal Sözleşme'yi feshetme, adli makamlara ihbarda bulunma ve uğradığı her türlü maddi-manevi zararı rücu etme hakkını saklı tutar.
 
