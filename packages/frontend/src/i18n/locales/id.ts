@@ -45,7 +45,8 @@ export const id = {
     "verified": "Terverifikasi",
     "unverified": "Belum Terverifikasi",
     "saved": "Berhasil disimpan",
-    "refresh": "Segarkan"
+    "refresh": "Segarkan",
+    "backToHome": "Kembali ke Beranda"
   },
   "nav": {
     "home": "Beranda",

@@ -45,7 +45,8 @@ export const ar = {
     "verified": "تم التحقق",
     "unverified": "غير موثق",
     "saved": "تم الحفظ بنجاح",
-    "refresh": "تحديث"
+    "refresh": "تحديث",
+    "backToHome": "العودة إلى الصفحة الرئيسية"
   },
   "nav": {
     "home": "الرئيسية",

@@ -45,7 +45,8 @@ export const de = {
     "verified": "Verifiziert",
     "unverified": "Unbestätigt",
     "saved": "Erfolgreich gespeichert",
-    "refresh": "Aktualisieren"
+    "refresh": "Aktualisieren",
+    "backToHome": "Zurück zur Startseite"
   },
   "nav": {
     "home": "Startseite",

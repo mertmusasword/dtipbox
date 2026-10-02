@@ -45,7 +45,8 @@ export const pt = {
     "verified": "Verificado",
     "unverified": "Não verificado",
     "saved": "Salvo com sucesso",
-    "refresh": "Atualizar"
+    "refresh": "Atualizar",
+    "backToHome": "Voltar ao Início"
   },
   "nav": {
     "home": "Início",

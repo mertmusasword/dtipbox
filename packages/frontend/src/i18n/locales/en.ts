@@ -45,7 +45,8 @@ export const en = {
     "verified": "Verified",
     "unverified": "Unverified",
     "saved": "Saved successfully",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "backToHome": "Back to Home"
   },
   "nav": {
     "home": "Home",

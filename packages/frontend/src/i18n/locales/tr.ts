@@ -45,7 +45,8 @@ export const tr = {
     "verified": "Doğrulandı",
     "unverified": "Doğrulama Bekliyor",
     "saved": "Başarıyla kaydedildi",
-    "refresh": "Yenile"
+    "refresh": "Yenile",
+    "backToHome": "Ana Sayfaya Dön"
   },
   "nav": {
     "home": "Anasayfa",

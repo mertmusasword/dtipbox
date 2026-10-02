@@ -45,7 +45,8 @@ export const zh = {
     "verified": "已验证",
     "unverified": "未验证",
     "saved": "保存成功",
-    "refresh": "刷新"
+    "refresh": "刷新",
+    "backToHome": "返回首页"
   },
   "nav": {
     "home": "首页",

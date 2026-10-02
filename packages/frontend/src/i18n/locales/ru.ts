@@ -45,7 +45,8 @@ export const ru = {
     "verified": "Подтверждено",
     "unverified": "Не подтверждено",
     "saved": "Успешно сохранено",
-    "refresh": "Обновить"
+    "refresh": "Обновить",
+    "backToHome": "На главную"
   },
   "nav": {
     "home": "Главная",

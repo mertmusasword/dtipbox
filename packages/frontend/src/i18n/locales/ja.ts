@@ -45,7 +45,8 @@ export const ja = {
     "verified": "認証済み",
     "unverified": "未確認",
     "saved": "正常に保存されました",
-    "refresh": "更新"
+    "refresh": "更新",
+    "backToHome": "ホームに戻る"
   },
   "nav": {
     "home": "ホーム",

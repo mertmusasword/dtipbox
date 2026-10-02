@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { ArrowRight, FileText, ShieldCheck, Building2, CheckCircle2, Crown, Sparkles, Clock, X, ChevronRight, Award } from 'lucide-react';
+import { ArrowRight, ArrowLeft, FileText, ShieldCheck, Building2, CheckCircle2, Crown, Sparkles, Clock, X, ChevronRight, Award } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../../i18n';
 import { trackBusinessRegisterStarted, trackBusinessRegistered, trackFounderSignupStarted, trackFounderSignupCompleted } from '../../analytics';
 import { AgreementModal } from '../../components/AgreementModal';
@@ -133,6 +133,45 @@ export const RegisterPage: React.FC = () => {
         canonicalUrl="https://www.naponi.com/register"
         noindex={true}
       />
+      {/* Back to Home Button */}
+      <Link
+        to="/"
+        style={{
+          position: 'fixed',
+          top: '1.25rem',
+          left: dir === 'rtl' ? 'auto' : '1.5rem',
+          right: dir === 'rtl' ? '1.5rem' : 'auto',
+          zIndex: 99999,
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.45rem',
+          padding: '0.45rem 0.9rem',
+          fontSize: '0.82rem',
+          fontWeight: 600,
+          background: 'rgba(15, 23, 42, 0.75)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '10px',
+          color: '#cbd5e1',
+          textDecoration: 'none',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+          transition: 'all 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = '#ffffff';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          e.currentTarget.style.background = 'rgba(30, 41, 59, 0.85)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = '#cbd5e1';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+          e.currentTarget.style.background = 'rgba(15, 23, 42, 0.75)';
+        }}
+      >
+        <ArrowLeft size={15} style={{ transform: dir === 'rtl' ? 'scaleX(-1)' : 'none' }} />
+        <span>{t('common.backToHome')}</span>
+      </Link>
+
       <div style={{
         position: 'fixed',
         top: '1.25rem',

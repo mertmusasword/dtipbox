@@ -45,7 +45,8 @@ export const fr = {
     "verified": "Vérifié",
     "unverified": "Non vérifié",
     "saved": "Enregistré avec succès",
-    "refresh": "Actualiser"
+    "refresh": "Actualiser",
+    "backToHome": "Retour à l'accueil"
   },
   "nav": {
     "home": "Accueil",
