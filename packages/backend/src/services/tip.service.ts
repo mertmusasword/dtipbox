@@ -48,6 +48,8 @@ export async function getTipPageDetails(publicToken: string) {
             where: { is_active: true },
             orderBy: { created_at: 'desc' },
           },
+          payment_methods: true,
+          payment_integrations: true,
         },
       },
       table: true,
@@ -79,21 +81,31 @@ export async function getTipPageDetails(publicToken: string) {
     orderBy: { first_name: 'asc' },
   });
 
-  // Determine available payment methods dynamically based on business configuration
-  const hasExternalPayment = Boolean(
+  // Determine available payment methods dynamically based on business configuration & active methods
+  const cardMethod = qr.business.payment_methods?.find((m) => m.type === 'CARD');
+  const ibanMethod = qr.business.payment_methods?.find((m) => m.type === 'IBAN_TRANSFER');
+
+  const hasConnectedGateway = qr.business.payment_integrations?.some((i) => i.status === 'CONNECTED');
+  const hasExternalUrl = Boolean(
     qr.business.external_payment_url &&
     qr.business.external_payment_url.trim().startsWith('https://')
   );
-  const hasIbanPayment = Boolean(
+
+  const isCardExplicitlyInactive = cardMethod?.status === 'INACTIVE';
+  const hasExternalPayment = !isCardExplicitlyInactive && (cardMethod?.status === 'ACTIVE' || hasExternalUrl || hasConnectedGateway);
+
+  const isIbanExplicitlyInactive = ibanMethod?.status === 'INACTIVE';
+  const hasIbanDetails = Boolean(
     qr.business.payment_account?.iban &&
     qr.business.payment_account.iban.trim().length > 0
   );
+  const hasIbanPayment = !isIbanExplicitlyInactive && (ibanMethod?.status === 'ACTIVE' || hasIbanDetails);
 
   const availableMethods: { type: PaymentMethodType; provider?: string | null; label: string }[] = [];
   if (hasExternalPayment) {
     availableMethods.push({
       type: PaymentMethodType.CARD,
-      provider: 'external_link',
+      provider: hasConnectedGateway ? 'gateway' : 'external_link',
       label: 'Güvenli Ödeme Sayfası',
     });
   }
