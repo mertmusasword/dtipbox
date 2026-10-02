@@ -782,7 +782,7 @@ export const CommissionSettlementTab: React.FC = () => {
                     style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
                   >
                     {copiedKey === 'company' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
-                    {copiedKey === 'company' ? ct.copied : 'Kopyala'}
+                    {copiedKey === 'company' ? ct.copied : (ct.copyCompany || 'Copy')}
                   </button>
                 </div>
               </div>

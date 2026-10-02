@@ -60,6 +60,7 @@ export interface CommissionTranslations {
   swiftCode?: string;
   copySwift?: string;
   selectAccount?: string;
+  copyCompany?: string;
   fastAddress: string;
   description: string;
   amountToPay: string;
@@ -121,6 +122,7 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     swiftCode: 'SWIFT / BIC Kodu',
     copySwift: 'SWIFT Kopyala',
     selectAccount: 'Hesap / Para Birimi',
+    copyCompany: 'Unvanı Kopyala',
     fastAddress: 'FAST / Kolay Adres',
     description: 'Havale Açıklaması / Referans',
     amountToPay: 'Ödenecek Komisyon Tutarı',
@@ -180,6 +182,7 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     swiftCode: 'SWIFT / BIC Code',
     copySwift: 'Copy SWIFT',
     selectAccount: 'Account / Currency',
+    copyCompany: 'Copy Title',
     fastAddress: 'FAST / Quick Pay Address',
     description: 'Payment Reference',
     amountToPay: 'Amount Due',
@@ -236,6 +239,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Finanzamt & Steuernummer',
     bankName: 'Bank',
     iban: 'IBAN',
+    swiftCode: 'SWIFT / BIC-Code',
+    copySwift: 'SWIFT kopieren',
+    selectAccount: 'Konto / Währung wählen',
+    copyCompany: 'Name kopieren',
     fastAddress: 'SEPA / Schnellzahlung',
     description: 'Verwendungszweck',
     amountToPay: 'Fälliger Betrag',
@@ -292,6 +299,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Oficina e Identificación Fiscal',
     bankName: 'Banco',
     iban: 'IBAN',
+    swiftCode: 'Código SWIFT / BIC',
+    copySwift: 'Copiar SWIFT',
+    selectAccount: 'Cuenta / Moneda',
+    copyCompany: 'Copiar Razón Social',
     fastAddress: 'Dirección FAST / Rápida',
     description: 'Referencia de Pago',
     amountToPay: 'Monto a Pagar',
@@ -348,6 +359,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Centre des Impôts & Numéro Fiscal',
     bankName: 'Banque',
     iban: 'IBAN',
+    swiftCode: 'Code SWIFT / BIC',
+    copySwift: 'Copier le SWIFT',
+    selectAccount: 'Compte / Devise',
+    copyCompany: 'Copier la Raison Sociale',
     fastAddress: 'Adresse FAST / Virement Instantané',
     description: 'Référence du Paiement',
     amountToPay: 'Montant Dû',
@@ -404,6 +419,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Identificação Fiscal / CNPJ',
     bankName: 'Banco',
     iban: 'IBAN / Conta',
+    swiftCode: 'Código SWIFT / BIC',
+    copySwift: 'Copiar SWIFT',
+    selectAccount: 'Conta / Moeda',
+    copyCompany: 'Copiar Razão Social',
     fastAddress: 'Chave PIX / FAST',
     description: 'Referência de Pagamento',
     amountToPay: 'Valor a Pagar',
@@ -460,6 +479,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'مكتب الضرائب والرقم الضريبي',
     bankName: 'البنك',
     iban: 'رقم الآيبان (IBAN)',
+    swiftCode: 'رمز سويفت / BIC',
+    copySwift: 'نسخ رمز سويفت',
+    selectAccount: 'الحساب / العملة',
+    copyCompany: 'نسخ اسم الشركة',
     fastAddress: 'العنوان السريع (FAST)',
     description: 'المرجع / الشرح',
     amountToPay: 'المبلغ المستحق',
@@ -516,6 +539,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: '税务登记信息',
     bankName: '开户行',
     iban: '银行账号 / IBAN',
+    swiftCode: 'SWIFT / BIC 代码',
+    copySwift: '复制 SWIFT',
+    selectAccount: '账户 / 币种',
+    copyCompany: '复制公司名称',
     fastAddress: '快捷收款地址',
     description: '汇款附言 / 参考号',
     amountToPay: '应付金额',
@@ -572,6 +599,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: '税務署・納税者番号',
     bankName: '取引銀行',
     iban: '口座番号 / IBAN',
+    swiftCode: 'SWIFT / BIC コード',
+    copySwift: 'SWIFTをコピー',
+    selectAccount: '口座 / 通貨',
+    copyCompany: '会社名をコピー',
     fastAddress: '即時送金アドレス',
     description: '振込名義 / 照会番号',
     amountToPay: '支払金額',
@@ -628,6 +659,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Kantor Pajak & NPWP',
     bankName: 'Nama Bank',
     iban: 'Nomor Rekening / IBAN',
+    swiftCode: 'Kode SWIFT / BIC',
+    copySwift: 'Salin SWIFT',
+    selectAccount: 'Rekening / Mata Uang',
+    copyCompany: 'Salin Nama Perusahaan',
     fastAddress: 'Alamat Cepat FAST',
     description: 'Keterangan / Referensi',
     amountToPay: 'Jumlah yang Harus Dibayar',
@@ -684,6 +719,10 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Налоговый орган и ИНН',
     bankName: 'Банк',
     iban: 'Номер счета / IBAN',
+    swiftCode: 'SWIFT / BIC код',
+    copySwift: 'Копировать SWIFT',
+    selectAccount: 'Счет / Валюта',
+    copyCompany: 'Копировать наименование',
     fastAddress: 'FAST / Быстрый адрес',
     description: 'Назначение платежа',
     amountToPay: 'Сумма к оплате',
@@ -798,10 +837,14 @@ const VERIFICATION_EXTENSIONS: Record<string, {
 };
 
 export function getCommissionText(lang: string): CommissionTranslations {
-  const base = COMMISSION_LOCALES[lang] || COMMISSION_LOCALES.en;
-  const ext = VERIFICATION_EXTENSIONS[lang] || VERIFICATION_EXTENSIONS.en;
+  const fallback = COMMISSION_LOCALES.en;
+  const base = COMMISSION_LOCALES[lang] || fallback;
+  const extFallback = VERIFICATION_EXTENSIONS.en;
+  const ext = VERIFICATION_EXTENSIONS[lang] || extFallback;
   return {
+    ...fallback,
     ...base,
+    ...extFallback,
     ...ext,
   };
 }
