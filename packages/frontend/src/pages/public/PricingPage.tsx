@@ -260,7 +260,7 @@ export const PricingPage: React.FC = () => {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#34d399', fontWeight: 700, marginTop: '0.35rem' }}>
-                  ✓ 2027 Planlarından Sonsuza Kadar Muaf
+                  {pt.founderExemptBadge}
                 </div>
               </div>
             </div>
@@ -305,7 +305,7 @@ export const PricingPage: React.FC = () => {
             {/* CTA Button */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', flexWrap: 'wrap' }}>
               <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                Kredi kartı gerekmez • Sıfır taahhüt • 3 dakikada canlıya geçiş
+                {pt.microProofText}
               </div>
               <Link
                 to="/register"
@@ -392,7 +392,7 @@ export const PricingPage: React.FC = () => {
               </div>
 
               <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.78rem', color: '#64748b' }}>
-                2027 Yılında Yayında
+                {pt.liveIn2027}
               </div>
             </div>
 
@@ -461,7 +461,7 @@ export const PricingPage: React.FC = () => {
               </div>
 
               <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.78rem', color: '#a5b4fc' }}>
-                2027 Yılında Yayında
+                {pt.liveIn2027}
               </div>
             </div>
 
@@ -509,7 +509,7 @@ export const PricingPage: React.FC = () => {
               </div>
 
               <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.78rem', color: '#64748b' }}>
-                2027 Yılında Yayında
+                {pt.liveIn2027}
               </div>
             </div>
           </div>
@@ -722,7 +722,7 @@ export const PricingPage: React.FC = () => {
       {/* Global Footer */}
       <footer className="home-footer" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
         <div className="home-container" style={{ textAlign: 'center', padding: '2rem 0', color: '#64748b', fontSize: '0.85rem' }}>
-          <div>© 2026 Naponi Teknoloji A.Ş. • Şeffaf Fiyatlandırma ve Kurucu Üyelik Modeli</div>
+          <div>{pt.pricingCopyright}</div>
           <div style={{ marginTop: '0.5rem', display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Naponi Home</Link>
             <Link to="/founder" style={{ color: '#fde047', textDecoration: 'none', fontWeight: 600 }}>2026 Founder Program</Link>

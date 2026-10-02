@@ -39,7 +39,8 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
   businessName,
   onSettled,
 }) => {
-  const { formatCurrency, formatDate, formatTime } = useLanguage();
+  const { formatCurrency, formatDate, formatTime, language } = useLanguage();
+  const isTr = language === 'tr';
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<'simulate' | 'history'>('simulate');
@@ -563,19 +564,19 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
 
         <div class="summary-grid">
           <div class="summary-card">
-            <div class="label">Brüt Bahşiş</div>
+            <div class="label">${isTr ? "Brüt Bahşiş" : "Gross Tip Pool"}</div>
             <div class="value">${grossAmt}</div>
           </div>
           <div class="summary-card">
-            <div class="label">Banka POS Kesintisi</div>
+            <div class="label">${isTr ? "Banka POS Kesintisi" : "POS Processing Fee"}</div>
             <div class="value" style="color: #dc2626;">-${posFeeAmt}</div>
           </div>
           <div class="summary-card">
-            <div class="label">Stopaj / Vergi</div>
+            <div class="label">${isTr ? "Stopaj / Vergi" : "Withholding / Tax"}</div>
             <div class="value" style="color: #d97706;">-${taxFeeAmt}</div>
           </div>
           <div class="summary-card">
-            <div class="label">Nakit / POS Dağılımı</div>
+            <div class="label">${isTr ? "Nakit / POS Dağılımı" : "Cash / POS Breakdown"}</div>
             <div class="value" style="font-size: 9.5px; font-weight: 700;">
               ${cashPool > 0 ? `💵 ${formatCurrency(cashPool, currency)}` : ''}
               ${cashPool > 0 && digitalPool > 0 ? ' • ' : ''}
@@ -584,7 +585,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
             </div>
           </div>
           <div class="summary-card highlight">
-            <div class="label">Net Dağıtılan Toplam</div>
+            <div class="label">${isTr ? "Net Dağıtılan Toplam" : "Net Distributed Total"}</div>
             <div class="value">${netDistributedAmt}</div>
           </div>
         </div>
@@ -598,14 +599,14 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
           <thead>
             <tr>
               <th style="width: 25px; text-align: center;">#</th>
-              <th>Personel Adı Soyadı</th>
-              <th>Görev / Rol</th>
-              <th style="width: 50px; text-align: center;">Katsayı</th>
-              <th style="width: 70px; text-align: right;">Brüt Pay</th>
-              ${!isHistory ? '<th style="width: 65px; text-align: right;">Kesinti</th>' : ''}
-              <th style="width: 105px; text-align: right;">Net Hak Ediş</th>
-              ${isHistory ? '<th style="width: 60px; text-align: center;">Durum</th>' : ''}
-              <th style="width: 100px; text-align: center;">İmza / Teslim Alan</th>
+              <th>${isTr ? "Personel Adı Soyadı" : "Employee Full Name"}</th>
+              <th>${isTr ? "Görev / Rol" : "Role / Position"}</th>
+              <th style="width: 50px; text-align: center;">${isTr ? "Katsayı" : "Points"}</th>
+              <th style="width: 70px; text-align: right;">${isTr ? "Brüt Pay" : "Gross"}</th>
+              ${!isHistory ? `<th style="width: 65px; text-align: right;">${isTr ? "Kesinti" : "Fee"}</th>` : ''}
+              <th style="width: 105px; text-align: right;">${isTr ? "Net Hak Ediş" : "Net Payout"}</th>
+              ${isHistory ? `<th style="width: 60px; text-align: center;">${isTr ? "Durum" : "Status"}</th>` : ''}
+              <th style="width: 100px; text-align: center;">${isTr ? "İmza / Teslim Alan" : "Signature / Recipient"}</th>
             </tr>
           </thead>
           <tbody>
@@ -615,12 +616,12 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
 
         <div class="signatures">
           <div class="sign-box">
-            <strong>Kasayı Kapatan / Vardiya Sorumlusu</strong><br>
-            İmza / Kaşe
+            <strong>${isTr ? "Kasayı Kapatan / Vardiya Sorumlusu" : "Shift Supervisor / Cashier Close"}</strong><br>
+            ${isTr ? "İmza / Kaşe" : "Signature / Stamp"}
           </div>
           <div class="sign-box">
-            <strong>İşletme Yetkilisi / Muhasebe Onayı</strong><br>
-            İmza
+            <strong>${isTr ? "İşletme Yetkilisi / Muhasebe Onayı" : "Venue Manager / Accounting Approval"}</strong><br>
+            ${isTr ? "İmza" : "Signature"}
           </div>
         </div>
 
@@ -679,10 +680,10 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
               </div>
               <div className="tip-pool-modal-titles">
                 <h3 className="tip-pool-modal-title">
-                  Bahşiş Dağıtımı & Kasa Kapat
+                  {isTr ? 'Bahşiş Dağıtımı & Kasa Kapat' : 'Tip Settlement & Register Close'}
                 </h3>
                 <p className="tip-pool-modal-desc">
-                  Kasadaki dağıtılmamış bahşişler ve personel hak ediş dökümü
+                  {isTr ? 'Kasadaki dağıtılmamış bahşişler ve personel hak ediş dökümü' : 'Unallocated register tips and staff entitlement breakdown'}
                 </p>
               </div>
             </div>
@@ -705,7 +706,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 className={`btn btn-sm ${activeTab === 'simulate' ? 'btn-primary' : 'btn-secondary'}`}
                 style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}
               >
-                Kasadaki Dağıtım
+                {isTr ? 'Kasadaki Dağıtım' : 'Current Settlement'}
               </button>
               <button
                 type="button"
@@ -713,7 +714,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                 className={`btn btn-sm ${activeTab === 'history' ? 'btn-primary' : 'btn-secondary'}`}
                 style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
               >
-                <History size={13} /> Geçmiş Kapanışlar
+                <History size={13} /> {isTr ? 'Geçmiş Kapanışlar' : 'Past Closures'}
               </button>
               <button
                 type="button"
@@ -809,7 +810,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       className="btn btn-secondary btn-sm tip-pool-add-external-btn"
                     >
                       <Coins size={15} />
-                      + Fiziksel Tip Box (Nakit) veya Kendi POS Bahşişinizi Ekleyin
+                      {isTr ? '+ Fiziksel Tip Box (Nakit) veya Kendi POS Bahşişinizi Ekleyin' : '+ Add Physical Tip Box (Cash) or Venue POS Tips'}
                     </button>
                   </div>
                 ) : (
@@ -833,10 +834,10 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                     >
                       <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fbbf24' }}>
                         <Coins size={16} />
-                        Harici Bahşiş Ekle (Fiziksel Tip Box & İşletme POS'u)
+                        {isTr ? "Harici Bahşiş Ekle (Fiziksel Tip Box & İşletme POS'u)" : 'Add External Tips (Cash Jar & Venue POS)'}
                         {isCalculating && (
                           <span style={{ fontSize: '0.72rem', color: '#60a5fa', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 500, marginLeft: '0.5rem' }}>
-                            <Loader2 size={12} className="animate-spin" /> Hesaplanıyor...
+                            <Loader2 size={12} className="animate-spin" /> {isTr ? 'Hesaplanıyor...' : 'Calculating...'}
                           </span>
                         )}
                       </div>
@@ -849,7 +850,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                             style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                           >
                             <Calculator size={12} />
-                            Şimdi Hesapla
+                            {isTr ? 'Şimdi Hesapla' : 'Calculate Now'}
                           </button>
                         )}
                         <button
@@ -967,10 +968,10 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                       <CheckCircle2 size={30} />
                     </div>
                     <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                      Kasanızda Dağıtılmamış Bahşiş Bulunmuyor
+                      {isTr ? 'Kasanızda Dağıtılmamış Bahşiş Bulunmuyor' : 'No Unallocated Tips in Register'}
                     </h4>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: '440px', margin: '0 auto 1.5rem', lineHeight: 1.5 }}>
-                      Önceki tüm bahşişler başarıyla dağıtıldı. Kutudaki nakit parayı veya kendi POS'unuzdan çekilen bahşişi dağıtmak için yukarıdaki butondan harici tutar ekleyebilirsiniz.
+                      {isTr ? "Önceki tüm bahşişler başarıyla dağıtıldı. Kutudaki nakit parayı veya kendi POS'unuzdan çekilen bahşişi dağıtmak için yukarıdaki butondan harici tutar ekleyebilirsiniz." : 'All previous tips were settled. You can add external tips from cash jars or your merchant POS using the button above.'}
                     </p>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
                       {!showManualInputs && (
@@ -980,7 +981,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
                           className="btn btn-primary btn-sm"
                           style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
                         >
-                          <Coins size={14} /> Nakit / Kendi POS Bahşişini Ekle
+                          <Coins size={14} /> {isTr ? 'Nakit / Kendi POS Bahşişini Ekle' : 'Add Cash / POS Tips'}
                         </button>
                       )}
                       <button

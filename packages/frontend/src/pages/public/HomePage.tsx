@@ -952,10 +952,10 @@ export const HomePage: React.FC = () => {
                   {language === 'tr' ? 'Mevcut Operasyonunuz' : 'Existing Systems'}
                 </div>
                 <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
-                  POS • Ödeme • Kasa
+                  {language === 'tr' ? 'POS • Ödeme • Kasa' : 'POS • Payment • Cashier'}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                  Toast • Square • Clover • Lightspeed • Yerel POS
+                  {language === 'tr' ? 'Toast • Square • Clover • Lightspeed • Yerel POS' : 'Toast • Square • Clover • Lightspeed • Local POS'}
                 </div>
               </div>
 
@@ -988,10 +988,10 @@ export const HomePage: React.FC = () => {
                   {language === 'tr' ? 'Tüm Misafir İhtiyaçları' : 'Guest Touchpoints'}
                 </div>
                 <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.2rem' }}>
-                  Bahşiş • Menü • Wi-Fi
+                  {language === 'tr' ? 'Bahşiş • Menü • Wi-Fi' : 'Tips • Menu • Wi-Fi'}
                 </div>
                 <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#cbd5e1' }}>
-                  Sadakat • Fırsat • Yorum
+                  {language === 'tr' ? 'Sadakat • Fırsat • Yorum' : 'Loyalty • Promos • Reviews'}
                 </div>
               </div>
             </div>

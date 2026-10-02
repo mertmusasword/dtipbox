@@ -45,6 +45,7 @@ import { PaymentMethodsRow } from '../../components/PaymentBadges';
 export const PaymentMethodsPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, language } = useLanguage();
+  const isTr = language === 'tr';
 
   // State
   const [methods, setMethods] = useState<PaymentMethodItem[]>([]);
@@ -1105,7 +1106,7 @@ export const PaymentMethodsPage: React.FC = () => {
               {/* 1. THREE CORE PRINCIPLES */}
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Zap size={16} color="var(--primary)" /> 3 Temel Prensip (Nasıl Çalışır?)
+                  <Zap size={16} color="var(--primary)" /> {isTr ? '3 Temel Prensip (Nasıl Çalışır?)' : '3 Core Principles (How It Works)'}
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
                   <div
@@ -1117,10 +1118,10 @@ export const PaymentMethodsPage: React.FC = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--success)' }}>
-                      <Check size={16} /> 1. %100 Non-Custodial (Aracı Havuz Yok)
+                      <Check size={16} /> {isTr ? '1. %100 Non-Custodial (Aracı Havuz Yok)' : '1. 100% Non-Custodial (Zero Intermediary Pool)'}
                     </div>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
-                      Naponi paranızı havuzda bekletmez, komisyon kesmez. Bahşişler doğrudan kendi Stripe, PayTR, Shopier veya Banka (IBAN) hesabınıza yatar.
+                      {isTr ? 'Naponi paranızı havuzda bekletmez, komisyon kesmez. Bahşişler doğrudan kendi Stripe, PayTR, Shopier veya Banka (IBAN) hesabınıza yatar.' : 'Naponi never holds your funds in escrow and charges zero commission. Tips land directly into your own Stripe, Merchant Gateway, or Bank (IBAN) account.'}
                     </p>
                   </div>
 
@@ -1133,11 +1134,10 @@ export const PaymentMethodsPage: React.FC = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)' }}>
-                      <ShieldCheck size={16} /> 2. İki Kolay Entegrasyon Yolu
+                      <ShieldCheck size={16} /> {isTr ? '2. İki Kolay Entegrasyon Yolu' : '2. Two Easy Integration Paths'}
                     </div>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
-                      <strong>Kolay Yol:</strong> Ödeme linkinizi (Stripe Payment Link, Shopier vb.) panele yapıştırın.<br/>
-                      <strong>Kurumsal Yol:</strong> Sanal POS API anahtarlarınızı bağlayın.
+                      {isTr ? (<><strong>Kolay Yol:</strong> Ödeme linkinizi (Stripe Payment Link, Shopier vb.) panele yapıştırın.<br/><strong>Kurumsal Yol:</strong> Sanal POS API anahtarlarınızı bağlayın.</>) : (<><strong>Simple Path:</strong> Paste your payment link (Stripe Link, hosted checkout).<br/><strong>API Gateway:</strong> Connect your merchant gateway API keys.</>)}
                     </p>
                   </div>
 
@@ -1150,10 +1150,10 @@ export const PaymentMethodsPage: React.FC = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: '#ec4899' }}>
-                      <Smartphone size={16} /> 3. Anında QR Aktivasyonu
+                      <Smartphone size={16} /> {isTr ? '3. Anında QR Aktivasyonu' : '3. Instant QR Activation'}
                     </div>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.4rem 0 0', lineHeight: 1.4 }}>
-                      Ödeme linkinizi girdiğiniz veya IBAN'ınızı kaydettiğiniz anda işletmenizdeki tüm QR kodlar kartlı bahşişe anında açılır.
+                      {isTr ? "Ödeme linkinizi girdiğiniz veya IBAN'ınızı kaydettiğiniz anda işletmenizdeki tüm QR kodlar kartlı bahşişe anında açılır." : 'The moment you enter your payment link or IBAN, all QR codes in your venue activate for cashless tips.'}
                     </p>
                   </div>
                 </div>
@@ -1162,7 +1162,7 @@ export const PaymentMethodsPage: React.FC = () => {
               {/* 2. WHICH PROVIDER TO CHOOSE */}
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Globe2 size={16} color="var(--primary)" /> Hangi Sağlayıcıyı Seçmeliyim?
+                  <Globe2 size={16} color="var(--primary)" /> {isTr ? 'Hangi Sağlayıcıyı Seçmeliyim?' : 'Which Provider Should I Choose?'}
                 </h4>
 
                 {/* Region Tabs */}
@@ -1172,21 +1172,21 @@ export const PaymentMethodsPage: React.FC = () => {
                     className={`btn btn-sm ${guideActiveTab === 'tr' ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => setGuideActiveTab('tr')}
                   >
-                    🇹🇷 Türkiye (TL & Yerel Kartlar)
+                    {isTr ? '🇹🇷 Türkiye (TL & Yerel Kartlar)' : '🇹🇷 Turkey (TRY & Local Cards)'}
                   </button>
                   <button
                     type="button"
                     className={`btn btn-sm ${guideActiveTab === 'global' ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => setGuideActiveTab('global')}
                   >
-                    🌍 Global / Batı Pazarı (USD, EUR, GBP)
+                    {isTr ? '🌍 Global / Batı Pazarı (USD, EUR, GBP)' : '🌍 Global & Western Markets (USD, EUR, GBP)'}
                   </button>
                   <button
                     type="button"
                     className={`btn btn-sm ${guideActiveTab === 'asia' ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => setGuideActiveTab('asia')}
                   >
-                    🇨🇳 Asya & Turist Hub'ları
+                    {isTr ? "🇨🇳 Asya & Turist Hub'ları" : '🇨🇳 Asia & Tourist Hubs'}
                   </button>
                 </div>
 

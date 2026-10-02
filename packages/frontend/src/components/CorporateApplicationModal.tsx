@@ -18,7 +18,8 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
   defaultCompanyName = '',
   defaultEmail = '',
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isTr = language === 'tr';
 
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -48,14 +49,14 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
     // Client-side phone validation (global E.164 and TR mobile)
     const phoneCheck = validateGlobalPhoneNumber(form.phone);
     if (!phoneCheck.isValid) {
-      setError(phoneCheck.error || 'Lütfen geçerli bir telefon numarası giriniz.');
+      setError(phoneCheck.error || (isTr ? 'Lütfen geçerli bir telefon numarası giriniz.' : 'Please enter a valid phone number.'));
       return;
     }
 
     // Client-side email validation (anti-disposable and dummy spam check)
     const emailCheck = validateEmailClient(form.email);
     if (!emailCheck.isValid) {
-      setError(emailCheck.error || 'Lütfen geçerli bir kurumsal e-posta adresi giriniz.');
+      setError(emailCheck.error || (isTr ? 'Lütfen geçerli bir kurumsal e-posta adresi giriniz.' : 'Please enter a valid corporate email address.'));
       return;
     }
 
@@ -80,12 +81,12 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || data.error || 'Başvuru gönderilirken bir hata oluştu');
+        throw new Error(data.message || data.error || (isTr ? 'Başvuru gönderilirken bir hata oluştu' : 'An error occurred while submitting application'));
       }
 
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || 'Başvuru gönderilemedi. Lütfen tekrar deneyin.');
+      setError(err.message || (isTr ? 'Başvuru gönderilemedi. Lütfen tekrar deneyin.' : 'Failed to submit application. Please try again.'));
     } finally {
       setSubmitting(false);
     }
@@ -191,7 +192,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                     type="text"
                     required
                     className="corporate-form-input"
-                    placeholder="Örn: BigChefs Grubu, Sunset Hospitality"
+                    placeholder={isTr ? "Örn: BigChefs Grubu, Sunset Hospitality" : "e.g. BigChefs Group, Sunset Hospitality"}
                     value={form.company_name}
                     onChange={(e) => setForm({ ...form, company_name: e.target.value })}
                   />
@@ -205,7 +206,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                     type="text"
                     required
                     className="corporate-form-input"
-                    placeholder="Örn: Ahmet Yılmaz"
+                    placeholder={isTr ? "Örn: Ahmet Yılmaz" : "e.g. John Doe"}
                     value={form.contact_name}
                     onChange={(e) => setForm({ ...form, contact_name: e.target.value })}
                   />
@@ -219,7 +220,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                     type="tel"
                     required
                     className="corporate-form-input"
-                    placeholder="+90 5XX XXX XX XX"
+                    placeholder={isTr ? "+90 5XX XXX XX XX" : "+1 (555) 000-0000"}
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   />
@@ -233,7 +234,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                     type="email"
                     required
                     className="corporate-form-input"
-                    placeholder="yetkili@sirket.com"
+                    placeholder={isTr ? "yetkili@sirket.com" : "manager@company.com"}
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
@@ -247,7 +248,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                     type="text"
                     required
                     className="corporate-form-input"
-                    placeholder="Restoran, Otel, Kafe, Kuaför, Vale..."
+                    placeholder={isTr ? "Restoran, Otel, Kafe, Kuaför, Vale..." : "Restaurant, Hotel, Cafe, Valet, Salon..."}
                     value={form.sector}
                     onChange={(e) => setForm({ ...form, sector: e.target.value })}
                   />
@@ -262,7 +263,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                     min="1"
                     required
                     className="corporate-form-input"
-                    placeholder="Örn: 5"
+                    placeholder={isTr ? "Örn: 5" : "e.g. 5"}
                     value={form.branch_count}
                     onChange={(e) => setForm({ ...form, branch_count: parseInt(e.target.value) || 1 })}
                   />
@@ -274,7 +275,7 @@ export const CorporateApplicationModal: React.FC<CorporateApplicationModalProps>
                   </label>
                   <textarea
                     className="corporate-form-textarea"
-                    placeholder="Özel entegrasyon talepleriniz, şube yapınız veya sormak istedikleriniz..."
+                    placeholder={isTr ? "Özel entegrasyon talepleriniz, şube yapınız veya sormak istedikleriniz..." : "Your custom integration requirements, branch structure, or questions..."}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                   />

@@ -79,6 +79,10 @@ export interface PricingLocaleStrings {
   ctaTitle: string;
   ctaSubtitle: string;
   ctaBtn: string;
+  founderExemptBadge: string;
+  microProofText: string;
+  liveIn2027: string;
+  pricingCopyright: string;
 }
 
 export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings> = {
@@ -156,6 +160,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "2026 Bitmeden Kurucu Üye Avantajınızı Kilitleyin",
     ctaSubtitle: "Birkaç dakika içinde işletmenizi ücretsiz kaydedin, ömür boyu 0 ₺ SaaS aboneliği hakkınızı garanti altına alın.",
     ctaBtn: "Ömür Boyu 0₺ ile Başla",
+    founderExemptBadge: "✓ 2027 Planlarından Sonsuza Kadar Muaf",
+    microProofText: "Kredi kartı gerekmez • Sıfır taahhüt • 3 dakikada canlıya geçiş",
+    liveIn2027: "2027 Yılında Yayında",
+    pricingCopyright: "© 2026 Naponi Teknoloji A.Ş. • Şeffaf Fiyatlandırma ve Kurucu Üyelik Modeli",
   },
   en: {
     metaTitle: "Pricing & 2026 Founder Membership Plans | Naponi",
@@ -231,6 +239,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Lock In Your Lifetime $0 Tier Before 2026 Ends",
     ctaSubtitle: "Sign up in minutes and secure your permanent exemption from monthly software fees.",
     ctaBtn: "Start Free as a Founder",
+    founderExemptBadge: "✓ Permanently Exempt from 2027 Plans",
+    microProofText: "No credit card required • Zero commitment • Live in 3 minutes",
+    liveIn2027: "Available in 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Transparent Pricing & Founder Membership Model",
   },
   de: {
     metaTitle: "Preise & 2026 Gründer-Mitgliedschafts-Tarife | Naponi",
@@ -306,6 +318,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Sichern Sie sich Ihren 0 € Tarif vor Ende 2026",
     ctaSubtitle: "In wenigen Minuten registrieren und lebenslang gebührenfrei bleiben.",
     ctaBtn: "Jetzt kostenlos starten",
+    founderExemptBadge: "✓ Dauerhaft befreit von den Plänen für 2027",
+    microProofText: "Keine Kreditkarte erforderlich • Keine Bindung • In 3 Minuten online",
+    liveIn2027: "Verfügbar ab 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Transparentes Preismodell & Gründer-Mitgliedschaft",
   },
   es: {
     metaTitle: "Precios y Oferta de Miembros Fundadores 2026 | Naponi",
@@ -381,6 +397,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Bloquee su Tarifa a 0 € Antes de Finalizar 2026",
     ctaSubtitle: "Regístrese en minutos y garantice su exención permanente de cuotas de software.",
     ctaBtn: "Empezar Gratis de por Vida",
+    founderExemptBadge: "✓ Exento para siempre de los planes de 2027",
+    microProofText: "Sin tarjeta de crédito • Cero permanencia • En vivo en 3 minutos",
+    liveIn2027: "Disponible en 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Precios transparentes y membresía fundadora",
   },
   fr: {
     metaTitle: "Tarifs & Offre Membres Fondateurs 2026 | Naponi",
@@ -456,6 +476,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Sécurisez Votre Forfait à 0 € Avant Fin 2026",
     ctaSubtitle: "Inscription rapide en quelques minutes pour garantir votre accès gratuit à vie.",
     ctaBtn: "Devenir Membre Fondateur",
+    founderExemptBadge: "✓ Exonéré à vie des forfaits 2027",
+    microProofText: "Sans carte bancaire • Zéro engagement • En ligne en 3 minutes",
+    liveIn2027: "Disponible en 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Tarification transparente & adhésion fondatrice",
   },
   pt: {
     metaTitle: "Preços e Oferta de Membros Fundadores 2026 | Naponi",
@@ -531,6 +555,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Garanta seu Plano a 0 € Antes do Fim de 2026",
     ctaSubtitle: "Cadastre seu estabelecimento em minutos e garanta isenção vitalícia.",
     ctaBtn: "Começar Grátis para Sempre",
+    founderExemptBadge: "✓ Isento permanentemente dos planos de 2027",
+    microProofText: "Sem cartão de crédito • Sem fidelidade • No ar em 3 minutos",
+    liveIn2027: "Disponível em 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Preços transparentes e associação fundadora",
   },
   ar: {
     metaTitle: "الأسعار وعرض العضوية التأسيسية 2026 | نابوني",
@@ -606,6 +634,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "احجز باقتك المجانية مدى الحياة قبل نهاية 2026",
     ctaSubtitle: "سجل منشأتك في دقائق واضمن الإعفاء الدائم من رسوم البرمجيات.",
     ctaBtn: "ابدأ مجاناً مدى الحياة",
+    founderExemptBadge: "✓ معفى نهائياً من خطط 2027",
+    microProofText: "لا يلزم بطاقة ائتمان • التزام صفري • يعمل في 3 دقائق",
+    liveIn2027: "متاح في عام 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • أسعار شفافة وعضوية تأسيسية",
   },
   zh: {
     metaTitle: "价格方案与2026年创始会员特惠 | Naponi",
@@ -681,6 +713,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "在2026年截止前锁定您的终身0元特权",
     ctaSubtitle: "只需两分钟完成注册，永久告别SaaS月费支出。",
     ctaBtn: "立即免费加入",
+    founderExemptBadge: "✓ 永久免除 2027 年订阅套餐费用",
+    microProofText: "无需信用卡 • 零绑定承诺 • 3分钟即刻上线",
+    liveIn2027: "将于 2027 年上线",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • 透明定价与创始会员模式",
   },
   ja: {
     metaTitle: "料金プランと2026年ファウンダー会員特典 | Naponi",
@@ -756,6 +792,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "2026年が終わる前に生涯0円特典を確保",
     ctaSubtitle: "わずか数分で登録完了。月額費用のない新しいおもてなしの形を体験してください。",
     ctaBtn: "生涯0円で始める",
+    founderExemptBadge: "✓ 2027年以降の有料プランが永久免除",
+    microProofText: "クレジットカード不要 • 契約縛りなし • 3分で運用開始",
+    liveIn2027: "2027年提供開始",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • 明朗な料金体系と創業者メンバーシップ",
   },
   id: {
     metaTitle: "Harga & Penawaran Anggota Founder 2026 | Naponi",
@@ -831,6 +871,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Kunci Paket Rp 0 Seumur Hidup Sebelum 2026 Berakhir",
     ctaSubtitle: "Daftar dalam hitungan menit dan pastikan bisnis Anda terbebas dari biaya software.",
     ctaBtn: "Mulai Gratis Seumur Hidup",
+    founderExemptBadge: "✓ Bebas selamanya dari paket 2027",
+    microProofText: "Tanpa kartu kredit • Tanpa komitmen • Siap dalam 3 menit",
+    liveIn2027: "Tersedia tahun 2027",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Harga transparan & keanggotaan pendiri",
   },
   ru: {
     metaTitle: "Тарифы и предложение для основателей 2026 | Naponi",
@@ -906,6 +950,10 @@ export const pricingTranslations: Record<SupportedLanguage, PricingLocaleStrings
     ctaTitle: "Закрепите тариф $0 навсегда до конца 2026 года",
     ctaSubtitle: "Регистрация займет пару минут и гарантирует пожизненное освобождение от абонентской платы.",
     ctaBtn: "Стать основателем за $0",
+    founderExemptBadge: "✓ Пожизненное освобождение от тарифов 2027 года",
+    microProofText: "Без привязки банковской карты • Без обязательств • Запуск за 3 минуты",
+    liveIn2027: "Доступно с 2027 года",
+    pricingCopyright: "© 2026 Naponi Technologies Inc. • Прозрачные тарифы и программа ранних участников",
   }
 };
 

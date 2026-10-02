@@ -38,6 +38,7 @@ import { useLanguage } from '../../i18n';
 export const PosIntegrationsPage: React.FC = () => {
   const { showToast } = useToast();
   const { t, language } = useLanguage();
+  const isTr = language === 'tr';
 
   // Data states
   const [connections, setConnections] = useState<PosConnectionItem[]>([]);
@@ -280,7 +281,7 @@ export const PosIntegrationsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="page-wrapper">
-        <LoadingState message="POS Entegrasyon Katmanı Yükleniyor..." />
+        <LoadingState message={isTr ? "POS Entegrasyon Katmanı Yükleniyor..." : "Loading POS Integration Layer..."} />
       </div>
     );
   }
@@ -340,7 +341,7 @@ export const PosIntegrationsPage: React.FC = () => {
               </div>
               <div>
                 <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
-                  POS & Adisyon Entegrasyonları
+                  {isTr ? 'POS & Adisyon Entegrasyonları' : 'POS & Cashier Integrations'}
                 </h1>
                 <span
                   style={{
@@ -363,8 +364,7 @@ export const PosIntegrationsPage: React.FC = () => {
             </div>
 
             <p style={{ margin: '0.75rem 0 0', color: '#94a3b8', fontSize: '0.95rem', maxWidth: '680px', lineHeight: 1.6 }}>
-              Mevcut kasanızı veya POS donanımınızı değiştirmenize gerek yok. Naponi, restoranınızdaki POS sistemiyle
-              senkronize olarak masaları, vardiyadaki personeli ve bahşiş akışını otomatik eşleştirir.
+              {isTr ? 'Mevcut kasanızı veya POS donanımınızı değiştirmenize gerek yok. Naponi, restoranınızdaki POS sistemiyle senkronize olarak masaları, vardiyadaki personeli ve bahşiş akışını otomatik eşleştirir.' : 'Keep your existing POS hardware and software. Naponi synchronizes with your restaurant POS to automatically map tables, on-duty staff, and live tip streams.'}
             </p>
           </div>
 
@@ -494,7 +494,7 @@ export const PosIntegrationsPage: React.FC = () => {
           }}
         >
           <Cpu size={18} />
-          Bağlı Sistemler
+          {isTr ? 'Bağlı Sistemler' : 'Connected Systems'}
           <span
             style={{
               background: activeTab === 'connections' ? '#4f46e5' : 'rgba(255, 255, 255, 0.1)',
@@ -527,7 +527,7 @@ export const PosIntegrationsPage: React.FC = () => {
           }}
         >
           <Layers size={18} />
-          Entegrasyon Kataloğu
+          {isTr ? 'Entegrasyon Kataloğu' : 'Integration Catalog'}
           <span
             style={{
               background: 'rgba(255, 255, 255, 0.1)',
@@ -572,10 +572,10 @@ export const PosIntegrationsPage: React.FC = () => {
                 <Cpu size={32} />
               </div>
               <h3 style={{ margin: '0 0 0.5rem', color: '#f8fafc', fontSize: '1.25rem' }}>
-                Henüz Bağlı Bir POS Sistemi Yok
+                {isTr ? 'Henüz Bağlı Bir POS Sistemi Yok' : 'No Connected POS System Yet'}
               </h3>
               <p style={{ margin: '0 auto 1.5rem', color: '#94a3b8', maxWidth: '480px', fontSize: '0.9rem' }}>
-                Kullandığınız restoran POS veya adisyon sistemini seçerek bahşiş ve personel senkronizasyonunu hemen başlatın.
+                {isTr ? 'Kullandığınız restoran POS veya adisyon sistemini seçerek bahşiş ve personel senkronizasyonunu hemen başlatın.' : 'Select your restaurant POS or register system from the catalog to start real-time tip and staff synchronization.'}
               </p>
               <button
                 onClick={handleOpenNewPosModal}
@@ -706,7 +706,7 @@ export const PosIntegrationsPage: React.FC = () => {
                       <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
                         <span>Personel Eşleştirmesi:</span>
                         <span style={{ color: conn.mappedEmployeesCount > 0 ? '#4ade80' : '#fbbf24', fontWeight: 600 }}>
-                          {conn.mappedEmployeesCount} / {conn.employeeMappingsCount} Eşleşti
+                          {conn.mappedEmployeesCount} / {conn.employeeMappingsCount} {isTr ? 'Eşleşti' : 'Mapped'}
                         </span>
                       </div>
                     </div>
@@ -759,7 +759,7 @@ export const PosIntegrationsPage: React.FC = () => {
 
                     <button
                       onClick={() => handleDisconnect(conn.id, conn.providerName)}
-                      title="Bağlantıyı Kes"
+                      title={isTr ? "Bağlantıyı Kes" : "Disconnect"}
                       style={{
                         background: 'rgba(239, 68, 68, 0.1)',
                         color: '#f87171',
@@ -921,7 +921,7 @@ export const PosIntegrationsPage: React.FC = () => {
                             gap: '4px',
                           }}
                         >
-                          <Check size={12} /> BAĞLI
+                          <Check size={12} /> {isTr ? 'BAĞLI' : 'CONNECTED'}
                         </span>
                       ) : item.has_adapter ? (
                         <span
