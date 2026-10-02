@@ -628,6 +628,8 @@ export const ru = {
     "updateStatusBtn": "Обновить статус",
     "globalOverview": "Глобальный обзор платформы",
     "dashboardSubtitle": "Управление Naponi SaaS, состояние заведений и совокупные объемы",
+    "commissionsTab": "Доходы и комиссии",
+    "commissionsSubtitle": "0,5% комиссии и Основатели 2026",
     "totalBusinesses": "Всего заведений",
     "currentlyActive": "активны в данный момент",
     "registeredStaff": "Зарегистрированный персонал",

@@ -628,6 +628,8 @@ export const ja = {
     "updateStatusBtn": "ステータス更新",
     "globalOverview": "グローバルプラットフォーム概要",
     "dashboardSubtitle": "Naponi SaaS管理、加盟店健全性および総取扱額",
+    "commissionsTab": "収益と手数料",
+    "commissionsSubtitle": "0.5%の手数料と2026年創業者",
     "totalBusinesses": "登録加盟店総数",
     "currentlyActive": "現在有効",
     "registeredStaff": "登録スタッフ",

@@ -628,6 +628,8 @@ export const de = {
     "updateStatusBtn": "Status aktualisieren",
     "globalOverview": "Globale Plattformübersicht",
     "dashboardSubtitle": "Naponi SaaS-Administration, Mandantengesundheit und Gesamtvolumen",
+    "commissionsTab": "Einnahmen & Provisionen",
+    "commissionsSubtitle": "0,5 % Provision & Gründer 2026",
     "totalBusinesses": "Registrierte Unternehmen",
     "currentlyActive": "derzeit aktiv",
     "registeredStaff": "Registriertes Personal",

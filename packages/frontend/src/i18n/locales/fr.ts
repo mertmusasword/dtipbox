@@ -628,6 +628,8 @@ export const fr = {
     "updateStatusBtn": "Mettre à jour le statut",
     "globalOverview": "Aperçu Global de la Plateforme",
     "dashboardSubtitle": "Administration SaaS Naponi, santé des locataires et volumes cumulés",
+    "commissionsTab": "Revenus & Commissions",
+    "commissionsSubtitle": "0,5 % de commission & Fondateurs 2026",
     "totalBusinesses": "Établissements Enregistrés",
     "currentlyActive": "actuellement actifs",
     "registeredStaff": "Personnel Enregistré",

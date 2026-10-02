@@ -628,6 +628,8 @@ export const es = {
     "updateStatusBtn": "Actualizar estado",
     "globalOverview": "Resumen Global de la Plataforma",
     "dashboardSubtitle": "Administración SaaS de Naponi, salud de clientes y volúmenes globales",
+    "commissionsTab": "Ingresos y Comisiones",
+    "commissionsSubtitle": "0,5 % de comisión y Fundadores 2026",
     "totalBusinesses": "Empresas Registradas",
     "currentlyActive": "actualmente activos",
     "registeredStaff": "Personal Registrado",

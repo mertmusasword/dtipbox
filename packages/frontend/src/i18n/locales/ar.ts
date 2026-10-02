@@ -628,6 +628,8 @@ export const ar = {
     "updateStatusBtn": "تحديث الحالة",
     "globalOverview": "نظرة عامة على المنصة العالمية",
     "dashboardSubtitle": "إدارة منصة Naponi SaaS وصحة المؤسسات والحجم الإجمالي للمدفوعات",
+    "commissionsTab": "الإيرادات والعمولات",
+    "commissionsSubtitle": "عمولة 0.5% ومؤسسو 2026",
     "totalBusinesses": "إجمالي المؤسسات",
     "currentlyActive": "نشط حالياً",
     "registeredStaff": "الموظفون المسجلون",

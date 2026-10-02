@@ -628,6 +628,8 @@ export const zh = {
     "updateStatusBtn": "更新状态",
     "globalOverview": "全球平台概览",
     "dashboardSubtitle": "Naponi SaaS 管理、商户健康状况与累计交易规模",
+    "commissionsTab": "收入与佣金",
+    "commissionsSubtitle": "0.5% 佣金与 2026 创始成员",
     "totalBusinesses": "注册商户总数",
     "currentlyActive": "当前活跃",
     "registeredStaff": "注册员工",
