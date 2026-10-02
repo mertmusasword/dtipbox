@@ -74,12 +74,22 @@ interface CommissionReport {
   monthlyPeriods: SettlementPeriod[];
   settlementIbanInfo: {
     companyName: string;
-    taxOffice: string;
-    taxNumber: string;
+    taxOffice?: string;
+    taxNumber?: string;
     bankName: string;
     iban: string;
-    fastAddress: string;
+    swiftCode?: string;
+    fastAddress?: string;
     paymentReference: string;
+    accounts?: Array<{
+      currency: string;
+      currencySymbol: string;
+      label: string;
+      bankName: string;
+      iban: string;
+      swiftCode?: string;
+      fastAddress?: string;
+    }>;
   };
 }
 
@@ -99,6 +109,7 @@ export const CommissionSettlementTab: React.FC = () => {
   const [isSettling, setIsSettling] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [settlementNote, setSettlementNote] = useState('');
+  const [selectedAccountCurrency, setSelectedAccountCurrency] = useState<string>('TRY');
 
   const loadData = useCallback(async () => {
     try {
@@ -107,6 +118,9 @@ export const CommissionSettlementTab: React.FC = () => {
       const res = await api.get('/business/commissions');
       if (res.data?.data) {
         setReport(res.data.data);
+        if (res.data.data.summary?.currency) {
+          setSelectedAccountCurrency(res.data.data.summary.currency);
+        }
       }
     } catch (err: any) {
       console.error('Failed to load commissions report:', err);
@@ -132,6 +146,9 @@ export const CommissionSettlementTab: React.FC = () => {
   const handleOpenSettlement = (period?: SettlementPeriod) => {
     setSelectedPeriod(period || null);
     setSettlementNote('');
+    if (report?.summary?.currency) {
+      setSelectedAccountCurrency(report.summary.currency);
+    }
     setIsModalOpen(true);
   };
 
@@ -174,6 +191,24 @@ export const CommissionSettlementTab: React.FC = () => {
 
   const { summary, monthlyPeriods, settlementIbanInfo } = report;
   const currency = summary.currency || 'TRY';
+
+  const availableAccounts =
+    settlementIbanInfo?.accounts && settlementIbanInfo.accounts.length > 0
+      ? settlementIbanInfo.accounts
+      : [
+          {
+            currency: 'TRY',
+            currencySymbol: '₺',
+            label: 'Türk Lirası (TL / FAST / EFT)',
+            bankName: settlementIbanInfo.bankName,
+            iban: settlementIbanInfo.iban,
+            swiftCode: settlementIbanInfo.swiftCode,
+            fastAddress: settlementIbanInfo.fastAddress,
+          },
+        ];
+
+  const currentAccount =
+    availableAccounts.find((a) => a.currency === selectedAccountCurrency) || availableAccounts[0];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', direction: isRtl ? 'rtl' : 'ltr' }}>
@@ -672,6 +707,56 @@ export const CommissionSettlementTab: React.FC = () => {
               </span>
             </div>
 
+            {/* Account / Currency Selector if multiple accounts exist */}
+            {availableAccounts.length > 1 && (
+              <div style={{ marginBottom: '1rem' }}>
+                <span style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>
+                  {ct.selectAccount || 'Havale Hesabı / Para Birimi'}
+                </span>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '0.4rem',
+                    background: 'rgba(15, 23, 42, 0.7)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    padding: '4px',
+                  }}
+                >
+                  {availableAccounts.map((acc) => {
+                    const isSelected = (currentAccount?.currency || 'TRY') === acc.currency;
+                    const flag = acc.currency === 'TRY' ? '🇹🇷' : acc.currency === 'USD' ? '🇺🇸' : acc.currency === 'EUR' ? '🇪🇺' : '🌐';
+                    return (
+                      <button
+                        key={acc.currency}
+                        type="button"
+                        onClick={() => setSelectedAccountCurrency(acc.currency)}
+                        style={{
+                          flex: 1,
+                          padding: '7px 10px',
+                          borderRadius: '8px',
+                          border: isSelected ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
+                          fontSize: '0.8rem',
+                          fontWeight: isSelected ? 700 : 500,
+                          background: isSelected ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                          color: isSelected ? '#38bdf8' : '#94a3b8',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.95rem' }}>{flag}</span>
+                        <span>{acc.currency}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Company Bank Account Details Card */}
             <div
               style={{
@@ -688,25 +773,36 @@ export const CommissionSettlementTab: React.FC = () => {
             >
               <div>
                 <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.companyTitle}</span>
-                <span style={{ color: '#f8fafc', fontWeight: 600 }}>{settlementIbanInfo.companyName}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
+                  <span style={{ color: '#f8fafc', fontWeight: 600, fontSize: '0.82rem' }}>{settlementIbanInfo.companyName}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(settlementIbanInfo.companyName, 'company')}
+                    className="btn btn-secondary"
+                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                  >
+                    {copiedKey === 'company' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+                    {copiedKey === 'company' ? ct.copied : 'Kopyala'}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.bankName}</span>
-                <span style={{ color: '#f8fafc', fontWeight: 600 }}>{settlementIbanInfo.bankName}</span>
+                <span style={{ color: '#f8fafc', fontWeight: 600 }}>{currentAccount.bankName}</span>
               </div>
 
               <div>
-                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.iban}</span>
+                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.iban} ({currentAccount.currency})</span>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
                   <code style={{ color: '#38bdf8', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
-                    {settlementIbanInfo.iban}
+                    {currentAccount.iban}
                   </code>
                   <button
                     type="button"
-                    onClick={() => handleCopy(settlementIbanInfo.iban, 'iban')}
+                    onClick={() => handleCopy(currentAccount.iban, 'iban')}
                     className="btn btn-secondary"
-                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
                   >
                     {copiedKey === 'iban' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
                     {copiedKey === 'iban' ? ct.copied : ct.copyIban}
@@ -714,10 +810,32 @@ export const CommissionSettlementTab: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.fastAddress}</span>
-                <span style={{ color: '#f8fafc', fontWeight: 600 }}>{settlementIbanInfo.fastAddress}</span>
-              </div>
+              {currentAccount.swiftCode && (
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.swiftCode || 'SWIFT / BIC Kodu'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
+                    <code style={{ color: '#a78bfa', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
+                      {currentAccount.swiftCode}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={() => handleCopy(currentAccount.swiftCode!, 'swift')}
+                      className="btn btn-secondary"
+                      style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                    >
+                      {copiedKey === 'swift' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+                      {copiedKey === 'swift' ? ct.copied : (ct.copySwift || 'SWIFT Kopyala')}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {currentAccount.fastAddress && currentAccount.currency === 'TRY' && (
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.fastAddress}</span>
+                  <span style={{ color: '#f8fafc', fontWeight: 600 }}>{currentAccount.fastAddress}</span>
+                </div>
+              )}
 
               <div>
                 <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.description}</span>
@@ -729,7 +847,7 @@ export const CommissionSettlementTab: React.FC = () => {
                     type="button"
                     onClick={() => handleCopy(settlementIbanInfo.paymentReference, 'ref')}
                     className="btn btn-secondary"
-                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
                   >
                     {copiedKey === 'ref' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
                     {copiedKey === 'ref' ? ct.copied : ct.copyRef}

@@ -56,12 +56,22 @@ export interface BusinessCommissionsReport {
   monthlyPeriods: MonthlySettlementPeriod[];
   settlementIbanInfo: {
     companyName: string;
-    taxOffice: string;
-    taxNumber: string;
+    taxOffice?: string;
+    taxNumber?: string;
     bankName: string;
     iban: string;
-    fastAddress: string;
+    swiftCode?: string;
+    fastAddress?: string;
     paymentReference: string;
+    accounts?: Array<{
+      currency: string;
+      currencySymbol: string;
+      label: string;
+      bankName: string;
+      iban: string;
+      swiftCode?: string;
+      fastAddress?: string;
+    }>;
   };
 }
 
@@ -328,13 +338,51 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     },
     monthlyPeriods,
     settlementIbanInfo: {
-      companyName: 'Naponi Dijital Teknoloji ve Ödeme Çözümleri A.Ş.',
-      taxOffice: 'Beşiktaş V.D.',
-      taxNumber: '6290887123',
-      bankName: 'QNB Finansbank / Garanti BBVA',
-      iban: 'TR56 0006 2000 0001 2990 0000 01',
-      fastAddress: 'info@naponi.com',
+      companyName: process.env.SETTLEMENT_COMPANY_NAME || 'Naponi İnternet Alışveriş Ve Mağazacılık İth.İhr.Ltd.Şti.',
+      taxOffice: process.env.SETTLEMENT_TAX_OFFICE || '',
+      taxNumber: process.env.SETTLEMENT_TAX_NUMBER || '',
+      bankName:
+        business.currency === 'USD'
+          ? (process.env.SETTLEMENT_BANK_NAME_USD || 'Enpara Bank A.Ş.')
+          : business.currency === 'EUR'
+            ? (process.env.SETTLEMENT_BANK_NAME_EUR || 'Enpara Bank A.Ş.')
+            : (process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.'),
+      iban:
+        business.currency === 'USD'
+          ? (process.env.SETTLEMENT_IBAN_USD || 'TR20 0015 7000 0000 0095 1325 08')
+          : business.currency === 'EUR'
+            ? (process.env.SETTLEMENT_IBAN_EUR || 'TR34 0015 7000 0000 0095 1325 47')
+            : (process.env.SETTLEMENT_IBAN_TRY || 'TR45 0015 7000 0000 0084 2975 46'),
+      swiftCode: process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
+      fastAddress: process.env.SETTLEMENT_FAST_ADDRESS || 'destek@naponi.com',
       paymentReference: `NAP-${business.id.slice(0, 8).toUpperCase()}`,
+      accounts: [
+        {
+          currency: 'TRY',
+          currencySymbol: '₺',
+          label: 'Türk Lirası (TL / FAST / EFT)',
+          bankName: process.env.SETTLEMENT_BANK_NAME_TRY || process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.',
+          iban: process.env.SETTLEMENT_IBAN_TRY || 'TR45 0015 7000 0000 0084 2975 46',
+          swiftCode: process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
+          fastAddress: process.env.SETTLEMENT_FAST_ADDRESS || 'destek@naponi.com',
+        },
+        {
+          currency: 'USD',
+          currencySymbol: '$',
+          label: 'US Dollar (USD / SWIFT)',
+          bankName: process.env.SETTLEMENT_BANK_NAME_USD || process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.',
+          iban: process.env.SETTLEMENT_IBAN_USD || 'TR20 0015 7000 0000 0095 1325 08',
+          swiftCode: process.env.SETTLEMENT_SWIFT_CODE_USD || process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
+        },
+        {
+          currency: 'EUR',
+          currencySymbol: '€',
+          label: 'Euro (EUR / SWIFT)',
+          bankName: process.env.SETTLEMENT_BANK_NAME_EUR || process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.',
+          iban: process.env.SETTLEMENT_IBAN_EUR || 'TR34 0015 7000 0000 0095 1325 47',
+          swiftCode: process.env.SETTLEMENT_SWIFT_CODE_EUR || process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
+        },
+      ],
     },
   };
 }

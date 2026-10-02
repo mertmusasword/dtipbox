@@ -57,6 +57,9 @@ export interface CommissionTranslations {
   taxInfo: string;
   bankName: string;
   iban: string;
+  swiftCode?: string;
+  copySwift?: string;
+  selectAccount?: string;
   fastAddress: string;
   description: string;
   amountToPay: string;
@@ -115,6 +118,9 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Vergi Dairesi & No',
     bankName: 'Banka',
     iban: 'IBAN Numarası',
+    swiftCode: 'SWIFT / BIC Kodu',
+    copySwift: 'SWIFT Kopyala',
+    selectAccount: 'Hesap / Para Birimi',
     fastAddress: 'FAST / Kolay Adres',
     description: 'Havale Açıklaması / Referans',
     amountToPay: 'Ödenecek Komisyon Tutarı',
@@ -171,6 +177,9 @@ export const COMMISSION_LOCALES: Record<string, CommissionTranslations> = {
     taxInfo: 'Tax Office & Number',
     bankName: 'Bank',
     iban: 'IBAN / Account',
+    swiftCode: 'SWIFT / BIC Code',
+    copySwift: 'Copy SWIFT',
+    selectAccount: 'Account / Currency',
     fastAddress: 'FAST / Quick Pay Address',
     description: 'Payment Reference',
     amountToPay: 'Amount Due',
