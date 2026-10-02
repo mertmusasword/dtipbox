@@ -1,0 +1,56 @@
+{
+  "name": "Naponi — Smart QR for Hospitality",
+  "short_name": "Naponi",
+  "description": "Keep your POS. Add NAPONI. One QR for tips, menu, Wi-Fi, loyalty, campaigns and reviews.",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "food", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "İşletme Girişi / Dashboard",
+      "url": "/auth/login",
+      "description": "Yönetici ve garson paneline giriş yapın",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Bahşiş Hesaplayıcı",
+      "url": "/tools/tip-calculator",
+      "description": "Ücretsiz akıllı bahşiş hesaplama aracı",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

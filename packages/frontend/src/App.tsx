@@ -7,6 +7,7 @@ import { LanguageProvider, useLanguage } from './i18n';
 import { AnalyticsTracker } from './analytics';
 import { ScrollToTop } from './components/ScrollToTop';
 import { FloatingSupportWidget } from './components/FloatingSupportWidget';
+import { PwaInstallPrompt } from './components/PwaInstallPrompt';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Role } from './types';
 
@@ -282,6 +283,7 @@ export const App: React.FC = () => {
             </Suspense>
           </ErrorBoundary>
           <FloatingSupportWidget />
+          <PwaInstallPrompt />
           </BrowserRouter>
         </ToastProvider>
       </AuthProvider>
