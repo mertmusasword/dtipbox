@@ -1377,6 +1377,10 @@ export const TipPage: React.FC = () => {
     const isPending = paymentStatus === 'PENDING';
     const isUnverified = isIban || paymentStatus === 'UNVERIFIED';
     const paymentUrl = paymentResult.payment?.paymentUrl;
+    const sq = details?.smartQr;
+    const isNativeMenu = sq?.menuMode === 'NATIVE' || Boolean(sq?.hasNativeMenu);
+    const hasExternalMenu = (sq?.menuMode === 'EXTERNAL_URL' || !sq?.menuMode) && Boolean(sq?.menuUrl);
+    const hasMenu = Boolean(sq?.enableMenu && (isNativeMenu || hasExternalMenu));
 
     return (
       <div className="theme-warm-light" style={{ minHeight: '100vh', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', background: '#FAF9F6', color: '#1C1917' }}>
@@ -1818,8 +1822,30 @@ export const TipPage: React.FC = () => {
             </div>
           )}
 
+          {hasMenu && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                marginBottom: '0.75rem',
+                padding: '0.85rem 1.25rem',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+              }}
+              onClick={handleMenuClick}
+            >
+              <UtensilsCrossed size={18} />
+              <span>{sq?.menuTitle || sqt.backToMenu || sqt.menuChip || (language === 'tr' ? 'Menüye Dön' : 'Back to Menu')}</span>
+            </button>
+          )}
+
           <button
-            className={isSuccess || isUnverified ? "btn btn-primary" : "btn btn-secondary"}
+            className={hasMenu ? "btn btn-secondary" : (isSuccess || isUnverified ? "btn btn-primary" : "btn btn-secondary")}
             style={{ width: '100%' }}
             onClick={() => {
               setPaymentResult(null);

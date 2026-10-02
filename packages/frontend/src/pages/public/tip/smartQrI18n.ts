@@ -50,6 +50,7 @@ export interface SmartQrTranslations {
   offersChip: string;
   feedbackChip: string;
   menuChip: string;
+  backToMenu: string;
 }
 
 export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslations> = {
@@ -103,6 +104,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Fırsatlar',
     feedbackChip: 'Görüş Bildir',
     menuChip: 'Menü',
+    backToMenu: 'Menüye Dön',
   },
 
   en: {
@@ -155,6 +157,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Offers',
     feedbackChip: 'Feedback',
     menuChip: 'Menu',
+    backToMenu: 'Back to Menu',
   },
 
   ru: {
@@ -207,6 +210,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Акции',
     feedbackChip: 'Отзыв',
     menuChip: 'Меню',
+    backToMenu: 'Вернуться в меню',
   },
 
   de: {
@@ -259,6 +263,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Angebote',
     feedbackChip: 'Feedback',
     menuChip: 'Speisekarte',
+    backToMenu: 'Zurück zur Speisekarte',
   },
 
   fr: {
@@ -311,6 +316,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Offres',
     feedbackChip: 'Donner un avis',
     menuChip: 'Menu',
+    backToMenu: 'Retour au Menu',
   },
 
   es: {
@@ -363,6 +369,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Ofertas',
     feedbackChip: 'Opinión',
     menuChip: 'Menú',
+    backToMenu: 'Volver al Menú',
   },
 
   ar: {
@@ -415,6 +422,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'العروض',
     feedbackChip: 'إبداء الرأي',
     menuChip: 'قائمة الطعام',
+    backToMenu: 'العودة إلى القائمة',
   },
 
   zh: {
@@ -467,6 +475,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: '优惠活动',
     feedbackChip: '评价反馈',
     menuChip: '电子菜单',
+    backToMenu: '返回菜单',
   },
 
   pt: {
@@ -519,6 +528,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Ofertas',
     feedbackChip: 'Avaliação',
     menuChip: 'Cardápio',
+    backToMenu: 'Voltar ao Cardápio',
   },
 
   id: {
@@ -571,6 +581,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: 'Penawaran',
     feedbackChip: 'Ulasan',
     menuChip: 'Menu',
+    backToMenu: 'Kembali ke Menu',
   },
 
   ja: {
@@ -623,6 +634,7 @@ export const SMART_QR_TRANSLATIONS: Record<SupportedLanguage, SmartQrTranslation
     offersChip: '特典・割引',
     feedbackChip: 'ご意見・評価',
     menuChip: 'メニュー',
+    backToMenu: 'メニューに戻る',
   },
 };
 
