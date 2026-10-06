@@ -83,31 +83,23 @@ export const Sidebar: React.FC = () => {
 
       <aside className={`sidebar ${mobileOpen ? 'sidebar--open' : ''}`}>
         {/* Brand */}
-        <div className="sidebar-brand" style={{ padding: '1.25rem 1.25rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '42px', width: 'auto', display: 'block' }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{
-              background: 'rgba(99, 102, 241, 0.15)',
-              padding: '3px 8px',
-              borderRadius: '6px',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              color: '#a5b4fc',
-              fontSize: '0.65rem',
-              fontWeight: 700,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase'
-            }}>
-              {user.role}
-            </span>
-            <button
-              type="button"
-              className="sidebar-close-btn"
-              onClick={closeMobile}
-              aria-label={t('common.close') || 'Kapat'}
-            >
-              <X size={18} />
-            </button>
-          </div>
+        <div className="sidebar-brand" style={{ padding: '1.25rem 1.25rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', boxSizing: 'border-box' }}>
+          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '36px', maxWidth: '140px', width: 'auto', display: 'block' }} />
+          <span style={{
+            background: 'rgba(99, 102, 241, 0.15)',
+            padding: '3px 8px',
+            borderRadius: '6px',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            color: '#a5b4fc',
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}>
+            {user.role}
+          </span>
         </div>
 
         {/* Navigation */}

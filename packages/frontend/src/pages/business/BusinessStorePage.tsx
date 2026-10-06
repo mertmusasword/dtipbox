@@ -789,7 +789,7 @@ export const BusinessStorePage: React.FC = () => {
           </div>
 
           {/* Product Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: '1.25rem' }}>
+          <div className="store-product-grid">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
@@ -973,22 +973,22 @@ export const BusinessStorePage: React.FC = () => {
                 </div>
 
                 {/* Content Area */}
-                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#f8fafc' }}>
+                <div style={{ padding: '1.25rem 1rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between', minWidth: 0, overflow: 'hidden' }}>
+                  <div style={{ minWidth: 0, width: '100%' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#f8fafc', wordBreak: 'break-word' }}>
                       {product.name}
                     </h3>
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: '0 0 1rem', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                       {product.description}
                     </p>
 
                     {/* Features list */}
                     {product.features && product.features.length > 0 && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginBottom: '1.1rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginBottom: '1.1rem', width: '100%' }}>
                         {product.features.map((feat, idx) => (
                           <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.8rem', color: '#cbd5e1' }}>
                             <Check size={14} style={{ color: '#10b981', flexShrink: 0 }} />
-                            <span>{feat}</span>
+                            <span style={{ wordBreak: 'break-word' }}>{feat}</span>
                           </div>
                         ))}
                       </div>
@@ -996,22 +996,23 @@ export const BusinessStorePage: React.FC = () => {
 
                     {/* Size Variants Preview Pills */}
                     {product.variants?.sizes && product.variants.sizes.length > 0 && (
-                      <div style={{ marginBottom: '1rem' }}>
+                      <div style={{ marginBottom: '1rem', width: '100%' }}>
                         <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
                           Ölçü Seçenekleri:
                         </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', width: '100%' }}>
                           {product.variants.sizes.map((s) => (
                             <span
                               key={s.id}
                               style={{
-                                padding: '3px 8px',
+                                padding: '3px 7px',
                                 borderRadius: '6px',
                                 background: 'rgba(56, 189, 248, 0.08)',
                                 border: '1px solid rgba(56, 189, 248, 0.2)',
                                 color: '#e2e8f0',
-                                fontSize: '0.73rem',
+                                fontSize: '0.72rem',
                                 fontWeight: 700,
+                                flexShrink: 0,
                               }}
                             >
                               {s.label}
@@ -1048,12 +1049,24 @@ export const BusinessStorePage: React.FC = () => {
                   {(() => {
                     const { price: startingPrice, isStarting, isPackage } = getProductStartingPrice(product);
                     return (
-                      <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div>
+                      <div
+                        style={{
+                          paddingTop: '1rem',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.5rem',
+                          flexWrap: 'wrap',
+                          width: '100%',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        <div style={{ minWidth: '110px' }}>
                           <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600 }}>
                             {isStarting ? 'Başlayan Fiyatla' : (t('common.amount') || 'Birim Fiyat')}
                           </div>
-                          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#38bdf8' }}>
+                          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8', whiteSpace: 'nowrap' }}>
                             {displayPrice(startingPrice)}
                             <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500, marginLeft: '4px' }}>
                               {isPackage ? '/ paket' : '/ adet'}
@@ -1067,8 +1080,9 @@ export const BusinessStorePage: React.FC = () => {
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             gap: '0.45rem',
-                            padding: '0.65rem 1.15rem',
+                            padding: '0.65rem 1rem',
                             borderRadius: '10px',
                             background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
                             border: 'none',
@@ -1076,8 +1090,10 @@ export const BusinessStorePage: React.FC = () => {
                             fontSize: '0.85rem',
                             fontWeight: 700,
                             cursor: 'pointer',
+                            whiteSpace: 'nowrap',
                             boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)',
                             transition: 'all 0.2s ease',
+                            flexShrink: 0,
                           }}
                         >
                           <Plus size={16} />
