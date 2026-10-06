@@ -25,6 +25,8 @@ import {
   Cpu,
   BookOpen,
   Coins,
+  ShoppingBag,
+  PackageCheck,
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
@@ -88,6 +90,7 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/business/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
               <NavItem to="/business/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
               <NavItem to="/business/menu" icon={<BookOpen size={18} />} label={t('nav.menu') || 'QR Menü'} onClick={closeMobile} />
+              <NavItem to="/business/store" icon={<ShoppingBag size={18} />} label={t('nav.store') || 'Donanım Mağazası'} onClick={closeMobile} />
               <NavItem to="/business/payment-settings" icon={<CreditCard size={18} />} label={t('nav.paymentSettings') || 'Ödeme Ayarları'} onClick={closeMobile} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
@@ -137,6 +140,8 @@ export const Sidebar: React.FC = () => {
               <NavItem to="/admin/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
               <NavItem to="/admin/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
               <NavItem to="/admin/payments" icon={<CreditCard size={18} />} label={t('nav.payments')} onClick={closeMobile} />
+              <NavItem to="/admin/products" icon={<ShoppingBag size={18} />} label={t('nav.adminProducts')} onClick={closeMobile} />
+              <NavItem to="/admin/orders" icon={<PackageCheck size={18} />} label={t('nav.adminOrders')} onClick={closeMobile} />
               <NavItem to="/admin/commissions" icon={<Coins size={18} />} label={language === 'tr' ? 'Gelir & Kurucu Takip' : 'Revenue & Founders'} onClick={closeMobile} />
               <NavItem to="/admin/payment-providers" icon={<Layers size={18} />} label={t('nav.paymentProviders')} onClick={closeMobile} />
               <NavItem to="/admin/agreements" icon={<FileText size={18} />} label={t('nav.agreements')} onClick={closeMobile} />

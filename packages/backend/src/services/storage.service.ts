@@ -13,9 +13,12 @@ const ALLOWED_MIME_TYPES: Record<string, string> = {
   'image/webp': '.webp',
   'image/gif': '.gif',
   'image/svg+xml': '.svg',
+  'video/mp4': '.mp4',
+  'video/webm': '.webm',
+  'video/quicktime': '.mov',
 };
 
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB limit
+const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB limit
 
 export interface UploadResult {
   url: string;
@@ -124,17 +127,17 @@ class StorageService {
   async uploadBuffer(
     buffer: Buffer,
     mimeType: string,
-    folder: 'menu' | 'avatars' | 'logos' | 'general' = 'general',
+    folder: 'menu' | 'avatars' | 'logos' | 'products' | 'general' = 'general',
     customFileName?: string
   ): Promise<UploadResult> {
     if (buffer.length > MAX_FILE_SIZE_BYTES) {
-      throw new AppError(`File exceeds maximum allowed size of 10 MB (${Math.round(buffer.length / 1024)} KB).`, 400);
+      throw new AppError(`File exceeds maximum allowed size of 50 MB (${Math.round(buffer.length / 1024 / 1024)} MB).`, 400);
     }
 
     const cleanMime = mimeType.toLowerCase().split(';')[0].trim();
     const ext = ALLOWED_MIME_TYPES[cleanMime];
     if (!ext) {
-      throw new AppError(`Unsupported image format '${mimeType}'. Allowed formats: JPEG, PNG, WebP, GIF, SVG.`, 400);
+      throw new AppError(`Unsupported format '${mimeType}'. Allowed formats: JPEG, PNG, WebP, GIF, SVG, MP4, WebM, MOV.`, 400);
     }
 
     // Security: Validate SVG to prevent Stored XSS attacks
@@ -205,10 +208,10 @@ class StorageService {
    */
   async uploadBase64(
     dataUri: string,
-    folder: 'menu' | 'avatars' | 'logos' | 'general' = 'general'
+    folder: 'menu' | 'avatars' | 'logos' | 'products' | 'general' = 'general'
   ): Promise<UploadResult> {
     if (!dataUri || typeof dataUri !== 'string') {
-      throw new AppError('Invalid image data. Expected Base64 data URI.', 400);
+      throw new AppError('Invalid data. Expected Base64 data URI.', 400);
     }
 
     // Check if it's already an HTTP / CDN URL (skip re-uploading)

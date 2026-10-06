@@ -157,10 +157,10 @@ app.use(
 // Rate limiting
 const limiter = rateLimit({
   windowMs: env.RATE_LIMIT_WINDOW_MS,
-  max: env.RATE_LIMIT_MAX,
+  max: env.isDev ? 50000 : env.RATE_LIMIT_MAX,
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.path === '/health',
+  skip: (req) => req.path === '/health' || env.isDev,
   message: { success: false, error: 'Too many requests, please try again later.' },
 });
 app.use('/api', limiter);
@@ -168,13 +168,13 @@ app.use('/api', limiter);
 // Body parsing with raw buffer preservation for webhook signature checks
 app.use(
   express.json({
-    limit: '10mb',
+    limit: '50mb',
     verify: (req: any, _res, buf) => {
       req.rawBody = buf.toString();
     },
   })
 );
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 app.use(requestLogger);
 

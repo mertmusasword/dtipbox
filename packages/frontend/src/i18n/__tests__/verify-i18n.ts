@@ -54,11 +54,12 @@ function getKeys(obj: Record<string, any>, prefix = ''): string[] {
 const enKeys = getKeys(enDict);
 console.log(`ℹ️ English dictionary contains ${enKeys.length} total translation keys across modules.`);
 
+let totalMissingAcrossAll = 0;
 for (const lang of expectedCodes) {
   const dict = locales[lang];
   assert(!!dict, `Locale dictionary missing for ${lang}`);
   
-  let missing = 0;
+  const missingKeys: string[] = [];
   for (const key of enKeys) {
     const parts = key.split('.');
     let val: any = dict;
@@ -66,12 +67,17 @@ for (const lang of expectedCodes) {
       val = val?.[part];
     }
     if (val === undefined || val === null || val === '') {
-      missing++;
+      missingKeys.push(key);
     }
   }
-  assert(missing === 0, `Language '${lang}' has ${missing} missing keys out of ${enKeys.length}`);
-  console.log(`✅ [${lang}] ${enKeys.length}/${enKeys.length} translation keys completely defined.`);
+  if (missingKeys.length > 0) {
+    console.log(`❌ [${lang}] has ${missingKeys.length} missing keys:`, missingKeys);
+    totalMissingAcrossAll += missingKeys.length;
+  } else {
+    console.log(`✅ [${lang}] ${enKeys.length}/${enKeys.length} translation keys completely defined.`);
+  }
 }
+assert(totalMissingAcrossAll === 0, `Total ${totalMissingAcrossAll} missing keys across languages!`);
 
 // 4. Verify Fallback Mechanism
 console.log('\n--- 4. Testing Fallback Order: Selected -> English -> Key ---');
@@ -150,6 +156,41 @@ for (const lang of expectedCodes) {
 }
 console.log('✅ Date and time formatting works seamlessly across all 11 locales.');
 
+// 7. Verify Modular Specialty Locales
+console.log('\n--- 7. Testing Modular Specialty Locales Coverage ---');
+import { ADMIN_REVENUE_LOCALES } from '../adminRevenueLocales';
+import { COMMISSION_LOCALES } from '../commissionLocales';
+import { founderTranslations } from '../founderLocales';
+import { homeTranslations } from '../homeLocales';
+import { LOYALTY_LOCALES, STAFF_LOYALTY_LOCALES } from '../loyaltyLocales';
+import { planGuardTranslations } from '../planGuardLocales';
+import { pricingTranslations } from '../pricingLocales';
+
+const modularChecks = [
+  { name: 'adminRevenueLocales', dict: ADMIN_REVENUE_LOCALES },
+  { name: 'commissionLocales', dict: COMMISSION_LOCALES },
+  { name: 'founderLocales', dict: founderTranslations },
+  { name: 'loyaltyCustomerLocales', dict: LOYALTY_LOCALES },
+  { name: 'loyaltyStaffLocales', dict: STAFF_LOYALTY_LOCALES },
+  { name: 'planGuardLocales', dict: planGuardTranslations },
+  { name: 'pricingLocales', dict: pricingTranslations },
+];
+
+for (const { name, dict } of modularChecks) {
+  for (const lang of expectedCodes) {
+    assert(!!(dict as any)[lang], `Module '${name}' is missing translation for '${lang}'`);
+  }
+  console.log(`✅ [${name}] All 11 languages present.`);
+}
+
+// homeTranslations is key -> { tr, en, es, ... }
+for (const [key, langMap] of Object.entries(homeTranslations)) {
+  for (const lang of expectedCodes) {
+    assert(!!langMap[lang], `homeTranslations key '${key}' is missing language '${lang}'`);
+  }
+}
+console.log(`✅ [homeLocales] All ${Object.keys(homeTranslations).length} keys cover all 11 languages.`);
+
 console.log('\n======================================================');
-console.log('🎉 ALL i18n & RTL VERIFICATION CHECKS PASSED (6/6)');
+console.log('🎉 ALL i18n & RTL VERIFICATION CHECKS PASSED (7/7)');
 console.log('======================================================\n');

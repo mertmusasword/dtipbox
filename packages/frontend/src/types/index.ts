@@ -655,4 +655,105 @@ export interface PublicMenuDetails {
   };
 }
 
+export interface StoreProductVariantSize {
+  id: string;
+  label: string;
+  price: number;
+  quantities?: number[];
+  prices?: Record<string, number>;
+}
+
+export interface StoreProductVariants {
+  type: string;
+  defaultSize?: string;
+  defaultQuantity?: number;
+  quantities?: number[];
+  sizes?: StoreProductVariantSize[];
+}
+
+export interface StoreProduct {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string | null;
+  features: string[];
+  price: number | string;
+  currency: string;
+  category: string;
+  image_url?: string | null;
+  gallery: string[];
+  video_url?: string | null;
+  stock: number;
+  min_quantity: number;
+  quantity_step?: number;
+  variants?: StoreProductVariants | null;
+  badge?: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type StoreOrderStatus =
+  | 'PENDING_PAYMENT'
+  | 'PAID'
+  | 'PREPARING'
+  | 'SHIPPED'
+  | 'DELIVERED'
+  | 'CANCELLED';
+
+export interface StoreOrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  unit_price: number | string;
+  customization?: {
+    size?: string;
+    sizePrice?: number;
+    tableStart?: number;
+    tableEnd?: number;
+    useLogo?: boolean;
+    staffIds?: string[];
+    notes?: string;
+  } | null;
+  product?: StoreProduct;
+}
+
+export interface StoreOrder {
+  id: string;
+  business_id: string;
+  order_number: string;
+  total_amount: number | string;
+  currency: string;
+  status: StoreOrderStatus;
+  payment_method: string;
+  payment_status: string;
+  bank_reference_code: string;
+  recipient_name: string;
+  phone: string;
+  address_line: string;
+  city: string;
+  state?: string | null;
+  postal_code?: string | null;
+  country: string;
+  company_name?: string | null;
+  tax_office?: string | null;
+  tax_number?: string | null;
+  notes?: string | null;
+  tracking_number?: string | null;
+  carrier?: string | null;
+  transfer_sender_note?: string | null;
+  created_at: string;
+  updated_at: string;
+  items?: StoreOrderItem[];
+  business?: {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+  };
+}
+
+
 

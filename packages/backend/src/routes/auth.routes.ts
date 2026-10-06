@@ -19,9 +19,10 @@ const REFRESH_COOKIE_OPTIONS: CookieOptions = {
 // Strict rate limiter for authentication endpoints against brute-force attacks
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 attempts per IP per 15 minutes
+  max: env.isDev ? 1000 : 10, // 10 attempts per IP per 15 minutes
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => env.isDev,
   message: {
     success: false,
     error: 'Too many authentication attempts. Please try again in 15 minutes.',

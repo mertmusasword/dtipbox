@@ -138,6 +138,21 @@ enum PosConnectionStatus {
   SYNCING
 }
 
+enum StoreOrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum StorePaymentMethod {
+  BANK_TRANSFER
+  CREDIT_CARD
+}
+
+
 // ==================== MODELS ====================
 
 model User {
@@ -224,6 +239,7 @@ model Business {
   smart_qr_events         SmartQrEvent[]
   menu_categories         MenuCategory[]
   menu_items              MenuItem[]
+  store_orders            StoreOrder[]
 
   @@index([owner_user_id])
   @@index([country])
@@ -1056,3 +1072,100 @@ model MenuItem {
   @@index([sort_order])
   @@map("menu_items")
 }
+
+// ==================== STORE & HARDWARE ORDERS ====================
+
+model StoreProduct {
+  id               String           @id @default(uuid())
+  slug             String           @unique
+  name             String
+  description      String?          @db.Text
+  features         String[]         @default([])
+  price            Decimal          @db.Decimal(10, 2)
+  currency         String           @default("TRY")
+  category         String           // "table_stand", "badge", "check_card", "sticker", "bundle"
+  image_url        String?
+  gallery          String[]         @default([])
+  video_url        String?
+  stock            Int              @default(999)
+  min_quantity     Int              @default(1)
+  quantity_step    Int              @default(1)
+  variants         Json?            // e.g. { sizes: [{ id: '7x7', label: '7x7 cm', price: 12.00 }], defaultSize: '7x7' }
+  badge            String?
+  is_active        Boolean          @default(true)
+  sort_order       Int              @default(0)
+
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+
+  order_items      StoreOrderItem[]
+
+  @@index([category])
+  @@index([is_active])
+  @@index([sort_order])
+  @@map("store_products")
+}
+
+model StoreOrder {
+  id                   String             @id @default(uuid())
+  business_id          String
+  order_number         String             @unique // e.g. "NAP-2026-1001"
+  total_amount         Decimal            @db.Decimal(10, 2)
+  currency             String             @default("TRY")
+  status               StoreOrderStatus   @default(PENDING_PAYMENT)
+  payment_method       StorePaymentMethod @default(BANK_TRANSFER)
+  payment_status       String             @default("UNPAID") // "UNPAID", "PAID"
+  bank_reference_code  String
+  
+  // Shipping info
+  recipient_name       String
+  phone                String
+  address_line         String
+  city                 String
+  state                String?
+  postal_code          String?
+  country              String             @default("TR")
+
+  // Billing info
+  company_name         String?
+  tax_office           String?
+  tax_number           String?
+
+  notes                String?            @db.Text
+  tracking_number      String?
+  carrier              String?
+  transfer_sender_note String?
+
+  created_at           DateTime           @default(now())
+  updated_at           DateTime           @updatedAt
+
+  // Relations
+  business             Business           @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  items                StoreOrderItem[]
+
+  @@index([business_id])
+  @@index([status])
+  @@index([order_number])
+  @@map("store_orders")
+}
+
+model StoreOrderItem {
+  id                   String       @id @default(uuid())
+  order_id             String
+  product_id           String
+  quantity             Int          @default(1)
+  unit_price           Decimal      @db.Decimal(10, 2)
+  customization        Json?        // e.g. { tableStart: 1, tableEnd: 25, useLogo: true, selectedStaff: [...] }
+
+  created_at           DateTime     @default(now())
+  updated_at           DateTime     @updatedAt
+
+  // Relations
+  order                StoreOrder   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product              StoreProduct @relation(fields: [product_id], references: [id], onDelete: Restrict)
+
+  @@index([order_id])
+  @@index([product_id])
+  @@map("store_order_items")
+}
+

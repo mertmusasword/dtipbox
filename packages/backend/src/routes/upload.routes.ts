@@ -10,7 +10,7 @@ const router = Router();
 const uploadImageSchema = {
   body: z.object({
     image: z.string().min(1, 'Image data is required'),
-    folder: z.enum(['menu', 'avatars', 'logos', 'general']).default('general'),
+    folder: z.enum(['menu', 'avatars', 'logos', 'products', 'general']).default('products'),
   }),
 };
 
@@ -24,6 +24,36 @@ router.post('/image', authenticate, validate(uploadImageSchema), async (req: Aut
     const { image, folder } = req.body;
 
     const result = await storageService.uploadBase64(image, folder);
+
+    res.status(200).json({
+      success: true,
+      url: result.url,
+      storage: result.storage,
+      size: result.size,
+      mimeType: result.mimeType,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+const uploadVideoSchema = {
+  body: z.object({
+    video: z.string().min(1, 'Video data is required'),
+    folder: z.enum(['products', 'general']).default('products'),
+  }),
+};
+
+/**
+ * POST /api/upload/video
+ * Uploads a video (.mp4, .webm, .mov) to Cloudflare R2 or local static storage.
+ * Returns public URL to be saved in database records.
+ */
+router.post('/video', authenticate, validate(uploadVideoSchema), async (req: AuthRequest, res, next) => {
+  try {
+    const { video, folder } = req.body;
+
+    const result = await storageService.uploadBase64(video, folder);
 
     res.status(200).json({
       success: true,

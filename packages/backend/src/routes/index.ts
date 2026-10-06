@@ -14,6 +14,7 @@ import posRoutes from './pos.routes';
 import smartQrRoutes from './smartQr.routes';
 import menuRoutes from './menu.routes';
 import uploadRoutes from './upload.routes';
+import storeRoutes from './store.routes';
 
 import prisma from '../utils/prisma';
 
@@ -57,6 +58,7 @@ apiRouter.use('/loyalty', loyaltyRoutes);
 apiRouter.use('/pos', posRoutes);
 apiRouter.use('/smart-qr', smartQrRoutes);
 apiRouter.use('/upload', uploadRoutes);
+apiRouter.use('/store', storeRoutes);
 
 export default apiRouter;
 

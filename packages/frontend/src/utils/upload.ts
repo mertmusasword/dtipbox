@@ -1,6 +1,6 @@
 import { api } from '../api/client';
 
-export type UploadFolder = 'menu' | 'avatars' | 'logos' | 'general';
+export type UploadFolder = 'menu' | 'avatars' | 'logos' | 'products' | 'general';
 
 /**
  * Upload an image (Base64 data URI or HTTP URL) to Cloudflare R2 / Object Storage.
@@ -38,3 +38,41 @@ export async function uploadImageToServer(
 
   return dataUri;
 }
+
+/**
+ * Upload a video (Base64 data URI or HTTP URL) to Cloudflare R2 / Object Storage.
+ * Returns the permanent CDN / storage URL.
+ * If upload fails or if dataUri is already a remote URL, gracefully returns the input.
+ */
+export async function uploadVideoToServer(
+  dataUri: string,
+  folder: UploadFolder = 'products'
+): Promise<string> {
+  if (!dataUri || typeof dataUri !== 'string') return '';
+
+  // Already a remote CDN or relative static URL
+  if (dataUri.startsWith('http://') || dataUri.startsWith('https://') || dataUri.startsWith('/uploads/') || dataUri.startsWith('/hardware/')) {
+    return dataUri;
+  }
+
+  // Only upload valid video data URIs
+  if (!dataUri.startsWith('data:video/')) {
+    return dataUri;
+  }
+
+  try {
+    const res = await api.post('/upload/video', {
+      video: dataUri,
+      folder,
+    });
+
+    if (res.data?.success && res.data?.url) {
+      return res.data.url;
+    }
+  } catch (err: any) {
+    console.warn('[Upload] Video cloud upload failed, using fallback data URI:', err?.message || err);
+  }
+
+  return dataUri;
+}
+

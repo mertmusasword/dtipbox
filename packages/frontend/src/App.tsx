@@ -49,6 +49,7 @@ const BusinessProfilePage = React.lazy(() => import('./pages/business/BusinessPr
 const EmployeesPage = React.lazy(() => import('./pages/business/EmployeesPage').then((m) => ({ default: m.EmployeesPage })));
 const TablesPage = React.lazy(() => import('./pages/business/TablesPage').then((m) => ({ default: m.TablesPage })));
 const MenuManagementPage = React.lazy(() => import('./pages/business/MenuManagementPage').then((m) => ({ default: m.MenuManagementPage })));
+const BusinessStorePage = React.lazy(() => import('./pages/business/BusinessStorePage').then((m) => ({ default: m.BusinessStorePage })));
 const QrCodesPage = React.lazy(() => import('./pages/business/QrCodesPage').then((m) => ({ default: m.QrCodesPage })));
 const PaymentMethodsPage = React.lazy(() => import('./pages/business/PaymentMethodsPage').then((m) => ({ default: m.PaymentMethodsPage })));
 const PaymentAccountPage = React.lazy(() => import('./pages/business/PaymentAccountPage').then((m) => ({ default: m.PaymentAccountPage })));
@@ -69,6 +70,8 @@ const AdminBusinessesPage = React.lazy(() => import('./pages/admin/AdminBusiness
 const AdminEmployeesPage = React.lazy(() => import('./pages/admin/AdminEmployeesPage').then((m) => ({ default: m.AdminEmployeesPage })));
 const AdminQrsPage = React.lazy(() => import('./pages/admin/AdminQrsPage').then((m) => ({ default: m.AdminQrsPage })));
 const AdminPaymentsPage = React.lazy(() => import('./pages/admin/AdminPaymentsPage').then((m) => ({ default: m.AdminPaymentsPage })));
+const AdminProductsPage = React.lazy(() => import('./pages/admin/AdminProductsPage').then((m) => ({ default: m.AdminProductsPage })));
+const AdminOrdersPage = React.lazy(() => import('./pages/admin/AdminOrdersPage').then((m) => ({ default: m.AdminOrdersPage })));
 const AdminCommissionsPage = React.lazy(() => import('./pages/admin/AdminCommissionsPage').then((m) => ({ default: m.AdminCommissionsPage })));
 const AdminPaymentProvidersPage = React.lazy(() => import('./pages/admin/AdminPaymentProvidersPage').then((m) => ({ default: m.AdminPaymentProvidersPage })));
 const AdminAuditPage = React.lazy(() => import('./pages/admin/AdminAuditPage').then((m) => ({ default: m.AdminAuditPage })));
@@ -235,6 +238,8 @@ export const App: React.FC = () => {
                   <Route path="/business/employees" element={<EmployeesPage />} />
                   <Route path="/business/tables" element={<Navigate to="/business/qr?tab=tables" replace />} />
                   <Route path="/business/menu" element={<MenuManagementPage />} />
+                  <Route path="/business/store" element={<BusinessStorePage />} />
+                  <Route path="/business/orders" element={<Navigate to="/business/store?tab=orders" replace />} />
                   <Route path="/business/qr" element={<QrCodesPage />} />
                   <Route path="/business/payment-settings" element={<PaymentSettingsPage />} />
                   <Route path="/business/payment-methods" element={<Navigate to="/business/payment-settings" replace />} />
@@ -265,6 +270,8 @@ export const App: React.FC = () => {
                   <Route path="/admin/employees" element={<AdminEmployeesPage />} />
                   <Route path="/admin/qr" element={<AdminQrsPage />} />
                   <Route path="/admin/payments" element={<AdminPaymentsPage />} />
+                  <Route path="/admin/products" element={<AdminProductsPage />} />
+                  <Route path="/admin/orders" element={<AdminOrdersPage />} />
                   <Route path="/admin/commissions" element={<AdminCommissionsPage />} />
                   <Route path="/admin/revenue" element={<Navigate to="/admin/commissions" replace />} />
                   <Route path="/admin/payment-providers" element={<AdminPaymentProvidersPage />} />
