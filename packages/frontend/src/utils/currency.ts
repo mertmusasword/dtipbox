@@ -6,8 +6,8 @@ export interface ExchangeRates {
   TRY: number;
   USD: number;
   EUR: number;
-  GBP: number;
-  [key: string]: number;
+  GBP?: number;
+  [key: string]: number | undefined;
 }
 
 // Fallback rates against 1 TRY
@@ -15,7 +15,6 @@ const FALLBACK_RATES: ExchangeRates = {
   TRY: 1,
   USD: 1 / 38.50, // ~0.026 USD per TRY
   EUR: 1 / 41.80, // ~0.0239 EUR per TRY
-  GBP: 1 / 49.50, // ~0.0202 GBP per TRY
 };
 
 let cachedRates: ExchangeRates = { ...FALLBACK_RATES };
@@ -47,7 +46,6 @@ export async function fetchLiveExchangeRates(): Promise<ExchangeRates> {
           TRY: 1,
           USD: data.rates.USD || FALLBACK_RATES.USD,
           EUR: data.rates.EUR || FALLBACK_RATES.EUR,
-          GBP: data.rates.GBP || FALLBACK_RATES.GBP,
         };
         lastFetchTime = now;
         localStorage.setItem(

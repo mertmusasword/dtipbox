@@ -80,9 +80,11 @@ export const BusinessStorePage: React.FC = () => {
   // Currency State - Defaults to business's registered currency if set (TRY, USD, EUR), else saved preference, else TRY
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     const savedCur = localStorage.getItem('naponi_store_currency');
-    if (savedCur && ['TRY', 'USD', 'EUR'].includes(savedCur)) {
-      return savedCur;
+    if (savedCur && ['TRY', 'USD', 'EUR'].includes(savedCur.toUpperCase())) {
+      return savedCur.toUpperCase();
     }
+    if (savedCur) localStorage.removeItem('naponi_store_currency');
+
     const bizCur = user?.business?.currency?.toUpperCase();
     if (bizCur && ['TRY', 'USD', 'EUR'].includes(bizCur)) {
       return bizCur;
@@ -98,7 +100,6 @@ export const BusinessStorePage: React.FC = () => {
     TRY: 1,
     USD: 1 / 38.5,
     EUR: 1 / 41.8,
-    GBP: 1 / 49.5,
   });
 
   const displayPrice = (amountInTRY: number): string => {
@@ -261,17 +262,27 @@ export const BusinessStorePage: React.FC = () => {
         const isTrBiz = !bCountry || bCountry === 'TR' || bCountry === 'TURKEY' || bCountry === 'TÜRKİYE';
 
         const savedCur = localStorage.getItem('naponi_store_currency');
-        if (savedCur) {
-          setSelectedCurrency(savedCur);
-          setShippingCountry(savedCur === 'TRY' ? (isTrBiz ? 'TR' : 'ABROAD') : 'ABROAD');
-        } else if (biz.currency) {
-          const bizCur = biz.currency.toUpperCase();
+        if (savedCur && ['TRY', 'USD', 'EUR'].includes(savedCur.toUpperCase())) {
+          setSelectedCurrency(savedCur.toUpperCase());
+          setShippingCountry(savedCur.toUpperCase() === 'TRY' ? (isTrBiz ? 'TR' : 'ABROAD') : 'ABROAD');
+        } else {
+          if (savedCur) localStorage.removeItem('naponi_store_currency');
+          const bizCur = (biz.currency || '').toUpperCase();
           if (['TRY', 'USD', 'EUR'].includes(bizCur)) {
             setSelectedCurrency(bizCur);
             setShippingCountry(isTrBiz && bizCur === 'TRY' ? 'TR' : 'ABROAD');
+          } else {
+            if (isTrBiz) {
+              setSelectedCurrency('TRY');
+              setShippingCountry('TR');
+            } else if (['DE', 'FR', 'ES', 'IT', 'NL', 'BE', 'AT', 'PT', 'GR', 'IE', 'FI'].includes(bCountry)) {
+              setSelectedCurrency('EUR');
+              setShippingCountry('ABROAD');
+            } else {
+              setSelectedCurrency('USD');
+              setShippingCountry('ABROAD');
+            }
           }
-        } else if (!isTrBiz && bCountry) {
-          setShippingCountry('ABROAD');
         }
       }
     } catch (err: any) {

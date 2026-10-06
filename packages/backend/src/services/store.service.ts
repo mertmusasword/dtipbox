@@ -71,205 +71,184 @@ export const STORE_BANK_ACCOUNTS = [
   },
 ];
 
-const INITIAL_PRODUCTS = [
-  {
-    slug: 'l-type-acrylic-table-stand',
-    name: 'L-Tipi Akrilik QR & NFC Masa Standı',
-    description: 'Masalarınız için lüks pleksi akrilik stant. Temassız NFC ve masaya özel dinamik QR kod entegreli. Suya ve darbelere dayanıklı UV baskı.',
-    features: [
-      'Lüks Şeffaf Pleksi / Mat Siyah Seçeneği',
-      'Entegre NTAG213/215 Temassız NFC Çip',
-      'Yüksek Çözünürlüklü Kalıcı UV Baskı',
-      'Masaya Özel QR Kod Eşleştirme',
-      'Kolay Temizlenebilir Yüzey'
-    ],
-    price: 180.00,
-    currency: 'TRY',
-    category: 'table_stand',
-    image_url: '/hardware/table-stand.jpg',
-    gallery: [],
-    video_url: null,
-    stock: 999,
-    min_quantity: 1,
-    badge: 'En Çok Satan',
-    sort_order: 1,
-  },
-  {
-    slug: 't-type-dual-sided-stand',
-    name: 'T-Tipi Çift Yönlü QR Menü & Bahşiş Standı',
-    description: 'Bir yüzünde QR Menü, diğer yüzünde Bahşiş ve Müşteri Değerlendirmesi sunan devrilmez ağır tabanlı çift yönlü masa standı.',
-    features: [
-      'Çift Taraflı Sunum (Ön: Menü, Arka: Bahşiş)',
-      'NFC Hızlı Temassız Dokunma Noktası',
-      'Ağırlaştırılmış Taban (Devrilmez)',
-      'Değiştirilebilir İç Kartvizit Alanı'
-    ],
-    price: 240.00,
-    currency: 'TRY',
-    category: 'table_stand',
-    image_url: '/hardware/dual-stand.jpg',
-    gallery: [],
-    video_url: null,
-    stock: 999,
-    min_quantity: 1,
-    badge: 'Popüler',
-    sort_order: 2,
-  },
-  {
-    slug: 'smart-staff-nfc-badge',
-    name: 'Akıllı Personel Yaka Kartı (NFC + QR)',
-    description: 'Garson ve servis ekibi için kıyafetlere zarar vermeyen güçlü manyetik klipsli, personele özel QR ve NFC donanımlı akıllı rozet.',
-    features: [
-      'Kıyafetlere Zarar Vermeyen Güçlü Manyetik Klips',
-      'Garsona Özel Kişisel QR Kod',
-      'NFC Çip ile Telefona Dokundurarak Bahşiş',
-      'İsim & Unvan Baskısı',
-      'Hafif ve Ergonomik Tasarım'
-    ],
-    price: 120.00,
-    currency: 'TRY',
-    category: 'badge',
-    image_url: '/hardware/staff-badge.jpg',
-    gallery: [],
-    video_url: null,
-    stock: 999,
-    min_quantity: 1,
-    badge: 'Ekip Tercihi',
-    sort_order: 3,
-  },
-  {
-    slug: 'check-presenter-nfc-card',
-    name: 'Adisyon & Hesap Sümen Kartı (QR + NFC)',
-    description: 'Hesapla birlikte masaya sunulan prestijli adisyon kartı. Müşterilerin hesabı incelerken kolayca bahşiş bırakmasını sağlar.',
-    features: [
-      'Lüks Ahşap / Deri Görünümlü / Mat Pleksi',
-      'Hesap İle Birlikte Masaya Bırakılır',
-      'Bahşiş Dönüşümünü %40 Artırır',
-      'Kalıcı Lazer Kazıma & UV'
-    ],
-    price: 140.00,
-    currency: 'TRY',
-    category: 'check_card',
-    image_url: '/hardware/check-card.jpg',
-    gallery: [],
-    video_url: null,
-    stock: 999,
-    min_quantity: 1,
-    badge: 'Yüksek Dönüşüm',
-    sort_order: 4,
-  },
+const ACTIVE_STICKERS = [
   {
     slug: 'opaque-qr-sticker',
     name: 'Opak QR Etiket Sticker',
-    description: 'Suya, sıvı dökülmelerine ve çizilmelere karşı koruyucu laminasyonlu beyaz opak zeminli yüksek çözünürlüklü QR etiket. Masa, bar ve menülere kolayca yapışır.',
+    description: 'Suya, neme, sıvı dökülmelerine ve çizilmelere karşı ultra koruyucu laminasyonlu parlak beyaz opak zeminli QR etiket. Masa, bar ve menülere kusursuz yapışır.',
     features: [
-      '24 ve Katları Şeklinde Sipariş Edilebilir',
-      'Lüks Beyaz Opak Parlak Zemin',
-      'Su ve Dış Ortam Koşullarına Dayanıklı Laminasyon',
-      'Özel Masaya/Garsona Özel Dinamik QR Entegrasyonu',
-      'Kolay Sökülür, Masada İz Bırakmaz'
+      'Parlak Beyaz Opak Lüks Zemin',
+      'Suya, Yağa ve Çizilmeye Dayanıklı UV Koruma',
+      'Masaya / Menüye Özel Dinamik QR Entegrasyonu',
+      'Kolay Sökülür, Masada Leke ve İz Bırakmaz',
     ],
-    price: 11.50,
+    price: 250.00,
     currency: 'TRY',
     category: 'sticker',
-    image_url: '/hardware/opaque-sticker.jpg',
+    image_url: '/hardware/opaque-qr-sticker-en.jpg',
     gallery: [],
-    video_url: null,
+    video_url: '/hardware/opaque-qr-sticker.mp4',
     stock: 9999,
     min_quantity: 1,
     quantity_step: 1,
     badge: null,
-    sort_order: 5,
+    sort_order: 1,
+    is_active: true,
     variants: {
-      type: 'sizes',
-      defaultSize: '7x7',
+      type: 'sizes_and_tiers',
+      defaultSize: '3x3',
+      defaultQuantity: 104,
+      quantities: [104, 208, 312, 416, 520, 1040],
       sizes: [
-        { id: '3x3', label: '3x3 cm', price: 4.50 },
-        { id: '4x6', label: '4x6 cm', price: 6.00 },
-        { id: '5x5', label: '5x5 cm', price: 7.50 },
-        { id: '5x7', label: '5x7 cm', price: 9.00 },
-        { id: '7x7', label: '7x7 cm', price: 11.50 },
-        { id: '10x10', label: '10x10 cm', price: 16.00 }
-      ]
-    }
+        {
+          id: '3x3',
+          label: '3x3 cm',
+          price: 350,
+          prices: { '104': 250, '208': 400, '250': 350, '312': 550, '416': 700, '500': 620, '520': 750, '750': 880, '1000': 1100, '1040': 1100, '1250': 1300, '2500': 2350 },
+          quantities: [104, 208, 312, 416, 520, 1040],
+        },
+        {
+          id: '4x6',
+          label: '4x6 cm',
+          price: 380,
+          prices: { '80': 450, '120': 550, '150': 380, '200': 800, '300': 680, '400': 1400, '450': 960, '600': 1900, '750': 1420, '1500': 2550 },
+          quantities: [80, 120, 200, 400, 600],
+        },
+        {
+          id: '5x5',
+          label: '5x5 cm',
+          price: 420,
+          prices: { '80': 450, '120': 550, '140': 420, '200': 800, '280': 760, '400': 1400, '420': 1080, '560': 1350, '600': 1900, '700': 1600, '1000': 2500, '1400': 2900 },
+          quantities: [80, 120, 200, 400, 600, 1000],
+        },
+        {
+          id: '5x7',
+          label: '5x7 cm',
+          price: 460,
+          prices: { '30': 250, '60': 400, '90': 500, '120': 600, '240': 1050, '360': 1180, '480': 1650, '600': 1750, '1200': 3150 },
+          quantities: [30, 60, 90, 120, 240, 480],
+        },
+        {
+          id: '7x7',
+          label: '7x7 cm',
+          price: 680,
+          prices: { '24': 250, '48': 400, '96': 650, '104': 680, '192': 1100, '208': 1220, '312': 1740, '384': 2000, '416': 2200, '520': 2650, '768': 3100, '1040': 4750 },
+          quantities: [24, 48, 96, 192, 384, 768],
+        },
+        {
+          id: '10x10',
+          label: '10x10 cm',
+          price: 580,
+          prices: { '52': 580, '64': 1700, '104': 1050, '128': 2700, '156': 1480, '192': 3500, '208': 1880, '256': 4000, '260': 2250, '320': 4800, '520': 4100, '640': 7500 },
+          quantities: [64, 128, 192, 256, 320, 640],
+        },
+      ],
+    },
   },
   {
     slug: 'transparent-qr-sticker',
     name: 'Şeffaf QR Sticker',
-    description: 'Cam, akrilik, ayna, metal ve açık renkli ahşap yüzeylerde kusursuz eriyen %100 kristal şeffaf transparan UV baskılı akıllı QR etiket.',
+    description: 'Cam, akrilik, metal ve açık renkli ahşap yüzeylerde kusursuz eriyip bütünleşen %100 kristal şeffaf transparan UV baskılı akıllı QR etiket.',
     features: [
-      'İstediğiniz Adette Esnek Sipariş İmkanı',
       '%100 Kristal Şeffaf Transparan Görünüm',
-      'Beyaz & Altın Yaldız Premium UV Baskı',
-      'Cam, Akrilik ve Ahşap Masalarda Eriyip Bütünleşen Tasarım',
-      'Yırtılmaz, Çizilmez ve Su Geçirmez'
+      'Cam ve Masalarda Eriyip Bütünleşen Tasarım',
+      'Yırtılmaz, Çizilmez ve Sıvı Geçirmez',
     ],
-    price: 8.50,
+    price: 250.00,
     currency: 'TRY',
     category: 'sticker',
-    image_url: '/hardware/transparent-sticker.jpg',
+    image_url: '/hardware/transparent-qr-sticker-en.jpg',
     gallery: [],
-    video_url: null,
+    video_url: '/hardware/transparent-qr-sticker.mp4',
     stock: 9999,
     min_quantity: 1,
     quantity_step: 1,
     badge: null,
-    sort_order: 6,
+    sort_order: 2,
+    is_active: true,
     variants: {
-      type: 'sizes',
-      defaultSize: '7x7',
+      type: 'sizes_and_tiers',
+      defaultSize: '3x3',
+      defaultQuantity: 104,
+      quantities: [104, 208, 312, 416, 520, 1040],
       sizes: [
-        { id: '3x3', label: '3x3 cm', price: 3.20 },
-        { id: '4x6', label: '4x6 cm', price: 4.50 },
-        { id: '5x5', label: '5x5 cm', price: 5.50 },
-        { id: '5x7', label: '5x7 cm', price: 6.80 },
-        { id: '7x7', label: '7x7 cm', price: 8.50 },
-        { id: '10x10', label: '10x10 cm', price: 12.50 }
-      ]
-    }
-  },
-  {
-    slug: 'all-in-one-starter-bundle',
-    name: 'Naponi Hepsi Bir Arada Başlangıç Paketi',
-    description: 'İşletmenizin tüm donanım ihtiyacını tek pakette karşılayan, logo baskılı avantajlı lansman seti.',
-    features: [
-      '10x L-Tipi Akrilik Masa Standı',
-      '5x Akıllı Personel Yaka Kartı',
-      '2x Adisyon Hesap Kartı',
-      '1x Kasa Önü Teşekkür Totemi',
-      'Özel İşletme Logo Baskısı Dahil',
-      'Ücretsiz Kargo & Hızlı Teslimat'
-    ],
-    price: 2850.00,
-    currency: 'TRY',
-    category: 'bundle',
-    image_url: '/hardware/bundle-kit.jpg',
-    gallery: [],
-    video_url: null,
-    stock: 999,
-    min_quantity: 1,
-    quantity_step: 1,
-    badge: 'En Avantajlı Paket',
-    sort_order: 7,
+        {
+          id: '3x3',
+          label: '3x3 cm',
+          price: 300,
+          prices: { '104': 250, '208': 400, '312': 550, '416': 650, '520': 1000, '1040': 1700 },
+          quantities: [104, 208, 312, 416, 520, 1040],
+        },
+        {
+          id: '4x6',
+          label: '4x6 cm',
+          price: 4.5,
+          prices: { '80': 450, '120': 550, '200': 800, '400': 1400, '600': 1900, '1000': 2500 },
+          quantities: [80, 120, 200, 400, 600, 1000],
+        },
+        {
+          id: '5x5',
+          label: '5x5 cm',
+          price: 5.5,
+          prices: { '80': 450, '120': 600, '200': 850, '400': 1400, '600': 1900, '1000': 2500 },
+          quantities: [80, 120, 200, 400, 600, 1000],
+        },
+        {
+          id: '5x7',
+          label: '5x7 cm',
+          price: 6.8,
+          prices: { '30': 250, '60': 400, '90': 550, '120': 650, '240': 1100, '480': 1700 },
+          quantities: [30, 60, 90, 120, 240, 480],
+        },
+        {
+          id: '7x7',
+          label: '7x7 cm',
+          price: 8.5,
+          prices: { '24': 250, '48': 400, '96': 700, '192': 1200, '384': 2000, '768': 3300 },
+          quantities: [24, 48, 96, 192, 384, 768],
+        },
+        {
+          id: '10x10',
+          label: '10x10 cm',
+          price: 12.5,
+          prices: { '64': 1700, '128': 2800, '192': 3800, '256': 4300, '320': 5000, '640': 7800 },
+          quantities: [64, 128, 192, 256, 320, 640],
+        },
+      ],
+    },
   },
 ];
 
 /**
- * Seed initial products if none exist
+ * Sync and seed store products: Ensures only the 2 stickers are active and non-stickers deactivated
  */
-export async function seedProductsIfEmpty() {
+export async function syncStoreProducts() {
   try {
-    const count = await prisma.storeProduct.count();
-    if (count === 0) {
-      for (const prod of INITIAL_PRODUCTS) {
-        await prisma.storeProduct.create({
-          data: prod,
-        });
-      }
-      console.log('[StoreService] Initial store products seeded successfully.');
+    // 1. Deactivate any non-sticker products (stands, badges, bundle) so only the 2 stickers are active
+    await prisma.storeProduct.updateMany({
+      where: {
+        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker'] },
+        is_active: true,
+      },
+      data: { is_active: false },
+    });
+
+    // 2. Ensure both active stickers are upserted with current variants & price
+    for (const prod of ACTIVE_STICKERS) {
+      await prisma.storeProduct.upsert({
+        where: { slug: prod.slug },
+        update: {
+          ...prod,
+          is_active: true,
+        },
+        create: {
+          ...prod,
+          is_active: true,
+        },
+      });
     }
   } catch (err) {
-    console.error('[StoreService] Error seeding store products:', err);
+    console.error('[StoreService] Error syncing store products:', err);
   }
 }
 
@@ -277,7 +256,7 @@ export async function seedProductsIfEmpty() {
  * List all active products for the store
  */
 export async function listStoreProducts() {
-  await seedProductsIfEmpty();
+  await syncStoreProducts();
   return prisma.storeProduct.findMany({
     where: { is_active: true },
     orderBy: { sort_order: 'asc' },
