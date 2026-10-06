@@ -53,32 +53,61 @@ export const Sidebar: React.FC = () => {
         onClick={closeMobile}
       />
 
-      {/* Mobile toggle button */}
-      <button
-        className="sidebar-mobile-toggle"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        aria-label={t('nav.toggleMenu')}
-      >
-        {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      {/* Mobile top app bar (fixed at top on mobile screens, replaces the intrusive floating button) */}
+      <header className="mobile-topbar">
+        <button
+          type="button"
+          className="mobile-topbar-toggle"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={t('nav.toggleMenu')}
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+
+        <div className="mobile-topbar-brand">
+          <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '30px', width: 'auto' }} />
+        </div>
+
+        <div className="mobile-topbar-actions">
+          <button
+            type="button"
+            className="mobile-topbar-btn"
+            onClick={() => setSupportOpen(true)}
+            aria-label={t('support.widgetBtn')}
+            title={t('support.widgetBtn')}
+          >
+            <Headphones size={18} />
+          </button>
+        </div>
+      </header>
 
       <aside className={`sidebar ${mobileOpen ? 'sidebar--open' : ''}`}>
         {/* Brand */}
         <div className="sidebar-brand" style={{ padding: '1.25rem 1.25rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <img src="/naponi-brand.svg" alt="Naponi" style={{ height: '42px', width: 'auto', display: 'block' }} />
-          <span style={{
-            background: 'rgba(99, 102, 241, 0.15)',
-            padding: '3px 8px',
-            borderRadius: '6px',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
-            color: '#a5b4fc',
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase'
-          }}>
-            {user.role}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{
+              background: 'rgba(99, 102, 241, 0.15)',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+              color: '#a5b4fc',
+              fontSize: '0.65rem',
+              fontWeight: 700,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase'
+            }}>
+              {user.role}
+            </span>
+            <button
+              type="button"
+              className="sidebar-close-btn"
+              onClick={closeMobile}
+              aria-label={t('common.close') || 'Kapat'}
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}

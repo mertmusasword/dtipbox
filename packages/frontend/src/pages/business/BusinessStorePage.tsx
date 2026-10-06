@@ -566,23 +566,9 @@ export const BusinessStorePage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1280px', margin: '0 auto', color: '#f8fafc' }}>
+    <div className="store-page-container">
       {/* Header Banner */}
-      <div
-        className="glass-card"
-        style={{
-          padding: '2rem 2.25rem',
-          marginBottom: '2rem',
-          borderRadius: '20px',
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.25rem',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="glass-card store-banner-card">
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.35rem 0.85rem', borderRadius: '999px', background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)', color: '#38bdf8', fontSize: '0.78rem', fontWeight: 700, marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -758,7 +744,19 @@ export const BusinessStorePage: React.FC = () => {
       {activeTab === 'catalog' && (
         <>
           {/* Category Filter Pills */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', overflowX: 'auto', paddingBottom: '0.75rem', marginBottom: '1.75rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              overflowX: 'auto',
+              paddingBottom: '0.75rem',
+              marginBottom: '1.75rem',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
             {[
               { id: 'all', label: 'Tüm QR Etiketler' },
               { id: 'opaque', label: 'Opak QR Etiket' },
@@ -780,6 +778,7 @@ export const BusinessStorePage: React.FC = () => {
                     fontWeight: active ? 700 : 500,
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
+                    flexShrink: 0,
                     transition: 'all 0.2s ease',
                   }}
                 >
@@ -790,7 +789,7 @@ export const BusinessStorePage: React.FC = () => {
           </div>
 
           {/* Product Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: '1.25rem' }}>
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
@@ -906,63 +905,75 @@ export const BusinessStorePage: React.FC = () => {
                     <Maximize2 size={14} />
                   </div>
 
-                  {/* QR Badge Indicator */}
+                  {/* Badges Bar (Bottom) */}
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: '12px',
-                      left: '12px',
-                      display: 'inline-flex',
+                      bottom: '10px',
+                      left: '10px',
+                      right: '10px',
+                      display: 'flex',
                       alignItems: 'center',
-                      gap: '0.35rem',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      background: 'rgba(15, 23, 42, 0.75)',
-                      backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      color: '#38bdf8',
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      zIndex: 2,
-                    }}
-                  >
-                    <QrCode size={12} style={{ color: '#38bdf8' }} />
-                    <span>Dinamik QR Kod</span>
-                  </div>
-
-                  {/* Video Showcase Button */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setVideoModalProduct(product);
-                    }}
-                    style={{
-                      position: 'absolute',
-                      bottom: '12px',
-                      right: '12px',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      padding: '5px 10px',
-                      borderRadius: '8px',
-                      background: 'rgba(15, 23, 42, 0.85)',
-                      backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      color: '#38bdf8',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
+                      justifyContent: 'space-between',
+                      gap: '0.5rem',
                       zIndex: 3,
+                      pointerEvents: 'none',
                     }}
                   >
-                    <Play size={12} fill="#38bdf8" />
-                    <span>{t('store.watchVideo') || 'Video'}</span>
-                  </button>
+                    {/* QR Badge Indicator */}
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        background: 'rgba(15, 23, 42, 0.8)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        color: '#38bdf8',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        whiteSpace: 'nowrap',
+                        pointerEvents: 'auto',
+                      }}
+                    >
+                      <QrCode size={12} style={{ color: '#38bdf8' }} />
+                      <span>Dinamik QR</span>
+                    </div>
+
+                    {/* Video Showcase Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setVideoModalProduct(product);
+                      }}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        padding: '4px 9px',
+                        borderRadius: '6px',
+                        background: 'rgba(15, 23, 42, 0.85)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        color: '#38bdf8',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        pointerEvents: 'auto',
+                      }}
+                    >
+                      <Play size={11} fill="#38bdf8" />
+                      <span>{t('store.watchVideo') || 'Video'}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Content Area */}
-                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
                   <div>
                     <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#f8fafc' }}>
                       {product.name}
