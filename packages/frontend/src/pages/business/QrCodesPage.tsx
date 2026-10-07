@@ -1727,9 +1727,9 @@ export const QrCodesPage: React.FC = () => {
                       {smartConfig.custom_links.map((link, idx) => (
                         <div
                           key={link.id || idx}
+                         className="custom-link-row"
                           style={{
                             display: 'grid',
-                            gridTemplateColumns: '130px 150px 1fr 40px',
                             gap: '0.5rem',
                             alignItems: 'center',
                             background: 'rgba(255,255,255,0.025)',

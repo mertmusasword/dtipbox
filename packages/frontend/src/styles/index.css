@@ -2456,3 +2456,13 @@ h1, h2, h3, h4, h5, h6,
 }
 
 
+
+/* Smart QR custom links row: desktop 4 columns, stacked on mobile */
+.custom-link-row { grid-template-columns: 130px 150px minmax(0, 1fr) 40px; min-width: 0; }
+.custom-link-row > * { min-width: 0; }
+@media (max-width: 768px) {
+  .custom-link-row { grid-template-columns: minmax(0, 1fr) 40px; }
+  .custom-link-row > select { grid-column: 1; grid-row: 1; }
+  .custom-link-row > button { grid-column: 2; grid-row: 1; }
+  .custom-link-row > input { grid-column: 1 / -1; width: 100%; }
+}
