@@ -15,7 +15,7 @@ export async function getAdminBusinesses(page: number = 1, limit: number = 20) {
         payment_account: true,
         _count: {
           select: {
-            employees: true,
+            employees: { where: { deleted_at: null } },
             tables: true,
             qr_codes: true,
             tips: true,
