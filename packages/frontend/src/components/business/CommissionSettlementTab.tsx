@@ -894,19 +894,6 @@ export const CommissionSettlementTab: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  showToast(language === 'tr' ? 'Kartla ödeme simülasyonu: Ödeme başarıyla alındı ve bakiye kapatıldı!' : 'Card payment successful: settlement closed!');
-                  handleConfirmSettlement();
-                }}
-                className="btn btn-secondary"
-                style={{ width: '100%', padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#38bdf8' }}
-              >
-                <CreditCard size={16} />
-                {ct.payOnlineBtn}
-              </button>
-
-              <button
-                type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="btn btn-secondary"
                 style={{ width: '100%', padding: '0.6rem', color: '#94a3b8' }}
