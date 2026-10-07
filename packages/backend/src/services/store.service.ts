@@ -1,6 +1,7 @@
 import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { StoreOrderStatus, StorePaymentMethod } from '@prisma/client';
+import { lemonSqueezyService } from './lemonsqueezy.service';
 
 export interface CreateOrderInput {
   items: Array<{
@@ -39,6 +40,8 @@ export interface CreateOrderInput {
   tax_number?: string;
   notes?: string;
   currency?: string;
+  paymentMethod?: 'BANK_TRANSFER' | 'CREDIT_CARD';
+  payment_method?: 'BANK_TRANSFER' | 'CREDIT_CARD';
 }
 
 export const STORE_BANK_ACCOUNTS = [
@@ -628,6 +631,9 @@ export async function createStoreOrder(businessId: string, input: CreateOrderInp
   const orderNumber = `NAP-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
   const bankReferenceCode = `ORD-${orderNumber.replace('NAP-', '')}`;
 
+  const chosenMethod = String(input.paymentMethod || (input as any).payment_method || 'BANK_TRANSFER').toUpperCase();
+  const paymentMethod = chosenMethod === 'CREDIT_CARD' ? StorePaymentMethod.CREDIT_CARD : StorePaymentMethod.BANK_TRANSFER;
+
   const order = await prisma.storeOrder.create({
     data: {
       business_id: business.id,
@@ -635,7 +641,7 @@ export async function createStoreOrder(businessId: string, input: CreateOrderInp
       total_amount: totalAmount,
       currency,
       status: StoreOrderStatus.PENDING_PAYMENT,
-      payment_method: StorePaymentMethod.BANK_TRANSFER,
+      payment_method: paymentMethod,
       payment_status: 'UNPAID',
       bank_reference_code: bankReferenceCode,
       recipient_name: input.recipientName || (input as any).recipient_name || business.name,
@@ -660,8 +666,27 @@ export async function createStoreOrder(businessId: string, input: CreateOrderInp
     },
   });
 
+  let checkoutUrl: string | null = null;
+  if (paymentMethod === StorePaymentMethod.CREDIT_CARD) {
+    try {
+      const checkoutSession = await lemonSqueezyService.createStoreCheckout({
+        orderId: order.id,
+        orderNumber: order.order_number,
+        totalAmount: Number(order.total_amount),
+        currency: order.currency,
+        customerEmail: business.email || undefined,
+        customerName: order.recipient_name || business.name,
+        description: `Naponi Hardware Store Order #${order.order_number}`,
+      });
+      checkoutUrl = checkoutSession.checkoutUrl;
+    } catch (checkoutErr: any) {
+      throw checkoutErr;
+    }
+  }
+
   return {
     order,
+    checkoutUrl,
     wireInstructions: {
       orderNumber: order.order_number,
       bankReferenceCode: order.bank_reference_code,
@@ -712,8 +737,27 @@ export async function getOrderById(orderId: string, businessId?: string) {
     throw new AppError('Sipariş bulunamadı.', 404);
   }
 
+  let checkoutUrl: string | null = null;
+  if (order.payment_method === StorePaymentMethod.CREDIT_CARD && order.payment_status === 'UNPAID') {
+    try {
+      const checkoutSession = await lemonSqueezyService.createStoreCheckout({
+        orderId: order.id,
+        orderNumber: order.order_number,
+        totalAmount: Number(order.total_amount),
+        currency: order.currency,
+        customerEmail: order.business?.email || undefined,
+        customerName: order.recipient_name || order.business?.name,
+        description: `Naponi Hardware Store Order #${order.order_number}`,
+      });
+      checkoutUrl = checkoutSession.checkoutUrl;
+    } catch {
+      // Non-fatal if offline
+    }
+  }
+
   return {
     order,
+    checkoutUrl,
     wireInstructions: {
       orderNumber: order.order_number,
       bankReferenceCode: order.bank_reference_code,

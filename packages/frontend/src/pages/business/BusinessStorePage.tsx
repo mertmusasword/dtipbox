@@ -212,6 +212,7 @@ export const BusinessStorePage: React.FC = () => {
   const [taxOffice, setTaxOffice] = useState<string>('');
   const [taxNumber, setTaxNumber] = useState<string>('');
   const [orderNotes, setOrderNotes] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'BANK_TRANSFER'>('CREDIT_CARD');
   const [submittingOrder, setSubmittingOrder] = useState<boolean>(false);
 
   // Wire Instructions Modal (Shown after order placement or from orders list)
@@ -244,6 +245,16 @@ export const BusinessStorePage: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [previewImage, videoModalProduct]);
+
+  // Handle Lemon Squeezy return redirect (?payment=success)
+  useEffect(() => {
+    const paymentParam = searchParams.get('payment');
+    if (paymentParam === 'success') {
+      showToast('Kredi kartı ile ödemeniz başarıyla alındı! Siparişiniz hazırlanma aşamasında.', 'success');
+      searchParams.delete('payment');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams, showToast]);
 
   // Load initial data
   const fetchData = async () => {
@@ -526,6 +537,7 @@ export const BusinessStorePage: React.FC = () => {
         taxNumber,
         notes: orderNotes,
         currency: selectedCurrency,
+        paymentMethod,
       };
 
       const res = await api.post<any>('/store/orders', payload);
@@ -536,7 +548,13 @@ export const BusinessStorePage: React.FC = () => {
       setCheckoutOpen(false);
       setCartOpen(false);
 
-      // Open wire instructions
+      if (paymentMethod === 'CREDIT_CARD' && data.checkoutUrl) {
+        showToast('Güvenli ödeme sayfasına yönlendiriliyorsunuz...', 'info');
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+
+      // If bank transfer: Open wire instructions
       setWireModalData({
         order: data.order,
         accounts: data.wireInstructions.accounts,
@@ -1290,8 +1308,43 @@ export const BusinessStorePage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Action buttons (Wire info button) */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.5rem' }}>
+                  {/* Action buttons */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.5rem', flexWrap: 'wrap' }}>
+                    {ord.payment_status === 'UNPAID' && ord.payment_method === 'CREDIT_CARD' && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const res = await api.get<any>(`/store/orders/${ord.id}`);
+                            if (res.data.data.checkoutUrl) {
+                              window.location.href = res.data.data.checkoutUrl;
+                            } else {
+                              showToast('Ödeme oturumu alınamadı.', 'error');
+                            }
+                          } catch {
+                            showToast('Ödeme sayfası başlatılamadı.', 'error');
+                          }
+                        }}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '8px',
+                          background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                          border: 'none',
+                          color: '#ffffff',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 10px rgba(2, 132, 199, 0.35)',
+                        }}
+                      >
+                        <CreditCard size={14} />
+                        <span>Kartla Ödemeyi Tamamla</span>
+                      </button>
+                    )}
+
                     <button
                       type="button"
                       onClick={async () => {
@@ -1319,7 +1372,7 @@ export const BusinessStorePage: React.FC = () => {
                         cursor: 'pointer',
                       }}
                     >
-                      <CreditCard size={14} />
+                      <Building size={14} />
                       <span>{t('store.viewWireDetails') || 'Havale Bilgilerini Gör'}</span>
                     </button>
                   </div>
@@ -2398,28 +2451,92 @@ export const BusinessStorePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Payment Method Card Highlight */}
-              <div
-                style={{
-                  marginBottom: '1.5rem',
-                  padding: '1.25rem',
-                  borderRadius: '12px',
-                  background: 'rgba(99, 102, 241, 0.1)',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ffffff', fontWeight: 700, fontSize: '0.92rem' }}>
-                    <CreditCard size={18} style={{ color: '#818cf8' }} />
-                    <span>{t('store.bankTransferTitle') || 'Banka Havalesi / FAST / EFT / SWIFT'}</span>
-                  </div>
-                  <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', fontSize: '0.72rem', fontWeight: 700 }}>
-                    {t('store.zeroCommissionBadge') || 'Sıfır Komisyon'}
-                  </span>
+              {/* Payment Method Selector */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '8px' }}>
+                  {t('store.paymentMethod') || 'Ödeme Yöntemi'} *
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {/* Option 1: Credit Card / Apple Pay / Google Pay (Default / Global) */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.85rem',
+                      padding: '1rem',
+                      borderRadius: '12px',
+                      border: paymentMethod === 'CREDIT_CARD' ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
+                      background: paymentMethod === 'CREDIT_CARD' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(30, 41, 59, 0.45)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CREDIT_CARD"
+                      checked={paymentMethod === 'CREDIT_CARD'}
+                      onChange={() => setPaymentMethod('CREDIT_CARD')}
+                      style={{ marginTop: '3px', accentColor: '#38bdf8' }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.25rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#ffffff', fontWeight: 700, fontSize: '0.92rem' }}>
+                          <CreditCard size={18} style={{ color: '#38bdf8' }} />
+                          <span>Kredi & Banka Kartı / Apple Pay / Google Pay</span>
+                        </div>
+                        <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontSize: '0.72rem', fontWeight: 700 }}>
+                          Anında Onay
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                        Tüm yerli ve uluslararası kartlar (Visa, Mastercard, AMEX), Apple Pay ve Google Pay ile anında küresel güvenli ödeme.
+                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem', fontSize: '0.7rem', color: '#34d399', fontWeight: 600 }}>
+                        <ShieldCheck size={14} />
+                        <span>Global Stripe / Lemon Squeezy Altyapısı</span>
+                      </div>
+                    </div>
+                  </label>
+
+                  {/* Option 2: Bank Transfer / SWIFT */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.85rem',
+                      padding: '1rem',
+                      borderRadius: '12px',
+                      border: paymentMethod === 'BANK_TRANSFER' ? '2px solid #818cf8' : '1px solid rgba(255, 255, 255, 0.12)',
+                      background: paymentMethod === 'BANK_TRANSFER' ? 'rgba(99, 102, 241, 0.12)' : 'rgba(30, 41, 59, 0.45)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="BANK_TRANSFER"
+                      checked={paymentMethod === 'BANK_TRANSFER'}
+                      onChange={() => setPaymentMethod('BANK_TRANSFER')}
+                      style={{ marginTop: '3px', accentColor: '#818cf8' }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.25rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#ffffff', fontWeight: 700, fontSize: '0.92rem' }}>
+                          <Building size={18} style={{ color: '#818cf8' }} />
+                          <span>{t('store.bankTransferTitle') || 'Banka Havalesi / FAST / EFT / SWIFT'}</span>
+                        </div>
+                        <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', fontSize: '0.72rem', fontWeight: 700 }}>
+                          {t('store.zeroCommissionBadge') || 'Sıfır Komisyon'}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                        {t('store.bankTransferDesc') || 'Siparişinizi oluşturduktan sonra belirtilen hesaplara referans koduyla transfer yapın.'}
+                      </p>
+                    </div>
+                  </label>
                 </div>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                  {t('store.bankTransferDesc') || 'Siparişinizi oluşturduktan sonra belirtilen hesaplara referans koduyla transfer yapın.'}
-                </p>
               </div>
 
               {/* Submit Button */}
@@ -2441,9 +2558,27 @@ export const BusinessStorePage: React.FC = () => {
                   type="submit"
                   disabled={submittingOrder}
                   className="btn btn-primary"
-                  style={{ padding: '0.75rem 1.5rem', fontWeight: 700 }}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
                 >
-                  {submittingOrder ? t('common.saving') : (t('store.placeOrder') || 'Siparişi Onayla')}
+                  {submittingOrder ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>{t('common.saving') || 'İşleniyor...'}</span>
+                    </>
+                  ) : paymentMethod === 'CREDIT_CARD' ? (
+                    <>
+                      <CreditCard size={16} />
+                      <span>Kartla Güvenli Öde</span>
+                    </>
+                  ) : (
+                    <span>{t('store.placeOrder') || 'Siparişi Onayla'}</span>
+                  )}
                 </button>
               </div>
             </form>

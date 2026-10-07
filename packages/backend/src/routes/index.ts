@@ -15,6 +15,7 @@ import smartQrRoutes from './smartQr.routes';
 import menuRoutes from './menu.routes';
 import uploadRoutes from './upload.routes';
 import storeRoutes from './store.routes';
+import lemonSqueezyWebhookRoutes from './lemonsqueezy.webhook';
 
 import prisma from '../utils/prisma';
 
@@ -59,6 +60,8 @@ apiRouter.use('/pos', posRoutes);
 apiRouter.use('/smart-qr', smartQrRoutes);
 apiRouter.use('/upload', uploadRoutes);
 apiRouter.use('/store', storeRoutes);
+apiRouter.use('/webhooks/lemonsqueezy', lemonSqueezyWebhookRoutes);
+apiRouter.use('/webhook/lemonsqueezy', lemonSqueezyWebhookRoutes);
 
 export default apiRouter;
 
