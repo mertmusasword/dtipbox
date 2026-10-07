@@ -169,6 +169,57 @@ const METAL_PLATE_PRODUCT = {
   },
 };
 
+const PLEKSI_STAND_SLUG = 'pleksi-qr-menu-stand';
+const PLEKSI_STAND_QTYS = [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 50];
+const PLEKSI_BASE_PRICES: Record<string, number> = {
+  '1': 193.20, '2': 386.40, '3': 579.60, '4': 772.80, '5': 966.00,
+  '10': 1932.00, '15': 2898.00, '20': 3864.00, '30': 5796.00, '40': 7728.00, '50': 9660.00,
+};
+const pleksiPrices = (mult: number): Record<string, number> =>
+  Object.fromEntries(Object.entries(PLEKSI_BASE_PRICES).map(([q, p]) => [q, Math.round(p * mult * 100) / 100]));
+const pleksiSize = (id: string, mult: number) => ({
+  id,
+  label: `${id} cm`,
+  price: Math.round(193.20 * mult * 100) / 100,
+  prices: pleksiPrices(mult),
+  quantities: PLEKSI_STAND_QTYS,
+});
+
+// Seeded create-only: founder panel edits are preserved. Larger sizes are estimated by area; adjust from the panel.
+// Plate colors (Gümüş, Altın, Beyaz, Bronz) are offered in the store UI for category 'pleksi_stand'.
+const PLEKSI_STAND_PRODUCT = {
+  slug: PLEKSI_STAND_SLUG,
+  name: 'Pleksi QR Karekod Menü Standı',
+  description: 'Siyah pleksi kırımlı (çadır formlu) stand üzerine yapıştırılmış metal plaka ile şık bir QR menü standı. Kırımlı yapısı sayesinde dayanıklılığı artırılmış, uzun ömürlü kullanıma uygundur. Metal plaka üzerine dış etkenlere dayanıklı süblimasyon baskı yapılır. Restoran, kafe ve otellerde QR menüyü pratik ve şık sunar.',
+  features: [
+    'Pleksi stand üzerine metal plaka',
+    '4 plaka rengi: Gümüş, Altın, Beyaz, Bronz',
+    '4 ebat: 4.5x5, 7x7, 9x5, 15x7 cm',
+    'Dış etkenlere dayanıklı süblimasyon baskı',
+    'Kırımlı yapı, uzun ömürlü kullanım',
+    'Her stand için farklı masa numarası / QR basılabilir',
+  ],
+  price: 193.20,
+  currency: 'TRY',
+  category: 'pleksi_stand',
+  image_url: '/hardware/pleksi-qr-menu-stand.jpg',
+  gallery: [] as string[],
+  video_url: null as string | null,
+  stock: 9999,
+  min_quantity: 1,
+  quantity_step: 1,
+  badge: null,
+  sort_order: 5,
+  is_active: true,
+  variants: {
+    type: 'sizes_and_tiers',
+    defaultSize: '4.5x5',
+    defaultQuantity: 1,
+    quantities: PLEKSI_STAND_QTYS,
+    sizes: [pleksiSize('4.5x5', 1), pleksiSize('7x7', 2), pleksiSize('9x5', 2), pleksiSize('15x7', 4)],
+  },
+};
+
 const ACTIVE_STICKERS = [
   {
     slug: 'opaque-qr-sticker',
@@ -325,7 +376,7 @@ export async function syncStoreProducts() {
     // 1. Deactivate any non-sticker products (stands, badges, bundle) so only the 2 stickers are active
     await prisma.storeProduct.updateMany({
       where: {
-        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker', METAL_STAND_SLUG, METAL_PLATE_SLUG] },
+        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker', METAL_STAND_SLUG, METAL_PLATE_SLUG, PLEKSI_STAND_SLUG] },
         is_active: true,
       },
       data: { is_active: false },
@@ -375,6 +426,12 @@ export async function syncStoreProducts() {
       where: { slug: METAL_PLATE_SLUG },
       update: {},
       create: METAL_PLATE_PRODUCT,
+    });
+    // Pleksi stand: create only if missing, never overwrite founder edits
+    await prisma.storeProduct.upsert({
+      where: { slug: PLEKSI_STAND_SLUG },
+      update: {},
+      create: PLEKSI_STAND_PRODUCT,
     });
     // Attach the plate video to an already-seeded row only while video_url is empty
     await prisma.storeProduct.updateMany({

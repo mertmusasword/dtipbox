@@ -612,6 +612,142 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       ],
     },
   },
+
+  // 8. PLEKSI QR MENU STAND
+  'pleksi-qr-menu-stand': {
+    tr: {
+      name: 'Pleksi QR Karekod Menü Standı',
+      description: 'Siyah pleksi kırımlı stand üzerine yapıştırılmış metal plaka ile şık bir QR menü standı. Kırımlı yapısı sayesinde dayanıklılığı artırılmış, uzun ömürlü kullanıma uygundur. Metal plaka üzerine dış etkenlere dayanıklı süblimasyon baskı yapılır.',
+      features: [
+        'Pleksi stand üzerine metal plaka',
+        '4 plaka rengi: Gümüş, Altın, Beyaz, Bronz',
+        '4 ebat: 4.5x5, 7x7, 9x5, 15x7 cm',
+        'Dış etkenlere dayanıklı süblimasyon baskı',
+        'Kırımlı yapı, uzun ömürlü kullanım',
+        'Her stand için farklı masa numarası / QR basılabilir',
+      ],
+    },
+    en: {
+      name: 'Plexiglass QR Code Menu Stand',
+      description: 'Elegant QR menu stand with a metal plate bonded onto a black folded plexiglass stand. The folded structure adds durability for long-lasting use. Weather-resistant sublimation print on the metal plate.',
+      features: [
+        'Metal plate on a plexiglass stand',
+        '4 plate colors: Silver, Gold, White, Bronze',
+        '4 sizes: 4.5x5, 7x7, 9x5, 15x7 cm',
+        'Durable sublimation print',
+        'Folded structure for long-lasting use',
+        'Different table number / QR per stand',
+      ],
+    },
+    de: {
+      name: 'Plexiglas-QR-Code-Menüaufsteller',
+      description: 'Eleganter QR-Menüaufsteller mit Metallplatte auf einem schwarzen gefalteten Plexiglas-Aufsteller. Die Faltung erhöht die Haltbarkeit. Widerstandsfähiger Sublimationsdruck auf der Metallplatte.',
+      features: [
+        'Metallplatte auf Plexiglas-Aufsteller',
+        '4 Plattenfarben: Silber, Gold, Weiß, Bronze',
+        '4 Größen: 4,5x5, 7x7, 9x5, 15x7 cm',
+        'Widerstandsfähiger Sublimationsdruck',
+        'Gefaltete Struktur, langlebig',
+        'Pro Aufsteller andere Tischnummer / anderer QR',
+      ],
+    },
+    fr: {
+      name: 'Support de menu QR en plexiglas',
+      description: 'Élégant support de menu QR avec plaque métallique collée sur un support en plexiglas noir plié. La structure pliée renforce la durabilité. Impression par sublimation résistante sur la plaque métallique.',
+      features: [
+        'Plaque métallique sur support en plexiglas',
+        '4 couleurs de plaque : argent, or, blanc, bronze',
+        '4 formats : 4,5x5, 7x7, 9x5, 15x7 cm',
+        'Impression par sublimation résistante',
+        'Structure pliée, longue durée',
+        'Numéro de table / QR différent par support',
+      ],
+    },
+    es: {
+      name: 'Soporte de menú QR de metacrilato',
+      description: 'Elegante soporte de menú QR con placa metálica pegada sobre un soporte plegado de metacrilato negro. La estructura plegada aumenta la durabilidad. Impresión por sublimación resistente sobre la placa.',
+      features: [
+        'Placa metálica sobre soporte de metacrilato',
+        '4 colores de placa: plata, oro, blanco, bronce',
+        '4 tamaños: 4,5x5, 7x7, 9x5, 15x7 cm',
+        'Impresión por sublimación resistente',
+        'Estructura plegada, larga duración',
+        'Número de mesa / QR distinto por soporte',
+      ],
+    },
+    pt: {
+      name: 'Suporte de menu QR em acrílico',
+      description: 'Elegante suporte de menu QR com placa metálica colada em um suporte de acrílico preto dobrado. A estrutura dobrada aumenta a durabilidade. Impressão por sublimação resistente na placa metálica.',
+      features: [
+        'Placa metálica sobre suporte de acrílico',
+        '4 cores de placa: prata, ouro, branco, bronze',
+        '4 tamanhos: 4,5x5, 7x7, 9x5, 15x7 cm',
+        'Impressão por sublimação resistente',
+        'Estrutura dobrada, longa duração',
+        'Número da mesa / QR diferente por suporte',
+      ],
+    },
+    ru: {
+      name: 'Подставка для QR-меню из оргстекла',
+      description: 'Элегантная подставка для QR-меню с металлической пластиной на чёрной складной подставке из оргстекла. Складная конструкция повышает прочность. Стойкая сублимационная печать на металлической пластине.',
+      features: [
+        'Металлическая пластина на подставке из оргстекла',
+        '4 цвета пластины: серебро, золото, белый, бронза',
+        '4 размера: 4,5x5, 7x7, 9x5, 15x7 см',
+        'Стойкая сублимационная печать',
+        'Складная конструкция, долгий срок службы',
+        'Разный номер стола / QR на каждой подставке',
+      ],
+    },
+    ar: {
+      name: 'حامل قائمة QR من البلكسي',
+      description: 'حامل قائمة QR أنيق بلوحة معدنية ملصقة على حامل بلكسي أسود مطوي. التصميم المطوي يزيد المتانة. طباعة تسامي مقاومة على اللوحة المعدنية.',
+      features: [
+        'لوحة معدنية على حامل بلكسي',
+        '4 ألوان للوحة: فضي، ذهبي، أبيض، برونزي',
+        '4 مقاسات: 4.5×5، 7×7، 9×5، 15×7 سم',
+        'طباعة تسامي متينة',
+        'هيكل مطوي لاستخدام طويل الأمد',
+        'رقم طاولة / QR مختلف لكل حامل',
+      ],
+    },
+    zh: {
+      name: '亚克力二维码菜单立牌',
+      description: '黑色折叠亚克力立牌上粘贴金属牌，优雅实用。折叠结构更耐用，适合长期使用。金属牌采用耐用热升华印刷。',
+      features: [
+        '亚克力立牌配金属牌',
+        '4 种金属牌颜色：银、金、白、青铜',
+        '4 种尺寸：4.5x5、7x7、9x5、15x7 厘米',
+        '耐用热升华印刷',
+        '折叠结构，经久耐用',
+        '每个立牌可印不同桌号 / 二维码',
+      ],
+    },
+    id: {
+      name: 'Standing Menu QR Pleksi',
+      description: 'Standing menu QR elegan dengan plat logam yang ditempel pada stand pleksi hitam lipat. Struktur lipat menambah daya tahan. Cetak sublimasi tahan lama pada plat logam.',
+      features: [
+        'Plat logam di atas stand pleksi',
+        '4 warna plat: perak, emas, putih, perunggu',
+        '4 ukuran: 4,5x5, 7x7, 9x5, 15x7 cm',
+        'Cetak sublimasi tahan lama',
+        'Struktur lipat, awet',
+        'Nomor meja / QR berbeda tiap stand',
+      ],
+    },
+    ja: {
+      name: 'アクリルQRメニュースタンド',
+      description: '黒い折り曲げ式アクリルスタンドに金属プレートを貼り付けたスタイリッシュなQRメニュースタンド。折り曲げ構造で耐久性が向上。金属プレートに耐久性のある昇華印刷。',
+      features: [
+        'アクリルスタンドに金属プレート',
+        'プレートカラー4色：シルバー、ゴールド、ホワイト、ブロンズ',
+        '4サイズ：4.5x5、7x7、9x5、15x7cm',
+        '耐久性のある昇華印刷',
+        '折り曲げ構造で長持ち',
+        'スタンドごとに異なるテーブル番号/QR',
+      ],
+    },
+  },
 };
 
 /**

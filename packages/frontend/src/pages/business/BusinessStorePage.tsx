@@ -471,7 +471,7 @@ export const BusinessStorePage: React.FC = () => {
       unitPrice: calculatedUnitPrice,
       customization: {
         size: tempSelectedSize || undefined,
-        color: customizingProduct.category === 'metal_plate' ? tempColor : undefined,
+        color: ['metal_plate', 'pleksi_stand'].includes(customizingProduct.category) ? tempColor : undefined,
         sizePrice: tempSizePrice > 0 ? tempSizePrice : undefined,
         qrType: tempQrType,
         qrTypeLabel: qrTypeOptions.find((o) => o.id === tempQrType)?.label || tempQrType,
@@ -480,7 +480,7 @@ export const BusinessStorePage: React.FC = () => {
         tableEnd: tempQrType === 'table' ? tempTableEnd : undefined,
         useLogo: tempUseLogo,
         staffIds: tempQrType === 'staff' ? tempSelectedStaff : undefined,
-        notes: customizingProduct.category === 'metal_plate'
+        notes: ['metal_plate', 'pleksi_stand'].includes(customizingProduct.category)
           ? [`Renk: ${tempColor}`, tempNotes].filter(Boolean).join(' | ')
           : tempNotes || undefined,
       },
@@ -783,6 +783,7 @@ export const BusinessStorePage: React.FC = () => {
               { id: 'transparent', label: 'Şeffaf QR Etiket' },
               { id: 'metal_stand', label: 'Metal QR Stand' },
               { id: 'metal_plate', label: 'Metal QR Kod' },
+              { id: 'pleksi_stand', label: 'Pleksi QR Stand' },
             ].map((cat) => {
               const active = selectedCategory === cat.id;
               return (
@@ -1433,7 +1434,7 @@ export const BusinessStorePage: React.FC = () => {
             )}
 
             {/* Color selection (metal plate only) */}
-            {customizingProduct.category === 'metal_plate' && (
+            {['metal_plate', 'pleksi_stand'].includes(customizingProduct.category) && (
               <div style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
                   <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
