@@ -60,6 +60,20 @@ interface CartItem {
   };
 }
 
+const IMAGES_ILLUSTRATIVE_NOTE = {
+  tr: 'Görseller temsilidir.',
+  en: 'Images are for illustration purposes only.',
+  de: 'Die Abbildungen sind symbolisch.',
+  fr: 'Les images sont non contractuelles.',
+  es: 'Las imágenes son ilustrativas.',
+  pt: 'As imagens são meramente ilustrativas.',
+  ru: 'Изображения носят иллюстративный характер.',
+  ar: 'الصور تمثيلية فقط.',
+  zh: '图片仅供参考。',
+  id: 'Gambar hanya sebagai ilustrasi.',
+  ja: '画像はイメージです。',
+};
+
 export const BusinessStorePage: React.FC = () => {
   const { t, formatCurrency, language } = useLanguage();
   const qrTypeOptions = getLocalizedQrTypeOptions(language);
@@ -971,6 +985,11 @@ export const BusinessStorePage: React.FC = () => {
                       <span>{t('store.watchVideo') || 'Video'}</span>
                     </button>
                   </div>
+                </div>
+
+                {/* Illustrative images disclaimer */}
+                <div style={{ padding: '0.35rem 1rem', fontSize: '0.68rem', color: '#64748b', fontStyle: 'italic', textAlign: 'center', background: 'rgba(15, 23, 42, 0.5)' }}>
+                  {IMAGES_ILLUSTRATIVE_NOTE[language as keyof typeof IMAGES_ILLUSTRATIVE_NOTE] || IMAGES_ILLUSTRATIVE_NOTE.en}
                 </div>
 
                 {/* Content Area */}
