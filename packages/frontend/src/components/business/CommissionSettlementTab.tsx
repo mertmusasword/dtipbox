@@ -24,6 +24,7 @@ import {
   Sparkles,
   ArrowRight,
   Lock,
+  Info,
 } from 'lucide-react';
 
 interface SettlementPeriod {
@@ -97,6 +98,13 @@ interface CommissionReport {
     }>;
   };
 }
+
+export const SETTLEMENT_MIN_THRESHOLDS: Record<string, number> = {
+  TRY: 100,
+  USD: 5,
+  EUR: 5,
+  GBP: 5,
+};
 
 export const CommissionSettlementTab: React.FC = () => {
   const { language, formatCurrency } = useLanguage();
@@ -235,6 +243,13 @@ export const CommissionSettlementTab: React.FC = () => {
 
   const { summary, monthlyPeriods, settlementIbanInfo } = report;
   const currency = summary.currency || 'TRY';
+  const minThreshold = SETTLEMENT_MIN_THRESHOLDS[(currency || 'TRY').toUpperCase()] || 5;
+  const isSummaryThresholdMet = summary.bankPlatformFeePending >= minThreshold;
+  const summaryProgressPercent = Math.min(100, Math.max(0, (summary.bankPlatformFeePending / minThreshold) * 100));
+
+  const modalAmountToPay = selectedPeriod ? selectedPeriod.bankCommissionPending : summary.bankPlatformFeePending;
+  const isModalThresholdMet = modalAmountToPay >= minThreshold;
+  const modalProgressPercent = Math.min(100, Math.max(0, (modalAmountToPay / minThreshold) * 100));
 
   const availableAccounts =
     settlementIbanInfo?.accounts && settlementIbanInfo.accounts.length > 0
@@ -431,12 +446,16 @@ export const CommissionSettlementTab: React.FC = () => {
             background: summary.hasPendingDeclaration
               ? 'rgba(245, 158, 11, 0.08)'
               : summary.bankPlatformFeePending > 0
-              ? 'rgba(239, 68, 68, 0.07)'
+              ? isSummaryThresholdMet
+                ? 'rgba(239, 68, 68, 0.08)'
+                : 'rgba(56, 189, 248, 0.08)'
               : 'rgba(16, 185, 129, 0.07)',
             border: summary.hasPendingDeclaration
               ? '1.5px solid rgba(245, 158, 11, 0.45)'
               : summary.bankPlatformFeePending > 0
-              ? '1.5px solid rgba(239, 68, 68, 0.35)'
+              ? isSummaryThresholdMet
+                ? '1.5px solid rgba(239, 68, 68, 0.35)'
+                : '1.5px solid rgba(56, 189, 248, 0.35)'
               : '1.5px solid rgba(16, 185, 129, 0.35)',
           }}
         >
@@ -444,7 +463,13 @@ export const CommissionSettlementTab: React.FC = () => {
             <span
               style={{
                 fontSize: '0.82rem',
-                color: summary.hasPendingDeclaration ? '#fde047' : summary.bankPlatformFeePending > 0 ? '#fca5a5' : '#86efac',
+                color: summary.hasPendingDeclaration
+                  ? '#fde047'
+                  : summary.bankPlatformFeePending > 0
+                  ? isSummaryThresholdMet
+                    ? '#fca5a5'
+                    : '#7dd3fc'
+                  : '#86efac',
                 fontWeight: 700,
               }}
             >
@@ -453,42 +478,125 @@ export const CommissionSettlementTab: React.FC = () => {
             <Clock
               size={18}
               style={{
-                color: summary.hasPendingDeclaration ? '#f59e0b' : summary.bankPlatformFeePending > 0 ? '#f87171' : '#34d399',
+                color: summary.hasPendingDeclaration
+                  ? '#f59e0b'
+                  : summary.bankPlatformFeePending > 0
+                  ? isSummaryThresholdMet
+                    ? '#f87171'
+                    : '#38bdf8'
+                  : '#34d399',
               }}
             />
           </div>
-          <div
-            style={{
-              fontSize: '1.65rem',
-              fontWeight: 800,
-              color: summary.hasPendingDeclaration ? '#fde047' : summary.bankPlatformFeePending > 0 ? '#f87171' : '#34d399',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {formatCurrency(summary.bankPlatformFeePending, currency)}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                fontSize: '1.65rem',
+                fontWeight: 800,
+                color: summary.hasPendingDeclaration
+                  ? '#fde047'
+                  : summary.bankPlatformFeePending > 0
+                  ? isSummaryThresholdMet
+                    ? '#f87171'
+                    : '#38bdf8'
+                  : '#34d399',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {formatCurrency(summary.bankPlatformFeePending, currency)}
+            </div>
+            {summary.bankPlatformFeePending > 0 && !summary.hasPendingDeclaration && (
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  background: isSummaryThresholdMet ? 'rgba(239, 68, 68, 0.2)' : 'rgba(56, 189, 248, 0.15)',
+                  color: isSummaryThresholdMet ? '#fca5a5' : '#38bdf8',
+                }}
+              >
+                {isSummaryThresholdMet
+                  ? (language === 'tr' ? '🔔 Eşik Aşıldı' : '🔔 Due Now')
+                  : `⏳ ${language === 'tr' ? 'Birikiyor' : 'Accruing'} (${language === 'tr' ? 'Eşik' : 'Min'}: ${formatCurrency(minThreshold, currency)})`}
+              </span>
+            )}
           </div>
-          <div style={{ marginTop: '0.5rem' }}>
+
+          {/* Threshold Progress Bar for Pending Balance */}
+          {summary.bankPlatformFeePending > 0 && !summary.hasPendingDeclaration && (
+            <div style={{ marginTop: '0.65rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#94a3b8', marginBottom: '3px', fontWeight: 600 }}>
+                <span>{language === 'tr' ? 'Asgari Kart Ödeme Eşiği' : 'Minimum Card Payment Threshold'}</span>
+                <span>%{summaryProgressPercent.toFixed(1)} ({formatCurrency(minThreshold, currency)})</span>
+              </div>
+              <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+                <div
+                  style={{
+                    width: `${Math.max(4, summaryProgressPercent)}%`,
+                    height: '100%',
+                    background: isSummaryThresholdMet
+                      ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
+                      : 'linear-gradient(90deg, #38bdf8 0%, #818cf8 100%)',
+                    borderRadius: '999px',
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '0.35rem', lineHeight: 1.35 }}>
+                💡 {isSummaryThresholdMet
+                  ? (language === 'tr'
+                      ? `Asgari eşik aşıldı. Kredi kartı veya havale ile mutabakatınızı hemen kapatabilirsiniz.`
+                      : `Threshold met. You can settle via card or bank wire now.`)
+                  : (language === 'tr'
+                      ? `Mikro işlem masraflarını önlemek için kartla ödeme ${formatCurrency(minThreshold, currency)} limitine ulaşıldığında açılır. Sistem kesintisiz çalışır.`
+                      : `To avoid micro-transaction fees, card settlement activates once ${formatCurrency(minThreshold, currency)} is reached.`)}
+              </div>
+            </div>
+          )}
+
+          <div style={{ marginTop: '0.65rem' }}>
             {summary.hasPendingDeclaration ? (
               <span style={{ fontSize: '0.78rem', color: '#f59e0b', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                 <Clock size={13} /> {ct.btnReportedPending || 'İncelemede / Onay Bekleniyor ⏳'}
               </span>
             ) : summary.bankPlatformFeePending > 0 ? (
-              <button
-                type="button"
-                onClick={() => handleOpenSettlement()}
-                className="btn btn-primary"
-                style={{
-                  padding: '4px 10px',
-                  fontSize: '0.78rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: '#ef4444',
-                  borderColor: '#dc2626',
-                }}
-              >
-                <Receipt size={13} /> {ct.btnPaySettle}
-              </button>
+              isSummaryThresholdMet ? (
+                <button
+                  type="button"
+                  onClick={() => handleOpenSettlement()}
+                  className="btn btn-primary"
+                  style={{
+                    padding: '5px 12px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                    borderColor: '#0284c7',
+                    boxShadow: '0 2px 10px rgba(2, 132, 199, 0.35)',
+                  }}
+                >
+                  <Receipt size={13} /> {ct.btnPaySettle}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleOpenSettlement()}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '0.76rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: '#38bdf8',
+                    borderColor: 'rgba(56, 189, 248, 0.35)',
+                  }}
+                >
+                  <Receipt size={13} /> {language === 'tr' ? 'Detayları İncele / Erken Kapat' : 'View Details / Settle Early'}
+                </button>
+              )
             ) : (
               <span style={{ fontSize: '0.75rem', color: '#10b981', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                 <CheckCircle2 size={13} /> {ct.btnSettled}
@@ -629,10 +737,18 @@ export const CommissionSettlementTab: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenSettlement(period)}
-                            className="btn btn-primary"
-                            style={{ padding: '4px 10px', fontSize: '0.78rem' }}
+                            className={period.bankCommissionPending >= minThreshold ? 'btn btn-primary' : 'btn btn-secondary'}
+                            style={{
+                              padding: '4px 10px',
+                              fontSize: '0.78rem',
+                              ...(period.bankCommissionPending < minThreshold
+                                ? { color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.4)' }
+                                : {}),
+                            }}
                           >
-                            {ct.btnPaySettle}
+                            {period.bankCommissionPending >= minThreshold
+                              ? ct.btnPaySettle
+                              : `⏳ ${language === 'tr' ? 'Birikiyor' : 'Accruing'} (${formatCurrency(period.bankCommissionPending, currency)})`}
                           </button>
                         ) : (
                           <button
@@ -730,25 +846,48 @@ export const CommissionSettlementTab: React.FC = () => {
             {/* Amount Due Callout */}
             <div
               style={{
-                background: 'rgba(239, 68, 68, 0.08)',
-                border: '1.5px solid rgba(239, 68, 68, 0.3)',
+                background: !isModalThresholdMet
+                  ? 'rgba(56, 189, 248, 0.08)'
+                  : 'rgba(239, 68, 68, 0.08)',
+                border: !isModalThresholdMet
+                  ? '1.5px solid rgba(56, 189, 248, 0.35)'
+                  : '1.5px solid rgba(239, 68, 68, 0.3)',
                 borderRadius: '14px',
                 padding: '1rem',
                 marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
               }}
             >
-              <span style={{ fontSize: '0.88rem', color: '#fca5a5', fontWeight: 600 }}>
-                {ct.amountToPay}:
-              </span>
-              <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f87171' }}>
-                {formatCurrency(
-                  selectedPeriod ? selectedPeriod.bankCommissionPending : summary.bankPlatformFeePending,
-                  currency
-                )}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.88rem', color: !isModalThresholdMet ? '#7dd3fc' : '#fca5a5', fontWeight: 600 }}>
+                  {ct.amountToPay}:
+                </span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 800, color: !isModalThresholdMet ? '#38bdf8' : '#f87171' }}>
+                  {formatCurrency(modalAmountToPay, currency)}
+                </span>
+              </div>
+              <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94a3b8', marginBottom: '3px' }}>
+                  <span>
+                    {language === 'tr' ? 'Asgari Kartlı Ödeme Eşiği: ' : 'Minimum Card Payment Threshold: '}
+                    <strong style={{ color: '#f8fafc' }}>{formatCurrency(minThreshold, currency)}</strong>
+                  </span>
+                  <span style={{ color: !isModalThresholdMet ? '#38bdf8' : '#10b981', fontWeight: 700 }}>
+                    %{modalProgressPercent.toFixed(1)} {isModalThresholdMet ? '✓' : ''}
+                  </span>
+                </div>
+                <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: `${Math.max(4, modalProgressPercent)}%`,
+                      height: '100%',
+                      background: isModalThresholdMet
+                        ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
+                        : 'linear-gradient(90deg, #38bdf8 0%, #818cf8 100%)',
+                      borderRadius: '999px',
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Payment Method Selector Tabs */}
@@ -815,67 +954,141 @@ export const CommissionSettlementTab: React.FC = () => {
             {/* OPTION 1: CREDIT CARD / APPLE PAY (INSTANT) */}
             {settlementMethod === 'CARD' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '0.5rem' }}>
-                <div
-                  style={{
-                    background: 'rgba(15, 23, 42, 0.7)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '14px',
-                    padding: '1.25rem',
-                    fontSize: '0.85rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.75rem',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <ShieldCheck size={20} style={{ color: '#10b981' }} />
-                    <span style={{ color: '#f8fafc', fontWeight: 700 }}>3D Secure & Apple Pay Güvencesi</span>
-                  </div>
-                  <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem', lineHeight: 1.5 }}>
-                    Visa, Mastercard, American Express, Apple Pay veya Google Pay ile anında ödeme yapabilirsiniz. Ödeme onaylandığı saniye mutabakatınız sistemde otomatik olarak kapatılır.
-                  </p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.75rem' }}>
-                    <Lock size={12} />
-                    <span>256-bit SSL Uçtan Uca Şifreli Ödeme Altyapısı</span>
-                  </div>
-                </div>
+                {!isModalThresholdMet ? (
+                  <>
+                    <div
+                      style={{
+                        background: 'rgba(56, 189, 248, 0.08)',
+                        border: '1px solid rgba(56, 189, 248, 0.25)',
+                        borderRadius: '14px',
+                        padding: '1.25rem',
+                        fontSize: '0.85rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <Clock size={20} style={{ color: '#38bdf8' }} />
+                        <span style={{ color: '#f8fafc', fontWeight: 700 }}>
+                          {language === 'tr'
+                            ? `Asgari Eşik Bilgilendirmesi (${formatCurrency(minThreshold, currency)})`
+                            : `Minimum Threshold Notice (${formatCurrency(minThreshold, currency)})`}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.82rem', lineHeight: 1.55 }}>
+                        {language === 'tr'
+                          ? `İşletmenizi mikro işlem ve kart komisyonu yükünden korumak adına, kartla ödeme butonu biriken komisyonunuz ${formatCurrency(minThreshold, currency)} limitine ulaştığında otomatik olarak aktifleşir. Bu limite ulaşana kadar sisteminiz ve QR bahşiş akışınız kesintisiz olarak çalışmaya devam eder.`
+                          : `To protect your business from micro-transaction overhead, card checkout activates automatically once your accrued fee reaches ${formatCurrency(minThreshold, currency)}. Your QR tipping continues uninterrupted in the meantime.`}
+                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.76rem', fontWeight: 600 }}>
+                        <CheckCircle2 size={14} />
+                        <span>
+                          {language === 'tr'
+                            ? 'Mevcut Durum: Sisteminiz %100 Aktif ve Kesintisizdir'
+                            : 'Status: System is 100% Active and Healthy'}
+                        </span>
+                      </div>
+                    </div>
 
-                <button
-                  type="button"
-                  disabled={startingCardPayment}
-                  onClick={handleCardPayment}
-                  className="btn btn-primary"
-                  style={{
-                    width: '100%',
-                    padding: '0.9rem 1.25rem',
-                    fontWeight: 800,
-                    fontSize: '0.95rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.6rem',
-                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-                    border: 'none',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 18px rgba(2, 132, 199, 0.4)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {startingCardPayment ? (
-                    <>
-                      <Loader2 size={18} className="spinner" />
-                      <span>Ödeme Sayfası Açılıyor...</span>
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard size={18} />
+                    <button
+                      type="button"
+                      disabled={true}
+                      style={{
+                        width: '100%',
+                        padding: '0.85rem 1.25rem',
+                        fontWeight: 700,
+                        fontSize: '0.88rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        color: '#94a3b8',
+                        cursor: 'not-allowed',
+                      }}
+                    >
+                      <Lock size={15} />
                       <span>
-                        Kartla Öde ve Kapat ({formatCurrency(selectedPeriod ? selectedPeriod.bankCommissionPending : summary.bankPlatformFeePending, currency)})
+                        {language === 'tr'
+                          ? `Asgari Eşik Bekleniyor (${formatCurrency(modalAmountToPay, currency)} / ${formatCurrency(minThreshold, currency)})`
+                          : `Threshold Pending (${formatCurrency(modalAmountToPay, currency)} / ${formatCurrency(minThreshold, currency)})`}
                       </span>
-                      <ArrowRight size={16} />
-                    </>
-                  )}
-                </button>
+                    </button>
+
+                    <p style={{ margin: 0, fontSize: '0.76rem', color: '#64748b', textAlign: 'center', lineHeight: 1.4 }}>
+                      💡 {language === 'tr'
+                        ? 'Beklemek istemezseniz "Banka Havalesi / FAST" sekmesinden şirket hesabımıza dilediğiniz tutarda doğrudan transfer yapabilirsiniz.'
+                        : 'If you wish to settle earlier, switch to the "Bank Wire / FAST" tab to transfer directly without waiting.'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        background: 'rgba(15, 23, 42, 0.7)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '14px',
+                        padding: '1.25rem',
+                        fontSize: '0.85rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <ShieldCheck size={20} style={{ color: '#10b981' }} />
+                        <span style={{ color: '#f8fafc', fontWeight: 700 }}>3D Secure & Apple Pay Güvencesi</span>
+                      </div>
+                      <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                        Visa, Mastercard, American Express, Apple Pay veya Google Pay ile anında ödeme yapabilirsiniz. Ödeme onaylandığı saniye mutabakatınız sistemde otomatik olarak kapatılır.
+                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.75rem' }}>
+                        <Lock size={12} />
+                        <span>256-bit SSL Uçtan Uca Şifreli Ödeme Altyapısı</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={startingCardPayment}
+                      onClick={handleCardPayment}
+                      className="btn btn-primary"
+                      style={{
+                        width: '100%',
+                        padding: '0.9rem 1.25rem',
+                        fontWeight: 800,
+                        fontSize: '0.95rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.6rem',
+                        background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 18px rgba(2, 132, 199, 0.4)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {startingCardPayment ? (
+                        <>
+                          <Loader2 size={18} className="spinner" />
+                          <span>Ödeme Sayfası Açılıyor...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard size={18} />
+                          <span>
+                            Kartla Öde ve Kapat ({formatCurrency(modalAmountToPay, currency)})
+                          </span>
+                          <ArrowRight size={16} />
+                        </>
+                      )}
+                    </button>
+                  </>
+                )}
 
                 <button
                   type="button"

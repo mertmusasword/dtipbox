@@ -590,6 +590,22 @@ router.post('/commissions/card-checkout', async (req: AuthRequest, res, next) =>
       throw new AppError('Ödenecek cari komisyon borcu bulunmuyor.', 400);
     }
 
+    const SETTLEMENT_MIN_THRESHOLDS: Record<string, number> = {
+      TRY: 100,
+      USD: 5,
+      EUR: 5,
+      GBP: 5,
+    };
+    const bCurrency = (business.currency || 'TRY').toUpperCase();
+    const minThreshold = SETTLEMENT_MIN_THRESHOLDS[bCurrency] || 5;
+
+    if (amountToPay < minThreshold) {
+      throw new AppError(
+        `Asgari kartlı mutabakat eşiği ${minThreshold} ${bCurrency}'dir. Bakiyeniz bu eşiğe ulaştığında kartla ödenebilir.`,
+        400
+      );
+    }
+
     const { checkoutUrl } = await lemonSqueezyService.createCommissionCheckout({
       businessId,
       businessName: business.name,
