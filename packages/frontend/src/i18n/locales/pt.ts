@@ -633,7 +633,7 @@ export const pt = {
     "globalOverview": "Visão Geral da Plataforma Global",
     "dashboardSubtitle": "Administração SaaS Naponi, saúde dos parceiros e volumes agregados",
     "commissionsTab": "Receitas e Comissões",
-    "commissionsSubtitle": "0,5% de comissão e Fundadores 2026",
+    "commissionsSubtitle": "3,5% de comissão e Fundadores 2026",
     "totalBusinesses": "Empresas Registradas",
     "currentlyActive": "atualmente ativas",
     "registeredStaff": "Equipe Registrada",

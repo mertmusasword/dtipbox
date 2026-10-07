@@ -11,7 +11,7 @@ export interface MonthlySettlementPeriod {
   bankTipsVolume: number;
   cashTipsVolume: number;
   totalTipsCount: number;
-  commissionRate: number; // 0.50
+  commissionRate: number; // 3.50
   totalCommission: number;
   cardCommission: number; // collected at gateway
   bankCommissionTotal: number;
@@ -38,7 +38,7 @@ export interface BusinessCommissionsReport {
     totalTipsCount: number;
     unverifiedTipsVolume: number;
     unverifiedTipsCount: number;
-    platformFeeRate: number; // 0.50
+    platformFeeRate: number; // 3.50
     totalPlatformFee: number;
     cardPlatformFee: number;
     bankPlatformFeeTotal: number;
@@ -174,7 +174,7 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
       continue;
     }
 
-    const fee = Number(tip.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
+    const fee = Number(tip.platform_fee_amount) || Number((amt * 0.035).toFixed(2));
 
     totalTipsVolume += amt;
     totalTipsCount += 1;
@@ -294,7 +294,7 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
       bankTipsVolume: Number(data.bankTipsVolume.toFixed(2)),
       cashTipsVolume: Number(data.cashTipsVolume.toFixed(2)),
       totalTipsCount: data.totalTipsCount,
-      commissionRate: 0.50,
+      commissionRate: 3.50,
       totalCommission: Number(data.totalCommission.toFixed(2)),
       cardCommission: Number(data.cardCommission.toFixed(2)),
       bankCommissionTotal: Number(data.bankCommissionTotal.toFixed(2)),
@@ -322,7 +322,7 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
       totalTipsCount,
       unverifiedTipsVolume: Number(unverifiedTipsVolume.toFixed(2)),
       unverifiedTipsCount,
-      platformFeeRate: 0.50,
+      platformFeeRate: 3.50,
       totalPlatformFee: Number(totalPlatformFee.toFixed(2)),
       cardPlatformFee: Number(cardPlatformFee.toFixed(2)),
       bankPlatformFeeTotal: Number(bankPlatformFeeTotal.toFixed(2)),
@@ -431,7 +431,7 @@ export async function declareBusinessSettlement(
   let declaredAmount = 0;
   for (const t of unsettledTips) {
     const amt = Number(t.amount);
-    const fee = Number(t.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
+    const fee = Number(t.platform_fee_amount) || Number((amt * 0.035).toFixed(2));
     declaredAmount += fee;
   }
   declaredAmount = Number(declaredAmount.toFixed(2));

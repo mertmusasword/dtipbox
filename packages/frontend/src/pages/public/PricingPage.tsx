@@ -536,7 +536,7 @@ export const PricingPage: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          4. COMMISSION TRANSPARENCY: SADECE %0.5
+          4. COMMISSION TRANSPARENCY: SADECE %3.5
           ==================================================================== */}
       <section className="home-section">
         <div className="home-container">

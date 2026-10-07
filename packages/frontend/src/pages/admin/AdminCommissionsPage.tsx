@@ -243,7 +243,7 @@ export const AdminCommissionsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Total Platform 0.5% Revenue */}
+        {/* Total Platform 3.5% Revenue */}
         <div className="glass-card" style={{ padding: '1.25rem', borderRadius: '14px', border: '1.5px solid rgba(16, 185, 129, 0.35)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '0.82rem', color: '#6ee7b7', fontWeight: 700 }}>{art.platformRevenue}</span>
@@ -253,7 +253,7 @@ export const AdminCommissionsPage: React.FC = () => {
             {formatCurrency(summary.totalPlatformRevenue, 'TRY')}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
-            Net %0.50 Naponi Platform Hasılatı
+            Net %3.50 Naponi Platform Hasılatı
           </div>
         </div>
 

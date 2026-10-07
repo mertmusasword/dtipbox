@@ -1235,8 +1235,8 @@ export const BLOG_POSTS_TR: BlogPost[] = [
         answer: '2027 yılı itibarıyla platforma yeni katılacak işletmeler için aylık 499 ₺ sabit yazılım lisans bedeli ve gelişmiş modüller için ek ücret tarifesi uygulanacaktır. 2026 Kurucu Üyeleri ise bu sabit aidatlardan ömür boyu tamamen muaftır.',
       },
       {
-        question: 'Bahşiş işlemlerinde alınan %0.50 platform komisyonu nasıl çalışır?',
-        answer: 'Naponi, kartlı veya FAST/havale ile gönderilen her bahşiş işleminde yalnızca %0.50 adil platform hizmet bedeli alır. Kredi kartı ödemelerinde bu bedel anında otomatik tahsil edilir; doğrudan işletme/personel IBAN\'ına yapılan havale/FAST transferlerinde ise aylık şeffaf ekstre ile mutabakat sağlanır.',
+        question: 'Bahşiş işlemlerinde alınan %3.50 platform komisyonu nasıl çalışır?',
+        answer: 'Naponi, kartlı veya FAST/havale ile gönderilen her bahşiş işleminde yalnızca %3.50 adil platform hizmet bedeli alır. Kredi kartı ödemelerinde bu bedel anında otomatik tahsil edilir; doğrudan işletme/personel IBAN\'ına yapılan havale/FAST transferlerinde ise aylık şeffaf ekstre ile mutabakat sağlanır.',
       },
       {
         question: 'Kurucu üye olmak için herhangi bir ek ücret veya gizli taahhüt var mı?',
@@ -1285,16 +1285,16 @@ export const BLOG_POSTS_TR: BlogPost[] = [
         <li><strong>Toplu Ödeme ve Bordro Dışa Aktarma:</strong> Muhasebe departmanınız için tek tıkla Excel ve CSV formatında yasal uyumlu döküm alma.</li>
       </ol>
 
-      <h2>Şeffaf Maliyet Modeli: Sadece %0.50 Platform Hizmet Bedeli</h2>
+      <h2>Şeffaf Maliyet Modeli: Sadece %3.50 Platform Hizmet Bedeli</h2>
       <p>
         Naponi'nin iş modeli gizli masraflara değil, şeffaf ve sürdürülebilir bir ortaklığa dayanır. İşletmenizden kurulum ücreti, donanım kira bedeli veya minimum ciro taahhüdü talep edilmez.
       </p>
       <ul>
-        <li><strong>Kredi Kartı İşlemleri:</strong> Yapılan bahşiş ödemesi üzerinden sadece %0.50 platform hizmet bedeli otomatik olarak ayrıştırılır.</li>
-        <li><strong>Havale / FAST / IBAN İşlemleri:</strong> Para doğrudan işletmenin veya garsonun hesabına geçtiği için, aylık periyotlarla üretilen şeffaf mutabakat ekstresi üzerinden %0.50 platform bedeli ödenir.</li>
+        <li><strong>Kredi Kartı İşlemleri:</strong> Yapılan bahşiş ödemesi üzerinden sadece %3.50 platform hizmet bedeli otomatik olarak ayrıştırılır.</li>
+        <li><strong>Havale / FAST / IBAN İşlemleri:</strong> Para doğrudan işletmenin veya garsonun hesabına geçtiği için, aylık periyotlarla üretilen şeffaf mutabakat ekstresi üzerinden %3.50 platform bedeli ödenir.</li>
       </ul>
       <p>
-        Örneğin 100 ₺'lik bir bahşiş işleminde platform bedeli yalnızca <strong>0.50 ₺</strong>'dir. Kalan 99.50 ₺ eksiksiz olarak servis personeline veya işletme havuzuna kalır.
+        Örneğin 100 ₺'lik bir bahşiş işleminde platform bedeli yalnızca <strong>3.50 ₺</strong>'dir. Kalan 96.50 ₺ eksiksiz olarak servis personeline veya işletme havuzuna kalır.
       </p>
 
       <h2>Kurucu Üyelik ile Standart Üyelik (2027+) Karşılaştırması</h2>
@@ -1315,8 +1315,8 @@ export const BLOG_POSTS_TR: BlogPost[] = [
             </tr>
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
               <td style="padding: 12px 16px; font-weight: 600;">İşlem Başına Platform Komisyonu</td>
-              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">%0.50 (Sabit)</td>
-              <td style="padding: 12px 16px;">%0.50 + Ek Modül Ücreti</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">%3.50 (Sabit)</td>
+              <td style="padding: 12px 16px;">%3.50 + Ek Modül Ücreti</td>
             </tr>
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
               <td style="padding: 12px 16px; font-weight: 600;">Masa ve QR Kod Sınırı</td>

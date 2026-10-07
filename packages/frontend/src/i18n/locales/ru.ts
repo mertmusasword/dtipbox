@@ -633,7 +633,7 @@ export const ru = {
     "globalOverview": "Глобальный обзор платформы",
     "dashboardSubtitle": "Управление Naponi SaaS, состояние заведений и совокупные объемы",
     "commissionsTab": "Доходы и комиссии",
-    "commissionsSubtitle": "0,5% комиссии и Основатели 2026",
+    "commissionsSubtitle": "3,5% комиссии и Основатели 2026",
     "totalBusinesses": "Всего заведений",
     "currentlyActive": "активны в данный момент",
     "registeredStaff": "Зарегистрированный персонал",

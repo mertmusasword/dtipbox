@@ -130,7 +130,7 @@ export const AnalyticsPage: React.FC = () => {
             }}
           >
             <Receipt size={17} />
-            <span>%0.5 Komisyon & Mutabakat</span>
+            <span>%3.5 Komisyon & Mutabakat</span>
           </Link>
 
           <div id="export-menu-container" style={{ position: 'relative' }}>

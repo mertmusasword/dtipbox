@@ -232,7 +232,7 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
 
   for (const t of allTips) {
     const amt = Number(t.amount);
-    const fee = Number(t.platform_fee_amount) || Number((amt * 0.005).toFixed(2));
+    const fee = Number(t.platform_fee_amount) || Number((amt * 0.035).toFixed(2));
     const method = (t.payment_method || '').toUpperCase();
     const isBank =
       method === 'BANK_TRANSFER' ||

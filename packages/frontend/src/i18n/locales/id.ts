@@ -633,7 +633,7 @@ export const id = {
     "globalOverview": "Ikhtisar Platform Global",
     "dashboardSubtitle": "Administrasi SaaS Naponi, kesehatan mitra, dan volume kumulatif",
     "commissionsTab": "Pendapatan & Komisi",
-    "commissionsSubtitle": "Komisi 0,5% & Pendiri 2026",
+    "commissionsSubtitle": "Komisi 3,5% & Pendiri 2026",
     "totalBusinesses": "Total Bisnis Terdaftar",
     "currentlyActive": "saat ini aktif",
     "registeredStaff": "Staf Terdaftar",

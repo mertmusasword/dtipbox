@@ -511,7 +511,7 @@ export const CommissionSettlementTab: React.FC = () => {
             {formatCurrency(summary.bankTipsVolume, currency)}
           </div>
           <div style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '0.35rem' }}>
-            %0.50 {ct.bankCommissionAccrued}: {formatCurrency(summary.bankPlatformFeeTotal, currency)}
+            %{summary.platformFeeRate ? summary.platformFeeRate.toFixed(2) : '3.50'} {ct.bankCommissionAccrued}: {formatCurrency(summary.bankPlatformFeeTotal, currency)}
           </div>
           {Boolean(summary.unverifiedTipsCount && summary.unverifiedTipsCount > 0) && (
             <div

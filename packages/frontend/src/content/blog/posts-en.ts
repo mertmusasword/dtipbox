@@ -1356,8 +1356,8 @@ export const BLOG_POSTS_EN: BlogPost[] = [
         answer: 'Starting in 2027, newly onboarded businesses will pay a monthly software subscription fee ($49/€45/499 ₺ per month) plus add-on modular fees. 2026 Founder Members are permanently exempt from all monthly and annual subscription fees for life.',
       },
       {
-        question: 'How does the 0.50% platform fee work on tips?',
-        answer: 'Naponi applies a fair 0.50% platform fee on all card and wire/instant bank transfer transactions. For credit card transactions, this fee is deducted automatically in real-time. For direct IBAN/bank transfers, an automated transparent monthly statement is generated for periodic settlement.',
+        question: 'How does the 3.50% platform fee work on tips?',
+        answer: 'Naponi applies a fair 3.50% platform fee on all card and wire/instant bank transfer transactions. For credit card transactions, this fee is deducted automatically in real-time. For direct IBAN/bank transfers, an automated transparent monthly statement is generated for periodic settlement.',
       },
       {
         question: 'Are there setup costs, hardware leases, or hidden commitments?',
@@ -1406,16 +1406,16 @@ export const BLOG_POSTS_EN: BlogPost[] = [
         <li><strong>One-Click Payroll & Tax Export:</strong> Clean CSV and Excel exports compliant with labor and payroll reporting standards.</li>
       </ol>
 
-      <h2>Transparent Cost Architecture: Just 0.50% Platform Fee</h2>
+      <h2>Transparent Cost Architecture: Just 3.50% Platform Fee</h2>
       <p>
         Naponi operates on partnership, not predatory pricing. We never charge setup fees, hardware lease penalties, or early termination fees.
       </p>
       <ul>
-        <li><strong>Card Payments:</strong> A flat 0.50% platform service fee is cleanly segregated during payment processing.</li>
+        <li><strong>Card Payments:</strong> A flat 3.50% platform service fee is cleanly segregated during payment processing.</li>
         <li><strong>Wire / Instant Bank Transfers:</strong> Because funds transfer straight to the venue or server IBAN, fees are tracked via transparent monthly statements for easy periodic settlement.</li>
       </ul>
       <p>
-        On a $100 (or €100 / 100 ₺) guest tip, our platform fee is just <strong>$0.50</strong> (or €0.50 / 0.50 ₺). The remaining 99.50% goes directly to the service workers who earned it.
+        On a $100 (or €100 / 100 ₺) guest tip, our platform fee is just <strong>$3.50</strong> (or €3.50 / 3.50 ₺). The remaining 96.50% goes directly to the service workers who earned it.
       </p>
 
       <h2>Founder Membership vs. Standard 2027+ Tiers</h2>
@@ -1436,8 +1436,8 @@ export const BLOG_POSTS_EN: BlogPost[] = [
             </tr>
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
               <td style="padding: 12px 16px; font-weight: 600;">Platform Fee per Transaction</td>
-              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">0.50% Flat</td>
-              <td style="padding: 12px 16px;">0.50% + Module Add-ons</td>
+              <td style="padding: 12px 16px; color: #34d399; font-weight: 700;">3.50% Flat</td>
+              <td style="padding: 12px 16px;">3.50% + Module Add-ons</td>
             </tr>
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
               <td style="padding: 12px 16px; font-weight: 600;">Table & QR Code Limits</td>

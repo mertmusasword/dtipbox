@@ -380,8 +380,8 @@ export async function createTip(data: CreateTipRequest) {
     }
 
     let tip: any;
-    const PLATFORM_FEE_RATE = 0.50; // %0.5
-    const platformFeeAmount = Math.round(data.amount * PLATFORM_FEE_RATE) / 100; // amount * 0.50 / 100
+    const PLATFORM_FEE_RATE = 3.50; // %3.5
+    const platformFeeAmount = Math.round(data.amount * PLATFORM_FEE_RATE) / 100; // amount * 3.50 / 100
     try {
       tip = await prisma.tip.create({
         data: {

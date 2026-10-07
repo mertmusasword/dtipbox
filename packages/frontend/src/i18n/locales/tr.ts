@@ -633,7 +633,7 @@ export const tr = {
     "globalOverview": "Genel Platform Özeti",
     "dashboardSubtitle": "Naponi SaaS yönetimi, işletme sağlığı ve kümülatif işlem hacimleri",
     "commissionsTab": "Gelir & Komisyonlar",
-    "commissionsSubtitle": "%0.5 Komisyon & 2026 Kurucular",
+    "commissionsSubtitle": "%3.5 Komisyon & 2026 Kurucular",
     "totalBusinesses": "Kayıtlı İşletmeler",
     "currentlyActive": "şu anda aktif",
     "registeredStaff": "Kayıtlı Personel",
