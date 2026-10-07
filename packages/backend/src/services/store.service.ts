@@ -150,7 +150,7 @@ const METAL_PLATE_PRODUCT = {
   category: 'metal_plate',
   image_url: '/hardware/metal-qr-plate.jpg',
   gallery: [] as string[],
-  video_url: null,
+  video_url: '/hardware/metal-qr-plate.mp4',
   stock: 9999,
   min_quantity: 1,
   quantity_step: 1,
@@ -375,6 +375,11 @@ export async function syncStoreProducts() {
       where: { slug: METAL_PLATE_SLUG },
       update: {},
       create: METAL_PLATE_PRODUCT,
+    });
+    // Attach the plate video to an already-seeded row only while video_url is empty
+    await prisma.storeProduct.updateMany({
+      where: { slug: METAL_PLATE_SLUG, video_url: null },
+      data: { video_url: '/hardware/metal-qr-plate.mp4' },
     });
   } catch (err) {
     console.error('[StoreService] Error syncing store products:', err);
