@@ -16,6 +16,17 @@ export interface CreateStoreCheckoutParams {
   redirectUrl?: string;
 }
 
+export interface CreateCommissionCheckoutParams {
+  businessId: string;
+  businessName: string;
+  periodKey?: string;
+  totalAmount: number;
+  currency: string;
+  customerEmail?: string;
+  customerName?: string;
+  redirectUrl?: string;
+}
+
 /**
  * Lemon Squeezy Global Merchant of Record (MoR) Integration
  * Powers credit card, debit card, Apple Pay, Google Pay, and international multi-currency checkouts.
@@ -173,6 +184,94 @@ export class LemonSqueezyService {
   }
 
   /**
+   * Create dynamic Lemon Squeezy hosted checkout for a business commission settlement
+   */
+  public async createCommissionCheckout(params: CreateCommissionCheckoutParams): Promise<{ checkoutUrl: string }> {
+    if (!this.isConfigured()) {
+      throw new AppError('Global payment gateway is not properly configured.', 503);
+    }
+
+    const amountInCents = await this.convertToUsdCents(params.totalAmount, params.currency);
+    const publicAppUrl =
+      env.APP_URL && !env.APP_URL.includes('localhost') && env.APP_URL.startsWith('http')
+        ? env.APP_URL
+        : 'https://www.naponi.com';
+    const redirectUrl =
+      params.redirectUrl ||
+      `${publicAppUrl}/business/payment-settings?tab=commissions&settled=success&period=${encodeURIComponent(params.periodKey || 'ALL_PENDING')}`;
+
+    const periodLabel = params.periodKey && params.periodKey !== 'ALL_PENDING' ? params.periodKey : 'Cari Dönem';
+
+    const requestPayload = {
+      data: {
+        type: 'checkouts',
+        attributes: {
+          custom_price: amountInCents,
+          checkout_options: {
+            dark: true,
+            button_color: '#0284c7',
+          },
+          product_options: {
+            name: `Naponi Platform Mutabakatı - ${params.businessName}`,
+            description: `Dönem: ${periodLabel} • Mutabakat Komisyon Ödemesi (${params.totalAmount} ${params.currency})`,
+            redirect_url: redirectUrl,
+          },
+          checkout_data: {
+            email: params.customerEmail || undefined,
+            name: params.customerName || undefined,
+            custom: {
+              type: 'COMMISSION_SETTLEMENT',
+              business_id: params.businessId,
+              period_key: params.periodKey || 'ALL_PENDING',
+              amount: params.totalAmount,
+              currency: params.currency,
+            },
+          },
+        },
+        relationships: {
+          store: {
+            data: {
+              type: 'stores',
+              id: this.storeId,
+            },
+          },
+          variant: {
+            data: {
+              type: 'variants',
+              id: this.variantId,
+            },
+          },
+        },
+      },
+    };
+
+    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/vnd.api+json',
+        Accept: 'application/vnd.api+json',
+      },
+      body: JSON.stringify(requestPayload),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      logger.error('[LemonSqueezy] Commission checkout creation failed', 'LemonSqueezy', { status: response.status, error: errText });
+      throw new AppError('Kredi kartı ile ödeme oturumu başlatılamadı.', 502);
+    }
+
+    const resJson: any = await response.json();
+    const checkoutUrl = resJson?.data?.attributes?.url;
+
+    if (!checkoutUrl) {
+      throw new AppError('Ödeme oturumu adresi oluşturulamadı.', 502);
+    }
+
+    return { checkoutUrl };
+  }
+
+  /**
    * Verify Lemon Squeezy webhook signature (X-Signature HMAC SHA-256)
    */
   public verifyWebhookSignature(rawBody: string, signature: string | undefined): boolean {
@@ -205,12 +304,30 @@ export class LemonSqueezyService {
     const orderId = customData.order_id;
     const orderNumber = customData.order_number;
 
-    logger.info(`[LemonSqueezy Webhook] Received event: ${eventName}`, 'LemonSqueezy', { orderId, orderNumber });
+    logger.info(`[LemonSqueezy Webhook] Received event: ${eventName}`, 'LemonSqueezy', { orderId, orderNumber, customData });
 
     if (eventName === 'order_created') {
       const attributes = payload?.data?.attributes || {};
-      const status = attributes.status; // e.g. "paid"
 
+      // 1. Commission Settlement Payment
+      if (customData.type === 'COMMISSION_SETTLEMENT') {
+        const { business_id, period_key, amount, currency } = customData;
+        if (business_id) {
+          const commissionService = await import('./commission.service');
+          await commissionService.settleCommissionViaCard(business_id, {
+            periodKey: period_key,
+            paymentMethod: 'CREDIT_CARD',
+            lemonSqueezyOrderId: payload?.data?.id ? String(payload.data.id) : undefined,
+            userEmail: attributes.user_email,
+            amount: Number(amount) || 0,
+            currency: currency || 'TRY',
+          });
+          logger.info(`[LemonSqueezy Webhook] Commission settlement for business ${business_id} marked as SETTLED.`);
+        }
+        return { handled: true, event: eventName };
+      }
+
+      // 2. Hardware / QR Store Order Payment
       if (orderId) {
         const existingOrder = await prisma.storeOrder.findUnique({
           where: { id: orderId },

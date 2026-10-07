@@ -530,5 +530,64 @@ export async function rejectAdminVenueSettlement(
   };
 }
 
+/**
+ * Automatically confirms commission settlement paid via Credit Card / Apple Pay (Lemon Squeezy)
+ */
+export async function settleCommissionViaCard(
+  businessId: string,
+  input: {
+    periodKey?: string;
+    paymentMethod: string;
+    lemonSqueezyOrderId?: string;
+    userEmail?: string;
+    amount?: number;
+    currency?: string;
+  }
+) {
+  const whereClause: any = {
+    business_id: businessId,
+    payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'FAST', 'IBAN_TRANSFER', 'HAVALE', 'EFT'] },
+    is_settled: false,
+    payment_status: PaymentStatus.SUCCESS,
+  };
+
+  if (input.periodKey && input.periodKey !== 'ALL_PENDING') {
+    const [yStr, mStr] = input.periodKey.split('-');
+    const year = parseInt(yStr, 10);
+    const month = parseInt(mStr, 10);
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
+    whereClause.created_at = { gte: startDate, lt: endDate };
+  }
+
+  const result = await prisma.tip.updateMany({
+    where: whereClause,
+    data: { is_settled: true },
+  });
+
+  await createAuditLog({
+    businessId,
+    action: 'COMMISSION_SETTLEMENT_CONFIRMED',
+    entityType: 'COMMISSION_SETTLEMENT',
+    metadata: {
+      periodKey: input.periodKey || 'ALL_PENDING',
+      settledCount: result.count,
+      paymentMethod: 'CREDIT_CARD',
+      lemonSqueezyOrderId: input.lemonSqueezyOrderId,
+      userEmail: input.userEmail,
+      amount: input.amount,
+      currency: input.currency,
+      confirmedAt: new Date().toISOString(),
+      note: 'Lemon Squeezy kredi kartı / Apple Pay ile anında otomatik tahsil edildi.',
+    },
+  });
+
+  return {
+    success: true,
+    settledCount: result.count,
+    periodKey: input.periodKey || 'ALL_PENDING',
+  };
+}
+
 // Backward compatibility alias: settleCommission now declares settlement for verification
 export const settleCommission = declareBusinessSettlement;

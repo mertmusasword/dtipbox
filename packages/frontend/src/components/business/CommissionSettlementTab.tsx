@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useLanguage } from '../../i18n';
 import { getCommissionText } from '../../i18n/commissionLocales';
@@ -19,6 +20,10 @@ import {
   Receipt,
   X,
   AlertTriangle,
+  Loader2,
+  Sparkles,
+  ArrowRight,
+  Lock,
 } from 'lucide-react';
 
 interface SettlementPeriod {
@@ -111,6 +116,12 @@ export const CommissionSettlementTab: React.FC = () => {
   const [settlementNote, setSettlementNote] = useState('');
   const [selectedAccountCurrency, setSelectedAccountCurrency] = useState<string>('TRY');
 
+  // Credit Card / Apple Pay Checkout State
+  const [searchParams, setSearchParams] = useSearchParams();
+  const cardSettledProcessedRef = useRef(false);
+  const [settlementMethod, setSettlementMethod] = useState<'CARD' | 'WIRE'>('CARD');
+  const [startingCardPayment, setStartingCardPayment] = useState(false);
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
@@ -133,6 +144,39 @@ export const CommissionSettlementTab: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Handle Lemon Squeezy return redirect (?settled=success)
+  useEffect(() => {
+    if (searchParams.get('settled') === 'success' && !cardSettledProcessedRef.current) {
+      cardSettledProcessedRef.current = true;
+      showToast('Kredi kartı ile komisyon ödemeniz başarıyla alındı ve mutabakatınız anında kapatıldı! 🎉', 'success');
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('settled');
+      nextParams.delete('period');
+      setSearchParams(nextParams, { replace: true });
+      loadData();
+    }
+  }, [searchParams, setSearchParams, showToast, loadData]);
+
+  const handleCardPayment = async () => {
+    try {
+      setStartingCardPayment(true);
+      const res = await api.post('/business/commissions/card-checkout', {
+        periodKey: selectedPeriod ? selectedPeriod.periodKey : undefined,
+      });
+      const checkoutUrl = res.data?.data?.checkoutUrl;
+      if (checkoutUrl) {
+        showToast('Güvenli ödeme sayfasına yönlendiriliyorsunuz...', 'info');
+        window.location.href = checkoutUrl;
+      } else {
+        showToast('Ödeme oturumu başlatılamadı.', 'error');
+      }
+    } catch (err: any) {
+      showToast(err.response?.data?.error || 'Ödeme oturumu başlatılamadı.', 'error');
+    } finally {
+      setStartingCardPayment(false);
+    }
+  };
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -707,200 +751,340 @@ export const CommissionSettlementTab: React.FC = () => {
               </span>
             </div>
 
-            {/* Account / Currency Selector if multiple accounts exist */}
-            {availableAccounts.length > 1 && (
-              <div style={{ marginBottom: '1rem' }}>
-                <span style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>
-                  {ct.selectAccount || 'Havale Hesabı / Para Birimi'}
+            {/* Payment Method Selector Tabs */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', marginBottom: '1.25rem' }}>
+              <button
+                type="button"
+                onClick={() => setSettlementMethod('CARD')}
+                style={{
+                  padding: '0.75rem 0.5rem',
+                  borderRadius: '12px',
+                  border: settlementMethod === 'CARD' ? '2px solid #0284c7' : '1px solid rgba(255, 255, 255, 0.1)',
+                  background: settlementMethod === 'CARD' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(30, 41, 59, 0.5)',
+                  color: settlementMethod === 'CARD' ? '#ffffff' : '#94a3b8',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  transition: 'all 0.2s ease',
+                  boxShadow: settlementMethod === 'CARD' ? '0 0 15px rgba(2, 132, 199, 0.35)' : 'none',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: settlementMethod === 'CARD' ? '#38bdf8' : '#cbd5e1' }}>
+                  <CreditCard size={16} />
+                  <span>Kredi Kartı / Apple Pay</span>
+                </div>
+                <span style={{ fontSize: '0.68rem', color: settlementMethod === 'CARD' ? '#7dd3fc' : '#64748b', fontWeight: 600 }}>
+                  ⚡ Anında Otomatik Kapanır
                 </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSettlementMethod('WIRE')}
+                style={{
+                  padding: '0.75rem 0.5rem',
+                  borderRadius: '12px',
+                  border: settlementMethod === 'WIRE' ? '2px solid #0284c7' : '1px solid rgba(255, 255, 255, 0.1)',
+                  background: settlementMethod === 'WIRE' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(30, 41, 59, 0.5)',
+                  color: settlementMethod === 'WIRE' ? '#ffffff' : '#94a3b8',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  transition: 'all 0.2s ease',
+                  boxShadow: settlementMethod === 'WIRE' ? '0 0 15px rgba(2, 132, 199, 0.35)' : 'none',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: settlementMethod === 'WIRE' ? '#38bdf8' : '#cbd5e1' }}>
+                  <Building2 size={16} />
+                  <span>Banka Havalesi / FAST</span>
+                </div>
+                <span style={{ fontSize: '0.68rem', color: settlementMethod === 'WIRE' ? '#7dd3fc' : '#64748b', fontWeight: 600 }}>
+                  %0 Komisyonsuz Manuel
+                </span>
+              </button>
+            </div>
+
+            {/* OPTION 1: CREDIT CARD / APPLE PAY (INSTANT) */}
+            {settlementMethod === 'CARD' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '0.5rem' }}>
                 <div
                   style={{
-                    display: 'flex',
-                    gap: '0.4rem',
                     background: 'rgba(15, 23, 42, 0.7)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
-                    padding: '4px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '14px',
+                    padding: '1.25rem',
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
                   }}
                 >
-                  {availableAccounts.map((acc) => {
-                    const isSelected = (currentAccount?.currency || 'TRY') === acc.currency;
-                    const flag = acc.currency === 'TRY' ? '🇹🇷' : acc.currency === 'USD' ? '🇺🇸' : acc.currency === 'EUR' ? '🇪🇺' : '🌐';
-                    return (
-                      <button
-                        key={acc.currency}
-                        type="button"
-                        onClick={() => setSelectedAccountCurrency(acc.currency)}
-                        style={{
-                          flex: 1,
-                          padding: '7px 10px',
-                          borderRadius: '8px',
-                          border: isSelected ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
-                          fontSize: '0.8rem',
-                          fontWeight: isSelected ? 700 : 500,
-                          background: isSelected ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-                          color: isSelected ? '#38bdf8' : '#94a3b8',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          transition: 'all 0.2s ease',
-                        }}
-                      >
-                        <span style={{ fontSize: '0.95rem' }}>{flag}</span>
-                        <span>{acc.currency}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Company Bank Account Details Card */}
-            <div
-              style={{
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '14px',
-                padding: '1.25rem',
-                marginBottom: '1.25rem',
-                fontSize: '0.85rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.75rem',
-              }}
-            >
-              <div>
-                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.companyTitle}</span>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
-                  <span style={{ color: '#f8fafc', fontWeight: 600, fontSize: '0.82rem' }}>{settlementIbanInfo.companyName}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(settlementIbanInfo.companyName, 'company')}
-                    className="btn btn-secondary"
-                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
-                  >
-                    {copiedKey === 'company' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
-                    {copiedKey === 'company' ? ct.copied : (ct.copyCompany || 'Copy')}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.bankName}</span>
-                <span style={{ color: '#f8fafc', fontWeight: 600 }}>{currentAccount.bankName}</span>
-              </div>
-
-              <div>
-                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.iban} ({currentAccount.currency})</span>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
-                  <code style={{ color: '#38bdf8', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
-                    {currentAccount.iban}
-                  </code>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(currentAccount.iban, 'iban')}
-                    className="btn btn-secondary"
-                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
-                  >
-                    {copiedKey === 'iban' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
-                    {copiedKey === 'iban' ? ct.copied : ct.copyIban}
-                  </button>
-                </div>
-              </div>
-
-              {currentAccount.swiftCode && (
-                <div>
-                  <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.swiftCode || 'SWIFT / BIC Kodu'}</span>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
-                    <code style={{ color: '#a78bfa', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
-                      {currentAccount.swiftCode}
-                    </code>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(currentAccount.swiftCode!, 'swift')}
-                      className="btn btn-secondary"
-                      style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
-                    >
-                      {copiedKey === 'swift' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
-                      {copiedKey === 'swift' ? ct.copied : (ct.copySwift || 'SWIFT Kopyala')}
-                    </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <ShieldCheck size={20} style={{ color: '#10b981' }} />
+                    <span style={{ color: '#f8fafc', fontWeight: 700 }}>3D Secure & Apple Pay Güvencesi</span>
+                  </div>
+                  <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                    Visa, Mastercard, American Express, Apple Pay veya Google Pay ile anında ödeme yapabilirsiniz. Ödeme onaylandığı saniye mutabakatınız sistemde otomatik olarak kapatılır.
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.75rem' }}>
+                    <Lock size={12} />
+                    <span>256-bit SSL Uçtan Uca Şifreli Ödeme Altyapısı</span>
                   </div>
                 </div>
-              )}
 
-              {currentAccount.fastAddress && currentAccount.currency === 'TRY' && (
-                <div>
-                  <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.fastAddress}</span>
-                  <span style={{ color: '#f8fafc', fontWeight: 600 }}>{currentAccount.fastAddress}</span>
+                <button
+                  type="button"
+                  disabled={startingCardPayment}
+                  onClick={handleCardPayment}
+                  className="btn btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: '0.9rem 1.25rem',
+                    fontWeight: 800,
+                    fontSize: '0.95rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.6rem',
+                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 18px rgba(2, 132, 199, 0.4)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {startingCardPayment ? (
+                    <>
+                      <Loader2 size={18} className="spinner" />
+                      <span>Ödeme Sayfası Açılıyor...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard size={18} />
+                      <span>
+                        Kartla Öde ve Kapat ({formatCurrency(selectedPeriod ? selectedPeriod.bankCommissionPending : summary.bankPlatformFeePending, currency)})
+                      </span>
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="btn btn-secondary"
+                  style={{ width: '100%', padding: '0.6rem', color: '#94a3b8' }}
+                >
+                  {ct.cancelBtn}
+                </button>
+              </div>
+            ) : (
+              /* OPTION 2: DIRECT BANK TRANSFER / SWIFT / FAST */
+              <>
+                {/* Account / Currency Selector if multiple accounts exist */}
+                {availableAccounts.length > 1 && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <span style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>
+                      {ct.selectAccount || 'Havale Hesabı / Para Birimi'}
+                    </span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.4rem',
+                        background: 'rgba(15, 23, 42, 0.7)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        borderRadius: '12px',
+                        padding: '4px',
+                      }}
+                    >
+                      {availableAccounts.map((acc) => {
+                        const isSelected = (currentAccount?.currency || 'TRY') === acc.currency;
+                        const flag = acc.currency === 'TRY' ? '🇹🇷' : acc.currency === 'USD' ? '🇺🇸' : acc.currency === 'EUR' ? '🇪🇺' : '🌐';
+                        return (
+                          <button
+                            key={acc.currency}
+                            type="button"
+                            onClick={() => setSelectedAccountCurrency(acc.currency)}
+                            style={{
+                              flex: 1,
+                              padding: '7px 10px',
+                              borderRadius: '8px',
+                              border: isSelected ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
+                              fontSize: '0.8rem',
+                              fontWeight: isSelected ? 700 : 500,
+                              background: isSelected ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                              color: isSelected ? '#38bdf8' : '#94a3b8',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px',
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            <span style={{ fontSize: '0.95rem' }}>{flag}</span>
+                            <span>{acc.currency}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Company Bank Account Details Card */}
+                <div
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.6)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '14px',
+                    padding: '1.25rem',
+                    marginBottom: '1.25rem',
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
+                  }}
+                >
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.companyTitle}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
+                      <span style={{ color: '#f8fafc', fontWeight: 600, fontSize: '0.82rem' }}>{settlementIbanInfo.companyName}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(settlementIbanInfo.companyName, 'company')}
+                        className="btn btn-secondary"
+                        style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                      >
+                        {copiedKey === 'company' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+                        {copiedKey === 'company' ? ct.copied : (ct.copyCompany || 'Copy')}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.bankName}</span>
+                    <span style={{ color: '#f8fafc', fontWeight: 600 }}>{currentAccount.bankName}</span>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.iban} ({currentAccount.currency})</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
+                      <code style={{ color: '#38bdf8', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
+                        {currentAccount.iban}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(currentAccount.iban, 'iban')}
+                        className="btn btn-secondary"
+                        style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                      >
+                        {copiedKey === 'iban' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+                        {copiedKey === 'iban' ? ct.copied : ct.copyIban}
+                      </button>
+                    </div>
+                  </div>
+
+                  {currentAccount.swiftCode && (
+                    <div>
+                      <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.swiftCode || 'SWIFT / BIC Kodu'}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
+                        <code style={{ color: '#a78bfa', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
+                          {currentAccount.swiftCode}
+                        </code>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(currentAccount.swiftCode!, 'swift')}
+                          className="btn btn-secondary"
+                          style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                        >
+                          {copiedKey === 'swift' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+                          {copiedKey === 'swift' ? ct.copied : (ct.copySwift || 'SWIFT Kopyala')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentAccount.fastAddress && currentAccount.currency === 'TRY' && (
+                    <div>
+                      <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.fastAddress}</span>
+                      <span style={{ color: '#f8fafc', fontWeight: 600 }}>{currentAccount.fastAddress}</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.description}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
+                      <code style={{ color: '#fef08a', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
+                        {settlementIbanInfo.paymentReference}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(settlementIbanInfo.paymentReference, 'ref')}
+                        className="btn btn-secondary"
+                        style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                      >
+                        {copiedKey === 'ref' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+                        {copiedKey === 'ref' ? ct.copied : ct.copyRef}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              )}
 
-              <div>
-                <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>{ct.description}</span>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '2px' }}>
-                  <code style={{ color: '#fef08a', fontFamily: 'monospace', fontSize: '0.88rem', fontWeight: 700 }}>
-                    {settlementIbanInfo.paymentReference}
-                  </code>
+                {/* Settlement Note / Reference input */}
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.4rem', fontWeight: 600 }}>
+                    {ct.settlementNoteLabel || 'Ödeme Notu / Dekont Referansı (Opsiyonel)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={settlementNote}
+                    onChange={(e) => setSettlementNote(e.target.value)}
+                    placeholder={ct.settlementNotePlaceholder || 'Örn: Gönderen banka, dekont referans no...'}
+                    className="input"
+                    style={{
+                      width: '100%',
+                      fontSize: '0.85rem',
+                      background: 'rgba(15, 23, 42, 0.6)',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '10px',
+                      padding: '0.65rem 0.85rem',
+                      color: '#f8fafc',
+                    }}
+                  />
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                   <button
                     type="button"
-                    onClick={() => handleCopy(settlementIbanInfo.paymentReference, 'ref')}
-                    className="btn btn-secondary"
-                    style={{ padding: '3px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                    disabled={isSettling}
+                    onClick={handleConfirmSettlement}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                   >
-                    {copiedKey === 'ref' ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
-                    {copiedKey === 'ref' ? ct.copied : ct.copyRef}
+                    <CheckCircle2 size={16} />
+                    {isSettling ? ct.processing : ct.markAsPaidBtn}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="btn btn-secondary"
+                    style={{ width: '100%', padding: '0.6rem', color: '#94a3b8' }}
+                  >
+                    {ct.cancelBtn}
                   </button>
                 </div>
-              </div>
-            </div>
-
-            {/* Settlement Note / Reference input */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.4rem', fontWeight: 600 }}>
-                {ct.settlementNoteLabel || 'Ödeme Notu / Dekont Referansı (Opsiyonel)'}
-              </label>
-              <input
-                type="text"
-                value={settlementNote}
-                onChange={(e) => setSettlementNote(e.target.value)}
-                placeholder={ct.settlementNotePlaceholder || 'Örn: Gönderen banka, dekont referans no...'}
-                className="input"
-                style={{
-                  width: '100%',
-                  fontSize: '0.85rem',
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '10px',
-                  padding: '0.65rem 0.85rem',
-                  color: '#f8fafc',
-                }}
-              />
-            </div>
-
-            {/* Actions */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <button
-                type="button"
-                disabled={isSettling}
-                onClick={handleConfirmSettlement}
-                className="btn btn-primary"
-                style={{ width: '100%', padding: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-              >
-                <CheckCircle2 size={16} />
-                {isSettling ? ct.processing : ct.markAsPaidBtn}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="btn btn-secondary"
-                style={{ width: '100%', padding: '0.6rem', color: '#94a3b8' }}
-              >
-                {ct.cancelBtn}
-              </button>
-            </div>
+              </>
+            )}
           </div>
         </div>
       )}
