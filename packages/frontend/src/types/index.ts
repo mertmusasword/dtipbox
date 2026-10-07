@@ -710,6 +710,7 @@ export interface StoreOrderItem {
   unit_price: number | string;
   customization?: {
     size?: string;
+    color?: string;
     sizePrice?: number;
     tableStart?: number;
     tableEnd?: number;

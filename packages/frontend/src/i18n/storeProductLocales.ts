@@ -476,6 +476,142 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       ],
     },
   },
+
+  // 7. METAL QR PLATE
+  'metal-qr-plate': {
+    tr: {
+      name: 'Metal QR Kod Menü',
+      description: 'Gümüş, altın, bronz ve beyaz renk seçenekleriyle dayanıklı metal QR kod plakası. 5x5 cm ve 10x5 cm ebatlarında, masaya kolayca yapıştırılır ve misafirleri rahatsız etmez. Dış etkenlere dayanıklı süblimasyon baskı ile QR kodunuz kalıcı olarak basılır.',
+      features: [
+        '4 renk seçeneği: Gümüş, Altın, Bronz, Beyaz',
+        '5x5 cm ve 10x5 cm ebat seçenekleri',
+        'Dış etkenlere dayanıklı süblimasyon baskı',
+        'Darbelere dayanıklı metal malzeme',
+        'Masaya kolayca yapıştırılır',
+        'Her plakaya farklı masa numarası / QR basılabilir',
+      ],
+    },
+    en: {
+      name: 'Metal QR Code Menu Plate',
+      description: 'Durable metal QR code plate in silver, gold, bronze and white. Available in 5x5 cm and 10x5 cm, easily stuck on tables without disturbing guests. Weather-resistant sublimation print keeps your QR code permanent.',
+      features: [
+        '4 colors: Silver, Gold, Bronze, White',
+        '5x5 cm and 10x5 cm sizes',
+        'Durable sublimation print',
+        'Impact-resistant metal material',
+        'Easily stuck on tables',
+        'Different table number / QR per plate',
+      ],
+    },
+    de: {
+      name: 'Metall-QR-Code-Menüplatte',
+      description: 'Robuste Metall-QR-Platte in Silber, Gold, Bronze und Weiß. Erhältlich in 5x5 cm und 10x5 cm, einfach auf den Tisch zu kleben. Widerstandsfähiger Sublimationsdruck für dauerhaften QR-Code.',
+      features: [
+        '4 Farben: Silber, Gold, Bronze, Weiß',
+        'Größen 5x5 cm und 10x5 cm',
+        'Widerstandsfähiger Sublimationsdruck',
+        'Schlagfestes Metall',
+        'Einfach auf den Tisch zu kleben',
+        'Pro Platte andere Tischnummer / anderer QR',
+      ],
+    },
+    fr: {
+      name: 'Plaque menu QR en métal',
+      description: 'Plaque QR en métal résistant, disponible en argent, or, bronze et blanc. Formats 5x5 cm et 10x5 cm, se colle facilement sur la table. Impression par sublimation résistante pour un QR code durable.',
+      features: [
+        '4 couleurs : argent, or, bronze, blanc',
+        'Formats 5x5 cm et 10x5 cm',
+        'Impression par sublimation résistante',
+        'Métal résistant aux chocs',
+        'Se colle facilement sur la table',
+        'Numéro de table / QR différent par plaque',
+      ],
+    },
+    es: {
+      name: 'Placa de menú QR de metal',
+      description: 'Placa QR de metal resistente en plata, oro, bronce y blanco. Tamaños 5x5 cm y 10x5 cm, se pega fácilmente a la mesa. Impresión por sublimación resistente para un QR duradero.',
+      features: [
+        '4 colores: plata, oro, bronce, blanco',
+        'Tamaños 5x5 cm y 10x5 cm',
+        'Impresión por sublimación resistente',
+        'Metal resistente a golpes',
+        'Se pega fácilmente a la mesa',
+        'Número de mesa / QR distinto por placa',
+      ],
+    },
+    pt: {
+      name: 'Placa de menu QR em metal',
+      description: 'Placa QR de metal resistente em prata, ouro, bronze e branco. Tamanhos 5x5 cm e 10x5 cm, cola facilmente na mesa. Impressão por sublimação resistente para um QR duradouro.',
+      features: [
+        '4 cores: prata, ouro, bronze, branco',
+        'Tamanhos 5x5 cm e 10x5 cm',
+        'Impressão por sublimação resistente',
+        'Metal resistente a impactos',
+        'Cola facilmente na mesa',
+        'Número da mesa / QR diferente por placa',
+      ],
+    },
+    ru: {
+      name: 'Металлическая табличка QR-меню',
+      description: 'Прочная металлическая QR-табличка серебристого, золотого, бронзового и белого цветов. Размеры 5x5 и 10x5 см, легко клеится на стол. Стойкая сублимационная печать для долговечного QR-кода.',
+      features: [
+        '4 цвета: серебро, золото, бронза, белый',
+        'Размеры 5x5 см и 10x5 см',
+        'Стойкая сублимационная печать',
+        'Ударопрочный металл',
+        'Легко клеится на стол',
+        'Разный номер стола / QR на каждой табличке',
+      ],
+    },
+    ar: {
+      name: 'لوحة قائمة QR معدنية',
+      description: 'لوحة QR معدنية متينة بألوان فضي وذهبي وبرونزي وأبيض. بمقاسي 5×5 و10×5 سم وتُلصق بسهولة على الطاولة. طباعة تسامي مقاومة لرمز QR دائم.',
+      features: [
+        '4 ألوان: فضي، ذهبي، برونزي، أبيض',
+        'مقاسات 5×5 سم و10×5 سم',
+        'طباعة تسامي متينة',
+        'معدن مقاوم للصدمات',
+        'تُلصق بسهولة على الطاولة',
+        'رقم طاولة / QR مختلف لكل لوحة',
+      ],
+    },
+    zh: {
+      name: '金属二维码菜单牌',
+      description: '耐用金属二维码牌，提供银、金、青铜、白四色。尺寸 5x5 厘米和 10x5 厘米，可轻松粘贴在桌面。耐用热升华印刷，二维码持久清晰。',
+      features: [
+        '4 种颜色：银、金、青铜、白',
+        '5x5 厘米和 10x5 厘米两种尺寸',
+        '耐用热升华印刷',
+        '抗冲击金属材质',
+        '轻松粘贴在桌面',
+        '每块可印不同桌号 / 二维码',
+      ],
+    },
+    id: {
+      name: 'Plakat Menu QR Logam',
+      description: 'Plakat QR logam tahan lama dalam warna perak, emas, perunggu, dan putih. Ukuran 5x5 cm dan 10x5 cm, mudah ditempel di meja. Cetak sublimasi tahan lama untuk QR permanen.',
+      features: [
+        '4 warna: perak, emas, perunggu, putih',
+        'Ukuran 5x5 cm dan 10x5 cm',
+        'Cetak sublimasi tahan lama',
+        'Logam tahan benturan',
+        'Mudah ditempel di meja',
+        'Nomor meja / QR berbeda tiap plakat',
+      ],
+    },
+    ja: {
+      name: 'メタルQRコードメニュープレート',
+      description: 'シルバー、ゴールド、ブロンズ、ホワイトの耐久性メタルQRプレート。5x5cmと10x5cmの2サイズで、テーブルに簡単に貼り付け可能。耐久性のある昇華印刷でQRコードが長持ちします。',
+      features: [
+        '4色：シルバー、ゴールド、ブロンズ、ホワイト',
+        '5x5cmと10x5cmのサイズ',
+        '耐久性のある昇華印刷',
+        '衝撃に強い金属素材',
+        'テーブルに簡単に貼り付け',
+        'プレートごとに異なるテーブル番号/QR',
+      ],
+    },
+  },
 };
 
 /**

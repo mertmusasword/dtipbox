@@ -9,6 +9,7 @@ export interface CreateOrderInput {
     quantity: number;
     customization?: {
       size?: string;
+      color?: string;
       sizePrice?: number;
       qrType?: string;
       qrTypeLabel?: string;
@@ -115,6 +116,55 @@ const METAL_STAND_PRODUCT = {
         prices: METAL_STAND_PRICES,
         quantities: [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 50],
       },
+    ],
+  },
+};
+
+const METAL_PLATE_SLUG = 'metal-qr-plate';
+const METAL_PLATE_QTYS = [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 50];
+const METAL_PLATE_PRICES_5X5: Record<string, number> = {
+  '1': 110.40, '2': 220.80, '3': 331.20, '4': 441.60, '5': 552.00,
+  '10': 1104.00, '15': 1657.38, '20': 2209.38, '30': 3313.38, '40': 4418.76, '50': 5522.76,
+};
+const METAL_PLATE_PRICES_10X5: Record<string, number> = {
+  '1': 220.80, '2': 441.60, '3': 662.40, '4': 883.20, '5': 1104.00,
+  '10': 2208.00, '15': 3314.76, '20': 4418.76, '30': 6626.76, '40': 8837.52, '50': 11045.52,
+};
+
+// Seeded create-only: founder panel edits (price, tiers, active state) are preserved.
+// Colors (Gümüş, Altın, Bronz, Beyaz) are offered in the store UI for category 'metal_plate'.
+const METAL_PLATE_PRODUCT = {
+  slug: METAL_PLATE_SLUG,
+  name: 'Metal QR Kod Menü',
+  description: 'Gümüş, altın, bronz ve beyaz renk seçenekleriyle dayanıklı metal QR kod plakası. 5x5 cm ve 10x5 cm ebatlarında, masaya kolayca yapıştırılır ve misafirleri rahatsız etmez. Dış etkenlere dayanıklı süblimasyon baskı ile QR kodunuz kalıcı olarak basılır. Restoran, kafe ve otellerde QR menüyü şık ve hijyenik sunar.',
+  features: [
+    '4 renk seçeneği: Gümüş, Altın, Bronz, Beyaz',
+    '5x5 cm ve 10x5 cm ebat seçenekleri',
+    'Dış etkenlere dayanıklı süblimasyon baskı',
+    'Darbelere dayanıklı metal malzeme',
+    'Masaya kolayca yapıştırılır',
+    'Her plakaya farklı masa numarası / QR basılabilir',
+  ],
+  price: 110.40,
+  currency: 'TRY',
+  category: 'metal_plate',
+  image_url: '/hardware/metal-qr-plate.jpg',
+  gallery: [] as string[],
+  video_url: null,
+  stock: 9999,
+  min_quantity: 1,
+  quantity_step: 1,
+  badge: null,
+  sort_order: 4,
+  is_active: true,
+  variants: {
+    type: 'sizes_and_tiers',
+    defaultSize: '5x5',
+    defaultQuantity: 1,
+    quantities: METAL_PLATE_QTYS,
+    sizes: [
+      { id: '5x5', label: '5x5 cm', price: 110.40, prices: METAL_PLATE_PRICES_5X5, quantities: METAL_PLATE_QTYS },
+      { id: '10x5', label: '10x5 cm', price: 220.80, prices: METAL_PLATE_PRICES_10X5, quantities: METAL_PLATE_QTYS },
     ],
   },
 };
@@ -275,7 +325,7 @@ export async function syncStoreProducts() {
     // 1. Deactivate any non-sticker products (stands, badges, bundle) so only the 2 stickers are active
     await prisma.storeProduct.updateMany({
       where: {
-        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker', METAL_STAND_SLUG] },
+        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker', METAL_STAND_SLUG, METAL_PLATE_SLUG] },
         is_active: true,
       },
       data: { is_active: false },
@@ -319,6 +369,12 @@ export async function syncStoreProducts() {
     await prisma.storeProduct.updateMany({
       where: { slug: METAL_STAND_SLUG, video_url: null },
       data: { video_url: '/hardware/metal-qr-menu-stand.mp4' },
+    });
+    // Metal plate: create only if missing, never overwrite founder edits
+    await prisma.storeProduct.upsert({
+      where: { slug: METAL_PLATE_SLUG },
+      update: {},
+      create: METAL_PLATE_PRODUCT,
     });
   } catch (err) {
     console.error('[StoreService] Error syncing store products:', err);

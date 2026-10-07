@@ -48,6 +48,7 @@ interface CartItem {
   unitPrice?: number;
   customization: {
     size?: string;
+    color?: string;
     sizePrice?: number;
     qrType?: string;
     qrTypeLabel?: string;
@@ -192,6 +193,7 @@ export const BusinessStorePage: React.FC = () => {
   const [tempNotes, setTempNotes] = useState<string>('');
   const [tempSelectedSize, setTempSelectedSize] = useState<string>('');
   const [tempSizePrice, setTempSizePrice] = useState<number>(0);
+  const [tempColor, setTempColor] = useState<string>('Gümüş');
 
   // Checkout Form State - Pre-filled from business registration data
   const [shippingCountry, setShippingCountry] = useState<string>(() => {
@@ -380,6 +382,7 @@ export const BusinessStorePage: React.FC = () => {
     setTempUseLogo(true);
     setTempSelectedStaff([]);
     setTempNotes('');
+    setTempColor('Gümüş');
 
     if (product.category === 'badge') {
       setTempQrType('staff');
@@ -468,6 +471,7 @@ export const BusinessStorePage: React.FC = () => {
       unitPrice: calculatedUnitPrice,
       customization: {
         size: tempSelectedSize || undefined,
+        color: customizingProduct.category === 'metal_plate' ? tempColor : undefined,
         sizePrice: tempSizePrice > 0 ? tempSizePrice : undefined,
         qrType: tempQrType,
         qrTypeLabel: qrTypeOptions.find((o) => o.id === tempQrType)?.label || tempQrType,
@@ -476,7 +480,9 @@ export const BusinessStorePage: React.FC = () => {
         tableEnd: tempQrType === 'table' ? tempTableEnd : undefined,
         useLogo: tempUseLogo,
         staffIds: tempQrType === 'staff' ? tempSelectedStaff : undefined,
-        notes: tempNotes || undefined,
+        notes: customizingProduct.category === 'metal_plate'
+          ? [`Renk: ${tempColor}`, tempNotes].filter(Boolean).join(' | ')
+          : tempNotes || undefined,
       },
     };
 
@@ -776,6 +782,7 @@ export const BusinessStorePage: React.FC = () => {
               { id: 'opaque', label: 'Opak QR Etiket' },
               { id: 'transparent', label: 'Şeffaf QR Etiket' },
               { id: 'metal_stand', label: 'Metal QR Stand' },
+              { id: 'metal_plate', label: 'Metal QR Kod' },
             ].map((cat) => {
               const active = selectedCategory === cat.id;
               return (
@@ -1425,6 +1432,55 @@ export const BusinessStorePage: React.FC = () => {
               </div>
             )}
 
+            {/* Color selection (metal plate only) */}
+            {customizingProduct.category === 'metal_plate' && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                    Renk Seçeneği:
+                  </label>
+                  <span style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 800 }}>
+                    Seçilen: {tempColor}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.65rem' }}>
+                  {[
+                    { name: 'Gümüş', hex: 'linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%)' },
+                    { name: 'Altın', hex: 'linear-gradient(135deg, #fde68a 0%, #b8860b 100%)' },
+                    { name: 'Bronz', hex: 'linear-gradient(135deg, #d9a066 0%, #8a5a2b 100%)' },
+                    { name: 'Beyaz', hex: 'linear-gradient(135deg, #ffffff 0%, #e5e7eb 100%)' },
+                  ].map((c) => {
+                    const isSel = tempColor === c.name;
+                    return (
+                      <button
+                        key={c.name}
+                        type="button"
+                        onClick={() => setTempColor(c.name)}
+                        style={{
+                          padding: '0.6rem 0.4rem',
+                          borderRadius: '12px',
+                          border: isSel ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
+                          background: isSel ? 'rgba(56, 189, 248, 0.2)' : 'rgba(30, 41, 59, 0.5)',
+                          color: isSel ? '#ffffff' : '#cbd5e1',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        <span style={{ width: '26px', height: '26px', borderRadius: '50%', background: c.hex, border: '1px solid rgba(255,255,255,0.35)' }} />
+                        {c.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Quantity Selector: Fixed Cards or Step Counter */}
             <div style={{ marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
@@ -2000,6 +2056,11 @@ export const BusinessStorePage: React.FC = () => {
                       {item.customization.qrTypeLabel && (
                         <span style={{ padding: '2px 8px', background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', borderRadius: '4px', fontWeight: 700 }}>
                           {item.customization.qrTypeLabel}
+                        </span>
+                      )}
+                      {item.customization.color && (
+                        <span style={{ padding: '2px 8px', background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24', borderRadius: '4px', fontWeight: 700 }}>
+                          Renk: {item.customization.color}
                         </span>
                       )}
                       {item.customization.size && (
