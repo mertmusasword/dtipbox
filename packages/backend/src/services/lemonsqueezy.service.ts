@@ -96,9 +96,13 @@ export class LemonSqueezyService {
     }
 
     const amountInCents = await this.convertToUsdCents(params.totalAmount, params.currency);
+    const publicAppUrl =
+      env.APP_URL && !env.APP_URL.includes('localhost') && env.APP_URL.startsWith('http')
+        ? env.APP_URL
+        : 'https://www.naponi.com';
     const redirectUrl =
       params.redirectUrl ||
-      `${env.APP_URL}/business/store?tab=orders&order=${encodeURIComponent(params.orderNumber)}&payment=success`;
+      `${publicAppUrl}/business/store?tab=orders&order=${encodeURIComponent(params.orderNumber)}&payment=success`;
 
     const requestPayload = {
       data: {

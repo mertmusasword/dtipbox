@@ -246,13 +246,16 @@ export const BusinessStorePage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [previewImage, videoModalProduct]);
 
+  const paymentProcessedRef = React.useRef(false);
+
   // Handle Lemon Squeezy return redirect (?payment=success)
   useEffect(() => {
-    const paymentParam = searchParams.get('payment');
-    if (paymentParam === 'success') {
+    if (searchParams.get('payment') === 'success' && !paymentProcessedRef.current) {
+      paymentProcessedRef.current = true;
       showToast('Kredi kartı ile ödemeniz başarıyla alındı! Siparişiniz hazırlanma aşamasında.', 'success');
-      searchParams.delete('payment');
-      setSearchParams(searchParams, { replace: true });
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('payment');
+      setSearchParams(nextParams, { replace: true });
     }
   }, [searchParams, setSearchParams, showToast]);
 
