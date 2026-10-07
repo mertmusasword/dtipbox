@@ -67,6 +67,7 @@ export interface BusinessCommissionsReport {
       currency: string;
       currencySymbol: string;
       label: string;
+      companyName?: string;
       bankName: string;
       iban: string;
       swiftCode?: string;
@@ -338,14 +339,17 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     },
     monthlyPeriods,
     settlementIbanInfo: {
-      companyName: process.env.SETTLEMENT_COMPANY_NAME || 'Naponi İnternet Alışveriş Ve Mağazacılık İth.İhr.Ltd.Şti.',
+      companyName:
+        business.currency === 'USD' || business.currency === 'EUR'
+          ? (process.env.SETTLEMENT_COMPANY_NAME_INTL || process.env.SETTLEMENT_COMPANY_NAME_EN || 'Naponi Internet Alisveris Ve Magazacilik Ith. Ihr. Ltd. Sti.')
+          : (process.env.SETTLEMENT_COMPANY_NAME || 'Naponi İnternet Alışveriş Ve Mağazacılık İth.İhr.Ltd.Şti.'),
       taxOffice: process.env.SETTLEMENT_TAX_OFFICE || '',
       taxNumber: process.env.SETTLEMENT_TAX_NUMBER || '',
       bankName:
         business.currency === 'USD'
-          ? (process.env.SETTLEMENT_BANK_NAME_USD || 'Enpara Bank A.Ş.')
+          ? (process.env.SETTLEMENT_BANK_NAME_USD || 'Enpara Bank A.S.')
           : business.currency === 'EUR'
-            ? (process.env.SETTLEMENT_BANK_NAME_EUR || 'Enpara Bank A.Ş.')
+            ? (process.env.SETTLEMENT_BANK_NAME_EUR || 'Enpara Bank A.S.')
             : (process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.'),
       iban:
         business.currency === 'USD'
@@ -361,6 +365,7 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
           currency: 'TRY',
           currencySymbol: '₺',
           label: 'Türk Lirası (TL / FAST / EFT)',
+          companyName: process.env.SETTLEMENT_COMPANY_NAME || 'Naponi İnternet Alışveriş Ve Mağazacılık İth.İhr.Ltd.Şti.',
           bankName: process.env.SETTLEMENT_BANK_NAME_TRY || process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.',
           iban: process.env.SETTLEMENT_IBAN_TRY || 'TR45 0015 7000 0000 0084 2975 46',
           swiftCode: process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
@@ -370,7 +375,8 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
           currency: 'USD',
           currencySymbol: '$',
           label: 'US Dollar (USD / SWIFT)',
-          bankName: process.env.SETTLEMENT_BANK_NAME_USD || process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.',
+          companyName: process.env.SETTLEMENT_COMPANY_NAME_INTL || process.env.SETTLEMENT_COMPANY_NAME_EN || 'Naponi Internet Alisveris Ve Magazacilik Ith. Ihr. Ltd. Sti.',
+          bankName: process.env.SETTLEMENT_BANK_NAME_USD || 'Enpara Bank A.S.',
           iban: process.env.SETTLEMENT_IBAN_USD || 'TR20 0015 7000 0000 0095 1325 08',
           swiftCode: process.env.SETTLEMENT_SWIFT_CODE_USD || process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
         },
@@ -378,7 +384,8 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
           currency: 'EUR',
           currencySymbol: '€',
           label: 'Euro (EUR / SWIFT)',
-          bankName: process.env.SETTLEMENT_BANK_NAME_EUR || process.env.SETTLEMENT_BANK_NAME || 'Enpara Bank A.Ş.',
+          companyName: process.env.SETTLEMENT_COMPANY_NAME_INTL || process.env.SETTLEMENT_COMPANY_NAME_EN || 'Naponi Internet Alisveris Ve Magazacilik Ith. Ihr. Ltd. Sti.',
+          bankName: process.env.SETTLEMENT_BANK_NAME_EUR || 'Enpara Bank A.S.',
           iban: process.env.SETTLEMENT_IBAN_EUR || 'TR34 0015 7000 0000 0095 1325 47',
           swiftCode: process.env.SETTLEMENT_SWIFT_CODE_EUR || process.env.SETTLEMENT_SWIFT_CODE || 'ENASTRISXXX',
         },
