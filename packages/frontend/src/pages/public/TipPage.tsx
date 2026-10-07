@@ -2989,6 +2989,7 @@ export const TipPage: React.FC = () => {
                         {emp.avatar ? (
                           <img
                             src={emp.avatar}
+                            referrerPolicy="no-referrer"
                             alt={emp.first_name}
                             style={{ width: '44px', height: '44px', borderRadius: '50%', margin: '0 auto 0.5rem', objectFit: 'cover', border: '1px solid rgba(0, 0, 0, 0.08)' }}
                           />

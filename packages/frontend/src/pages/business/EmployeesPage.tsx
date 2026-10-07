@@ -23,6 +23,7 @@ export const EmployeesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [useUrlInput, setUseUrlInput] = useState(false);
+  const [avatarUrlBroken, setAvatarUrlBroken] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -233,7 +234,7 @@ export const EmployeesPage: React.FC = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div className={`avatar ${emp.avatar ? '' : 'avatar-placeholder'}`}>
                           {emp.avatar ? (
-                            <img src={emp.avatar} alt={emp.first_name} />
+                            <img src={emp.avatar} alt={emp.first_name} referrerPolicy="no-referrer" />
                           ) : (
                             emp.first_name[0]
                           )}
@@ -521,9 +522,30 @@ export const EmployeesPage: React.FC = () => {
                   type="url"
                   placeholder="https://images.unsplash.com/..."
                   value={formData.avatar}
-                  onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
+                  onChange={(e) => {
+                    setAvatarUrlBroken(false);
+                    setFormData({ ...formData, avatar: e.target.value });
+                  }}
                   className="form-input"
                 />
+                {formData.avatar && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.6rem' }}>
+                    {!avatarUrlBroken && (
+                      <img
+                        src={formData.avatar}
+                        alt=""
+                        referrerPolicy="no-referrer"
+                        onError={() => setAvatarUrlBroken(true)}
+                        style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-primary)' }}
+                      />
+                    )}
+                    {avatarUrlBroken && (
+                      <div style={{ fontSize: '0.78rem', color: '#f87171' }}>
+                        Bu bağlantıdan görsel yüklenemedi. Doğrudan görsel adresi (.jpg/.png/.webp) olmalı ve herkese açık olmalıdır; olmadı ise "Görsel Dosyası Yükle" seçeneğini kullanın.
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
                   Doğrudan web görsel bağlantısı (https://...) girebilirsiniz.
                 </div>
@@ -556,6 +578,7 @@ export const EmployeesPage: React.FC = () => {
                     <div style={{ position: 'relative' }}>
                       <img
                         src={formData.avatar}
+                        referrerPolicy="no-referrer"
                         alt="Önizleme"
                         style={{
                           width: '76px',
