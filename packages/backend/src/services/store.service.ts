@@ -71,6 +71,54 @@ export const STORE_BANK_ACCOUNTS = [
   },
 ];
 
+const METAL_STAND_SLUG = 'metal-qr-menu-stand';
+const METAL_STAND_PRICES: Record<string, number> = {
+  '1': 158.40, '2': 316.80, '3': 475.20, '4': 633.60, '5': 792.00,
+  '10': 1578.72, '15': 2370.72, '20': 3157.44, '30': 4736.16, '40': 6314.88, '50': 7893.60,
+};
+
+// Seeded create-only: founder panel edits (price, tiers, active state) are preserved.
+const METAL_STAND_PRODUCT = {
+  slug: METAL_STAND_SLUG,
+  name: 'Metal QR Karekod Menü Standı',
+  description: 'Gümüş eloksallı alüminyumdan üretilen, 10x5 cm ebadında kırımlı (çadır formlu) QR menü standı. Dış etkenlere dayanıklı süblimasyon baskı ile ön ve arka yüzüne QR kodunuzu veya masa numaranızı basıyoruz. Düz kargolanır; kırım hattından elle bükerek kolayca kurarsınız. Restoran, kafe ve otellerde QR menüyü şık ve hijyenik sunar.',
+  features: [
+    'Eloksallı alüminyum, 0,45 mm kalınlık, gümüş zemin',
+    '10x5 cm kompakt ebat, masada yer kaplamaz',
+    'Dış etkenlere dayanıklı süblimasyon baskı',
+    'Her stand için farklı masa numarası / QR basılabilir',
+    'Ön ve arka yüzde 4x4 cm baskı alanı',
+    'Düz kargolanır, kırım hattından elle bükülerek kurulur',
+  ],
+  price: 158.40,
+  currency: 'TRY',
+  category: 'metal_stand',
+  image_url: '/hardware/metal-qr-menu-stand.jpg',
+  gallery: ['/hardware/metal-qr-menu-stand-design-area.jpg'],
+  video_url: null,
+  stock: 9999,
+  min_quantity: 1,
+  quantity_step: 1,
+  badge: 'Yeni',
+  sort_order: 3,
+  is_active: true,
+  variants: {
+    type: 'sizes_and_tiers',
+    defaultSize: '10x5',
+    defaultQuantity: 1,
+    quantities: [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 50],
+    sizes: [
+      {
+        id: '10x5',
+        label: '10x5 cm',
+        price: 158.40,
+        prices: METAL_STAND_PRICES,
+        quantities: [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 50],
+      },
+    ],
+  },
+};
+
 const ACTIVE_STICKERS = [
   {
     slug: 'opaque-qr-sticker',
@@ -227,7 +275,7 @@ export async function syncStoreProducts() {
     // 1. Deactivate any non-sticker products (stands, badges, bundle) so only the 2 stickers are active
     await prisma.storeProduct.updateMany({
       where: {
-        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker'] },
+        slug: { notIn: ['opaque-qr-sticker', 'transparent-qr-sticker', METAL_STAND_SLUG] },
         is_active: true,
       },
       data: { is_active: false },
@@ -247,6 +295,13 @@ export async function syncStoreProducts() {
         },
       });
     }
+
+    // 3. Metal stand: create only if missing, never overwrite founder edits
+    await prisma.storeProduct.upsert({
+      where: { slug: METAL_STAND_SLUG },
+      update: {},
+      create: METAL_STAND_PRODUCT,
+    });
   } catch (err) {
     console.error('[StoreService] Error syncing store products:', err);
   }

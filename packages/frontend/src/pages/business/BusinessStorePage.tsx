@@ -758,9 +758,10 @@ export const BusinessStorePage: React.FC = () => {
             }}
           >
             {[
-              { id: 'all', label: 'Tüm QR Etiketler' },
+              { id: 'all', label: 'Tüm Ürünler' },
               { id: 'opaque', label: 'Opak QR Etiket' },
               { id: 'transparent', label: 'Şeffaf QR Etiket' },
+              { id: 'metal_stand', label: 'Metal QR Stand' },
             ].map((cat) => {
               const active = selectedCategory === cat.id;
               return (
