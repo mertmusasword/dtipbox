@@ -148,7 +148,7 @@ export const de = {
     "founderSubtitle": "Unternehmen, die Naponi bis zum 31. Dezember 2026 beitreten, erhalten lebenslang kostenlosen Zugang zu den Kernfunktionen der Plattform.",
     "founderDaysLeft": "Nur noch {days} Tage",
     "founderJoiningAs": "Sie treten als Gründungsmitglied bei!",
-    "founderPill1": "Lebenslang 0 € Lizenz (ab 2027 regulär 29-99 €/Monat)",
+    "founderPill1": "Lebenslang 0 € Lizenz (ab 2027 regulär 19-69 €/Monat)",
     "founderPill2": "Unbegrenzt Servicepersonal & Tisch-QRs",
     "founderPill3": "Trinkgeld-Pool, QR-Karte & Gästefeedback inklusive",
     "founderViewPerks": "Gründer-Vorteile anzeigen",

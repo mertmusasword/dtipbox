@@ -148,7 +148,7 @@ export const pt = {
     "founderSubtitle": "Empresas que entrarem na Naponi até 31 de dezembro de 2026 terão acesso gratuito vitalício aos recursos principais da plataforma.",
     "founderDaysLeft": "Apenas {days} dias restantes",
     "founderJoiningAs": "Está a aderir como Membro Fundador!",
-    "founderPill1": "Licença a 0€ vitalícia (futuro 29-99€/mês em 2027)",
+    "founderPill1": "Licença a 0€ vitalícia (futuro 19-69€/mês em 2027)",
     "founderPill2": "Equipa, funcionários e QR codes de mesa ilimitados",
     "founderPill3": "Tip Pool, menu QR e avaliações incluídos",
     "founderViewPerks": "Ver Vantagens de Fundador",

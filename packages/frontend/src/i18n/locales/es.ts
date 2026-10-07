@@ -148,7 +148,7 @@ export const es = {
     "founderSubtitle": "Los negocios que se unan a Naponi hasta el 31 de diciembre de 2026 obtienen acceso gratuito de por vida a las funciones clave de la plataforma.",
     "founderDaysLeft": "Quedan solo {days} días",
     "founderJoiningAs": "¡Se une como Miembro Fundador!",
-    "founderPill1": "Licencia a 0€ de por vida (próximamente 29-99€/mes en 2027)",
+    "founderPill1": "Licencia a 0€ de por vida (próximamente 19-69€/mes en 2027)",
     "founderPill2": "Personal, camareros y códigos QR ilimitados",
     "founderPill3": "Bote de propinas, menú QR y opiniones incluidos",
     "founderViewPerks": "Ver Ventajas de Fundador",

@@ -148,7 +148,7 @@ export const zh = {
     "founderSubtitle": "在2026年12月31日前加入Naponi的商家，将享受核心平台功能终身免费使用权。",
     "founderDaysLeft": "仅剩 {days} 天",
     "founderJoiningAs": "您正以创始会员身份加入！",
-    "founderPill1": "终身0元软件使用权（2027年起原价月费29-99美元）",
+    "founderPill1": "终身0元软件使用权（2027年起原价月费19-69美元）",
     "founderPill2": "员工团队与餐桌专属QR码不设上限",
     "founderPill3": "包含小费集中池、数字菜单与顾客评价功能",
     "founderViewPerks": "查看创始会员专属权益",

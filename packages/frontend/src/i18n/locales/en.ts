@@ -148,7 +148,7 @@ export const en = {
     "founderSubtitle": "Businesses joining Naponi until December 31, 2026 receive lifetime free access to core Naponi platform capabilities.",
     "founderDaysLeft": "Only {days} Days Left",
     "founderJoiningAs": "You are Joining as a Founder Member!",
-    "founderPill1": "Lifetime $0 License (Upcoming $29-$99/mo in 2027)",
+    "founderPill1": "Lifetime $0 License (Upcoming $19-$69/mo in 2027)",
     "founderPill2": "Unlimited Staff, Servers & Table QRs",
     "founderPill3": "Tip Pool, QR Menu & Guest Feedback Included",
     "founderViewPerks": "Founder Member Perks",

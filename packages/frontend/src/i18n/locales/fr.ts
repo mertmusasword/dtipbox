@@ -148,7 +148,7 @@ export const fr = {
     "founderSubtitle": "Les établissements qui rejoignent Naponi jusqu'au 31 décembre 2026 bénéficient d'un accès gratuit à vie aux fonctionnalités clés de la plateforme.",
     "founderDaysLeft": "Plus que {days} jours",
     "founderJoiningAs": "Vous rejoignez en tant que Membre Fondateur !",
-    "founderPill1": "Licence à 0 € à vie (tarif futur 29-99 €/mois en 2027)",
+    "founderPill1": "Licence à 0 € à vie (tarif futur 19-69 €/mois en 2027)",
     "founderPill2": "Personnel, serveurs et QR codes illimités",
     "founderPill3": "Partage de pourboires, menu QR & avis clients inclus",
     "founderViewPerks": "Voir les Avantages Fondateur",
