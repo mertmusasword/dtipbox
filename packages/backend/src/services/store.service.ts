@@ -93,8 +93,8 @@ const METAL_STAND_PRODUCT = {
   price: 158.40,
   currency: 'TRY',
   category: 'metal_stand',
-  image_url: '/hardware/metal-qr-menu-stand.jpg',
-  gallery: ['/hardware/metal-qr-menu-stand-design-area.jpg'],
+  image_url: '/hardware/metal-qr-menu-stand-v2.jpg',
+  gallery: ['/hardware/metal-qr-menu-stand-design-area-v2.jpg'],
   video_url: '/hardware/metal-qr-menu-stand.mp4',
   stock: 9999,
   min_quantity: 1,
@@ -301,6 +301,14 @@ export async function syncStoreProducts() {
       where: { slug: METAL_STAND_SLUG },
       update: {},
       create: METAL_STAND_PRODUCT,
+    });
+    // One-time migration to the refreshed (cache-busted) images
+    await prisma.storeProduct.updateMany({
+      where: { slug: METAL_STAND_SLUG, image_url: '/hardware/metal-qr-menu-stand.jpg' },
+      data: {
+        image_url: '/hardware/metal-qr-menu-stand-v2.jpg',
+        gallery: ['/hardware/metal-qr-menu-stand-design-area-v2.jpg'],
+      },
     });
     // One-time cleanup: remove the seeded 'Yeni' badge from the metal stand
     await prisma.storeProduct.updateMany({
