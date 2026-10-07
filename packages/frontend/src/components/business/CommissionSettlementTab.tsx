@@ -130,6 +130,89 @@ export const CommissionSettlementTab: React.FC = () => {
   const [settlementMethod, setSettlementMethod] = useState<'CARD' | 'WIRE'>('CARD');
   const [startingCardPayment, setStartingCardPayment] = useState(false);
 
+  // Unverified Wire Transfers Review Modal State
+  const [isUnverifiedModalOpen, setIsUnverifiedModalOpen] = useState(false);
+  const [unverifiedTipsList, setUnverifiedTipsList] = useState<any[]>([]);
+  const [loadingUnverifiedTips, setLoadingUnverifiedTips] = useState(false);
+  const [processingTipId, setProcessingTipId] = useState<string | null>(null);
+  const [bulkActionLoading, setBulkActionLoading] = useState<'VERIFY' | 'REJECT' | null>(null);
+
+  const fetchUnverifiedTips = async () => {
+    try {
+      setLoadingUnverifiedTips(true);
+      const res = await api.get('/business/tips?status=UNVERIFIED_OR_PENDING&limit=100');
+      setUnverifiedTipsList(res.data?.data?.tips || []);
+    } catch {
+      showToast('Onay bekleyen transferler yüklenemedi.', 'error');
+    } finally {
+      setLoadingUnverifiedTips(false);
+    }
+  };
+
+  const handleOpenUnverifiedModal = () => {
+    setIsUnverifiedModalOpen(true);
+    fetchUnverifiedTips();
+  };
+
+  const handleSingleVerify = async (tipId: string) => {
+    try {
+      setProcessingTipId(tipId);
+      await api.put(`/business/tips/${tipId}/verify`);
+      showToast('Transfer onaylandı ve hacme eklendi! 🎉', 'success');
+      await fetchUnverifiedTips();
+      loadData();
+    } catch {
+      showToast('Transfer onaylanırken bir hata oluştu.', 'error');
+    } finally {
+      setProcessingTipId(null);
+    }
+  };
+
+  const handleSingleReject = async (tipId: string) => {
+    if (!window.confirm('Bu transferi iptal etmek istediğinize emin misiniz?')) return;
+    try {
+      setProcessingTipId(tipId);
+      await api.put(`/business/tips/${tipId}/reject`);
+      showToast('Transfer iptal edildi.', 'info');
+      await fetchUnverifiedTips();
+      loadData();
+    } catch {
+      showToast('İptal edilirken bir hata oluştu.', 'error');
+    } finally {
+      setProcessingTipId(null);
+    }
+  };
+
+  const handleBulkVerify = async () => {
+    if (!window.confirm('Listelenen tüm onay bekleyen transferleri onaylamak istediğinize emin misiniz?')) return;
+    try {
+      setBulkActionLoading('VERIFY');
+      const res = await api.post('/business/tips/verify-all');
+      showToast(res.data?.message || 'Tüm transferler başarıyla onaylandı!', 'success');
+      await fetchUnverifiedTips();
+      loadData();
+    } catch {
+      showToast('Toplu onaylama sırasında bir hata oluştu.', 'error');
+    } finally {
+      setBulkActionLoading(null);
+    }
+  };
+
+  const handleBulkReject = async () => {
+    if (!window.confirm('Bu transferlerin tümünü iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) return;
+    try {
+      setBulkActionLoading('REJECT');
+      const res = await api.post('/business/tips/reject-all');
+      showToast(res.data?.message || 'Transferler iptal edildi.', 'info');
+      await fetchUnverifiedTips();
+      loadData();
+    } catch {
+      showToast('Toplu iptal sırasında bir hata oluştu.', 'error');
+    } finally {
+      setBulkActionLoading(null);
+    }
+  };
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
@@ -431,8 +514,49 @@ export const CommissionSettlementTab: React.FC = () => {
             %0.50 {ct.bankCommissionAccrued}: {formatCurrency(summary.bankPlatformFeeTotal, currency)}
           </div>
           {Boolean(summary.unverifiedTipsCount && summary.unverifiedTipsCount > 0) && (
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.3rem', background: 'rgba(255, 255, 255, 0.04)', padding: '2px 6px', borderRadius: '6px' }}>
-              ⏳ {summary.unverifiedTipsCount} {language === 'tr' ? 'onay bekleyen transfer (Onaylanana kadar komisyon yansıtılmaz)' : 'pending verification (No fee until verified)'}
+            <div
+              style={{
+                marginTop: '0.65rem',
+                background: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                borderRadius: '10px',
+                padding: '8px 10px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                <span style={{ fontSize: '0.74rem', color: '#fde047', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Clock size={13} style={{ color: '#f59e0b' }} />
+                  {summary.unverifiedTipsCount} {language === 'tr' ? 'onay bekleyen transfer' : 'transfers pending verification'}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleOpenUnverifiedModal}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '3px 8px',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    color: '#f59e0b',
+                    borderColor: 'rgba(245, 158, 11, 0.4)',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <span>{language === 'tr' ? 'Listeyi Aç & Onayla' : 'Review & Verify'}</span>
+                  <ArrowRight size={11} />
+                </button>
+              </div>
+              <div style={{ fontSize: '0.68rem', color: '#94a3b8', lineHeight: 1.35 }}>
+                💡 {language === 'tr'
+                  ? 'Müşteriler havale yaptım dediğinde buraya düşer. Bankanıza gelenleri onaylayabilir veya asılsızları tek tıkla iptal edebilirsiniz.'
+                  : 'Customer wire notifications. Verify matching bank deposits or reject unconfirmed claims.'}
+              </div>
             </div>
           )}
         </div>
@@ -1298,6 +1422,269 @@ export const CommissionSettlementTab: React.FC = () => {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 6. UNVERIFIED WIRE TRANSFERS REVIEW & APPROVAL MODAL */}
+      {isUnverifiedModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem',
+          }}
+        >
+          <div
+            className="glass-card"
+            style={{
+              maxWidth: '680px',
+              width: '100%',
+              borderRadius: '20px',
+              padding: '1.75rem',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+              border: '1.5px solid rgba(255, 255, 255, 0.15)',
+              position: 'relative',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <button
+              onClick={() => setIsUnverifiedModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                background: 'none',
+                border: 'none',
+                color: '#94a3b8',
+                cursor: 'pointer',
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <div
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: '#f59e0b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Clock size={22} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc' }}>
+                  {language === 'tr' ? 'Onay Bekleyen Havale Transferleri' : 'Pending Wire Transfer Claims'}
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                  {unverifiedTipsList.length} {language === 'tr' ? 'adet onay bekleyen işlem listeleniyor' : 'transactions awaiting review'}
+                </span>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5, marginBottom: '1rem' }}>
+              {language === 'tr'
+                ? "Müşterilerin masadaki QR kodu okutup 'Havale/FAST ile Gönderdim' bildirdiği bahşişler aşağıdadır. Banka ekstrenizde gördüğünüz transferleri onaylayabilir, hesaba gelmeyen veya test olanları tek tıkla iptal edebilirsiniz."
+                : 'Customer claims of bank wire transfers. Confirm deposits that have cleared into your bank account, or reject invalid claims.'}
+            </p>
+
+            {/* Bulk Action Controls */}
+            {unverifiedTipsList.length > 0 && (
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.7)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '12px',
+                  padding: '0.75rem 1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
+                  marginBottom: '1rem',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div style={{ fontSize: '0.82rem', color: '#f8fafc', fontWeight: 700 }}>
+                  {language === 'tr' ? 'Toplam Bekleyen Tutar: ' : 'Total Pending: '}
+                  <span style={{ color: '#f59e0b' }}>
+                    {formatCurrency(
+                      unverifiedTipsList.reduce((acc, t) => acc + (t.amount || 0), 0),
+                      currency
+                    )}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    disabled={bulkActionLoading !== null}
+                    onClick={handleBulkVerify}
+                    className="btn btn-primary"
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      background: '#10b981',
+                      borderColor: '#059669',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <CheckCircle2 size={14} />
+                    <span>{bulkActionLoading === 'VERIFY' ? 'Onaylanıyor...' : (language === 'tr' ? '✨ Tümünü Onayla' : 'Approve All')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={bulkActionLoading !== null}
+                    onClick={handleBulkReject}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: '0.78rem',
+                      color: '#f87171',
+                      borderColor: 'rgba(239, 68, 68, 0.4)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <X size={14} />
+                    <span>{bulkActionLoading === 'REJECT' ? 'İptal Ediliyor...' : (language === 'tr' ? 'Tümünü İptal Et' : 'Reject All')}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Scrollable Items List */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.6rem', paddingRight: '4px' }}>
+              {loadingUnverifiedTips ? (
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
+                  <Loader2 size={24} className="spinner" style={{ margin: '0 auto 0.5rem' }} />
+                  <div>Transferler yükleniyor...</div>
+                </div>
+              ) : unverifiedTipsList.length === 0 ? (
+                <div
+                  style={{
+                    padding: '2.5rem 1rem',
+                    textAlign: 'center',
+                    background: 'rgba(16, 185, 129, 0.05)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: '14px',
+                  }}
+                >
+                  <CheckCircle2 size={36} style={{ color: '#10b981', margin: '0 auto 0.5rem' }} />
+                  <div style={{ color: '#f8fafc', fontWeight: 700, fontSize: '0.95rem' }}>
+                    {language === 'tr' ? 'Onay bekleyen transfer bulunmuyor!' : 'No pending transfers!'}
+                  </div>
+                  <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: '4px' }}>
+                    {language === 'tr' ? 'Tüm havale bildirimleri onaylanmış veya incelenmiştir.' : 'All wire transfers are verified.'}
+                  </div>
+                </div>
+              ) : (
+                unverifiedTipsList.map((tip) => (
+                  <div
+                    key={tip.id}
+                    style={{
+                      background: 'rgba(30, 41, 59, 0.6)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      padding: '0.75rem 1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.75rem',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+                          {formatCurrency(tip.amount, tip.currency || currency)}
+                        </span>
+                        <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', fontSize: '0.68rem', padding: '1px 6px' }}>
+                          {tip.paymentMethod?.replace(/_/g, ' ') || 'HAVALE'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span>📅 {new Date(tip.createdAt).toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US')}</span>
+                        {tip.tableName && <span>🍽️ {tip.tableName}</span>}
+                        {tip.employeeName && <span>👤 {tip.employeeName}</span>}
+                        {tip.customerName && <span>💬 {tip.customerName}</span>}
+                      </div>
+                      {tip.customerMessage && (
+                        <div style={{ fontSize: '0.72rem', color: '#cbd5e1', fontStyle: 'italic', marginTop: '2px' }}>
+                          "{tip.customerMessage}"
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <button
+                        type="button"
+                        disabled={processingTipId === tip.id}
+                        onClick={() => handleSingleVerify(tip.id)}
+                        className="btn btn-primary"
+                        style={{
+                          padding: '4px 10px',
+                          fontSize: '0.75rem',
+                          background: '#10b981',
+                          borderColor: '#059669',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <Check size={13} />
+                        <span>{processingTipId === tip.id ? '...' : (language === 'tr' ? 'Onayla' : 'Verify')}</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={processingTipId === tip.id}
+                        onClick={() => handleSingleReject(tip.id)}
+                        className="btn btn-secondary"
+                        style={{
+                          padding: '4px 8px',
+                          fontSize: '0.75rem',
+                          color: '#f87171',
+                          borderColor: 'rgba(239, 68, 68, 0.3)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                        }}
+                        title={language === 'tr' ? 'İptal Et / Reddet' : 'Reject'}
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setIsUnverifiedModalOpen(false)}
+                className="btn btn-secondary"
+                style={{ padding: '0.5rem 1.25rem', fontSize: '0.82rem' }}
+              >
+                {ct.cancelBtn}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -658,6 +658,157 @@ router.get('/audit-logs', async (req: AuthRequest, res, next) => {
   }
 });
 
+// --- Get Business Tips (with filtering by status and pagination) ---
+router.get('/tips', async (req: AuthRequest, res, next) => {
+  try {
+    const businessId = req.user!.businessId!;
+    const status = req.query.status as string | undefined;
+    const page = Math.max(1, parseInt((req.query.page as string) || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || '50', 10) || 50));
+    const skip = (page - 1) * limit;
+
+    const where: any = { business_id: businessId };
+    if (status) {
+      if (status === 'UNVERIFIED_OR_PENDING') {
+        where.payment_status = { in: ['UNVERIFIED', 'PENDING'] };
+      } else {
+        where.payment_status = status as any;
+      }
+    }
+
+    const [tips, total] = await Promise.all([
+      prisma.tip.findMany({
+        where,
+        include: {
+          table: { select: { id: true, name: true } },
+          employee: { select: { id: true, first_name: true, last_name: true } },
+        },
+        orderBy: { created_at: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.tip.count({ where }),
+    ]);
+
+    const formattedTips = tips.map((t) => ({
+      id: t.id,
+      amount: Number(t.amount),
+      currency: t.currency || 'TRY',
+      paymentMethod: t.payment_method,
+      paymentStatus: t.payment_status,
+      isSettled: t.is_settled,
+      customerName: t.customer_name,
+      customerMessage: t.customer_message,
+      tableName: t.table?.name || null,
+      employeeName: t.employee ? `${t.employee.first_name} ${t.employee.last_name}`.trim() : null,
+      createdAt: t.created_at,
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        tips: formattedTips,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Bulk Verify All Pending Bank Transfers ---
+router.post('/tips/verify-all', async (req: AuthRequest, res, next) => {
+  try {
+    const businessId = req.user!.businessId!;
+    const unverifiedTips = await prisma.tip.findMany({
+      where: {
+        business_id: businessId,
+        payment_status: { in: ['UNVERIFIED', 'PENDING'] },
+      },
+      select: { id: true, amount: true, payment_method: true },
+    });
+
+    if (unverifiedTips.length === 0) {
+      res.json({ success: true, count: 0, message: 'Onay bekleyen transfer bulunmuyor.' });
+      return;
+    }
+
+    const tipIds = unverifiedTips.map((t) => t.id);
+    await prisma.tip.updateMany({
+      where: { id: { in: tipIds } },
+      data: { payment_status: 'SUCCESS' },
+    });
+
+    await auditService.createAuditLog({
+      actorUserId: req.user?.id,
+      businessId,
+      action: 'BULK_TIPS_VERIFIED',
+      entityType: 'TIP',
+      metadata: {
+        count: unverifiedTips.length,
+        tipIds,
+      },
+    });
+
+    res.json({
+      success: true,
+      count: unverifiedTips.length,
+      message: `${unverifiedTips.length} adet transfer başarıyla onaylandı ve hacme eklendi.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Bulk Reject All Pending Bank Transfers (if fake/unpaid/test) ---
+router.post('/tips/reject-all', async (req: AuthRequest, res, next) => {
+  try {
+    const businessId = req.user!.businessId!;
+    const unverifiedTips = await prisma.tip.findMany({
+      where: {
+        business_id: businessId,
+        payment_status: { in: ['UNVERIFIED', 'PENDING'] },
+      },
+      select: { id: true },
+    });
+
+    if (unverifiedTips.length === 0) {
+      res.json({ success: true, count: 0, message: 'İptal edilecek onay bekleyen transfer bulunmuyor.' });
+      return;
+    }
+
+    const tipIds = unverifiedTips.map((t) => t.id);
+    await prisma.tip.updateMany({
+      where: { id: { in: tipIds } },
+      data: { payment_status: 'CANCELLED' },
+    });
+
+    await auditService.createAuditLog({
+      actorUserId: req.user?.id,
+      businessId,
+      action: 'BULK_TIPS_REJECTED',
+      entityType: 'TIP',
+      metadata: {
+        count: unverifiedTips.length,
+        tipIds,
+      },
+    });
+
+    res.json({
+      success: true,
+      count: unverifiedTips.length,
+      message: `${unverifiedTips.length} adet transfer iptal edildi ve kaldırıldı.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // --- Verify Tip (Confirm incoming IBAN bank transfer) ---
 router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
   try {
