@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../api/client';
+import { SetupWarning } from '../../onboarding/SetupWarning';
 import { QrCode, Table, Business, CustomSocialLink } from '../../types';
 import { Modal } from '../../components/Modal';
 import { QrModal } from '../../components/QrModal';
@@ -505,7 +506,7 @@ export const QrCodesPage: React.FC = () => {
 
         {activeTab === 'qrcodes' && (
           <div className="page-header-actions">
-            <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
+            <button className="btn btn-primary" data-tour="qr-create" onClick={() => setIsCreateModalOpen(true)}>
               <Plus size={16} /> {t('business.generateQrBtn')}
             </button>
           </div>
@@ -535,6 +536,8 @@ export const QrCodesPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <SetupWarning />
 
       {/* Tabs Navigation */}
       <div

@@ -235,6 +235,7 @@ export const BusinessProfilePage: React.FC = () => {
         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
           {/* Logo */}
           <div
+            data-tour="profile-logo"
             style={{
               width: '80px',
               height: '80px',

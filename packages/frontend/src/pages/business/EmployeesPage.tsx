@@ -192,7 +192,7 @@ export const EmployeesPage: React.FC = () => {
           </p>
         </div>
         <div className="page-header-actions">
-          <button className="btn btn-primary" onClick={openCreateModal}>
+          <button className="btn btn-primary" data-tour="employee-add" onClick={openCreateModal}>
             <Plus size={16} /> {t('business.addStaffBtn')}
           </button>
         </div>

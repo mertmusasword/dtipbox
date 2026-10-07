@@ -36,6 +36,15 @@ router.get('/', async (req: AuthRequest, res, next) => {
   }
 });
 
+router.get('/onboarding-status', async (req: AuthRequest, res, next) => {
+  try {
+    const data = await businessService.getOnboardingStatus(req.user!.businessId!);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+});
+
 const updateBusinessSchema = {
   body: z.object({
     name: z.string().min(2).optional(),

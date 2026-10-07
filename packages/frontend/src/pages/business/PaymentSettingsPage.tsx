@@ -486,7 +486,7 @@ export const PaymentSettingsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+            <div className="form-group" data-tour="payment-iban" style={{ marginBottom: '1.25rem' }}>
               <label className="form-label" style={{ fontWeight: 600 }}>
                 {t('payments.ibanField')} *
               </label>

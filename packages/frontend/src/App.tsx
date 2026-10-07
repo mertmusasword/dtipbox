@@ -10,6 +10,7 @@ import { FloatingSupportWidget } from './components/FloatingSupportWidget';
 import { PwaInstallPrompt } from './components/PwaInstallPrompt';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Role } from './types';
+import { OnboardingProvider } from './onboarding/OnboardingContext';
 
 // ==================== CODE SPLITTING / LAZY LOADED PAGES ====================
 // Public Pages
@@ -137,7 +138,7 @@ const ProtectedLayout: React.FC<{ allowedRoles?: Role[] }> = ({ allowedRoles }) 
     return <Navigate to="/business/dashboard" replace />;
   }
 
-  return (
+  const layout = (
     <div className="app-container">
       <Sidebar />
       <main className="main-content">
@@ -147,6 +148,8 @@ const ProtectedLayout: React.FC<{ allowedRoles?: Role[] }> = ({ allowedRoles }) 
       </main>
     </div>
   );
+
+  return user.role === 'BUSINESS' ? <OnboardingProvider>{layout}</OnboardingProvider> : layout;
 };
 
 export const App: React.FC = () => {

@@ -30,12 +30,16 @@ import {
 } from 'lucide-react';
 import { useLanguage, LanguageSelector } from '../i18n';
 import { SupportTicketModal } from './SupportTicketModal';
+import { useOnboarding } from '../onboarding/OnboardingContext';
+import { useOnboardingText } from '../i18n/onboardingLocales';
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
   const { t, language } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const ob = useOnboarding();
+  const onbText = useOnboardingText();
 
   if (!user) return null;
 
@@ -107,16 +111,30 @@ export const Sidebar: React.FC = () => {
           {isBusiness && (
             <>
               <NavItem to="/business/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.dashboard')} onClick={closeMobile} />
-              <NavItem to="/business/profile" icon={<UserCircle size={18} />} label={t('nav.profile')} onClick={closeMobile} />
-              <NavItem to="/business/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} />
-              <NavItem to="/business/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} />
+              <NavItem to="/business/profile" icon={<UserCircle size={18} />} label={t('nav.profile')} onClick={closeMobile} dot={!!ob?.isPending('profile')} />
+              <NavItem to="/business/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} dot={!!ob?.isPending('staff')} />
+              <NavItem to="/business/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} dot={!!ob?.isPending('qr')} />
               <NavItem to="/business/menu" icon={<BookOpen size={18} />} label={t('nav.menu') || 'QR Menü'} onClick={closeMobile} />
               <NavItem to="/business/store" icon={<ShoppingBag size={18} />} label={t('nav.store') || 'Donanım Mağazası'} onClick={closeMobile} />
-              <NavItem to="/business/payment-settings" icon={<CreditCard size={18} />} label={t('nav.paymentSettings') || 'Ödeme Ayarları'} onClick={closeMobile} />
+              <NavItem to="/business/payment-settings" icon={<CreditCard size={18} />} label={t('nav.paymentSettings') || 'Ödeme Ayarları'} onClick={closeMobile} dot={!!ob?.isPending('payment')} />
               <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
               <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
               <NavItem to="/business/loyalty" icon={<Award size={18} />} label={t('nav.loyalty')} onClick={closeMobile} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
+              {ob && ob.loaded && (
+                <button
+                  type="button"
+                  className="onb-nav-tour"
+                  onClick={() => {
+                    closeMobile();
+                    ob.startTour();
+                  }}
+                >
+                  <span>▶</span>
+                  <span>{onbText('menuTour')}</span>
+                  {!ob.allDone && <span className="onb-dot" />}
+                </button>
+              )}
               <button
                 type="button"
                 className="sidebar-nav-item"
@@ -218,7 +236,8 @@ const NavItem: React.FC<{
   label: string;
   end?: boolean;
   onClick?: () => void;
-}> = ({ to, icon, label, end, onClick }) => {
+  dot?: boolean;
+}> = ({ to, icon, label, end, onClick, dot }) => {
   return (
     <NavLink
       to={to}
@@ -230,6 +249,7 @@ const NavItem: React.FC<{
     >
       {icon}
       <span>{label}</span>
+      {dot && <span className="onb-dot" aria-hidden="true" />}
     </NavLink>
   );
 };
