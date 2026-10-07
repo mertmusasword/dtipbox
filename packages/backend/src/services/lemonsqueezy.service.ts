@@ -105,6 +105,10 @@ export class LemonSqueezyService {
         type: 'checkouts',
         attributes: {
           custom_price: amountInCents,
+          checkout_options: {
+            dark: true,
+            button_color: '#0284c7',
+          },
           product_options: {
             name: `Naponi Order #${params.orderNumber}`,
             description:
