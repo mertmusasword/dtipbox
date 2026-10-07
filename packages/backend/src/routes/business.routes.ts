@@ -668,8 +668,8 @@ router.get('/tips', async (req: AuthRequest, res, next) => {
     const skip = (page - 1) * limit;
 
     const where: any = { business_id: businessId };
-    if (status) {
-      if (status === 'UNVERIFIED_OR_PENDING') {
+    if (status && status !== 'ALL') {
+      if (status === 'UNVERIFIED_OR_PENDING' || status === 'UNVERIFIED' || status === 'PENDING') {
         where.payment_status = { in: ['UNVERIFIED', 'PENDING'] };
       } else {
         where.payment_status = status as any;
@@ -695,13 +695,21 @@ router.get('/tips', async (req: AuthRequest, res, next) => {
       amount: Number(t.amount),
       currency: t.currency || 'TRY',
       paymentMethod: t.payment_method,
+      payment_method: t.payment_method,
       paymentStatus: t.payment_status,
+      status: t.payment_status,
       isSettled: t.is_settled,
+      is_settled: t.is_settled,
       customerName: t.customer_name,
+      customer_name: t.customer_name,
       customerMessage: t.customer_message,
+      customer_message: t.customer_message,
       tableName: t.table?.name || null,
+      table_name: t.table?.name || null,
       employeeName: t.employee ? `${t.employee.first_name} ${t.employee.last_name}`.trim() : null,
+      employee_name: t.employee ? `${t.employee.first_name} ${t.employee.last_name}`.trim() : null,
       createdAt: t.created_at,
+      created_at: t.created_at,
     }));
 
     res.json({

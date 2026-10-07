@@ -41,6 +41,7 @@ import { CustomerFeedbacks } from '../../components/CustomerFeedbacks';
 import { TipPoolSettlementModal } from '../../components/TipPoolSettlementModal';
 import { PlanGuardStatusModal } from '../../components/business/PlanGuardStatusModal';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { useToast } from '../../components/Toast';
 
 export const BusinessDashboard: React.FC = () => {
   const { t, formatCurrency, formatTime, language } = useLanguage();
@@ -80,6 +81,31 @@ export const BusinessDashboard: React.FC = () => {
       .finally(() => setLoading(false));
   }, [t]);
 
+  const { showToast } = useToast();
+  const [tipsFilter, setTipsFilter] = useState<'ALL' | 'SUCCESS' | 'UNVERIFIED'>('ALL');
+  const [dashboardTips, setDashboardTips] = useState<any[] | null>(null);
+  const [loadingTips, setLoadingTips] = useState(false);
+  const [bulkActionLoading, setBulkActionLoading] = useState<'VERIFY' | 'REJECT' | null>(null);
+
+  const fetchFilteredTips = useCallback(async (filter: 'ALL' | 'SUCCESS' | 'UNVERIFIED') => {
+    try {
+      setLoadingTips(true);
+      const statusParam = filter === 'UNVERIFIED' ? 'UNVERIFIED_OR_PENDING' : filter;
+      const res = await api.get(`/business/tips?status=${statusParam}&limit=50`);
+      if (res.data?.data?.tips) {
+        setDashboardTips(res.data.data.tips);
+      }
+    } catch (err) {
+      console.error('Failed to fetch filtered tips:', err);
+    } finally {
+      setLoadingTips(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFilteredTips(tipsFilter);
+  }, [tipsFilter, fetchFilteredTips]);
+
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
 
@@ -87,9 +113,11 @@ export const BusinessDashboard: React.FC = () => {
     try {
       setVerifyingId(tipId);
       await api.put(`/business/tips/${tipId}/verify`);
+      showToast(language === 'tr' ? 'Transfer başarıyla onaylandı.' : 'Transfer verified.', 'success');
       loadData();
+      fetchFilteredTips(tipsFilter);
     } catch {
-      alert(t('common.error'));
+      showToast(t('common.error'), 'error');
     } finally {
       setVerifyingId(null);
     }
@@ -102,11 +130,42 @@ export const BusinessDashboard: React.FC = () => {
     try {
       setRejectingId(tipId);
       await api.put(`/business/tips/${tipId}/reject`);
+      showToast(language === 'tr' ? 'Transfer iptal edildi.' : 'Transfer rejected.', 'info');
       loadData();
+      fetchFilteredTips(tipsFilter);
     } catch {
-      alert(t('common.error'));
+      showToast(t('common.error'), 'error');
     } finally {
       setRejectingId(null);
+    }
+  };
+
+  const handleBulkVerifyDashboard = async () => {
+    try {
+      setBulkActionLoading('VERIFY');
+      const res = await api.post('/business/tips/verify-all');
+      showToast(res.data?.message || (language === 'tr' ? 'Tüm transferler onaylandı.' : 'All transfers verified.'), 'success');
+      loadData();
+      fetchFilteredTips(tipsFilter);
+    } catch {
+      showToast('Toplu onay sırasında hata oluştu.', 'error');
+    } finally {
+      setBulkActionLoading(null);
+    }
+  };
+
+  const handleBulkRejectDashboard = async () => {
+    if (!window.confirm(language === 'tr' ? 'Onay bekleyen tüm transferleri iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.' : 'Are you sure you want to cancel all pending transfers?')) return;
+    try {
+      setBulkActionLoading('REJECT');
+      const res = await api.post('/business/tips/reject-all');
+      showToast(res.data?.message || (language === 'tr' ? 'Transferler iptal edildi.' : 'Transfers rejected.'), 'info');
+      loadData();
+      fetchFilteredTips(tipsFilter);
+    } catch {
+      showToast('Toplu iptal sırasında hata oluştu.', 'error');
+    } finally {
+      setBulkActionLoading(null);
     }
   };
 
@@ -717,23 +776,173 @@ export const BusinessDashboard: React.FC = () => {
 
       {/* Recent Tips Table */}
       <div className="glass-card">
-        <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
+        <div className="flex-between" style={{ marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div className="section-header mb-0">
             <Sparkles size={20} className="section-icon" />
             <h2 className="section-title">{t('business.recentActivity')}</h2>
           </div>
-          <Link
-            to="/business/analytics"
-            style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-          >
-            {t('business.viewAllAnalytics')} <ArrowRight size={14} />
-          </Link>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {/* Filter Tabs */}
+            <div style={{
+              display: 'inline-flex',
+              background: 'rgba(15, 23, 42, 0.6)',
+              padding: '3px',
+              borderRadius: '10px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}>
+              <button
+                type="button"
+                onClick={() => setTipsFilter('ALL')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '7px',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: 'all 0.2s',
+                  background: tipsFilter === 'ALL' ? 'var(--accent-primary, #6366f1)' : 'transparent',
+                  color: tipsFilter === 'ALL' ? '#ffffff' : 'var(--text-secondary, #94a3b8)',
+                }}
+              >
+                {language === 'tr' ? 'Tümü' : 'All'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTipsFilter('SUCCESS')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '7px',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: 'all 0.2s',
+                  background: tipsFilter === 'SUCCESS' ? '#10b981' : 'transparent',
+                  color: tipsFilter === 'SUCCESS' ? '#ffffff' : 'var(--text-secondary, #94a3b8)',
+                }}
+              >
+                {language === 'tr' ? 'Başarılı' : 'Successful'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTipsFilter('UNVERIFIED')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '7px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: tipsFilter === 'UNVERIFIED'
+                    ? '#f59e0b'
+                    : (analytics?.pendingTipCount && analytics.pendingTipCount > 0 ? 'rgba(245, 158, 11, 0.15)' : 'transparent'),
+                  color: tipsFilter === 'UNVERIFIED'
+                    ? '#000000'
+                    : (analytics?.pendingTipCount && analytics.pendingTipCount > 0 ? '#f59e0b' : 'var(--text-secondary, #94a3b8)'),
+                }}
+              >
+                <span>⏳ {language === 'tr' ? 'Onay Bekleyenler' : 'Pending Approval'}</span>
+                {analytics?.pendingTipCount && analytics.pendingTipCount > 0 ? (
+                  <span
+                    style={{
+                      background: tipsFilter === 'UNVERIFIED' ? '#000000' : '#f59e0b',
+                      color: tipsFilter === 'UNVERIFIED' ? '#ffffff' : '#000000',
+                      borderRadius: '999px',
+                      padding: '1px 6px',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                    }}
+                  >
+                    {analytics.pendingTipCount}
+                  </span>
+                ) : null}
+              </button>
+            </div>
+
+            <Link
+              to="/business/analytics"
+              style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              {t('business.viewAllAnalytics')} <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
 
-        {loading ? (
+        {loading || loadingTips ? (
           <LoadingState compact message={t('common.loading')} />
-        ) : analytics?.recentTips && analytics.recentTips.length > 0 ? (
+        ) : (dashboardTips !== null ? dashboardTips : (analytics?.recentTips || [])).length > 0 ? (
           <>
+            {tipsFilter === 'UNVERIFIED' && (
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.08)',
+                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                  borderRadius: '12px',
+                  padding: '0.75rem 1rem',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Clock size={18} style={{ color: '#f59e0b' }} />
+                  <span style={{ fontSize: '0.85rem', color: '#fef3c7', fontWeight: 600 }}>
+                    {language === 'tr'
+                      ? `${(dashboardTips || []).length} adet transfer onayınızı bekliyor.`
+                      : `${(dashboardTips || []).length} transfers awaiting verification.`}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    disabled={bulkActionLoading !== null}
+                    onClick={handleBulkVerifyDashboard}
+                    className="btn btn-primary"
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: '0.78rem',
+                      background: '#10b981',
+                      borderColor: '#059669',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <CheckCircle2 size={14} />
+                    <span>{bulkActionLoading === 'VERIFY' ? 'Onaylanıyor...' : (language === 'tr' ? '✨ Tümünü Onayla' : 'Approve All')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={bulkActionLoading !== null}
+                    onClick={handleBulkRejectDashboard}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: '0.78rem',
+                      color: '#f87171',
+                      borderColor: 'rgba(239, 68, 68, 0.35)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <X size={14} />
+                    <span>{bulkActionLoading === 'REJECT' ? 'İptal Ediliyor...' : (language === 'tr' ? 'Tümünü İptal Et' : 'Reject All')}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Desktop Table View */}
             <div className="desktop-tips-table table-responsive">
               <table className="data-table">
@@ -749,7 +958,7 @@ export const BusinessDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {analytics.recentTips.map((tip) => (
+                  {(dashboardTips !== null ? dashboardTips : (analytics?.recentTips || [])).map((tip) => (
                     <tr key={tip.id}>
                       <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                         {formatTime(tip.created_at)}
@@ -888,7 +1097,7 @@ export const BusinessDashboard: React.FC = () => {
 
             {/* Mobile Card List View */}
             <div className="mobile-tips-list">
-              {analytics.recentTips.map((tip) => (
+              {(dashboardTips !== null ? dashboardTips : (analytics?.recentTips || [])).map((tip) => (
                 <div key={tip.id} className="mobile-tip-card">
                   <div className="mobile-tip-card-top">
                     <div className="mobile-tip-card-amount">
@@ -1002,6 +1211,38 @@ export const BusinessDashboard: React.FC = () => {
               ))}
             </div>
           </>
+        ) : tipsFilter === 'UNVERIFIED' ? (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '2.5rem 1.5rem',
+              background: 'rgba(16, 185, 129, 0.05)',
+              border: '1px solid rgba(16, 185, 129, 0.2)',
+              borderRadius: '14px',
+            }}
+          >
+            <CheckCircle2 size={36} style={{ color: '#10b981', margin: '0 auto 0.5rem' }} />
+            <div style={{ fontWeight: 700, color: '#f8fafc', fontSize: '0.95rem' }}>
+              {language === 'tr' ? 'Onay bekleyen hiçbir transfer bulunmuyor!' : 'No pending transfers!'}
+            </div>
+            <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: '4px' }}>
+              {language === 'tr' ? 'Tüm havale bildirimleri onaylanmış veya incelenmiştir.' : 'All wire transfer notifications have been reviewed.'}
+            </div>
+          </div>
+        ) : tipsFilter === 'SUCCESS' ? (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '2.5rem 1.5rem',
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: '14px',
+            }}
+          >
+            <div style={{ fontWeight: 600, color: '#94a3b8', fontSize: '0.9rem' }}>
+              {language === 'tr' ? 'Henüz başarılı bir bahşiş hareketi bulunmuyor.' : 'No successful tips yet.'}
+            </div>
+          </div>
         ) : (
           <EmptyState
             icon={<DollarSign size={28} />}
