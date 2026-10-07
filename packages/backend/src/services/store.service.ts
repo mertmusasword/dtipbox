@@ -194,7 +194,7 @@ const PLEKSI_STAND_PRODUCT = {
   features: [
     'Pleksi stand üzerine metal plaka',
     '4 plaka rengi: Gümüş, Altın, Beyaz, Bronz',
-    '4 ebat: 4.5x5, 7x7, 9x5, 15x7 cm',
+    '3 ebat: 4.5x5, 7x7, 9x5 cm',
     'Dış etkenlere dayanıklı süblimasyon baskı',
     'Kırımlı yapı, uzun ömürlü kullanım',
     'Her stand için farklı masa numarası / QR basılabilir',
@@ -216,7 +216,7 @@ const PLEKSI_STAND_PRODUCT = {
     defaultSize: '4.5x5',
     defaultQuantity: 1,
     quantities: PLEKSI_STAND_QTYS,
-    sizes: [pleksiSize('4.5x5', 1), pleksiSize('7x7', 2), pleksiSize('9x5', 2), pleksiSize('15x7', 4)],
+    sizes: [pleksiSize('4.5x5', 1), pleksiSize('7x7', 2), pleksiSize('9x5', 2)],
   },
 };
 
@@ -433,6 +433,20 @@ export async function syncStoreProducts() {
       update: {},
       create: PLEKSI_STAND_PRODUCT,
     });
+    // One-time cleanup: drop the cancelled 15x7 size from an already-seeded pleksi stand
+    const pleksiRow = await prisma.storeProduct.findUnique({ where: { slug: PLEKSI_STAND_SLUG } });
+    const pleksiVariants = pleksiRow?.variants as any;
+    if (pleksiRow && pleksiVariants?.sizes?.some((s: any) => s.id === '15x7')) {
+      await prisma.storeProduct.update({
+        where: { slug: PLEKSI_STAND_SLUG },
+        data: {
+          variants: { ...pleksiVariants, sizes: pleksiVariants.sizes.filter((s: any) => s.id !== '15x7') },
+          features: (pleksiRow.features || []).map((f: string) =>
+            f.startsWith('4 ebat:') ? '3 ebat: 4.5x5, 7x7, 9x5 cm' : f
+          ),
+        },
+      });
+    }
     // Attach the plate video to an already-seeded row only while video_url is empty
     await prisma.storeProduct.updateMany({
       where: { slug: METAL_PLATE_SLUG, video_url: null },
