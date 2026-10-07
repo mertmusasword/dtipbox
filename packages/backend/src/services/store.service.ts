@@ -95,7 +95,7 @@ const METAL_STAND_PRODUCT = {
   category: 'metal_stand',
   image_url: '/hardware/metal-qr-menu-stand.jpg',
   gallery: ['/hardware/metal-qr-menu-stand-design-area.jpg'],
-  video_url: null,
+  video_url: '/hardware/metal-qr-menu-stand.mp4',
   stock: 9999,
   min_quantity: 1,
   quantity_step: 1,
@@ -301,6 +301,11 @@ export async function syncStoreProducts() {
       where: { slug: METAL_STAND_SLUG },
       update: {},
       create: METAL_STAND_PRODUCT,
+    });
+    // Attach the product video to an already-seeded row only while video_url is empty
+    await prisma.storeProduct.updateMany({
+      where: { slug: METAL_STAND_SLUG, video_url: null },
+      data: { video_url: '/hardware/metal-qr-menu-stand.mp4' },
     });
   } catch (err) {
     console.error('[StoreService] Error syncing store products:', err);
