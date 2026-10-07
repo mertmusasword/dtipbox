@@ -167,8 +167,10 @@ export async function getBusinessCommissionsReport(businessId: string): Promise<
     // If an incoming tip is UNVERIFIED or PENDING, the venue has NOT verified receipt of funds yet.
     // Zero commission is accrued until the venue confirms the payment from their dashboard.
     if (tip.payment_status !== PaymentStatus.SUCCESS) {
-      unverifiedTipsVolume += amt;
-      unverifiedTipsCount += 1;
+      if (isBank) {
+        unverifiedTipsVolume += amt;
+        unverifiedTipsCount += 1;
+      }
       continue;
     }
 
