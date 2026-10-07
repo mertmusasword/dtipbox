@@ -13,6 +13,11 @@ interface Rect {
 
 const PAD = 8;
 
+const roundedRect = (r: Rect, rad: number) => {
+  const { left: x, top: y, width: w, height: h } = r;
+  return `M${x + rad} ${y}H${x + w - rad}A${rad} ${rad} 0 0 1 ${x + w} ${y + rad}V${y + h - rad}A${rad} ${rad} 0 0 1 ${x + w - rad} ${y + h}H${x + rad}A${rad} ${rad} 0 0 1 ${x} ${y + h - rad}V${y + rad}A${rad} ${rad} 0 0 1 ${x + rad} ${y}Z`;
+};
+
 export const OnboardingTour: React.FC = () => {
   const ob = useOnboarding();
   const o = useOnboardingText();
@@ -20,6 +25,7 @@ export const OnboardingTour: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [rect, setRect] = useState<Rect | null>(null);
+  const [navRect, setNavRect] = useState<Rect | null>(null);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [stepDone, setStepDone] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -71,6 +77,25 @@ export const OnboardingTour: React.FC = () => {
     const t = window.setInterval(measure, 200);
     return () => window.clearInterval(t);
   }, [stepId, location.pathname, step]);
+
+  // Highlight the matching sidebar menu item so the user knows which page they are on.
+  useEffect(() => {
+    if (!step) return;
+    const measureNav = () => {
+      const el = document.querySelector(`.sidebar a[href="${step.route}"]`) as HTMLElement | null;
+      if (!el) return setNavRect(null);
+      const r = el.getBoundingClientRect();
+      const visible = r.width > 0 && r.right > 0 && r.left < window.innerWidth && r.top >= 0 && r.bottom <= window.innerHeight;
+      setNavRect(
+        visible
+          ? { top: r.top - 2, left: r.left - 2, width: r.width + 4, height: r.height + 4 }
+          : null
+      );
+    };
+    measureNav();
+    const t = window.setInterval(measureNav, 300);
+    return () => window.clearInterval(t);
+  }, [stepId, step]);
 
   // Poll real status while on an action step; auto-advance when completed.
   const stepKey = step?.stepKey;
@@ -127,9 +152,19 @@ export const OnboardingTour: React.FC = () => {
   const title = o(step.titleKey as OnboardingKey);
   const body = o(step.bodyKey as OnboardingKey);
 
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const holes: string[] = [];
+  if (rect) holes.push(roundedRect({ top: rect.top - PAD, left: rect.left - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2 }, 14));
+  if (navRect) holes.push(roundedRect(navRect, 10));
+  const dimStyle: React.CSSProperties = holes.length
+    ? { clipPath: `path(evenodd, 'M0 0H${vw}V${vh}H0Z${holes.join('')}')` }
+    : {};
+
   return (
     <div className="onb-tour-root" dir={dir} role="dialog" aria-live="polite">
-      {rect ? (
+      <div className="onb-dim" style={dimStyle} />
+      {rect && (
         <div
           className="onb-spot"
           style={{
@@ -139,8 +174,12 @@ export const OnboardingTour: React.FC = () => {
             height: rect.height + PAD * 2,
           }}
         />
-      ) : (
-        <div className="onb-dim" />
+      )}
+      {navRect && (
+        <div
+          className="onb-spot onb-spot-nav"
+          style={{ top: navRect.top, left: navRect.left, width: navRect.width, height: navRect.height }}
+        />
       )}
       <div ref={tooltipRef} className={`onb-tip ${isMobile ? 'onb-tip-sheet' : ''}`} style={tipStyle}>
         <div className="onb-tip-top">
