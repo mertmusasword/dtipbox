@@ -621,7 +621,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Pleksi stand üzerine metal plaka',
         '4 plaka rengi: Gümüş, Altın, Beyaz, Bronz',
-        '3 ebat: 4.5x5, 7x7, 9x5 cm',
+        '2 ebat: 4.5x5, 7x7 cm',
         'Dış etkenlere dayanıklı süblimasyon baskı',
         'Kırımlı yapı, uzun ömürlü kullanım',
         'Her stand için farklı masa numarası / QR basılabilir',
@@ -633,7 +633,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Metal plate on a plexiglass stand',
         '4 plate colors: Silver, Gold, White, Bronze',
-        '3 sizes: 4.5x5, 7x7, 9x5 cm',
+        '2 sizes: 4.5x5, 7x7 cm',
         'Durable sublimation print',
         'Folded structure for long-lasting use',
         'Different table number / QR per stand',
@@ -645,7 +645,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Metallplatte auf Plexiglas-Aufsteller',
         '4 Plattenfarben: Silber, Gold, Weiß, Bronze',
-        '3 Größen: 4,5x5, 7x7, 9x5 cm',
+        '2 Größen: 4,5x5, 7x7 cm',
         'Widerstandsfähiger Sublimationsdruck',
         'Gefaltete Struktur, langlebig',
         'Pro Aufsteller andere Tischnummer / anderer QR',
@@ -657,7 +657,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Plaque métallique sur support en plexiglas',
         '4 couleurs de plaque : argent, or, blanc, bronze',
-        '3 formats : 4,5x5, 7x7, 9x5 cm',
+        '2 formats : 4,5x5, 7x7 cm',
         'Impression par sublimation résistante',
         'Structure pliée, longue durée',
         'Numéro de table / QR différent par support',
@@ -669,7 +669,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Placa metálica sobre soporte de metacrilato',
         '4 colores de placa: plata, oro, blanco, bronce',
-        '3 tamaños: 4,5x5, 7x7, 9x5 cm',
+        '2 tamaños: 4,5x5, 7x7 cm',
         'Impresión por sublimación resistente',
         'Estructura plegada, larga duración',
         'Número de mesa / QR distinto por soporte',
@@ -681,7 +681,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Placa metálica sobre suporte de acrílico',
         '4 cores de placa: prata, ouro, branco, bronze',
-        '3 tamanhos: 4,5x5, 7x7, 9x5 cm',
+        '2 tamanhos: 4,5x5, 7x7 cm',
         'Impressão por sublimação resistente',
         'Estrutura dobrada, longa duração',
         'Número da mesa / QR diferente por suporte',
@@ -693,7 +693,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Металлическая пластина на подставке из оргстекла',
         '4 цвета пластины: серебро, золото, белый, бронза',
-        '3 размера: 4,5x5, 7x7, 9x5 см',
+        '2 размера: 4,5x5, 7x7 см',
         'Стойкая сублимационная печать',
         'Складная конструкция, долгий срок службы',
         'Разный номер стола / QR на каждой подставке',
@@ -705,7 +705,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'لوحة معدنية على حامل بلكسي',
         '4 ألوان للوحة: فضي، ذهبي، أبيض، برونزي',
-        '3 مقاسات: 4.5×5، 7×7، 9×5 سم',
+        '2 مقاسات: 4.5×5، 7×7 سم',
         'طباعة تسامي متينة',
         'هيكل مطوي لاستخدام طويل الأمد',
         'رقم طاولة / QR مختلف لكل حامل',
@@ -717,7 +717,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         '亚克力立牌配金属牌',
         '4 种金属牌颜色：银、金、白、青铜',
-        '3 种尺寸：4.5x5、7x7、9x5 厘米',
+        '2 种尺寸：4.5x5、7x7 厘米',
         '耐用热升华印刷',
         '折叠结构，经久耐用',
         '每个立牌可印不同桌号 / 二维码',
@@ -729,7 +729,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'Plat logam di atas stand pleksi',
         '4 warna plat: perak, emas, putih, perunggu',
-        '3 ukuran: 4,5x5, 7x7, 9x5 cm',
+        '2 ukuran: 4,5x5, 7x7 cm',
         'Cetak sublimasi tahan lama',
         'Struktur lipat, awet',
         'Nomor meja / QR berbeda tiap stand',
@@ -741,7 +741,7 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
       features: [
         'アクリルスタンドに金属プレート',
         'プレートカラー4色：シルバー、ゴールド、ホワイト、ブロンズ',
-        '3サイズ：4.5x5、7x7、9x5cm',
+        '2サイズ：4.5x5、7x7cm',
         '耐久性のある昇華印刷',
         '折り曲げ構造で長持ち',
         'スタンドごとに異なるテーブル番号/QR',

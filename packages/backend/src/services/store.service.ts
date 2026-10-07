@@ -216,7 +216,7 @@ const PLEKSI_STAND_PRODUCT = {
     defaultSize: '4.5x5',
     defaultQuantity: 1,
     quantities: PLEKSI_STAND_QTYS,
-    sizes: [pleksiSize('4.5x5', 1), pleksiSize('7x7', 2), pleksiSize('9x5', 2)],
+    sizes: [pleksiSize('4.5x5', 1), pleksiSize('7x7', 2)],
   },
 };
 
@@ -433,16 +433,17 @@ export async function syncStoreProducts() {
       update: {},
       create: PLEKSI_STAND_PRODUCT,
     });
-    // One-time cleanup: drop the cancelled 15x7 size from an already-seeded pleksi stand
+    // One-time cleanup: drop cancelled sizes (15x7, 9x5) from an already-seeded pleksi stand
     const pleksiRow = await prisma.storeProduct.findUnique({ where: { slug: PLEKSI_STAND_SLUG } });
     const pleksiVariants = pleksiRow?.variants as any;
-    if (pleksiRow && pleksiVariants?.sizes?.some((s: any) => s.id === '15x7')) {
+    const CANCELLED_PLEKSI_SIZES = ['15x7', '9x5'];
+    if (pleksiRow && pleksiVariants?.sizes?.some((s: any) => CANCELLED_PLEKSI_SIZES.includes(s.id))) {
       await prisma.storeProduct.update({
         where: { slug: PLEKSI_STAND_SLUG },
         data: {
-          variants: { ...pleksiVariants, sizes: pleksiVariants.sizes.filter((s: any) => s.id !== '15x7') },
+          variants: { ...pleksiVariants, sizes: pleksiVariants.sizes.filter((s: any) => !CANCELLED_PLEKSI_SIZES.includes(s.id)) },
           features: (pleksiRow.features || []).map((f: string) =>
-            f.startsWith('4 ebat:') ? '3 ebat: 4.5x5, 7x7, 9x5 cm' : f
+            /^\d ebat:/.test(f) ? '2 ebat: 4.5x5, 7x7 cm' : f
           ),
         },
       });
