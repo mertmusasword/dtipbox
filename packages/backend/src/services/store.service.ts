@@ -204,7 +204,7 @@ const PLEKSI_STAND_PRODUCT = {
   category: 'pleksi_stand',
   image_url: '/hardware/pleksi-qr-menu-stand.jpg',
   gallery: [] as string[],
-  video_url: '/hardware/pleksi-qr-menu-stand.mp4' as string | null,
+  video_url: '/hardware/pleksi-qr-menu-stand-v2.mp4' as string | null,
   stock: 9999,
   min_quantity: 1,
   quantity_step: 1,
@@ -436,7 +436,12 @@ export async function syncStoreProducts() {
     // Attach the pleksi video to an already-seeded row only while video_url is empty
     await prisma.storeProduct.updateMany({
       where: { slug: PLEKSI_STAND_SLUG, video_url: null },
-      data: { video_url: '/hardware/pleksi-qr-menu-stand.mp4' },
+      data: { video_url: '/hardware/pleksi-qr-menu-stand-v2.mp4' },
+    });
+    // One-time migration: replace the old pleksi video with the refreshed one
+    await prisma.storeProduct.updateMany({
+      where: { slug: PLEKSI_STAND_SLUG, video_url: '/hardware/pleksi-qr-menu-stand.mp4' },
+      data: { video_url: '/hardware/pleksi-qr-menu-stand-v2.mp4' },
     });
     // One-time cleanup: drop cancelled sizes (15x7, 9x5) from an already-seeded pleksi stand
     const pleksiRow = await prisma.storeProduct.findUnique({ where: { slug: PLEKSI_STAND_SLUG } });
