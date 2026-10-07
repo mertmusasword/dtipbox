@@ -346,7 +346,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     tr: {
       name: 'Metal QR Karekod Menü Standı',
       description: 'Gümüş eloksallı alüminyumdan üretilen, 10x5 cm ebadında kırımlı QR menü standı. Dış etkenlere dayanıklı süblimasyon baskı ile QR kodunuz veya masa numaranız ön ve arka yüze basılır. Düz kargolanır, elle bükülerek kurulur.',
-      badge: 'Yeni',
       features: [
         'Eloksallı alüminyum, 0,45 mm kalınlık, gümüş zemin',
         '10x5 cm kompakt ebat, masada yer kaplamaz',
@@ -359,7 +358,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     en: {
       name: 'Metal QR Code Menu Stand',
       description: 'Silver anodized aluminium folded QR menu stand, 10x5 cm. Weather-resistant sublimation print puts your QR code or table number on front and back. Shipped flat, bend by hand to set up.',
-      badge: 'New',
       features: [
         'Anodized aluminium, 0.45 mm thick, silver finish',
         'Compact 10x5 cm size, saves table space',
@@ -372,7 +370,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     de: {
       name: 'Metall-QR-Code-Menüaufsteller',
       description: 'Gefalteter QR-Menüaufsteller aus silberfarben eloxiertem Aluminium, 10x5 cm. Robuster Sublimationsdruck für QR-Code oder Tischnummer auf Vorder- und Rückseite. Flach geliefert, von Hand zu biegen.',
-      badge: 'Neu',
       features: [
         'Eloxiertes Aluminium, 0,45 mm, Silber',
         'Kompakt: 10x5 cm',
@@ -385,7 +382,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     fr: {
       name: 'Support de menu QR en métal',
       description: 'Support de menu QR plié en aluminium anodisé argenté, 10x5 cm. Impression par sublimation résistante pour votre QR code ou numéro de table, recto et verso. Livré à plat, à plier à la main.',
-      badge: 'Nouveau',
       features: [
         'Aluminium anodisé, 0,45 mm, argent',
         'Format compact 10x5 cm',
@@ -398,7 +394,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     es: {
       name: 'Soporte de menú QR de metal',
       description: 'Soporte de menú QR plegado de aluminio anodizado plateado, 10x5 cm. Impresión por sublimación resistente para tu QR o número de mesa en ambas caras. Se envía plano y se dobla a mano.',
-      badge: 'Nuevo',
       features: [
         'Aluminio anodizado, 0,45 mm, plata',
         'Tamaño compacto 10x5 cm',
@@ -411,7 +406,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     pt: {
       name: 'Suporte de menu QR em metal',
       description: 'Suporte de menu QR dobrado em alumínio anodizado prateado, 10x5 cm. Impressão por sublimação resistente para seu QR ou número da mesa na frente e no verso. Enviado plano, dobre à mão.',
-      badge: 'Novo',
       features: [
         'Alumínio anodizado, 0,45 mm, prata',
         'Tamanho compacto 10x5 cm',
@@ -424,7 +418,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     ru: {
       name: 'Металлическая подставка для QR-меню',
       description: 'Складная подставка для QR-меню из серебристого анодированного алюминия, 10x5 см. Стойкая сублимационная печать QR-кода или номера стола с двух сторон. Доставляется плоской, сгибается вручную.',
-      badge: 'Новинка',
       features: [
         'Анодированный алюминий, 0,45 мм, серебро',
         'Компактный размер 10x5 см',
@@ -437,7 +430,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     ar: {
       name: 'حامل قائمة QR معدني',
       description: 'حامل قائمة QR مطوي من الألومنيوم المؤكسد الفضي بمقاس 10×5 سم. طباعة تسامي مقاومة لعوامل الطقس لرمز QR أو رقم الطاولة على الوجهين. يُشحن مسطحًا ويُثنى يدويًا.',
-      badge: 'جديد',
       features: [
         'ألومنيوم مؤكسد بسماكة 0.45 مم، فضي',
         'مقاس مدمج 10×5 سم',
@@ -450,7 +442,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     zh: {
       name: '金属二维码菜单立牌',
       description: '银色阳极氧化铝折叠式二维码菜单立牌，10x5 厘米。耐用热升华印刷，正反面均可印二维码或桌号。平整发货，手动折弯即可使用。',
-      badge: '新品',
       features: [
         '阳极氧化铝，厚 0.45 毫米，银色',
         '10x5 厘米小巧尺寸',
@@ -463,7 +454,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     id: {
       name: 'Standing Menu QR Logam',
       description: 'Standing menu QR lipat dari aluminium anodized perak, 10x5 cm. Cetak sublimasi tahan lama untuk QR atau nomor meja di kedua sisi. Dikirim datar, lipat sendiri dengan tangan.',
-      badge: 'Baru',
       features: [
         'Aluminium anodized 0,45 mm, perak',
         'Ukuran ringkas 10x5 cm',
@@ -476,7 +466,6 @@ export const PRODUCT_TRANSLATIONS: Record<string, Partial<Record<SupportedLangua
     ja: {
       name: 'メタルQRメニュースタンド',
       description: 'シルバーのアルマイトアルミ製、10x5cmの折り曲げ式QRメニュースタンド。耐久性のある昇華印刷で、表裏にQRコードやテーブル番号を印刷。平らな状態で届き、手で折り曲げて使用します。',
-      badge: '新登場',
       features: [
         'アルマイトアルミ、厚さ0.45mm、シルバー',
         'コンパクトな10x5cm',

@@ -99,7 +99,7 @@ const METAL_STAND_PRODUCT = {
   stock: 9999,
   min_quantity: 1,
   quantity_step: 1,
-  badge: 'Yeni',
+  badge: null,
   sort_order: 3,
   is_active: true,
   variants: {
@@ -301,6 +301,11 @@ export async function syncStoreProducts() {
       where: { slug: METAL_STAND_SLUG },
       update: {},
       create: METAL_STAND_PRODUCT,
+    });
+    // One-time cleanup: remove the seeded 'Yeni' badge from the metal stand
+    await prisma.storeProduct.updateMany({
+      where: { slug: METAL_STAND_SLUG, badge: 'Yeni' },
+      data: { badge: null },
     });
     // Attach the product video to an already-seeded row only while video_url is empty
     await prisma.storeProduct.updateMany({
