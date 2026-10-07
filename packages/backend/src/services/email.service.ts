@@ -170,7 +170,7 @@ class EmailService {
                 <tr>
                   <td align="left" style="vertical-align: middle;">
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
-                      <img src="${env.APP_URL}/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0;" />
+                      <img src="https://www.naponi.com/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0; outline: none; text-decoration: none; color: #ffffff;" />
                     </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
@@ -313,7 +313,7 @@ class EmailService {
                 <tr>
                   <td align="left" style="vertical-align: middle;">
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
-                      <img src="${env.APP_URL}/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0;" />
+                      <img src="https://www.naponi.com/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0; outline: none; text-decoration: none; color: #ffffff;" />
                     </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
@@ -517,7 +517,7 @@ Support: info@naponi.com
                 <tr>
                   <td align="left" style="vertical-align: middle;">
                     <a href="${env.APP_URL}" style="text-decoration: none; display: inline-block;">
-                      <img src="${env.APP_URL}/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0;" />
+                      <img src="https://www.naponi.com/naponi-brand.png" alt="Naponi" width="145" height="43" style="display: block; width: 145px; height: auto; border: 0; outline: none; text-decoration: none; color: #ffffff;" />
                     </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
