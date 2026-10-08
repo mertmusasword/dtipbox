@@ -5,7 +5,7 @@ import { validate } from '../middleware/validation';
 import * as partnerService from '../services/partner.service';
 import { validateEmailQuality } from '../utils/emailValidator';
 import { validateGlobalPhoneNumber } from '../utils/phoneValidator';
-import { verifyTurnstileToken } from '../utils/turnstile';
+import { requireTurnstile } from '../middleware/turnstile.middleware';
 
 const router = Router();
 
@@ -70,6 +70,7 @@ router.post(
   '/',
   partnerSubmissionLimiter,
   validate(createPartnerApplicationSchema),
+  requireTurnstile(),
   async (req, res, next) => {
     try {
       // Honeypot detection
@@ -82,24 +83,6 @@ router.post(
       }
 
       const ipAddress = req.ip || req.socket.remoteAddress || '0.0.0.0';
-
-      // Cloudflare Turnstile Verification (Mandatory in production)
-      if (process.env.NODE_ENV === 'production' && !req.body.turnstileToken) {
-        return res.status(400).json({
-          success: false,
-          error: 'Güvenlik doğrulaması zorunludur. Lütfen sayfayı yenileyip tekrar deneyiniz.',
-        });
-      }
-
-      if (req.body.turnstileToken) {
-        const turnstileCheck = await verifyTurnstileToken(req.body.turnstileToken, ipAddress);
-        if (!turnstileCheck.success) {
-          return res.status(403).json({
-            success: false,
-            error: 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyiniz.',
-          });
-        }
-      }
 
       const application = await partnerService.createPartnerApplication({
         ...req.body,
