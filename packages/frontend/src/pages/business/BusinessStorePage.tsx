@@ -11,6 +11,7 @@ import { LoadingState } from '../../components/LoadingState';
 import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
+import { ENABLE_B2B_CREDIT_CARD_PAYMENTS } from '../../constants/featureFlags';
 import {
   ShoppingBag,
   Sparkles,
@@ -212,7 +213,9 @@ export const BusinessStorePage: React.FC = () => {
   const [taxOffice, setTaxOffice] = useState<string>('');
   const [taxNumber, setTaxNumber] = useState<string>('');
   const [orderNotes, setOrderNotes] = useState<string>('');
-  const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'BANK_TRANSFER'>('CREDIT_CARD');
+  const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'BANK_TRANSFER'>(
+    ENABLE_B2B_CREDIT_CARD_PAYMENTS ? 'CREDIT_CARD' : 'BANK_TRANSFER'
+  );
   const [submittingOrder, setSubmittingOrder] = useState<boolean>(false);
 
   // Wire Instructions Modal (Shown after order placement or from orders list)
@@ -2461,46 +2464,48 @@ export const BusinessStorePage: React.FC = () => {
                 </label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {/* Option 1: Credit Card / Apple Pay / Google Pay (Default / Global) */}
-                  <label
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '0.85rem',
-                      padding: '1rem',
-                      borderRadius: '12px',
-                      border: paymentMethod === 'CREDIT_CARD' ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
-                      background: paymentMethod === 'CREDIT_CARD' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(30, 41, 59, 0.45)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="CREDIT_CARD"
-                      checked={paymentMethod === 'CREDIT_CARD'}
-                      onChange={() => setPaymentMethod('CREDIT_CARD')}
-                      style={{ marginTop: '3px', accentColor: '#38bdf8' }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.25rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#ffffff', fontWeight: 700, fontSize: '0.92rem' }}>
-                          <CreditCard size={18} style={{ color: '#38bdf8' }} />
-                          <span>Kredi & Banka Kartı / Apple Pay / Google Pay</span>
+                  {ENABLE_B2B_CREDIT_CARD_PAYMENTS && (
+                    <label
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.85rem',
+                        padding: '1rem',
+                        borderRadius: '12px',
+                        border: paymentMethod === 'CREDIT_CARD' ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
+                        background: paymentMethod === 'CREDIT_CARD' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(30, 41, 59, 0.45)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="CREDIT_CARD"
+                        checked={paymentMethod === 'CREDIT_CARD'}
+                        onChange={() => setPaymentMethod('CREDIT_CARD')}
+                        style={{ marginTop: '3px', accentColor: '#38bdf8' }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.25rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#ffffff', fontWeight: 700, fontSize: '0.92rem' }}>
+                            <CreditCard size={18} style={{ color: '#38bdf8' }} />
+                            <span>Kredi & Banka Kartı / Apple Pay / Google Pay</span>
+                          </div>
+                          <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontSize: '0.72rem', fontWeight: 700 }}>
+                            Anında Onay
+                          </span>
                         </div>
-                        <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontSize: '0.72rem', fontWeight: 700 }}>
-                          Anında Onay
-                        </span>
+                        <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                          Tüm yerli ve uluslararası kartlar (Visa, Mastercard, AMEX), Apple Pay ve Google Pay ile anında küresel güvenli ödeme.
+                        </p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem', fontSize: '0.7rem', color: '#34d399', fontWeight: 600 }}>
+                          <ShieldCheck size={14} />
+                          <span>Global Stripe / Lemon Squeezy Altyapısı</span>
+                        </div>
                       </div>
-                      <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                        Tüm yerli ve uluslararası kartlar (Visa, Mastercard, AMEX), Apple Pay ve Google Pay ile anında küresel güvenli ödeme.
-                      </p>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem', fontSize: '0.7rem', color: '#34d399', fontWeight: 600 }}>
-                        <ShieldCheck size={14} />
-                        <span>Global Stripe / Lemon Squeezy Altyapısı</span>
-                      </div>
-                    </div>
-                  </label>
+                    </label>
+                  )}
 
                   {/* Option 2: Bank Transfer / SWIFT */}
                   <label

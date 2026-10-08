@@ -27,6 +27,13 @@ export interface CreateCommissionCheckoutParams {
   redirectUrl?: string;
 }
 
+interface CachedRate {
+  rate: number;
+  timestamp: number;
+}
+
+const exchangeRateCache = new Map<string, CachedRate>();
+
 /**
  * Lemon Squeezy Global Merchant of Record (MoR) Integration
  * Powers credit card, debit card, Apple Pay, Google Pay, and international multi-currency checkouts.
@@ -56,43 +63,51 @@ export class LemonSqueezyService {
   }
 
   /**
+   * Fetch live forex exchange rate with in-memory TTL caching and fast fallback
+   */
+  private async getUsdRate(currency: string): Promise<number> {
+    const cur = currency.toUpperCase();
+    if (cur === 'USD') return 1;
+
+    const cached = exchangeRateCache.get(cur);
+    const now = Date.now();
+    if (cached && now - cached.timestamp < 60 * 60 * 1000) {
+      return cached.rate;
+    }
+
+    const defaultFallback = cur === 'TRY' ? 1 / 38.5 : cur === 'EUR' ? 1.08 : cur === 'GBP' ? 1.28 : 1;
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      const res = await fetch(`https://open.er-api.com/v6/latest/${cur}`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data: any = await res.json();
+        if (data?.rates?.USD && typeof data.rates.USD === 'number') {
+          const liveRate = data.rates.USD;
+          exchangeRateCache.set(cur, { rate: liveRate, timestamp: now });
+          return liveRate;
+        }
+      }
+    } catch (err: any) {
+      logger.warn(`[LemonSqueezy] Live FX rate fetch failed for ${cur}: ${err.message}. Using fallback.`, 'LemonSqueezy');
+    }
+
+    if (cached) {
+      return cached.rate;
+    }
+
+    exchangeRateCache.set(cur, { rate: defaultFallback, timestamp: now });
+    return defaultFallback;
+  }
+
+  /**
    * Convert an arbitrary currency amount to USD cents (Lemon Squeezy store currency)
    */
   private async convertToUsdCents(amount: number, currency: string): Promise<number> {
-    const cur = currency.toUpperCase();
-    if (cur === 'USD') {
-      return Math.round(amount * 100);
-    }
-
-    let usdRate = 1;
-    if (cur === 'TRY') {
-      usdRate = 1 / 38.5; // fallback
-      try {
-        const res = await fetch('https://open.er-api.com/v6/latest/TRY');
-        if (res.ok) {
-          const data: any = await res.json();
-          if (data?.rates?.USD) {
-            usdRate = data.rates.USD;
-          }
-        }
-      } catch (err) {
-        logger.warn('[LemonSqueezy] Failed to fetch TRY->USD live exchange rate, using fallback');
-      }
-    } else if (cur === 'EUR') {
-      usdRate = 1.08; // fallback
-      try {
-        const res = await fetch('https://open.er-api.com/v6/latest/EUR');
-        if (res.ok) {
-          const data: any = await res.json();
-          if (data?.rates?.USD) {
-            usdRate = data.rates.USD;
-          }
-        }
-      } catch (err) {
-        logger.warn('[LemonSqueezy] Failed to fetch EUR->USD live exchange rate, using fallback');
-      }
-    }
-
+    const usdRate = await this.getUsdRate(currency);
     const usdAmount = amount * usdRate;
     // Minimum Lemon Squeezy checkout is $0.50 (50 cents)
     return Math.max(50, Math.round(usdAmount * 100));

@@ -775,57 +775,151 @@ export const CommissionSettlementTab: React.FC = () => {
             {ct.noPeriods}
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8' }}>
-                  <th style={{ padding: '0.75rem' }}>{ct.period}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.totalTips}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.bankTips}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.cardTips}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.rate}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.feeAmount}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.dueDate}</th>
-                  <th style={{ padding: '0.75rem' }}>{ct.status}</th>
-                  <th style={{ padding: '0.75rem', textAlign: 'right' }}>{ct.action}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {monthlyPeriods.map((period) => {
-                  const isCurrent = period.status === 'CURRENT_OPEN';
-                  const isPending = period.status === 'PENDING_PAYMENT';
-                  const isSettled = period.status === 'SETTLED';
+          <>
+            {/* Desktop Table View */}
+            <div className="responsive-table-desktop" style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8' }}>
+                    <th style={{ padding: '0.75rem' }}>{ct.period}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.totalTips}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.bankTips}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.cardTips}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.rate}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.feeAmount}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.dueDate}</th>
+                    <th style={{ padding: '0.75rem' }}>{ct.status}</th>
+                    <th style={{ padding: '0.75rem', textAlign: 'right' }}>{ct.action}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {monthlyPeriods.map((period) => {
+                    const isCurrent = period.status === 'CURRENT_OPEN';
+                    const isPending = period.status === 'PENDING_PAYMENT';
+                    const isSettled = period.status === 'SETTLED';
 
-                  return (
-                    <tr
-                      key={period.periodKey}
-                      style={{
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                        background: isPending ? 'rgba(239, 68, 68, 0.03)' : 'transparent',
-                      }}
-                    >
-                      <td style={{ padding: '0.85rem 0.75rem', fontWeight: 700, color: '#f8fafc' }}>
+                    return (
+                      <tr
+                        key={period.periodKey}
+                        style={{
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                          background: isPending ? 'rgba(239, 68, 68, 0.03)' : 'transparent',
+                        }}
+                      >
+                        <td style={{ padding: '0.85rem 0.75rem', fontWeight: 700, color: '#f8fafc' }}>
+                          {period.periodKey}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem' }}>
+                          {formatCurrency(period.totalTipsVolume, currency)}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem', color: '#f59e0b' }}>
+                          {formatCurrency(period.bankTipsVolume, currency)}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem', color: '#818cf8' }}>
+                          {formatCurrency(period.cardTipsVolume, currency)}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem', color: '#94a3b8' }}>
+                          %{period.commissionRate.toFixed(2)}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem', fontWeight: 700, color: '#f8fafc' }}>
+                          {formatCurrency(period.bankCommissionTotal, currency)}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem', color: '#94a3b8', fontSize: '0.82rem' }}>
+                          {period.dueDate}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem' }}>
+                          {period.status === 'PENDING_VERIFICATION' && (
+                            <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
+                              <Clock size={11} style={{ marginRight: '4px' }} /> {ct.statusPendingVerification || 'Kurucu Onayı Bekleniyor'}
+                            </span>
+                          )}
+                          {isCurrent && period.status !== 'PENDING_VERIFICATION' && (
+                            <span className="badge badge-neutral" style={{ color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}>
+                              <Clock size={11} style={{ marginRight: '4px' }} /> {ct.statusCurrent}
+                            </span>
+                          )}
+                          {isPending && period.status !== 'PENDING_VERIFICATION' && (
+                            <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                              <AlertTriangle size={11} style={{ marginRight: '4px' }} /> {ct.statusPending}
+                            </span>
+                          )}
+                          {isSettled && period.status !== 'PENDING_VERIFICATION' && (
+                            <span className="badge badge-success">
+                              <CheckCircle2 size={11} style={{ marginRight: '4px' }} /> {ct.statusSettled}
+                            </span>
+                          )}
+                        </td>
+                        <td style={{ padding: '0.85rem 0.75rem', textAlign: 'right' }}>
+                          {period.status === 'PENDING_VERIFICATION' ? (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenSettlement(period)}
+                              className="btn btn-secondary"
+                              style={{ padding: '4px 10px', fontSize: '0.78rem', color: '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                            >
+                              ⏳ {ct.btnReportedPending || 'İnceleniyor'}
+                            </button>
+                          ) : period.bankCommissionPending > 0.01 ? (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenSettlement(period)}
+                              className={period.bankCommissionPending >= minThreshold ? 'btn btn-primary' : 'btn btn-secondary'}
+                              style={{
+                                padding: '4px 10px',
+                                fontSize: '0.78rem',
+                                ...(period.bankCommissionPending < minThreshold
+                                  ? { color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.4)' }
+                                  : {}),
+                              }}
+                            >
+                              {period.bankCommissionPending >= minThreshold
+                                ? ct.btnPaySettle
+                                : `⏳ ${language === 'tr' ? 'Birikiyor' : 'Accruing'} (${formatCurrency(period.bankCommissionPending, currency)})`}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenSettlement(period)}
+                              className="btn btn-secondary"
+                              style={{ padding: '4px 10px', fontSize: '0.78rem' }}
+                            >
+                              {ct.btnViewDetails}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards View */}
+            <div className="responsive-cards-mobile">
+              {monthlyPeriods.map((period) => {
+                const isCurrent = period.status === 'CURRENT_OPEN';
+                const isPending = period.status === 'PENDING_PAYMENT';
+                const isSettled = period.status === 'SETTLED';
+
+                return (
+                  <div
+                    key={period.periodKey}
+                    style={{
+                      background: isPending ? 'rgba(239, 68, 68, 0.04)' : 'rgba(255, 255, 255, 0.03)',
+                      border: isPending ? '1px solid rgba(239, 68, 68, 0.25)' : '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      padding: '1rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.85rem',
+                    }}
+                  >
+                    {/* Header: Period & Status */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 800, fontSize: '1.05rem', color: '#f8fafc', letterSpacing: '0.02em' }}>
                         {period.periodKey}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem' }}>
-                        {formatCurrency(period.totalTipsVolume, currency)}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem', color: '#f59e0b' }}>
-                        {formatCurrency(period.bankTipsVolume, currency)}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem', color: '#818cf8' }}>
-                        {formatCurrency(period.cardTipsVolume, currency)}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem', color: '#94a3b8' }}>
-                        %{period.commissionRate.toFixed(2)}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem', fontWeight: 700, color: '#f8fafc' }}>
-                        {formatCurrency(period.bankCommissionTotal, currency)}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem', color: '#94a3b8', fontSize: '0.82rem' }}>
-                        {period.dueDate}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem' }}>
+                      </span>
+                      <div>
                         {period.status === 'PENDING_VERIFICATION' && (
                           <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
                             <Clock size={11} style={{ marginRight: '4px' }} /> {ct.statusPendingVerification || 'Kurucu Onayı Bekleniyor'}
@@ -846,14 +940,71 @@ export const CommissionSettlementTab: React.FC = () => {
                             <CheckCircle2 size={11} style={{ marginRight: '4px' }} /> {ct.statusSettled}
                           </span>
                         )}
-                      </td>
-                      <td style={{ padding: '0.85rem 0.75rem', textAlign: 'right' }}>
+                      </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '0.65rem',
+                        background: 'rgba(0, 0, 0, 0.25)',
+                        borderRadius: '8px',
+                        padding: '0.75rem',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {ct.totalTips}
+                        </div>
+                        <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', marginTop: '2px' }}>
+                          {formatCurrency(period.totalTipsVolume, currency)}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {ct.feeAmount} ({`%${period.commissionRate.toFixed(2)}`})
+                        </div>
+                        <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f59e0b', marginTop: '2px' }}>
+                          {formatCurrency(period.bankCommissionTotal, currency)}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {ct.bankTips} (IBAN)
+                        </div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f59e0b', marginTop: '2px' }}>
+                          {formatCurrency(period.bankTipsVolume, currency)}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {ct.cardTips} (Kart)
+                        </div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#818cf8', marginTop: '2px' }}>
+                          {formatCurrency(period.cardTipsVolume, currency)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Due Date & Action Button */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.25rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                        <span style={{ opacity: 0.8 }}>{ct.dueDate}: </span>
+                        <span style={{ color: '#cbd5e1', fontWeight: 500 }}>{period.dueDate}</span>
+                      </div>
+
+                      <div>
                         {period.status === 'PENDING_VERIFICATION' ? (
                           <button
                             type="button"
                             onClick={() => handleOpenSettlement(period)}
                             className="btn btn-secondary"
-                            style={{ padding: '4px 10px', fontSize: '0.78rem', color: '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                            style={{ padding: '6px 12px', fontSize: '0.8rem', color: '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.4)' }}
                           >
                             ⏳ {ct.btnReportedPending || 'İnceleniyor'}
                           </button>
@@ -863,8 +1014,8 @@ export const CommissionSettlementTab: React.FC = () => {
                             onClick={() => handleOpenSettlement(period)}
                             className={period.bankCommissionPending >= minThreshold ? 'btn btn-primary' : 'btn btn-secondary'}
                             style={{
-                              padding: '4px 10px',
-                              fontSize: '0.78rem',
+                              padding: '6px 12px',
+                              fontSize: '0.8rem',
                               ...(period.bankCommissionPending < minThreshold
                                 ? { color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.4)' }
                                 : {}),
@@ -879,18 +1030,18 @@ export const CommissionSettlementTab: React.FC = () => {
                             type="button"
                             onClick={() => handleOpenSettlement(period)}
                             className="btn btn-secondary"
-                            style={{ padding: '4px 10px', fontSize: '0.78rem' }}
+                            style={{ padding: '6px 12px', fontSize: '0.8rem' }}
                           >
                             {ct.btnViewDetails}
                           </button>
                         )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
 

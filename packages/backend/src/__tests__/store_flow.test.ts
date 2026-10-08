@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest';
 import { PrismaClient, StoreOrderStatus } from '@prisma/client';
 import {
   listStoreProducts,
@@ -341,4 +342,8 @@ async function runStoreVerification() {
   }
 }
 
-runStoreVerification();
+describe('Store Flow Verification', () => {
+  it('runs full store verification flow', async () => {
+    await runStoreVerification();
+  }, 45000);
+});

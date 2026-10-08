@@ -457,6 +457,8 @@ model Tip {
   @@index([payment_status])
   @@index([is_settled])
   @@index([tip_pool_distribution_id])
+  @@index([business_id, payment_status, created_at])
+  @@index([business_id, created_at])
   @@map("tips")
 }
 
@@ -479,6 +481,7 @@ model AuditLog {
   @@index([actor_user_id])
   @@index([created_at])
   @@index([entity_type])
+  @@index([business_id, created_at])
   @@map("audit_logs")
 }
 
@@ -1146,6 +1149,7 @@ model StoreOrder {
   @@index([business_id])
   @@index([status])
   @@index([order_number])
+  @@index([business_id, status, created_at])
   @@map("store_orders")
 }
 

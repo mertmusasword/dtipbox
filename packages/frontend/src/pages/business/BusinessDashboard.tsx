@@ -33,6 +33,7 @@ import {
   CheckCircle2,
   ShieldCheck,
   Mail,
+  AlertTriangle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
@@ -710,6 +711,104 @@ export const BusinessDashboard: React.FC = () => {
       {/* Setup checklist (onboarding) */}
       {!loading && <SetupChecklist />}
 
+      {/* Pending Bank/IBAN Transfers Alert Banner */}
+      {!loading && analytics?.pendingTipCount && analytics.pendingTipCount > 0 ? (
+        <div
+          className="glass-card"
+          style={{
+            marginBottom: '1.5rem',
+            padding: '1.25rem 1.5rem',
+            borderRadius: '16px',
+            border: '1px solid rgba(245, 158, 11, 0.45)',
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(180, 83, 9, 0.05) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1.25rem',
+            flexWrap: 'wrap',
+            boxShadow: '0 4px 24px rgba(245, 158, 11, 0.1)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '280px', flex: 1 }}>
+            <div
+              style={{
+                width: '46px',
+                height: '46px',
+                borderRadius: '12px',
+                background: 'rgba(245, 158, 11, 0.2)',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                color: '#f59e0b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <AlertTriangle size={24} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: '#fef3c7' }}>
+                  {language === 'tr'
+                    ? `${analytics.pendingTipCount} Adet Onay Bekleyen Havale / EFT Bahşişi Var!`
+                    : `${analytics.pendingTipCount} Pending Bank Transfer Tips Require Verification!`}
+                </h3>
+                <span
+                  style={{
+                    background: '#f59e0b',
+                    color: '#000000',
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {analytics.pendingTipCount} {language === 'tr' ? 'BEKLEYEN' : 'PENDING'}
+                </span>
+              </div>
+              <p style={{ fontSize: '0.84rem', color: '#cbd5e1', margin: '0.35rem 0 0', lineHeight: 1.45 }}>
+                {language === 'tr'
+                  ? 'Müşterilerinizin IBAN yoluyla gönderdiği bahşişleri hesap hareketlerinizle eşleştirip tek tıkla onaylayabilir veya iptal edebilirsiniz.'
+                  : 'Review incoming customer bank transfers against your bank statements to verify or reject with one click.'}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setTipsFilter('UNVERIFIED');
+                const el = document.getElementById('recent-tips-section');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="btn btn-primary"
+              style={{
+                padding: '0.65rem 1.25rem',
+                fontSize: '0.86rem',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                border: 'none',
+                color: '#ffffff',
+                boxShadow: '0 4px 14px rgba(245, 158, 11, 0.35)',
+                borderRadius: '10px',
+                cursor: 'pointer',
+              }}
+            >
+              <span>{language === 'tr' ? 'Hemen İncele & Onayla' : 'Review & Verify Now'}</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {/* Financial Metrics */}
       {loading ? (
         <SkeletonCard count={4} />
@@ -775,7 +874,7 @@ export const BusinessDashboard: React.FC = () => {
       )}
 
       {/* Recent Tips Table */}
-      <div className="glass-card">
+      <div id="recent-tips-section" className="glass-card">
         <div className="flex-between" style={{ marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div className="section-header mb-0">
             <Sparkles size={20} className="section-icon" />

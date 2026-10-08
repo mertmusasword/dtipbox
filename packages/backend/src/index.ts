@@ -165,16 +165,25 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Body parsing with raw buffer preservation for webhook signature checks
+// Body parsing: Scoped 50MB limit strictly for media upload endpoints
 app.use(
+  '/api/upload',
   express.json({
     limit: '50mb',
+  })
+);
+app.use('/api/upload', express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Global body parsing: 2MB limit with raw buffer preservation for webhooks
+app.use(
+  express.json({
+    limit: '2mb',
     verify: (req: any, _res, buf) => {
       req.rawBody = buf.toString();
     },
   })
 );
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(cookieParser());
 app.use(requestLogger);
 

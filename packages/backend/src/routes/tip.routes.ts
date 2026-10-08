@@ -124,12 +124,28 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
       return;
     }
 
-    // Find the tip record
+    // Verify the public QR token first to scope by venue
+    const qr = await prisma.qrCode.findUnique({
+      where: { public_token: req.params.publicToken },
+      include: { business: true },
+    });
+
+    if (!qr) {
+      res.status(404).json({ success: false, error: 'Geçersiz QR kodu.' });
+      return;
+    }
+
+    if (!tipId && !referenceCode) {
+      res.status(400).json({ success: false, error: 'Bahşiş referansı veya kimliği gereklidir.' });
+      return;
+    }
+
+    // Find the tip record strictly within this venue
     let tip = null;
-    if (tipId) {
+    if (tipId && typeof tipId === 'string') {
       try {
-        tip = await prisma.tip.findUnique({
-          where: { id: tipId },
+        tip = await prisma.tip.findFirst({
+          where: { id: tipId, business_id: qr.business_id },
           include: {
             business: true,
             table: true,
@@ -141,12 +157,13 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
       }
     }
 
-    // Fallback: search by reference code (e.g. TIP-44BE3B52)
-    if (!tip && referenceCode) {
+    // Fallback: search by reference code strictly within this venue
+    if (!tip && referenceCode && typeof referenceCode === 'string') {
       const cleanRef = String(referenceCode).replace(/^TIP-/, '').replace(/^IBAN_TIP-/, '').trim();
       if (cleanRef.length >= 4) {
         tip = await prisma.tip.findFirst({
           where: {
+            business_id: qr.business_id,
             OR: [
               { id: { startsWith: cleanRef.toLowerCase() } },
               { provider_transaction_id: { contains: cleanRef } },
@@ -162,26 +179,7 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
     }
 
     if (!tip) {
-      // Find latest tip for this QR token as fallback
-      const qr = await prisma.qrCode.findUnique({
-        where: { public_token: req.params.publicToken },
-        include: { business: true },
-      });
-      if (qr) {
-        tip = await prisma.tip.findFirst({
-          where: { business_id: qr.business_id },
-          orderBy: { created_at: 'desc' },
-          include: {
-            business: true,
-            table: true,
-            employee: true,
-          },
-        });
-      }
-    }
-
-    if (!tip) {
-      res.status(404).json({ success: false, error: 'Bahşiş kaydı bulunamadı.' });
+      res.status(404).json({ success: false, error: 'Belirtilen referansa ait bahşiş kaydı bulunamadı.' });
       return;
     }
 

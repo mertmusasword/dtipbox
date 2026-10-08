@@ -180,9 +180,9 @@ export function requireBusinessOwnership(
   // Admins can access any business if specified via header/query or linked
   if (req.user.role === 'ADMIN') {
     const adminBizId =
-      req.user.businessId ||
+      (req.headers['x-business-id'] as string) ||
       (req.query.businessId as string) ||
-      (req.headers['x-business-id'] as string);
+      req.user.businessId;
     if (adminBizId) {
       req.user.businessId = adminBizId;
       next();

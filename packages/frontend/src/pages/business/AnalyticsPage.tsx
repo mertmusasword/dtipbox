@@ -350,7 +350,7 @@ export const AnalyticsPage: React.FC = () => {
       </div>
 
       {/* QR Code Usage & Payment Method Usage Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.5rem' }}>
         {/* QR Usage */}
         <div className="glass-card">
           <div className="section-header">

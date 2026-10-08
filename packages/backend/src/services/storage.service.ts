@@ -177,8 +177,13 @@ class StorageService {
           storage: 'r2',
         };
       } catch (err: any) {
-        logger.error(`Cloudflare R2 PutObject failed (${err.message}). Falling back to local storage.`, 'STORAGE');
+        logger.error(`Cloudflare R2 PutObject failed (${err.message}).`, 'STORAGE');
+        if (env.isProd) {
+          throw new AppError(`Cloud storage upload failed: ${err.message}. Local storage fallback is disabled in production to prevent data loss.`, 500);
+        }
       }
+    } else if (env.isProd) {
+      throw new AppError('Cloud storage (Cloudflare R2) is required in production. Local storage fallback is disabled to prevent data loss on container restarts.', 500);
     }
 
     // 2. Local File System Fallback

@@ -50,7 +50,7 @@ describe('Storage & Media Service (Cloudflare R2 / Local Storage)', () => {
   it('should reject unsupported mime types', async () => {
     const buffer = Buffer.from('console.log("bad")', 'utf-8');
     await expect(storageService.uploadBuffer(buffer, 'application/javascript', 'general')).rejects.toThrow(
-      'Unsupported image format'
+      'Unsupported format'
     );
   });
 

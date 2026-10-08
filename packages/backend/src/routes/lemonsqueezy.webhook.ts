@@ -10,10 +10,16 @@ const router = Router();
  */
 router.post('/', async (req: Request, res: Response) => {
   const signature = req.headers['x-signature'] as string | undefined;
-  const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+  const rawBody = (req as any).rawBody;
 
-  if (!lemonSqueezyService.verifyWebhookSignature(rawBody, signature)) {
-    logger.warn('[LemonSqueezy Webhook] Invalid signature received.');
+  if (!rawBody) {
+    logger.error('[LemonSqueezy Webhook] Missing raw body for webhook verification.', 'LemonSqueezy');
+    res.status(500).json({ success: false, error: 'Server misconfiguration: Raw payload buffer unavailable' });
+    return;
+  }
+
+  if (!signature || !lemonSqueezyService.verifyWebhookSignature(rawBody, signature)) {
+    logger.warn('[LemonSqueezy Webhook] Invalid signature received.', 'LemonSqueezy');
     res.status(401).json({ success: false, error: 'Invalid webhook signature' });
     return;
   }

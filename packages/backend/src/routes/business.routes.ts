@@ -669,8 +669,16 @@ router.get('/tips', async (req: AuthRequest, res, next) => {
 
     const where: any = { business_id: businessId };
     if (status && status !== 'ALL') {
-      if (status === 'UNVERIFIED_OR_PENDING' || status === 'UNVERIFIED' || status === 'PENDING') {
+      if (status === 'UNVERIFIED_OR_PENDING' || status === 'UNVERIFIED') {
         where.payment_status = { in: ['UNVERIFIED', 'PENDING'] };
+        where.OR = [
+          { payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'IBAN_TRANSFER', 'FAST', 'HAVALE', 'EFT'] } },
+          { payment_method: { contains: 'IBAN', mode: 'insensitive' } },
+          { payment_method: { contains: 'BANK', mode: 'insensitive' } },
+          { payment_method: { contains: 'HAVALE', mode: 'insensitive' } },
+        ];
+      } else if (status === 'PENDING') {
+        where.payment_status = 'PENDING';
       } else {
         where.payment_status = status as any;
       }
@@ -737,6 +745,12 @@ router.post('/tips/verify-all', async (req: AuthRequest, res, next) => {
       where: {
         business_id: businessId,
         payment_status: { in: ['UNVERIFIED', 'PENDING'] },
+        OR: [
+          { payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'IBAN_TRANSFER', 'FAST', 'HAVALE', 'EFT'] } },
+          { payment_method: { contains: 'IBAN', mode: 'insensitive' } },
+          { payment_method: { contains: 'BANK', mode: 'insensitive' } },
+          { payment_method: { contains: 'HAVALE', mode: 'insensitive' } },
+        ],
       },
       select: { id: true, amount: true, payment_method: true },
     });
@@ -781,6 +795,12 @@ router.post('/tips/reject-all', async (req: AuthRequest, res, next) => {
       where: {
         business_id: businessId,
         payment_status: { in: ['UNVERIFIED', 'PENDING'] },
+        OR: [
+          { payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'IBAN_TRANSFER', 'FAST', 'HAVALE', 'EFT'] } },
+          { payment_method: { contains: 'IBAN', mode: 'insensitive' } },
+          { payment_method: { contains: 'BANK', mode: 'insensitive' } },
+          { payment_method: { contains: 'HAVALE', mode: 'insensitive' } },
+        ],
       },
       select: { id: true },
     });
@@ -839,6 +859,17 @@ router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
 
     if (tip.payment_status === 'CANCELLED') {
       res.status(400).json({ success: false, error: 'İptal edilmiş bir bahşiş tekrar onaylanamaz.' });
+      return;
+    }
+
+    const methodStr = (tip.payment_method || '').toUpperCase();
+    const isBank = methodStr.includes('IBAN') || methodStr.includes('BANK') || methodStr.includes('HAVALE') || methodStr.includes('FAST') || methodStr.includes('EFT');
+
+    if (!isBank) {
+      res.status(400).json({
+        success: false,
+        error: 'Kredi kartı ve online ödemeler yalnızca ödeme sağlayıcısı (Stripe/Lemon Squeezy) tarafından otomatik onaylanabilir.',
+      });
       return;
     }
 
