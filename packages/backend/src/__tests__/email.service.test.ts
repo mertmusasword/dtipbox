@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { emailService } from '../services/email.service';
 
 describe('Email Service & Templates Suite', () => {
-  it('should export emailService singleton instance', () => {
+  it('should export emailService singleton instance with all 10 public methods', () => {
     expect(emailService).toBeDefined();
     expect(typeof emailService.sendPasswordResetEmail).toBe('function');
     expect(typeof emailService.sendBusinessWelcomeEmail).toBe('function');
@@ -11,6 +11,9 @@ describe('Email Service & Templates Suite', () => {
     expect(typeof emailService.sendSupportTicketAdminNotificationEmail).toBe('function');
     expect(typeof emailService.sendPartnerApplicationAdminNotificationEmail).toBe('function');
     expect(typeof emailService.sendPartnerApplicationConfirmationEmail).toBe('function');
+    expect(typeof emailService.sendLoyaltyCardWelcomeEmail).toBe('function');
+    expect(typeof emailService.sendLoyaltyCardRecoveryEmail).toBe('function');
+    expect(typeof emailService.sendDigitalReceiptEmail).toBe('function');
     expect(typeof emailService.verifyConnection).toBe('function');
   });
 
@@ -89,6 +92,50 @@ describe('Email Service & Templates Suite', () => {
       companyName: 'OmniPOS Tech',
       contactName: 'Ahmet Partner',
       applicationId: 'partner-test-123',
+    });
+    expect(result).toBe(true);
+  });
+
+  it('should handle simulated loyalty card welcome email without throwing', async () => {
+    const result = await emailService.sendLoyaltyCardWelcomeEmail({
+      to: 'customer@example.com',
+      businessName: 'Naponi Cafe',
+      programName: 'Kahve Kulübü',
+      cardUrl: 'https://www.naponi.com/loyalty/card/xyz123',
+      cardCode: 'KAFE-8899',
+      targetStamps: 8,
+      rewardDescription: '1 Adet Ücretsiz Kahve',
+    });
+    expect(result).toBe(true);
+  });
+
+  it('should handle simulated loyalty card recovery email without throwing', async () => {
+    const result = await emailService.sendLoyaltyCardRecoveryEmail({
+      to: 'customer@example.com',
+      cards: [
+        {
+          businessName: 'Naponi Cafe',
+          programName: 'Kahve Kulübü',
+          cardUrl: 'https://www.naponi.com/loyalty/card/xyz123',
+          cardCode: 'KAFE-8899',
+          currentStamps: 4,
+          targetStamps: 8,
+        },
+      ],
+    });
+    expect(result).toBe(true);
+  });
+
+  it('should handle simulated digital receipt email without throwing', async () => {
+    const result = await emailService.sendDigitalReceiptEmail({
+      to: 'guest@example.com',
+      businessName: 'Naponi Bistro',
+      referenceNo: 'REC-2026-9901',
+      amount: 75.0,
+      currency: 'TRY',
+      paymentMethod: 'Kredi Kartı',
+      tableName: 'Masa 14',
+      staffName: 'Canberk D.',
     });
     expect(result).toBe(true);
   });
