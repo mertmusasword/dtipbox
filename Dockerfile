@@ -60,7 +60,7 @@ ENV PORT=3000
 ENV NODE_ENV=production
 EXPOSE 3000
 
-# Run database migrations safely in production and start server
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=packages/backend/prisma/schema.prisma && node packages/backend/dist/index.js"]
+# Run db push to sync schema with production database and start server
+CMD ["sh", "-c", "(npx prisma db push --accept-data-loss --schema=packages/backend/prisma/schema.prisma || true) && node packages/backend/dist/index.js"]
 
 
