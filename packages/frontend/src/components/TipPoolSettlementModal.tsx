@@ -666,6 +666,68 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
     }
   };
 
+  const handleDownloadCsv = () => {
+    const isHistory = activeTab === 'history' && selectedHistoryItem !== null;
+    const bName = businessName || (isTr ? 'Naponi İşletmesi' : 'Naponi Business');
+    const dateFormatted = new Date().toISOString().split('T')[0];
+    const filename = `Naponi-Bahsis-Dagitim-${dateFormatted}.csv`;
+
+    let csvContent = '\uFEFF'; // UTF-8 BOM for Microsoft Excel compatibility
+    csvContent += `"${bName} - ${isTr ? 'Bahşiş Dağıtım ve Kasa Kapanış Raporu' : 'Tip Settlement & Register Close Report'}"\n`;
+    csvContent += `"${isTr ? 'Tarih / Saat' : 'Date / Time'}:";"${new Date().toLocaleString(isTr ? 'tr-TR' : 'en-US')}"\n`;
+    csvContent += `"${isTr ? 'Para Birimi' : 'Currency'}:";"${currency}"\n\n`;
+
+    if (isHistory && selectedHistoryItem) {
+      csvContent += `"${isTr ? 'Kapanış Referansı' : 'Settlement Ref'}:";"${selectedHistoryItem.id}"\n`;
+      csvContent += `"${isTr ? 'Brüt Toplam' : 'Gross Total'}:";"${Number(selectedHistoryItem.gross_amount).toFixed(2)}"\n`;
+      csvContent += `"${isTr ? 'Net Dağıtılan' : 'Net Distributed'}:";"${Number(selectedHistoryItem.net_distributed_amount).toFixed(2)}"\n\n`;
+
+      csvContent += `"#";"${isTr ? 'Personel Adı' : 'Employee Name'}";"${isTr ? 'Görev' : 'Role'}";"${isTr ? 'Katsayı' : 'Points/Weight'}";"${isTr ? 'Brüt Pay' : 'Gross Share'}";"${isTr ? 'Net Hak Ediş' : 'Net Share'}";"${isTr ? 'Ödeme Durumu' : 'Payment Status'}"\n`;
+
+      selectedHistoryItem.shares?.forEach((share, idx) => {
+        const empName = share.employee
+          ? `${share.employee.first_name || ''} ${share.employee.last_name || ''}`.trim()
+          : 'Personel';
+        const role = share.employee?.position || share.employee?.role_title || 'Servis';
+        const weight = Number(share.share_weight || 1).toFixed(2);
+        const gross = Number(share.gross_share || share.net_share).toFixed(2);
+        const net = Number(share.net_share).toFixed(2);
+        const status = share.is_paid ? (isTr ? 'Ödendi' : 'Paid') : (isTr ? 'Bekliyor' : 'Pending');
+        csvContent += `"${idx + 1}";"${empName}";"${role}";"${weight}";"${gross}";"${net}";"${status}"\n`;
+      });
+    } else if (simulation) {
+      csvContent += `"${isTr ? 'Brüt Toplam' : 'Gross Total'}:";"${simulation.summary.grossAmount.toFixed(2)}"\n`;
+      csvContent += `"${isTr ? 'POS Kesintisi' : 'POS Fee'}:";"-${simulation.summary.posFeeAmount.toFixed(2)}"\n`;
+      csvContent += `"${isTr ? 'Stopaj / Vergi' : 'Withholding / Tax'}:";"-${simulation.summary.taxFeeAmount.toFixed(2)}"\n`;
+      csvContent += `"${isTr ? 'Net Dağıtılan Toplam' : 'Net Distributed Total'}:";"${simulation.summary.netDistributedAmount.toFixed(2)}"\n\n`;
+
+      csvContent += `"#";"${isTr ? 'Personel Adı' : 'Employee Name'}";"${isTr ? 'Görev' : 'Role'}";"${isTr ? 'Katsayı' : 'Points/Weight'}";"${isTr ? 'Brüt Pay' : 'Gross Share'}";"${isTr ? 'POS Kesintisi' : 'POS Fee'}";"${isTr ? 'Vergi Kesintisi' : 'Tax Fee'}";"${isTr ? 'Net Hak Ediş' : 'Net Share'}";"${isTr ? 'Vardiya Durumu' : 'Shift Status'}"\n`;
+
+      simulation.employees.forEach((emp, idx) => {
+        const isExcluded = excludedEmployeeIds.includes(emp.employeeId);
+        const empName = emp.employeeName;
+        const role = emp.position || emp.roleTitle || 'Personel';
+        const weight = emp.shareWeight.toFixed(2);
+        const gross = emp.grossShare.toFixed(2);
+        const posFee = emp.posFeeShare.toFixed(2);
+        const taxFee = emp.taxFeeShare.toFixed(2);
+        const net = emp.netShare.toFixed(2);
+        const status = isExcluded ? (isTr ? 'Dahil Edilmedi' : 'Excluded') : (isTr ? 'Aktif Vardiya' : 'Active Shift');
+        csvContent += `"${idx + 1}";"${empName}";"${role}";"${weight}";"${gross}";"${posFee}";"${taxFee}";"${net}";"${status}"\n`;
+      });
+    }
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -1389,13 +1451,25 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
 
         {/* Modal Footer */}
         <div className="tip-pool-modal-footer">
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="btn btn-secondary tip-pool-print-btn"
-          >
-            <Printer size={15} /> Yazdır / Rapor Çıktısı Al
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="btn btn-secondary tip-pool-print-btn"
+            >
+              <Printer size={15} /> {isTr ? 'Yazdır / Kaşeli Rapor' : 'Print / Stamp Report'}
+            </button>
+            <button
+              type="button"
+              onClick={handleDownloadCsv}
+              className="btn btn-secondary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem' }}
+              title={isTr ? 'Muhasebe için Excel uyumlu CSV tablosu indir' : 'Export Excel-compatible CSV for payroll'}
+            >
+              <FileSpreadsheet size={15} style={{ color: '#10b981' }} />
+              <span>{isTr ? 'Excel / CSV İndir' : 'Export Excel / CSV'}</span>
+            </button>
+          </div>
 
           {activeTab === 'simulate' && (
             <div className="tip-pool-modal-footer-actions">

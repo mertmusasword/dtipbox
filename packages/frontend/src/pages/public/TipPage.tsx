@@ -1838,6 +1838,62 @@ export const TipPage: React.FC = () => {
             </div>
           )}
 
+          {/* Digital Loyalty Club Card (Post-Tip Retention) */}
+          {(isSuccess || isUnverified) && details?.business?.id && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(245, 158, 11, 0.04))',
+              border: '1.5px solid rgba(217, 119, 6, 0.25)',
+              borderRadius: '16px',
+              padding: '1.25rem',
+              marginBottom: '1.25rem',
+              textAlign: 'center',
+            }}>
+              <div style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                background: 'rgba(217, 119, 6, 0.15)',
+                color: '#d97706',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 0.6rem',
+              }}>
+                <Gift size={20} />
+              </div>
+              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#1C1917', marginBottom: '0.25rem' }}>
+                {language === 'tr' ? `${details.business.name} Sadakat Kulübü` : `${details.business.name} Loyalty Club`}
+              </h4>
+              <p style={{ fontSize: '0.82rem', color: '#78716C', marginBottom: '0.85rem' }}>
+                {language === 'tr'
+                  ? 'Ziyaretlerinizde damga toplayarak hediye ikramlar ve ayrıcalıklar kazanın.'
+                  : 'Collect digital stamps and earn free rewards and treats on your visits.'}
+              </p>
+              <Link
+                to={`/loyalty/enroll/${details.business.id}`}
+                className="btn btn-primary btn-sm"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                  borderColor: '#b45309',
+                  color: '#FFFFFF',
+                  textDecoration: 'none',
+                  padding: '0.55rem 1.25rem',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 12px rgba(217, 119, 6, 0.2)',
+                }}
+              >
+                <Sparkles size={14} />
+                <span>{language === 'tr' ? 'Sadakat Kartını Aç / Katıl' : 'Join Loyalty Program'}</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          )}
+
           {hasMenu && (
             <button
               type="button"
