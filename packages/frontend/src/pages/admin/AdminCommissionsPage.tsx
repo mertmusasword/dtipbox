@@ -182,31 +182,7 @@ export const AdminCommissionsPage: React.FC = () => {
     }
   };
 
-  if (loading && !data) {
-    return (
-      <div className="page-wrapper" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
-        <div className="spinner" style={{ margin: '0 auto 1rem' }} />
-        <div style={{ color: 'var(--text-secondary)' }}>{art.loading}</div>
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="page-wrapper">
-        <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
-          <p style={{ color: '#f87171', marginBottom: '1rem' }}>{error || 'Error'}</p>
-          <button onClick={loadData} className="btn btn-secondary">
-            <RefreshCw size={16} /> {art.refreshBtn}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const { summary, venues } = data;
-
-  // Category counts across all venues
+  // Category counts across all venues (Hooks MUST be called before any conditional return!)
   const counts = useMemo(() => {
     const all = data?.venues || [];
     const pendingVerification =
@@ -309,6 +285,30 @@ export const AdminCommissionsPage: React.FC = () => {
       color: '#34d399',
     },
   ];
+
+  if (loading && !data) {
+    return (
+      <div className="page-wrapper" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
+        <div className="spinner" style={{ margin: '0 auto 1rem' }} />
+        <div style={{ color: 'var(--text-secondary)' }}>{art.loading}</div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="page-wrapper">
+        <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+          <p style={{ color: '#f87171', marginBottom: '1rem' }}>{error || 'Error'}</p>
+          <button onClick={loadData} className="btn btn-secondary">
+            <RefreshCw size={16} /> {art.refreshBtn}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const { summary, venues } = data;
 
   return (
     <div className="page-wrapper" style={{ direction: isRtl ? 'rtl' : 'ltr' }}>
