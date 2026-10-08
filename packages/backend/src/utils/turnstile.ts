@@ -7,6 +7,9 @@ const TURNSTILE_VERIFY_ENDPOINT = 'https://challenges.cloudflare.com/turnstile/v
 // Cloudflare official dummy secret key for testing (always passes)
 const DEFAULT_SECRET_KEY = '1x0000000000000000000000000000000AA';
 
+/** Error code returned when Cloudflare could not be reached or answered abnormally. */
+export const TURNSTILE_NETWORK_ERROR = 'network-error';
+
 export interface TurnstileVerifyResult {
   success: boolean;
   errorCodes?: string[];
@@ -32,6 +35,9 @@ export async function verifyTurnstileToken(
     };
   }
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6000); // 6s timeout
+
   try {
     const formData = new URLSearchParams();
     formData.append('secret', secretKey);
@@ -39,9 +45,6 @@ export async function verifyTurnstileToken(
     if (remoteIp) {
       formData.append('remoteip', remoteIp);
     }
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000); // 6s timeout
 
     const res = await fetch(TURNSTILE_VERIFY_ENDPOINT, {
       method: 'POST',
@@ -52,7 +55,9 @@ export async function verifyTurnstileToken(
       signal: controller.signal,
     });
 
-    clearTimeout(timeout);
+    if (!res.ok) {
+      throw new Error(`Turnstile siteverify responded with HTTP ${res.status}`);
+    }
 
     const outcome = (await res.json()) as Record<string, any>;
     return {
@@ -63,10 +68,13 @@ export async function verifyTurnstileToken(
     };
   } catch (error: any) {
     console.error('[Turnstile] Verification API request error:', error);
-    // On unexpected upstream network error, fail closed or open based on policy
+    // Fail closed: if Cloudflare cannot be reached we cannot prove the request is human,
+    // so an attacker must not be able to bypass the CAPTCHA by forcing an upstream failure.
     return {
-      success: true, // Allow fallback if Cloudflare verification endpoint is unreachable
-      errorCodes: ['network-error-fallback'],
+      success: false,
+      errorCodes: [TURNSTILE_NETWORK_ERROR],
     };
+  } finally {
+    clearTimeout(timeout);
   }
 }

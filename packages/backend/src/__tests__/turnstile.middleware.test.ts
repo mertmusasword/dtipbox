@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../utils/turnstile', () => ({
   verifyTurnstileToken: vi.fn(),
+  TURNSTILE_NETWORK_ERROR: 'network-error',
 }));
 
 import { requireTurnstile } from '../middleware/turnstile.middleware';
@@ -62,6 +63,14 @@ describe('requireTurnstile middleware', () => {
     expect(r.status).toBe(403);
     expect(r.nextCalled).toBe(false);
     expect(mockedVerify).toHaveBeenCalledWith('bad', '1.2.3.4');
+  });
+
+  it('returns a retryable 503 when Cloudflare is unreachable (fail-closed)', async () => {
+    process.env.NODE_ENV = 'production';
+    mockedVerify.mockResolvedValue({ success: false, errorCodes: ['network-error'] });
+    const r = await run(requireTurnstile(), { body: { turnstileToken: 'x' } });
+    expect(r.status).toBe(503);
+    expect(r.nextCalled).toBe(false);
   });
 
   it('passes a valid token', async () => {

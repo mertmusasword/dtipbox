@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyTurnstileToken } from '../utils/turnstile';
+import { verifyTurnstileToken, TURNSTILE_NETWORK_ERROR } from '../utils/turnstile';
 
 interface RequireTurnstileOptions {
   /** Authenticated requests (req.user set by an earlier middleware) skip the CAPTCHA entirely. */
@@ -42,6 +42,12 @@ export const requireTurnstile =
         const ipAddress = req.ip || req.socket.remoteAddress || '0.0.0.0';
         const result = await verifyTurnstileToken(token, ipAddress);
         if (!result.success) {
+          if (result.errorCodes?.includes(TURNSTILE_NETWORK_ERROR)) {
+            return res.status(503).json({
+              success: false,
+              error: 'Güvenlik doğrulaması şu an yapılamıyor. Lütfen birkaç dakika sonra tekrar deneyiniz.',
+            });
+          }
           return res.status(403).json({
             success: false,
             error: 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyiniz.',
