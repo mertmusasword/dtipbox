@@ -4,6 +4,7 @@ import { api } from '../../api/client';
 import { useLanguage } from '../../i18n';
 import { getCommissionText } from '../../i18n/commissionLocales';
 import { useToast } from '../Toast';
+import { ENABLE_B2B_CREDIT_CARD_PAYMENTS } from '../../constants/featureFlags';
 import {
   Coins,
   CreditCard,
@@ -127,7 +128,9 @@ export const CommissionSettlementTab: React.FC = () => {
   // Credit Card / Apple Pay Checkout State
   const [searchParams, setSearchParams] = useSearchParams();
   const cardSettledProcessedRef = useRef(false);
-  const [settlementMethod, setSettlementMethod] = useState<'CARD' | 'WIRE'>('CARD');
+  const [settlementMethod, setSettlementMethod] = useState<'CARD' | 'WIRE'>(
+    ENABLE_B2B_CREDIT_CARD_PAYMENTS ? 'CARD' : 'WIRE'
+  );
   const [startingCardPayment, setStartingCardPayment] = useState(false);
 
   // Unverified Wire Transfers Review Modal State
@@ -281,6 +284,7 @@ export const CommissionSettlementTab: React.FC = () => {
   const handleOpenSettlement = (period?: SettlementPeriod) => {
     setSelectedPeriod(period || null);
     setSettlementNote('');
+    setSettlementMethod(ENABLE_B2B_CREDIT_CARD_PAYMENTS ? 'CARD' : 'WIRE');
     if (report?.summary?.currency) {
       setSelectedAccountCurrency(report.summary.currency);
     }
@@ -863,16 +867,16 @@ export const CommissionSettlementTab: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleOpenSettlement(period)}
-                              className={period.bankCommissionPending >= minThreshold ? 'btn btn-primary' : 'btn btn-secondary'}
+                              className={(!ENABLE_B2B_CREDIT_CARD_PAYMENTS || period.bankCommissionPending >= minThreshold) ? 'btn btn-primary' : 'btn btn-secondary'}
                               style={{
                                 padding: '4px 10px',
                                 fontSize: '0.78rem',
-                                ...(period.bankCommissionPending < minThreshold
+                                ...(ENABLE_B2B_CREDIT_CARD_PAYMENTS && period.bankCommissionPending < minThreshold
                                   ? { color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.4)' }
                                   : {}),
                               }}
                             >
-                              {period.bankCommissionPending >= minThreshold
+                              {(!ENABLE_B2B_CREDIT_CARD_PAYMENTS || period.bankCommissionPending >= minThreshold)
                                 ? ct.btnPaySettle
                                 : `⏳ ${language === 'tr' ? 'Birikiyor' : 'Accruing'} (${formatCurrency(period.bankCommissionPending, currency)})`}
                             </button>
@@ -1012,16 +1016,16 @@ export const CommissionSettlementTab: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenSettlement(period)}
-                            className={period.bankCommissionPending >= minThreshold ? 'btn btn-primary' : 'btn btn-secondary'}
+                            className={(!ENABLE_B2B_CREDIT_CARD_PAYMENTS || period.bankCommissionPending >= minThreshold) ? 'btn btn-primary' : 'btn btn-secondary'}
                             style={{
                               padding: '6px 12px',
                               fontSize: '0.8rem',
-                              ...(period.bankCommissionPending < minThreshold
+                              ...(ENABLE_B2B_CREDIT_CARD_PAYMENTS && period.bankCommissionPending < minThreshold
                                 ? { color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.4)' }
                                 : {}),
                             }}
                           >
-                            {period.bankCommissionPending >= minThreshold
+                            {(!ENABLE_B2B_CREDIT_CARD_PAYMENTS || period.bankCommissionPending >= minThreshold)
                               ? ct.btnPaySettle
                               : `⏳ ${language === 'tr' ? 'Birikiyor' : 'Accruing'} (${formatCurrency(period.bankCommissionPending, currency)})`}
                           </button>
@@ -1115,7 +1119,11 @@ export const CommissionSettlementTab: React.FC = () => {
             </div>
 
             <p style={{ fontSize: '0.86rem', color: '#cbd5e1', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-              {ct.settlementModalDesc}
+              {ENABLE_B2B_CREDIT_CARD_PAYMENTS
+                ? ct.settlementModalDesc
+                : (language === 'tr'
+                    ? 'Doğrudan IBAN/FAST ile aldığınız bahşişlerin tahakkuk eden %3.50 platform hizmet bedelini şirket banka hesabımıza havale ederek kolayca kapatabilirsiniz.'
+                    : 'You can settle the accrued 3.50% platform service fee from tips via direct bank wire / FAST transfer to our company account.')}
             </p>
 
             {/* Amount Due Callout */}
@@ -1140,94 +1148,98 @@ export const CommissionSettlementTab: React.FC = () => {
                   {formatCurrency(modalAmountToPay, currency)}
                 </span>
               </div>
-              <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94a3b8', marginBottom: '3px' }}>
-                  <span>
-                    {language === 'tr' ? 'Asgari Kartlı Ödeme Eşiği: ' : 'Minimum Card Payment Threshold: '}
-                    <strong style={{ color: '#f8fafc' }}>{formatCurrency(minThreshold, currency)}</strong>
-                  </span>
-                  <span style={{ color: !isModalThresholdMet ? '#38bdf8' : '#10b981', fontWeight: 700 }}>
-                    %{modalProgressPercent.toFixed(1)} {isModalThresholdMet ? '✓' : ''}
-                  </span>
+              {ENABLE_B2B_CREDIT_CARD_PAYMENTS && (
+                <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94a3b8', marginBottom: '3px' }}>
+                    <span>
+                      {language === 'tr' ? 'Asgari Kartlı Ödeme Eşiği: ' : 'Minimum Card Payment Threshold: '}
+                      <strong style={{ color: '#f8fafc' }}>{formatCurrency(minThreshold, currency)}</strong>
+                    </span>
+                    <span style={{ color: !isModalThresholdMet ? '#38bdf8' : '#10b981', fontWeight: 700 }}>
+                      %{modalProgressPercent.toFixed(1)} {isModalThresholdMet ? '✓' : ''}
+                    </span>
+                  </div>
+                  <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${Math.max(4, modalProgressPercent)}%`,
+                        height: '100%',
+                        background: isModalThresholdMet
+                          ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
+                          : 'linear-gradient(90deg, #38bdf8 0%, #818cf8 100%)',
+                        borderRadius: '999px',
+                      }}
+                    />
+                  </div>
                 </div>
-                <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '999px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      width: `${Math.max(4, modalProgressPercent)}%`,
-                      height: '100%',
-                      background: isModalThresholdMet
-                        ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
-                        : 'linear-gradient(90deg, #38bdf8 0%, #818cf8 100%)',
-                      borderRadius: '999px',
-                    }}
-                  />
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Payment Method Selector Tabs */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', marginBottom: '1.25rem' }}>
-              <button
-                type="button"
-                onClick={() => setSettlementMethod('CARD')}
-                style={{
-                  padding: '0.75rem 0.5rem',
-                  borderRadius: '12px',
-                  border: settlementMethod === 'CARD' ? '2px solid #0284c7' : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: settlementMethod === 'CARD' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(30, 41, 59, 0.5)',
-                  color: settlementMethod === 'CARD' ? '#ffffff' : '#94a3b8',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  transition: 'all 0.2s ease',
-                  boxShadow: settlementMethod === 'CARD' ? '0 0 15px rgba(2, 132, 199, 0.35)' : 'none',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: settlementMethod === 'CARD' ? '#38bdf8' : '#cbd5e1' }}>
-                  <CreditCard size={16} />
-                  <span>Kredi Kartı / Apple Pay</span>
-                </div>
-                <span style={{ fontSize: '0.68rem', color: settlementMethod === 'CARD' ? '#7dd3fc' : '#64748b', fontWeight: 600 }}>
-                  ⚡ Anında Otomatik Kapanır
-                </span>
-              </button>
+            {ENABLE_B2B_CREDIT_CARD_PAYMENTS && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', marginBottom: '1.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setSettlementMethod('CARD')}
+                  style={{
+                    padding: '0.75rem 0.5rem',
+                    borderRadius: '12px',
+                    border: settlementMethod === 'CARD' ? '2px solid #0284c7' : '1px solid rgba(255, 255, 255, 0.1)',
+                    background: settlementMethod === 'CARD' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(30, 41, 59, 0.5)',
+                    color: settlementMethod === 'CARD' ? '#ffffff' : '#94a3b8',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    transition: 'all 0.2s ease',
+                    boxShadow: settlementMethod === 'CARD' ? '0 0 15px rgba(2, 132, 199, 0.35)' : 'none',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: settlementMethod === 'CARD' ? '#38bdf8' : '#cbd5e1' }}>
+                    <CreditCard size={16} />
+                    <span>Kredi Kartı / Apple Pay</span>
+                  </div>
+                  <span style={{ fontSize: '0.68rem', color: settlementMethod === 'CARD' ? '#7dd3fc' : '#64748b', fontWeight: 600 }}>
+                    ⚡ Anında Otomatik Kapanır
+                  </span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setSettlementMethod('WIRE')}
-                style={{
-                  padding: '0.75rem 0.5rem',
-                  borderRadius: '12px',
-                  border: settlementMethod === 'WIRE' ? '2px solid #0284c7' : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: settlementMethod === 'WIRE' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(30, 41, 59, 0.5)',
-                  color: settlementMethod === 'WIRE' ? '#ffffff' : '#94a3b8',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  transition: 'all 0.2s ease',
-                  boxShadow: settlementMethod === 'WIRE' ? '0 0 15px rgba(2, 132, 199, 0.35)' : 'none',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: settlementMethod === 'WIRE' ? '#38bdf8' : '#cbd5e1' }}>
-                  <Building2 size={16} />
-                  <span>Banka Havalesi / FAST</span>
-                </div>
-                <span style={{ fontSize: '0.68rem', color: settlementMethod === 'WIRE' ? '#7dd3fc' : '#64748b', fontWeight: 600 }}>
-                  %0 Komisyonsuz Manuel
-                </span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setSettlementMethod('WIRE')}
+                  style={{
+                    padding: '0.75rem 0.5rem',
+                    borderRadius: '12px',
+                    border: settlementMethod === 'WIRE' ? '2px solid #0284c7' : '1px solid rgba(255, 255, 255, 0.1)',
+                    background: settlementMethod === 'WIRE' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(30, 41, 59, 0.5)',
+                    color: settlementMethod === 'WIRE' ? '#ffffff' : '#94a3b8',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    transition: 'all 0.2s ease',
+                    boxShadow: settlementMethod === 'WIRE' ? '0 0 15px rgba(2, 132, 199, 0.35)' : 'none',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: settlementMethod === 'WIRE' ? '#38bdf8' : '#cbd5e1' }}>
+                    <Building2 size={16} />
+                    <span>Banka Havalesi / FAST</span>
+                  </div>
+                  <span style={{ fontSize: '0.68rem', color: settlementMethod === 'WIRE' ? '#7dd3fc' : '#64748b', fontWeight: 600 }}>
+                    %0 Komisyonsuz Manuel
+                  </span>
+                </button>
+              </div>
+            )}
 
             {/* OPTION 1: CREDIT CARD / APPLE PAY (INSTANT) */}
-            {settlementMethod === 'CARD' ? (
+            {ENABLE_B2B_CREDIT_CARD_PAYMENTS && settlementMethod === 'CARD' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '0.5rem' }}>
                 {!isModalThresholdMet ? (
                   <>
