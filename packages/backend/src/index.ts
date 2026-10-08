@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -13,6 +14,15 @@ import { providerRegistry } from './services/payment/core/providerRegistry';
 import { bootstrapDefaultAgreement } from './services/agreement.service';
 import { loyaltyService } from './services/loyalty.service';
 import { logger, requestLogger } from './utils/logger';
+
+// Initialize Sentry for Backend Error Tracking & Observability
+if (env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: env.SENTRY_DSN,
+    environment: env.NODE_ENV || 'production',
+    tracesSampleRate: env.isProd ? 0.2 : 1.0,
+  });
+}
 
 const app = express();
 
@@ -237,6 +247,11 @@ if (env.isProd) {
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
+}
+
+// Sentry Express error handler
+if (env.SENTRY_DSN) {
+  Sentry.setupExpressErrorHandler(app);
 }
 
 // Global error handler

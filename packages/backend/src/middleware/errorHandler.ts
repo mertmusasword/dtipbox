@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import * as Sentry from '@sentry/node';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
 
@@ -27,6 +28,17 @@ export function errorHandler(
   const message = statusCode === 500 && env.isProd
     ? 'Internal server error'
     : err.message || 'Internal server error';
+
+  // Report internal server errors (500) to Sentry
+  if (statusCode >= 500 && env.SENTRY_DSN) {
+    Sentry.captureException(err, {
+      extra: {
+        method: req.method,
+        path: req.path,
+        statusCode,
+      },
+    });
+  }
 
   // Log error using structured logger
   logger.error(err.message || 'Unhandled Express Error', 'EXPRESS_ERROR', {

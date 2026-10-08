@@ -115,8 +115,19 @@ router.post('/:publicToken/feedback', feedbackLimiter, validate(createFeedbackSc
   }
 });
 
+const receiptLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 receipt emails per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many receipt requests from this device. Please wait a moment before trying again.',
+  },
+});
+
 // Public: Send Digital Tip Receipt Email
-router.post('/:publicToken/send-receipt', async (req, res, next) => {
+router.post('/:publicToken/send-receipt', receiptLimiter, async (req, res, next) => {
   try {
     const { email, tipId, referenceCode, language } = req.body;
     if (!email || typeof email !== 'string' || !email.includes('@')) {
@@ -125,8 +136,9 @@ router.post('/:publicToken/send-receipt', async (req, res, next) => {
     }
 
     // Verify the public QR token first to scope by venue
+    const publicToken = Array.isArray(req.params.publicToken) ? req.params.publicToken[0] : req.params.publicToken;
     const qr = await prisma.qrCode.findUnique({
-      where: { public_token: req.params.publicToken },
+      where: { public_token: publicToken },
       include: { business: true },
     });
 

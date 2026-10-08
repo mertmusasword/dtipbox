@@ -94,7 +94,19 @@ router.post('/login', authLimiter, validate(loginSchema), async (req, res, next)
   }
 });
 
-router.post('/refresh', async (req, res, next) => {
+const refreshLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: env.isDev ? 1000 : 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => env.isDev,
+  message: {
+    success: false,
+    error: 'Too many token refresh attempts. Please log in again.',
+  },
+});
+
+router.post('/refresh', refreshLimiter, async (req, res, next) => {
   try {
     const token = req.cookies?.refreshToken || req.body?.refreshToken;
     if (!token) {

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import rateLimit from 'express-rate-limit';
 import { validate } from '../middleware/validation';
 import { authenticate, authorize, requireBusinessOwnership, AuthRequest } from '../middleware/auth';
 import * as businessService from '../services/business.service';
@@ -21,6 +22,17 @@ import { lemonSqueezyService } from '../services/lemonsqueezy.service';
 import prisma from '../utils/prisma';
 
 const router = Router();
+
+const commissionActionLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Çok fazla komisyon işlemi denemesi yapıldı. Lütfen biraz bekleyiniz.',
+  },
+});
 
 // Apply auth and business ownership to all business endpoints
 router.use(authenticate);
@@ -551,7 +563,7 @@ router.get('/commissions', async (req: AuthRequest, res, next) => {
   }
 });
 
-router.post('/commissions/settle', async (req: AuthRequest, res, next) => {
+router.post('/commissions/settle', commissionActionLimiter, async (req: AuthRequest, res, next) => {
   try {
     const { periodKey, note } = req.body || {};
     const result = await commissionService.settleCommission(req.user!.businessId!, {
@@ -565,7 +577,7 @@ router.post('/commissions/settle', async (req: AuthRequest, res, next) => {
   }
 });
 
-router.post('/commissions/card-checkout', async (req: AuthRequest, res, next) => {
+router.post('/commissions/card-checkout', commissionActionLimiter, async (req: AuthRequest, res, next) => {
   try {
     const { periodKey } = req.body || {};
     const businessId = req.user!.businessId!;

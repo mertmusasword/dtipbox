@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import { authenticate, authorize, requireBusinessOwnership, AuthRequest } from '../middleware/auth';
 import {
   listStoreProducts,
@@ -16,6 +17,17 @@ import {
 } from '../services/store.service';
 
 const router = Router();
+
+const storeOrderLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Çok fazla sipariş oluşturma denemesi yapıldı. Lütfen biraz bekleyiniz.',
+  },
+});
 
 /**
  * GET /api/store/products
@@ -53,6 +65,7 @@ router.get('/products/:id', async (req, res: Response, next) => {
  */
 router.post(
   '/orders',
+  storeOrderLimiter,
   authenticate,
   authorize('BUSINESS', 'ADMIN'),
   requireBusinessOwnership,

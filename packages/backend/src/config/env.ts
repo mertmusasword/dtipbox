@@ -68,6 +68,11 @@ export const env = {
   LEMONSQUEEZY_VARIANT_ID: process.env.LEMONSQUEEZY_VARIANT_ID || '',
   LEMONSQUEEZY_WEBHOOK_SECRET: process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '',
 
+  // Sentry (Backend Error Tracking)
+  SENTRY_DSN:
+    process.env.SENTRY_DSN ||
+    'https://e26ae0bcac487c16f7830d2c92bc0491@o4512186065092608.ingest.de.sentry.io/4512186076823632',
+
   // Helpers
   isDev: process.env.NODE_ENV !== 'production',
   isProd: process.env.NODE_ENV === 'production',
