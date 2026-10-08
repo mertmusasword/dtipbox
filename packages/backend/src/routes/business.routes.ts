@@ -680,8 +680,10 @@ router.get('/tips', async (req: AuthRequest, res, next) => {
     const skip = (page - 1) * limit;
 
     const where: any = { business_id: businessId };
-    if (status && status !== 'ALL') {
-      if (status === 'UNVERIFIED_OR_PENDING' || status === 'UNVERIFIED') {
+    const rawStatus = typeof status === 'string' ? status.trim().toUpperCase() : undefined;
+
+    if (rawStatus && rawStatus !== 'ALL') {
+      if (rawStatus === 'UNVERIFIED_OR_PENDING' || rawStatus === 'UNVERIFIED') {
         where.payment_status = { in: ['UNVERIFIED', 'PENDING'] };
         where.OR = [
           { payment_method: { in: ['BANK_TRANSFER', 'IBAN', 'IBAN_TRANSFER', 'FAST', 'HAVALE', 'EFT'] } },
@@ -689,11 +691,12 @@ router.get('/tips', async (req: AuthRequest, res, next) => {
           { payment_method: { contains: 'BANK', mode: 'insensitive' } },
           { payment_method: { contains: 'HAVALE', mode: 'insensitive' } },
         ];
-      } else if (status === 'PENDING') {
+      } else if (rawStatus === 'PENDING') {
         where.payment_status = 'PENDING';
-      } else {
-        where.payment_status = status as any;
+      } else if (['SUCCESS', 'FAILED', 'CANCELLED'].includes(rawStatus)) {
+        where.payment_status = rawStatus;
       }
+      // Any other unknown or invalid status value is safely ignored instead of causing a PrismaClientValidationError crash
     }
 
     const [tips, total] = await Promise.all([

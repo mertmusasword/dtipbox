@@ -20,7 +20,24 @@ if (SENTRY_DSN) {
       'Non-Error promise rejection captured',
       'NetworkError when attempting to fetch resource',
       'AbortError',
+      'Failed to fetch dynamically imported module',
+      'Importing a module script failed',
+      'error loading dynamically imported module',
+      'Unable to preload CSS',
+      'ChunkLoadError',
     ],
+  });
+}
+
+// Auto-reload when Vite fails to load a dynamic chunk (e.g. after a new production deployment)
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', (event) => {
+    console.warn('[Vite] Preload error detected, reloading to fetch latest bundle...', event);
+    const lastReload = Number(sessionStorage.getItem('naponi_chunk_reload') || '0');
+    if (Date.now() - lastReload > 15000) {
+      sessionStorage.setItem('naponi_chunk_reload', Date.now().toString());
+      window.location.reload();
+    }
   });
 }
 

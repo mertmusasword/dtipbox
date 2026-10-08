@@ -227,10 +227,77 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   return <LanguageContext.Provider value={contextValue}>{children}</LanguageContext.Provider>;
 };
 
+function createFallbackLanguageContext(lang: SupportedLanguage = 'tr'): LanguageContextType {
+  const currentMeta = SUPPORTED_LANGUAGES.find((l) => l.code === lang) || SUPPORTED_LANGUAGES[0];
+  return {
+    language: lang,
+    currentMeta,
+    setLanguage: () => {},
+    dir: currentMeta.dir,
+    t: (path: string, params?: Record<string, string | number>): string => {
+      const activeDict = translations[lang] || translations.en;
+      let value = getNestedValue(activeDict, path);
+      if (!value && lang !== 'en') {
+        value = getNestedValue(translations.en, path);
+      }
+      if (!value) return path;
+      if (params) {
+        return Object.entries(params).reduce((acc, [k, v]) => acc.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v)), value);
+      }
+      return value;
+    },
+    formatNumber: (num: number, options?: Intl.NumberFormatOptions): string => {
+      try {
+        return new Intl.NumberFormat(lang, options).format(num);
+      } catch {
+        return num.toLocaleString();
+      }
+    },
+    formatCurrency: (amount: number, currencyCode: string = 'TRY', options?: Intl.NumberFormatOptions): string => {
+      try {
+        return new Intl.NumberFormat(lang, {
+          style: 'currency',
+          currency: currencyCode.toUpperCase(),
+          ...options,
+        }).format(amount);
+      } catch {
+        return `${amount.toFixed(2)} ${currencyCode}`;
+      }
+    },
+    formatDate: (date: Date | string | number, options?: Intl.DateTimeFormatOptions): string => {
+      try {
+        const d = date instanceof Date ? date : new Date(date);
+        return new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'short', day: 'numeric', ...options }).format(d);
+      } catch {
+        return String(date);
+      }
+    },
+    formatTime: (date: Date | string | number, options?: Intl.DateTimeFormatOptions): string => {
+      try {
+        const d = date instanceof Date ? date : new Date(date);
+        return new Intl.DateTimeFormat(lang, { hour: '2-digit', minute: '2-digit', ...options }).format(d);
+      } catch {
+        return String(date);
+      }
+    },
+    supportedLanguages: SUPPORTED_LANGUAGES,
+  };
+}
+
 export function useLanguage(): LanguageContextType {
-  const context = useContext(LanguageContext);
+  let context: LanguageContextType | undefined;
+  try {
+    context = useContext(LanguageContext);
+  } catch {
+    // In case called when React dispatcher is not attached
+  }
+
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+      console.warn('useLanguage was called outside LanguageProvider; returning graceful fallback.');
+    }
+    return createFallbackLanguageContext(detectInitialLanguage());
   }
   return context;
 }
+

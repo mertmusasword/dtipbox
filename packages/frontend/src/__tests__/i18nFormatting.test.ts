@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { en } from '../i18n/locales/en';
 import { tr } from '../i18n/locales/tr';
+import { useLanguage } from '../i18n';
 
 describe('i18n Localization & Translation Keys Integrity', () => {
   it('contains essential tipping, error, and feedback keys in both TR and EN', () => {
@@ -21,4 +22,15 @@ describe('i18n Localization & Translation Keys Integrity', () => {
     expect(formatTRY(150)).toBe('₺150.00');
     expect(formatUSD(25)).toBe('$25.00');
   });
+
+  it('useLanguage() returns graceful fallback without throwing when called outside LanguageProvider', () => {
+    expect(() => {
+      const result = useLanguage();
+      expect(result).toBeDefined();
+      expect(result.language).toBeDefined();
+      expect(typeof result.t).toBe('function');
+      expect(typeof result.formatCurrency).toBe('function');
+    }).not.toThrow();
+  });
 });
+

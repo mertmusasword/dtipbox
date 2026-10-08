@@ -1,4 +1,4 @@
-const CACHE_NAME = 'naponi-pwa-v1';
+const CACHE_NAME = 'naponi-pwa-v2';
 
 // Essential static assets for offline app shell
 const PRECACHE_ASSETS = [
