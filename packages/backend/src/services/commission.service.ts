@@ -1,5 +1,6 @@
 import prisma from '../utils/prisma';
 import { PaymentStatus } from '@prisma/client';
+import { AppError } from '../middleware/errorHandler';
 import { createAuditLog } from './audit.service';
 
 export interface MonthlySettlementPeriod {
@@ -435,6 +436,10 @@ export async function declareBusinessSettlement(
     declaredAmount += fee;
   }
   declaredAmount = Number(declaredAmount.toFixed(2));
+
+  if (declaredAmount <= 0) {
+    throw new AppError('Mutabakat bildirilecek bekleyen komisyon bakiyesi bulunmamaktadır.', 400);
+  }
 
   await createAuditLog({
     actorUserId: input.actorUserId,

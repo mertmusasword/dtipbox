@@ -107,6 +107,7 @@ export const TipPage: React.FC = () => {
   // Processing & Confirmation State
   const [submitting, setSubmitting] = useState(false);
   const [paymentResult, setPaymentResult] = useState<any | null>(null);
+  const [createdTipData, setCreatedTipData] = useState<any | null>(null);
   const [redirectingUrl, setRedirectingUrl] = useState<string | null>(null);
   const [copiedIban, setCopiedIban] = useState(false);
 
@@ -339,6 +340,8 @@ export const TipPage: React.FC = () => {
         effectiveAmount,
         details?.business?.currency || 'USD'
       );
+
+      setCreatedTipData(res.data.data);
 
       const paymentUrl = res.data.data?.payment?.paymentUrl;
       if (selectedPaymentMethod === 'CARD' && paymentUrl) {
@@ -582,18 +585,31 @@ export const TipPage: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              setPaymentResult({
-                tip: {
-                  id: idempotencyKey,
-                  payment_method: 'CARD',
-                  status: 'SUCCESS',
-                  amount: selectedAmount || customAmount,
-                  currency: details?.business?.currency || 'TRY',
-                },
-                payment: {
-                  status: 'SUCCESS',
-                },
-              });
+              if (createdTipData) {
+                setPaymentResult({
+                  ...createdTipData,
+                  tip: {
+                    ...createdTipData.tip,
+                    status: 'SUCCESS',
+                  },
+                  payment: {
+                    status: 'SUCCESS',
+                  },
+                });
+              } else {
+                setPaymentResult({
+                  tip: {
+                    id: undefined,
+                    payment_method: 'CARD',
+                    status: 'SUCCESS',
+                    amount: selectedAmount || customAmount,
+                    currency: details?.business?.currency || 'TRY',
+                  },
+                  payment: {
+                    status: 'SUCCESS',
+                  },
+                });
+              }
               setRedirectingUrl(null);
             }}
             className="btn btn-secondary"

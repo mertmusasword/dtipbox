@@ -710,14 +710,15 @@ export class LoyaltyService {
         data: { used_at: new Date() },
       });
 
-      // Increment stamp
-      const prevStamps = card.current_stamps;
-      const newStamps = prevStamps + 1;
-
-      await tx.loyaltyCard.update({
+      // Increment stamp atomically
+      const updatedCard = await tx.loyaltyCard.update({
         where: { id: card.id },
-        data: { current_stamps: newStamps },
+        data: { current_stamps: { increment: 1 } },
+        select: { current_stamps: true },
       });
+
+      const newStamps = updatedCard.current_stamps;
+      const prevStamps = newStamps - 1;
 
       // Audit transaction
       await tx.loyaltyStampTransaction.create({
@@ -831,14 +832,15 @@ export class LoyaltyService {
         }
       }
 
-      // Increment stamp
-      const prevStamps = card.current_stamps;
-      const newStamps = prevStamps + 1;
-
-      await tx.loyaltyCard.update({
+      // Increment stamp atomically
+      const updatedCard = await tx.loyaltyCard.update({
         where: { id: card.id },
-        data: { current_stamps: newStamps },
+        data: { current_stamps: { increment: 1 } },
+        select: { current_stamps: true },
       });
+
+      const newStamps = updatedCard.current_stamps;
+      const prevStamps = newStamps - 1;
 
       // Audit transaction
       await tx.loyaltyStampTransaction.create({

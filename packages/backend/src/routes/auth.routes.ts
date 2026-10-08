@@ -121,7 +121,11 @@ router.post('/refresh', refreshLimiter, async (req, res, next) => {
   }
 });
 
-router.post('/logout', (_req, res) => {
+router.post('/logout', (req, res) => {
+  const token = req.cookies?.refreshToken || req.body?.refreshToken;
+  if (token && typeof token === 'string') {
+    authService.revokeToken(token);
+  }
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: env.isProd,

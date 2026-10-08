@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
 import rateLimit from 'express-rate-limit';
+import { z } from 'zod';
 import { authenticate, authorize, requireBusinessOwnership, AuthRequest } from '../middleware/auth';
+import { validate } from '../middleware/validation';
 import {
   listStoreProducts,
   getStoreProduct,
@@ -17,6 +19,45 @@ import {
 } from '../services/store.service';
 
 const router = Router();
+
+const createStoreOrderSchema = {
+  body: z.object({
+    items: z
+      .array(
+        z
+          .object({
+            productId: z.string().optional(),
+            product_id: z.string().optional(),
+            quantity: z.number().int().positive('Adet pozitif tam sayı olmalıdır.'),
+            customization: z.any().optional(),
+          })
+          .refine((item) => Boolean(item.productId || item.product_id), {
+            message: 'Ürün ID (productId veya product_id) zorunludur.',
+          })
+      )
+      .min(1, 'Sepetinizde en az bir ürün bulunmalıdır.'),
+    recipientName: z.string().trim().max(100).optional(),
+    recipient_name: z.string().trim().max(100).optional(),
+    phone: z.string().trim().max(50).optional(),
+    addressLine: z.string().trim().max(255).optional(),
+    address_line: z.string().trim().max(255).optional(),
+    city: z.string().trim().max(100).optional(),
+    state: z.string().trim().max(100).optional(),
+    postalCode: z.string().trim().max(20).optional(),
+    postal_code: z.string().trim().max(20).optional(),
+    country: z.string().trim().max(100).optional(),
+    companyName: z.string().trim().max(150).optional(),
+    company_name: z.string().trim().max(150).optional(),
+    taxOffice: z.string().trim().max(100).optional(),
+    tax_office: z.string().trim().max(100).optional(),
+    taxNumber: z.string().trim().max(50).optional(),
+    tax_number: z.string().trim().max(50).optional(),
+    notes: z.string().trim().max(500).optional(),
+    paymentMethod: z.string().optional(),
+    payment_method: z.string().optional(),
+    currency: z.string().trim().max(10).optional(),
+  }),
+};
 
 const storeOrderLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
@@ -69,6 +110,7 @@ router.post(
   authenticate,
   authorize('BUSINESS', 'ADMIN'),
   requireBusinessOwnership,
+  validate(createStoreOrderSchema),
   async (req: AuthRequest, res: Response, next) => {
     try {
       const businessId = req.user!.businessId!;

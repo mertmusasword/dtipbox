@@ -511,6 +511,46 @@ export async function createStoreOrder(businessId: string, input: CreateOrderInp
     throw new AppError('İşletme bulunamadı.', 404);
   }
 
+  // 5-second anti-duplicate check for rapid double-click submissions
+  const recentDuplicate = await prisma.storeOrder.findFirst({
+    where: {
+      business_id: business.id,
+      created_at: {
+        gte: new Date(Date.now() - 5000),
+      },
+      status: StoreOrderStatus.PENDING_PAYMENT,
+    },
+    include: {
+      items: {
+        include: { product: true },
+      },
+    },
+    orderBy: { created_at: 'desc' },
+  });
+
+  if (recentDuplicate && recentDuplicate.items.length === input.items.length) {
+    const isExactDuplicate = input.items.every((inItem) => {
+      const pId = inItem.productId || (inItem as any).product_id;
+      return recentDuplicate.items.some(
+        (existing) => existing.product_id === pId && existing.quantity === inItem.quantity
+      );
+    });
+
+    if (isExactDuplicate) {
+      return {
+        order: recentDuplicate,
+        checkoutUrl: null,
+        wireInstructions: {
+          orderNumber: recentDuplicate.order_number,
+          bankReferenceCode: recentDuplicate.bank_reference_code,
+          totalAmount: recentDuplicate.total_amount,
+          currency: recentDuplicate.currency,
+          accounts: STORE_BANK_ACCOUNTS,
+        },
+      };
+    }
+  }
+
   // Fetch products and validate quantities
   const productIds = input.items.map((i) => i.productId || (i as any).product_id);
   const products = await prisma.storeProduct.findMany({

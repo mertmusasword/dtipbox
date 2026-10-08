@@ -41,8 +41,9 @@ const createTipSchema = {
     tableId: z.string().uuid().optional(),
     amount: z
       .number()
-      .positive('Tip amount must be positive')
-      .max(100000, 'Tip amount exceeds maximum allowed single transaction limit (100,000)'),
+      .min(1, 'Tip amount must be at least 1')
+      .max(100000, 'Tip amount exceeds maximum allowed single transaction limit (100,000)')
+      .refine((val) => Number(val.toFixed(2)) === val, 'Amount can have at most 2 decimal places'),
     paymentMethod: z.nativeEnum(PaymentMethodType),
     customerName: z
       .string()

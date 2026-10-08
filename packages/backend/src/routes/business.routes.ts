@@ -885,11 +885,24 @@ router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
       return;
     }
 
-    const updatedTip = await prisma.tip.update({
-      where: { id: tip.id },
+    const updateResult = await prisma.tip.updateMany({
+      where: {
+        id: tip.id,
+        business_id: businessId,
+        payment_status: { in: ['PENDING', 'UNVERIFIED'] },
+      },
       data: {
         payment_status: 'SUCCESS',
       },
+    });
+
+    if (updateResult.count === 0) {
+      res.status(400).json({ success: false, error: 'Bu bahşiş zaten onaylanmış veya durumu değiştirilmiş.' });
+      return;
+    }
+
+    const updatedTip = await prisma.tip.findUnique({
+      where: { id: tip.id },
     });
 
     // Record audit log entry

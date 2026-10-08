@@ -44,6 +44,35 @@ function generateTokens(userId: string, email: string, role: Role): TokenPair {
   return { accessToken, refreshToken };
 }
 
+const revokedTokens = new Map<string, number>();
+
+// Clean up expired revoked tokens every hour
+setInterval(() => {
+  const now = Date.now();
+  for (const [t, exp] of revokedTokens.entries()) {
+    if (exp <= now) {
+      revokedTokens.delete(t);
+    }
+  }
+}, 60 * 60 * 1000).unref();
+
+export function revokeToken(token: string): void {
+  if (!token) return;
+  // 7 days TTL (refresh token validity period)
+  revokedTokens.set(token, Date.now() + 7 * 24 * 60 * 60 * 1000);
+}
+
+export function isTokenRevoked(token: string): boolean {
+  if (!token) return false;
+  const exp = revokedTokens.get(token);
+  if (!exp) return false;
+  if (exp <= Date.now()) {
+    revokedTokens.delete(token);
+    return false;
+  }
+  return true;
+}
+
 /**
  * Register a new user.
  * If role is BUSINESS, also create an associated Business record.
@@ -166,6 +195,10 @@ export async function login(input: LoginInput) {
  * Refresh access token using refresh token.
  */
 export async function refreshToken(token: string) {
+  if (isTokenRevoked(token)) {
+    throw new AppError('Refresh token has been revoked. Please log in again.', 401);
+  }
+
   try {
     const decoded = jwt.verify(token, env.JWT_REFRESH_SECRET) as {
       userId: string;

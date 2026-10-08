@@ -40,28 +40,39 @@ export function validateSvgSecurity(buffer: Buffer): void {
     throw new AppError('SVG contains prohibited DOCTYPE or ENTITY definitions.', 400);
   }
 
+  // Normalize HTML entities to prevent obfuscation bypasses (e.g. &#x6A;avascript:)
+  const normalizedContent = content
+    .replace(/&#x([0-9a-fA-F]+);?/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#([0-9]+);?/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&colon;/gi, ':');
+
   // 2. Prohibit script tags (including namespaced tags like <svg:script> or <html:script>)
-  if (/<\s*([a-zA-Z0-9_]+:)?script[\s\S]*?>/i.test(content)) {
+  if (/<\s*([a-zA-Z0-9_]+:)?script[\s\S]*?>/i.test(normalizedContent)) {
     throw new AppError('SVG contains executable script tags and was rejected for security.', 400);
   }
 
   // 3. Prohibit dangerous HTML / external embedding elements
-  if (/<\s*([a-zA-Z0-9_]+:)?(foreignObject|iframe|object|embed|applet|meta|link)[\s\S]*?>/i.test(content)) {
+  if (/<\s*([a-zA-Z0-9_]+:)?(foreignObject|iframe|object|embed|applet|meta|link|base)[\s\S]*?>/i.test(normalizedContent)) {
     throw new AppError('SVG contains prohibited HTML or external object elements.', 400);
   }
 
   // 4. Prohibit inline event handlers (onload, onerror, onclick, etc.)
-  if (/\bon[a-zA-Z]+\s*=/i.test(content)) {
+  if (/\bon[a-zA-Z]+\s*=/i.test(normalizedContent)) {
     throw new AppError('SVG contains executable event handlers (e.g. onload) and was rejected.', 400);
   }
 
-  // 5. Prohibit javascript: or data:text/html URI schemes in attributes like href, xlink:href, src
-  if (/(href|src|action|formaction)\s*=\s*['"]?\s*(javascript:|vbscript:|data:text\/html)/i.test(content)) {
+  // 5. Prohibit javascript:, vbscript:, or unsafe data: URI schemes in attributes
+  if (/(href|xlink:href|src|action|formaction|values|to|from)\s*=\s*['"]?\s*(javascript:|vbscript:|data:(?!image\/(png|jpe?g|webp);base64))/i.test(normalizedContent)) {
     throw new AppError('SVG contains unsafe javascript URI references and was rejected.', 400);
   }
 
-  // 6. Prohibit CSS expressions or javascript: inside style attributes or tags
-  if (/style[\s\S]*?expression\s*\(|style[\s\S]*?javascript\s*:/i.test(content)) {
+  // 6. Prohibit external <use> tags
+  if (/<\s*([a-zA-Z0-9_]+:)?use\s+[^>]*href\s*=\s*['"]?\s*(https?:|\/\/)/i.test(normalizedContent)) {
+    throw new AppError('SVG contains unsafe external use references and was rejected.', 400);
+  }
+
+  // 7. Prohibit CSS expressions or javascript: inside style attributes or tags
+  if (/style[\s\S]*?expression\s*\(|style[\s\S]*?javascript\s*:/i.test(normalizedContent)) {
     throw new AppError('SVG contains unsafe CSS expressions and was rejected.', 400);
   }
 }
