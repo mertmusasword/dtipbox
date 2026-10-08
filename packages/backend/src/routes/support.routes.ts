@@ -69,10 +69,20 @@ router.post(
         });
       }
 
-      const ipAddress = req.ip || req.headers['x-forwarded-for']?.toString();
+      const ipAddress = req.ip || req.socket.remoteAddress || '0.0.0.0';
 
-      // Cloudflare Turnstile Verification (if unauthenticated public request)
-      if (req.body.turnstileToken && !req.user) {
+      // Cloudflare Turnstile Verification (Mandatory for unauthenticated public request in production)
+      const isPublicSubmission = !req.user;
+      if (isPublicSubmission && process.env.NODE_ENV === 'production') {
+        if (!req.body.turnstileToken) {
+          return res.status(400).json({
+            success: false,
+            error: 'Güvenlik doğrulaması zorunludur. Lütfen sayfayı yenileyip tekrar deneyiniz.',
+          });
+        }
+      }
+
+      if (req.body.turnstileToken && isPublicSubmission) {
         const turnstileCheck = await verifyTurnstileToken(req.body.turnstileToken, ipAddress);
         if (!turnstileCheck.success) {
           return res.status(403).json({

@@ -268,6 +268,16 @@ export async function getEmployeeAnalytics(employeeId: string, businessId: strin
   };
 }
 
+function sanitizeCsvCell(val: unknown): string {
+  if (val === null || val === undefined) return '""';
+  let str = String(val);
+  // Neutralize spreadsheet formula injection triggers (=, +, -, @, \t, \r)
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = `'${str}`;
+  }
+  return `"${str.replace(/"/g, '""')}"`;
+}
+
 export async function exportTipsCsv(
   businessId: string,
   options: {
@@ -318,8 +328,8 @@ export async function exportTipsCsv(
       const total = emp.tips.reduce((sum, t) => sum + Number(t.amount), 0);
       const avg = count > 0 ? (total / count).toFixed(2) : '0.00';
       return [
-        `"${`${emp.first_name} ${emp.last_name || ''}`.trim()}"`,
-        `"${emp.position || 'Servis Ekibi'}"`,
+        sanitizeCsvCell(`${emp.first_name} ${emp.last_name || ''}`.trim()),
+        sanitizeCsvCell(emp.position || 'Servis Ekibi'),
         count,
         total.toFixed(2),
         avg,
@@ -370,16 +380,16 @@ export async function exportTipsCsv(
     const refCode = t.provider_transaction_id || '—';
 
     return [
-      `"${t.id}"`,
-      `"${dateStr}"`,
-      `"${timeStr}"`,
+      sanitizeCsvCell(t.id),
+      sanitizeCsvCell(dateStr),
+      sanitizeCsvCell(timeStr),
       Number(t.amount).toFixed(2),
-      `"${t.currency || currency}"`,
-      `"${t.payment_method}"`,
-      `"${t.payment_status}"`,
-      `"${empName}"`,
-      `"${tableName}"`,
-      `"${refCode}"`,
+      sanitizeCsvCell(t.currency || currency),
+      sanitizeCsvCell(t.payment_method),
+      sanitizeCsvCell(t.payment_status),
+      sanitizeCsvCell(empName),
+      sanitizeCsvCell(tableName),
+      sanitizeCsvCell(refCode),
     ].join(delimiter);
   });
 

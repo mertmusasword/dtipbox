@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   AlertCircle
 } from 'lucide-react';
+import { escapeHtml } from '../../utils/sanitize';
 
 interface LoyaltyProgramData {
   id: string;
@@ -209,11 +210,12 @@ export const BusinessLoyaltyPage: React.FC = () => {
   const printQr = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
-    const printTitle = `${businessName} - ${isTr ? 'Sadakat Kartı Kayıt QR Kodu' : 'Loyalty Card Registration QR Code'}`;
-    const badgeText = `${targetStamps} ${isTr ? 'Damga' : 'Stamps'} = ${rewardDesc}`;
-    const subText = isTr ? 'Dijital sadakat kartınızı oluşturmak için QR kodu telefonunuzun kamerasıyla tarayın.' : 'Scan the QR code with your phone camera to create your digital loyalty card.';
-    const noteText = isTr ? 'Uygulama yükleme gerekmez. Kartınız tarayıcınızda açılır.' : 'No app download required. Your card opens in your browser.';
-    const qrAlt = isTr ? 'Kayıt QR Kodu' : 'Registration QR Code';
+    const safeBizName = escapeHtml(businessName);
+    const printTitle = `${safeBizName} - ${isTr ? 'Sadakat Kartı Kayıt QR Kodu' : 'Loyalty Card Registration QR Code'}`;
+    const badgeText = escapeHtml(`${targetStamps} ${isTr ? 'Damga' : 'Stamps'} = ${rewardDesc}`);
+    const subText = escapeHtml(isTr ? 'Dijital sadakat kartınızı oluşturmak için QR kodu telefonunuzun kamerasıyla tarayın.' : 'Scan the QR code with your phone camera to create your digital loyalty card.');
+    const noteText = escapeHtml(isTr ? 'Uygulama yükleme gerekmez. Kartınız tarayıcınızda açılır.' : 'No app download required. Your card opens in your browser.');
+    const qrAlt = escapeHtml(isTr ? 'Kayıt QR Kodu' : 'Registration QR Code');
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -291,7 +293,7 @@ export const BusinessLoyaltyPage: React.FC = () => {
         <body>
           <div class="card">
             <div class="logo">NAPONI LOYALTY</div>
-            <h1>${businessName}</h1>
+            <h1>${safeBizName}</h1>
             <div class="badge">${badgeText}</div>
             <p class="sub">${subText}</p>
             <div class="qr-wrapper">

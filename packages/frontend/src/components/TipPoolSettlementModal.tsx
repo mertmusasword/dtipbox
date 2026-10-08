@@ -23,6 +23,8 @@ import { useLanguage } from '../i18n';
 import { useToast } from './Toast';
 import { TipPoolSimulation, TipPoolDistribution } from '../types';
 import { UkTroncPolicyModal } from './business/UkTroncPolicyModal';
+import { escapeHtml } from '../utils/sanitize';
+import { sanitizeCsvCell } from '../utils/csv';
 
 interface TipPoolSettlementModalProps {
   isOpen: boolean;
@@ -297,18 +299,22 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
       return;
     }
 
-    const title = isHistory
-      ? 'KASA KAPANIŞ & PERSONEL HAK EDİŞ BORDROSU'
-      : 'KASA KAPANIŞ & PERSONEL HAK EDİŞ BORDROSU';
+    const title = escapeHtml(
+      isHistory
+        ? 'KASA KAPANIŞ & PERSONEL HAK EDİŞ BORDROSU'
+        : 'KASA KAPANIŞ & PERSONEL HAK EDİŞ BORDROSU'
+    );
 
-    const bName = businessName || 'İşletme Bahşiş Kapanışı';
+    const bName = escapeHtml(businessName || 'İşletme Bahşiş Kapanışı');
     const dateFormatted = isHistory
       ? `${formatDate(selectedHistoryItem!.created_at)} ${formatTime(selectedHistoryItem!.created_at)}`
       : `${formatDate(new Date())} ${formatTime(new Date())}`;
 
-    const reportNote = isHistory
-      ? selectedHistoryItem!.notes || '—'
-      : note.trim() || 'Gün Sonu Kapanışı';
+    const reportNote = escapeHtml(
+      isHistory
+        ? selectedHistoryItem!.notes || '—'
+        : note.trim() || 'Gün Sonu Kapanışı'
+    );
 
     const grossAmt = isHistory
       ? formatCurrency(Number(selectedHistoryItem!.gross_amount), currency)
@@ -334,19 +340,23 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
       ? Number(selectedHistoryItem!.external_pos_amount || 0)
       : simulation!.summary.netDigitalPool || 0;
 
-    const distributionModeText = !isHistory && simulation
-      ? simulation.settings.mode === 'INDIVIDUAL'
-        ? 'Bireysel Dağıtım (Direkt)'
-        : simulation.settings.mode === 'EQUAL_POOL'
-        ? 'Eşit Havuz (Pool)'
-        : 'Puan / Rol Ağırlıklı Havuz'
-      : 'Vardiya Havuz Dağıtımı';
+    const distributionModeText = escapeHtml(
+      !isHistory && simulation
+        ? simulation.settings.mode === 'INDIVIDUAL'
+          ? 'Bireysel Dağıtım (Direkt)'
+          : simulation.settings.mode === 'EQUAL_POOL'
+          ? 'Eşit Havuz (Pool)'
+          : 'Puan / Rol Ağırlıklı Havuz'
+        : 'Vardiya Havuz Dağıtımı'
+    );
 
     const rowsHtml = isHistory
       ? (selectedHistoryItem!.shares || [])
           .map((s, idx) => {
-            const name = `${s.employee?.first_name || ''} ${s.employee?.last_name || ''}`.trim() || 'Personel';
-            const pos = s.employee?.position || s.employee?.role_title || 'Servis Ekibi';
+            const rawName = `${s.employee?.first_name || ''} ${s.employee?.last_name || ''}`.trim() || 'Personel';
+            const rawPos = s.employee?.position || s.employee?.role_title || 'Servis Ekibi';
+            const name = escapeHtml(rawName);
+            const pos = escapeHtml(rawPos);
             const weight = `${Number(s.share_weight || 1).toFixed(2)}x`;
             const gross = formatCurrency(Number(s.gross_share || 0), currency);
             const net = formatCurrency(Number(s.net_share || 0), currency);
@@ -374,8 +384,8 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
           .join('')
       : (simulation!.employees || [])
           .map((d, idx) => {
-            const name = d.employeeName || 'Personel';
-            const pos = d.position || d.roleTitle || 'Servis Ekibi';
+            const name = escapeHtml(d.employeeName || 'Personel');
+            const pos = escapeHtml(d.position || d.roleTitle || 'Servis Ekibi');
             const weight = `${d.shareWeight.toFixed(2)}x`;
             const gross = formatCurrency(d.grossShare, currency);
             const deductions = formatCurrency(d.posFeeShare + d.taxFeeShare, currency);
@@ -673,16 +683,24 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
     const filename = `Naponi-Bahsis-Dagitim-${dateFormatted}.csv`;
 
     let csvContent = '\uFEFF'; // UTF-8 BOM for Microsoft Excel compatibility
-    csvContent += `"${bName} - ${isTr ? 'Bahşiş Dağıtım ve Kasa Kapanış Raporu' : 'Tip Settlement & Register Close Report'}"\n`;
-    csvContent += `"${isTr ? 'Tarih / Saat' : 'Date / Time'}:";"${new Date().toLocaleString(isTr ? 'tr-TR' : 'en-US')}"\n`;
-    csvContent += `"${isTr ? 'Para Birimi' : 'Currency'}:";"${currency}"\n\n`;
+    csvContent += `${sanitizeCsvCell(`${bName} - ${isTr ? 'Bahşiş Dağıtım ve Kasa Kapanış Raporu' : 'Tip Settlement & Register Close Report'}`)}\n`;
+    csvContent += `${sanitizeCsvCell(`${isTr ? 'Tarih / Saat' : 'Date / Time'}:`)};${sanitizeCsvCell(new Date().toLocaleString(isTr ? 'tr-TR' : 'en-US'))}\n`;
+    csvContent += `${sanitizeCsvCell(`${isTr ? 'Para Birimi' : 'Currency'}:`)};${sanitizeCsvCell(currency)}\n\n`;
 
     if (isHistory && selectedHistoryItem) {
-      csvContent += `"${isTr ? 'Kapanış Referansı' : 'Settlement Ref'}:";"${selectedHistoryItem.id}"\n`;
-      csvContent += `"${isTr ? 'Brüt Toplam' : 'Gross Total'}:";"${Number(selectedHistoryItem.gross_amount).toFixed(2)}"\n`;
-      csvContent += `"${isTr ? 'Net Dağıtılan' : 'Net Distributed'}:";"${Number(selectedHistoryItem.net_distributed_amount).toFixed(2)}"\n\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'Kapanış Referansı' : 'Settlement Ref'}:`)};${sanitizeCsvCell(selectedHistoryItem.id)}\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'Brüt Toplam' : 'Gross Total'}:`)};${sanitizeCsvCell(Number(selectedHistoryItem.gross_amount).toFixed(2))}\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'Net Dağıtılan' : 'Net Distributed'}:`)};${sanitizeCsvCell(Number(selectedHistoryItem.net_distributed_amount).toFixed(2))}\n\n`;
 
-      csvContent += `"#";"${isTr ? 'Personel Adı' : 'Employee Name'}";"${isTr ? 'Görev' : 'Role'}";"${isTr ? 'Katsayı' : 'Points/Weight'}";"${isTr ? 'Brüt Pay' : 'Gross Share'}";"${isTr ? 'Net Hak Ediş' : 'Net Share'}";"${isTr ? 'Ödeme Durumu' : 'Payment Status'}"\n`;
+      csvContent += [
+        sanitizeCsvCell('#'),
+        sanitizeCsvCell(isTr ? 'Personel Adı' : 'Employee Name'),
+        sanitizeCsvCell(isTr ? 'Görev' : 'Role'),
+        sanitizeCsvCell(isTr ? 'Katsayı' : 'Points/Weight'),
+        sanitizeCsvCell(isTr ? 'Brüt Pay' : 'Gross Share'),
+        sanitizeCsvCell(isTr ? 'Net Hak Ediş' : 'Net Share'),
+        sanitizeCsvCell(isTr ? 'Ödeme Durumu' : 'Payment Status'),
+      ].join(';') + '\n';
 
       selectedHistoryItem.shares?.forEach((share, idx) => {
         const empName = share.employee
@@ -693,15 +711,33 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         const gross = Number(share.gross_share || share.net_share).toFixed(2);
         const net = Number(share.net_share).toFixed(2);
         const status = share.is_paid ? (isTr ? 'Ödendi' : 'Paid') : (isTr ? 'Bekliyor' : 'Pending');
-        csvContent += `"${idx + 1}";"${empName}";"${role}";"${weight}";"${gross}";"${net}";"${status}"\n`;
+        csvContent += [
+          sanitizeCsvCell(idx + 1),
+          sanitizeCsvCell(empName),
+          sanitizeCsvCell(role),
+          sanitizeCsvCell(weight),
+          sanitizeCsvCell(gross),
+          sanitizeCsvCell(net),
+          sanitizeCsvCell(status),
+        ].join(';') + '\n';
       });
     } else if (simulation) {
-      csvContent += `"${isTr ? 'Brüt Toplam' : 'Gross Total'}:";"${simulation.summary.grossAmount.toFixed(2)}"\n`;
-      csvContent += `"${isTr ? 'POS Kesintisi' : 'POS Fee'}:";"-${simulation.summary.posFeeAmount.toFixed(2)}"\n`;
-      csvContent += `"${isTr ? 'Stopaj / Vergi' : 'Withholding / Tax'}:";"-${simulation.summary.taxFeeAmount.toFixed(2)}"\n`;
-      csvContent += `"${isTr ? 'Net Dağıtılan Toplam' : 'Net Distributed Total'}:";"${simulation.summary.netDistributedAmount.toFixed(2)}"\n\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'Brüt Toplam' : 'Gross Total'}:`)};${sanitizeCsvCell(simulation.summary.grossAmount.toFixed(2))}\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'POS Kesintisi' : 'POS Fee'}:`)};${sanitizeCsvCell(`-${simulation.summary.posFeeAmount.toFixed(2)}`)}\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'Stopaj / Vergi' : 'Withholding / Tax'}:`)};${sanitizeCsvCell(`-${simulation.summary.taxFeeAmount.toFixed(2)}`)}\n`;
+      csvContent += `${sanitizeCsvCell(`${isTr ? 'Net Dağıtılan Toplam' : 'Net Distributed Total'}:`)};${sanitizeCsvCell(simulation.summary.netDistributedAmount.toFixed(2))}\n\n`;
 
-      csvContent += `"#";"${isTr ? 'Personel Adı' : 'Employee Name'}";"${isTr ? 'Görev' : 'Role'}";"${isTr ? 'Katsayı' : 'Points/Weight'}";"${isTr ? 'Brüt Pay' : 'Gross Share'}";"${isTr ? 'POS Kesintisi' : 'POS Fee'}";"${isTr ? 'Vergi Kesintisi' : 'Tax Fee'}";"${isTr ? 'Net Hak Ediş' : 'Net Share'}";"${isTr ? 'Vardiya Durumu' : 'Shift Status'}"\n`;
+      csvContent += [
+        sanitizeCsvCell('#'),
+        sanitizeCsvCell(isTr ? 'Personel Adı' : 'Employee Name'),
+        sanitizeCsvCell(isTr ? 'Görev' : 'Role'),
+        sanitizeCsvCell(isTr ? 'Katsayı' : 'Points/Weight'),
+        sanitizeCsvCell(isTr ? 'Brüt Pay' : 'Gross Share'),
+        sanitizeCsvCell(isTr ? 'POS Kesintisi' : 'POS Fee'),
+        sanitizeCsvCell(isTr ? 'Vergi Kesintisi' : 'Tax Fee'),
+        sanitizeCsvCell(isTr ? 'Net Hak Ediş' : 'Net Share'),
+        sanitizeCsvCell(isTr ? 'Vardiya Durumu' : 'Shift Status'),
+      ].join(';') + '\n';
 
       simulation.employees.forEach((emp, idx) => {
         const isExcluded = excludedEmployeeIds.includes(emp.employeeId);
@@ -713,7 +749,17 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         const taxFee = emp.taxFeeShare.toFixed(2);
         const net = emp.netShare.toFixed(2);
         const status = isExcluded ? (isTr ? 'Dahil Edilmedi' : 'Excluded') : (isTr ? 'Aktif Vardiya' : 'Active Shift');
-        csvContent += `"${idx + 1}";"${empName}";"${role}";"${weight}";"${gross}";"${posFee}";"${taxFee}";"${net}";"${status}"\n`;
+        csvContent += [
+          sanitizeCsvCell(idx + 1),
+          sanitizeCsvCell(empName),
+          sanitizeCsvCell(role),
+          sanitizeCsvCell(weight),
+          sanitizeCsvCell(gross),
+          sanitizeCsvCell(posFee),
+          sanitizeCsvCell(taxFee),
+          sanitizeCsvCell(net),
+          sanitizeCsvCell(status),
+        ].join(';') + '\n';
       });
     }
 

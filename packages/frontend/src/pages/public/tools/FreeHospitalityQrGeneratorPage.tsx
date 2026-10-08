@@ -15,6 +15,7 @@ import {
 import { SeoHead } from '../../../components/SeoHead';
 import { SEO_TOOLS, SEO_TOOLS_EN } from '../../../content/tools/tools';
 import { useLanguage, LanguageSelector } from '../../../i18n';
+import { escapeHtml } from '../../../utils/sanitize';
 import '../../../styles/home.css';
 import '../../../styles/blog.css';
 import '../../../styles/seo-features.css';
@@ -185,7 +186,7 @@ export const FreeHospitalityQrGeneratorPage: React.FC = () => {
 
     try {
       const dataUrl = canvas.toDataURL('image/png');
-      const title = `${tableLabel ? tableLabel.toUpperCase() : 'Naponi QR Stand'}`;
+      const title = escapeHtml(tableLabel ? tableLabel.toUpperCase() : 'Naponi QR Stand');
 
       const printWindow = window.open('', '_blank');
       if (printWindow) {

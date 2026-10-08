@@ -15,6 +15,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
+import { escapeHtml } from '../utils/sanitize';
 
 interface QrModalProps {
   isOpen: boolean;
@@ -268,7 +269,7 @@ export const QrModal: React.FC<QrModalProps> = ({
     <html>
       <head>
         <meta charset="utf-8">
-        <title>Naponi QR - ${businessName}${tableName ? ` (${tableName})` : ''}</title>
+        <title>Naponi QR - ${escapeHtml(businessName)}${tableName ? ` (${escapeHtml(tableName)})` : ''}</title>
         <style>
           @page {
             size: A4 portrait;
@@ -339,11 +340,12 @@ export const QrModal: React.FC<QrModalProps> = ({
   const handleDownloadPdf = () => {
     const pdfWindow = window.open('', '_blank');
     if (!pdfWindow) return;
+    const safePdfTitle = JSON.stringify(`naponi-qr-${tableName ? tableName.toLowerCase().replace(/[^a-z0-9_-]/g, '-') : 'stand'}.pdf`);
     pdfWindow.document.write(`
       ${generatePrintableHtml()}
       <script>
         window.onload = function() {
-          document.title = "naponi-qr-${tableName ? tableName.toLowerCase().replace(/\\s+/g, '-') : 'stand'}.pdf";
+          document.title = ${safePdfTitle};
           window.print();
         };
       </script>

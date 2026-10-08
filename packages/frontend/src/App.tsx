@@ -48,12 +48,9 @@ const ResetPasswordPage = React.lazy(() => import('./pages/auth/ResetPasswordPag
 const BusinessDashboard = React.lazy(() => import('./pages/business/BusinessDashboard').then((m) => ({ default: m.BusinessDashboard })));
 const BusinessProfilePage = React.lazy(() => import('./pages/business/BusinessProfilePage').then((m) => ({ default: m.BusinessProfilePage })));
 const EmployeesPage = React.lazy(() => import('./pages/business/EmployeesPage').then((m) => ({ default: m.EmployeesPage })));
-const TablesPage = React.lazy(() => import('./pages/business/TablesPage').then((m) => ({ default: m.TablesPage })));
 const MenuManagementPage = React.lazy(() => import('./pages/business/MenuManagementPage').then((m) => ({ default: m.MenuManagementPage })));
 const BusinessStorePage = React.lazy(() => import('./pages/business/BusinessStorePage').then((m) => ({ default: m.BusinessStorePage })));
 const QrCodesPage = React.lazy(() => import('./pages/business/QrCodesPage').then((m) => ({ default: m.QrCodesPage })));
-const PaymentMethodsPage = React.lazy(() => import('./pages/business/PaymentMethodsPage').then((m) => ({ default: m.PaymentMethodsPage })));
-const PaymentAccountPage = React.lazy(() => import('./pages/business/PaymentAccountPage').then((m) => ({ default: m.PaymentAccountPage })));
 const PaymentSettingsPage = React.lazy(() => import('./pages/business/PaymentSettingsPage').then((m) => ({ default: m.PaymentSettingsPage })));
 const AnalyticsPage = React.lazy(() => import('./pages/business/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage })));
 const FeedbacksPage = React.lazy(() => import('./pages/business/FeedbacksPage').then((m) => ({ default: m.FeedbacksPage })));

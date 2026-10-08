@@ -60,7 +60,7 @@ router.post('/register', authLimiter, validate(registerSchema), async (req, res,
       try {
         const agreementService = await import('../services/agreement.service');
         const activeAgreement = await agreementService.getActiveAgreement();
-        const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.socket.remoteAddress || req.ip || '0.0.0.0';
+        const ip = req.ip || req.socket.remoteAddress || '0.0.0.0';
         const userAgent = req.headers['user-agent'] || 'Unknown Browser';
 
         await agreementService.acceptAgreement({
@@ -121,10 +121,19 @@ router.post('/refresh', refreshLimiter, async (req, res, next) => {
   }
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
   const token = req.cookies?.refreshToken || req.body?.refreshToken;
   if (token && typeof token === 'string') {
     authService.revokeToken(token);
+    try {
+      const jwt = await import('jsonwebtoken');
+      const decoded = jwt.decode(token) as any;
+      if (decoded?.userId) {
+        await authService.revokeUserSessions(decoded.userId);
+      }
+    } catch {
+      // ignore decode error on invalid token logout
+    }
   }
   res.clearCookie('refreshToken', {
     httpOnly: true,

@@ -59,15 +59,20 @@ export async function authenticate(
       userId: string;
       email: string;
       role: Role;
+      tokenVersion?: number;
     };
 
     // Check in-memory cache first to avoid DB round-trip on every single API request
-    const cached = userAuthCache.get(decoded.userId);
+    const cached = userAuthCache.get(decoded.userId) as (CachedAuthUser & { tokenVersion?: number }) | undefined;
     const now = Date.now();
     if (cached && now - cached.cachedAt < AUTH_CACHE_TTL_MS) {
-      req.user = cached.user;
-      next();
-      return;
+      if (decoded.tokenVersion !== undefined && cached.tokenVersion !== undefined && decoded.tokenVersion !== cached.tokenVersion) {
+        userAuthCache.delete(decoded.userId);
+      } else {
+        req.user = cached.user;
+        next();
+        return;
+      }
     }
 
     // Fetch user and check is_active
@@ -90,6 +95,12 @@ export async function authenticate(
     if (!user || !user.is_active) {
       userAuthCache.delete(decoded.userId);
       res.status(401).json({ success: false, error: 'User not found or inactive' });
+      return;
+    }
+
+    if (decoded.tokenVersion !== undefined && decoded.tokenVersion !== user.token_version) {
+      userAuthCache.delete(decoded.userId);
+      res.status(401).json({ success: false, error: 'Session expired or invalidated. Please log in again.' });
       return;
     }
 
@@ -126,7 +137,7 @@ export async function authenticate(
     if (userAuthCache.size > 2000) {
       userAuthCache.clear();
     }
-    userAuthCache.set(user.id, { user: authUser, cachedAt: now });
+    userAuthCache.set(user.id, { user: authUser, cachedAt: now, tokenVersion: user.token_version } as any);
 
     req.user = authUser;
     next();

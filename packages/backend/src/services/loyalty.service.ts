@@ -677,6 +677,25 @@ export class LoyaltyService {
         throw new AppError('İşletmenin sadakat programı şu anda pasif durumda', 400);
       }
 
+      // 1. Atomic token consumption (Prevents Race Conditions & Replay)
+      // Only one concurrent transaction can successfully transition used_at from NULL to timestamp
+      const consumeResult = await tx.loyaltyScanToken.updateMany({
+        where: {
+          id: scanToken.id,
+          used_at: null,
+        },
+        data: {
+          used_at: new Date(),
+        },
+      });
+
+      if (consumeResult.count === 0) {
+        throw new AppError('Bu QR kod başka bir işlem tarafından kullanılmış veya geçersiz.', 400);
+      }
+
+      // 2. Row lock the loyalty card to prevent concurrent stamp races across devices
+      await tx.$queryRaw`SELECT id FROM loyalty_cards WHERE id = ${card.id} FOR UPDATE`;
+
       // Anti-fraud cooldown check: prevent rapid repeated stamps on the same card
       const cooldownSeconds = params.cooldownSeconds !== undefined ? params.cooldownSeconds : 60;
       if (cooldownSeconds > 0) {
@@ -703,12 +722,6 @@ export class LoyaltyService {
           }
         }
       }
-
-      // Mark token as used immediately (replay protection)
-      await tx.loyaltyScanToken.update({
-        where: { id: scanToken.id },
-        data: { used_at: new Date() },
-      });
 
       // Increment stamp atomically
       const updatedCard = await tx.loyaltyCard.update({
@@ -917,9 +930,15 @@ export class LoyaltyService {
           throw new AppError('Bu ödül başka bir işletmeye aittir!', 403);
         }
 
-        // Mark redemption as redeemed
-        await tx.loyaltyRedemption.update({
-          where: { id: redemption.id },
+        // Row lock card to prevent concurrent stamp or redemption collisions
+        await tx.$queryRaw`SELECT id FROM loyalty_cards WHERE id = ${redemption.card_id} FOR UPDATE`;
+
+        // Mark redemption as redeemed atomically (conditional update)
+        const updateResult = await tx.loyaltyRedemption.updateMany({
+          where: {
+            id: redemption.id,
+            status: 'PENDING',
+          },
           data: {
             status: 'REDEEMED',
             redeemed_at: new Date(),
@@ -927,8 +946,16 @@ export class LoyaltyService {
           },
         });
 
-        // Deduct target stamps and increment total rewards earned
-        const prevStamps = redemption.card.current_stamps;
+        if (updateResult.count === 0) {
+          throw new AppError('Bu ödül daha önce kullanılmıştır veya eşzamanlı bir işlem tarafından onaylanmıştır!', 400);
+        }
+
+        // Deduct target stamps and increment total rewards earned based on locked fresh state
+        const freshCard = await tx.loyaltyCard.findUnique({ where: { id: redemption.card_id } });
+        if (!freshCard) {
+          throw new AppError('Sadakat kartı bulunamadı', 404);
+        }
+        const prevStamps = freshCard.current_stamps;
         const newStamps = Math.max(0, prevStamps - redemption.card.target_stamps);
 
         await tx.loyaltyCard.update({
@@ -980,6 +1007,9 @@ export class LoyaltyService {
         throw new AppError('Lütfen geçerli bir müşteri kart kodu veya ödül doğrulama kodu giriniz', 400);
       }
 
+      // Row lock card by code to serialize concurrent requests
+      await tx.$queryRaw`SELECT id FROM loyalty_cards WHERE card_code = ${targetCardCode} FOR UPDATE`;
+
       const card = await tx.loyaltyCard.findUnique({
         where: { card_code: targetCardCode },
         include: {
@@ -1006,14 +1036,17 @@ export class LoyaltyService {
 
       let activeRedemption = card.redemptions[0];
       if (activeRedemption) {
-        await tx.loyaltyRedemption.update({
-          where: { id: activeRedemption.id },
+        const updateResult = await tx.loyaltyRedemption.updateMany({
+          where: { id: activeRedemption.id, status: 'PENDING' },
           data: {
             status: 'REDEEMED',
             redeemed_at: new Date(),
             employee_id: params.employeeId || null,
           },
         });
+        if (updateResult.count === 0) {
+          throw new AppError('Bu ödül daha önce kullanılmıştır!', 400);
+        }
       } else {
         activeRedemption = await tx.loyaltyRedemption.create({
           data: {

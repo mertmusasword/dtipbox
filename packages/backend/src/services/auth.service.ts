@@ -28,15 +28,15 @@ interface TokenPair {
   refreshToken: string;
 }
 
-function generateTokens(userId: string, email: string, role: Role): TokenPair {
+function generateTokens(userId: string, email: string, role: Role, tokenVersion: number = 0): TokenPair {
   const accessToken = jwt.sign(
-    { userId, email, role },
+    { userId, email, role, tokenVersion },
     env.JWT_SECRET,
     { expiresIn: env.JWT_EXPIRY as any }
   );
 
   const refreshToken = jwt.sign(
-    { userId, email, role, type: 'refresh' },
+    { userId, email, role, tokenVersion, type: 'refresh' },
     env.JWT_REFRESH_SECRET,
     { expiresIn: env.JWT_REFRESH_EXPIRY as any }
   );
@@ -129,7 +129,7 @@ export async function register(input: RegisterInput) {
     },
   });
 
-  const tokens = generateTokens(user.id, user.email, user.role);
+  const tokens = generateTokens(user.id, user.email, user.role, user.token_version);
 
   if (role === Role.BUSINESS && user.business) {
     import('./email.service').then(({ emailService }) => {
@@ -177,7 +177,7 @@ export async function login(input: LoginInput) {
     throw new AppError('Invalid email or password', 401);
   }
 
-  const tokens = generateTokens(user.id, user.email, user.role);
+  const tokens = generateTokens(user.id, user.email, user.role, user.token_version);
 
   return {
     user: {
@@ -204,6 +204,7 @@ export async function refreshToken(token: string) {
       userId: string;
       email: string;
       role: Role;
+      tokenVersion?: number;
       type: string;
     };
 
@@ -219,7 +220,12 @@ export async function refreshToken(token: string) {
       throw new AppError('User not found or inactive', 401);
     }
 
-    const tokens = generateTokens(user.id, user.email, user.role);
+    // Security: Check token version to invalidate sessions across all pods after password reset or logout
+    if (decoded.tokenVersion !== undefined && decoded.tokenVersion !== user.token_version) {
+      throw new AppError('Oturum süresi dolmuş veya başka bir cihazdan sonlandırılmış. Lütfen tekrar giriş yapınız.', 401);
+    }
+
+    const tokens = generateTokens(user.id, user.email, user.role, user.token_version);
     return tokens;
   } catch (error) {
     if (error instanceof AppError) throw error;
@@ -312,6 +318,7 @@ export async function updateProfile(
       throw new AppError('New password must be between 8 and 128 characters', 400);
     }
     updateData.password_hash = await bcrypt.hash(input.newPassword, SALT_ROUNDS);
+    (updateData as any).token_version = { increment: 1 };
   }
 
   const updatedUser = await prisma.user.update({
@@ -326,8 +333,8 @@ export async function updateProfile(
   // Evict stale cached credentials from memory
   invalidateUserAuthCache(userId);
 
-  // Generate fresh token pair with updated email
-  const tokens = generateTokens(updatedUser.id, updatedUser.email, updatedUser.role);
+  // Generate fresh token pair with updated email & incremented token version
+  const tokens = generateTokens(updatedUser.id, updatedUser.email, updatedUser.role, updatedUser.token_version);
 
   return {
     user: {
@@ -428,11 +435,14 @@ export async function resetPassword(rawToken: string, newPassword: string) {
 
   const newPasswordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
-  // Update user password and mark token as used atomically
+  // Update user password, revoke active sessions across all clusters, and mark token as used atomically
   await prisma.$transaction([
     prisma.user.update({
       where: { id: tokenRecord.user_id },
-      data: { password_hash: newPasswordHash },
+      data: {
+        password_hash: newPasswordHash,
+        token_version: { increment: 1 },
+      },
     }),
     prisma.passwordResetToken.update({
       where: { id: tokenRecord.id },
@@ -447,5 +457,16 @@ export async function resetPassword(rawToken: string, newPassword: string) {
     success: true,
     message: 'Şifreniz başarıyla güncellendi. Yeni şifrenizle giriş yapabilirsiniz.',
   };
+}
+
+/**
+ * Invalidate all active user sessions across instances (by bumping token_version in DB).
+ */
+export async function revokeUserSessions(userId: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { token_version: { increment: 1 } },
+  });
+  invalidateUserAuthCache(userId);
 }
 

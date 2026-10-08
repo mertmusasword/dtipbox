@@ -51,6 +51,7 @@ import {
   PaymentMethodsRow,
   PaymentTrustGuarantee,
 } from '../../components/PaymentBadges';
+import { escapeHtml } from '../../utils/sanitize';
 import {
   trackQrScanned,
   trackTipFlowStarted,
@@ -919,13 +920,15 @@ export const TipPage: React.FC = () => {
           const frameDoc = printFrame.contentWindow?.document || printFrame.contentDocument;
           if (frameDoc && printFrame.contentWindow) {
             frameDoc.open();
+            const safeTitle = escapeHtml(rt.title);
+            const safeBizName = escapeHtml(details?.business?.name || 'Naponi');
             frameDoc.write(`
               <!DOCTYPE html>
               <html>
                 <head>
                   <meta charset="utf-8">
                   <meta name="viewport" content="width=device-width, initial-scale=1">
-                  <title>${rt.title} - ${details?.business?.name || 'Naponi'}</title>
+                  <title>${safeTitle} - ${safeBizName}</title>
                   <style>
                     @page { size: auto; margin: 10mm; }
                     body {

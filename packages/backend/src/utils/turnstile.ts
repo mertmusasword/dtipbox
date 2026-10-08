@@ -4,7 +4,8 @@
  */
 
 const TURNSTILE_VERIFY_ENDPOINT = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-const DEFAULT_SECRET_KEY = '0x4AAAAAAFL2TnlPFAIAS5WzAZR--2lzjJc';
+// Cloudflare official dummy secret key for testing (always passes)
+const DEFAULT_SECRET_KEY = '1x0000000000000000000000000000000AA';
 
 export interface TurnstileVerifyResult {
   success: boolean;
@@ -19,8 +20,8 @@ export async function verifyTurnstileToken(
 ): Promise<TurnstileVerifyResult> {
   const secretKey = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY || DEFAULT_SECRET_KEY;
 
-  // In test environment or if secret key is omitted, allow bypass
-  if (process.env.NODE_ENV === 'test' && !token) {
+  // In test environment or development without explicit key, allow bypass
+  if ((process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') && (!token || token === 'test-token')) {
     return { success: true };
   }
 
