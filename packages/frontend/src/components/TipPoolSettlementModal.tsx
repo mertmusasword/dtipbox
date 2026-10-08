@@ -130,15 +130,19 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
     try {
       const res = await api.get('/business/tip-pool/history', { params: { page: 1, limit: 15 } });
       if (res.data?.success) {
-        setHistoryList(res.data.data.items || []);
+        const items = res.data.data.items || [];
+        setHistoryList(items);
+        return items;
       }
     } catch {
       // ignore
     }
+    return [];
   }, []);
 
   useEffect(() => {
     if (isOpen) {
+      setActiveTab('simulate');
       setExcludedEmployeeIds([]);
       setManualCash('');
       setManualPos('');
@@ -272,7 +276,7 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
       const cashNum = parseFloat(cashInput || manualCash);
       const posNum = parseFloat(posInput || manualPos);
 
-      await api.post('/business/tip-pool/settle', {
+      const res = await api.post('/business/tip-pool/settle', {
         note: note.trim() || undefined,
         active_employee_ids: activeIds,
         manual_cash_amount: !isNaN(cashNum) && cashNum > 0 ? cashNum : undefined,
@@ -280,10 +284,36 @@ export const TipPoolSettlementModal: React.FC<TipPoolSettlementModalProps> = ({
         deduct_pos_fee_from_manual_pos: deductPosFeeFromManualPos,
       });
 
+      const newDistribution = res.data?.data;
+
       showToast('Bahşişler personele başarıyla paylaştırıldı ve kasa kapatıldı!');
-      fetchHistory();
+
+      // Reset local input states
+      setManualCash('');
+      setManualPos('');
+      setCashInput('');
+      setPosInput('');
+      setNote('');
+      setShowManualInputs(false);
+      setExcludedEmployeeIds([]);
+
+      // Reload fresh simulation (which zeroes out grossAmount) and history in parallel
+      const [, historyItems] = await Promise.all([
+        fetchSimulation([], '', '', deductPosFeeFromManualPos, true),
+        fetchHistory(),
+      ]);
+
+      if (newDistribution?.shares?.length) {
+        setSelectedHistoryItem(newDistribution);
+      } else if (historyItems && historyItems.length > 0) {
+        setSelectedHistoryItem(historyItems[0]);
+      }
+
       setActiveTab('history');
-      if (onSettled) onSettled();
+
+      if (onSettled) {
+        onSettled();
+      }
     } catch (err: any) {
       showToast(err.response?.data?.error || 'Kasa kapatma işlemi başarısız oldu.', 'error');
     } finally {

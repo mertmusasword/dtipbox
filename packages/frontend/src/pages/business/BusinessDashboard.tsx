@@ -1373,7 +1373,10 @@ export const BusinessDashboard: React.FC = () => {
         onClose={() => setShowSettlementModal(false)}
         currency={currency}
         businessName={business?.name}
-        onSettled={loadData}
+        onSettled={() => {
+          loadData();
+          fetchFilteredTips(tipsFilter);
+        }}
       />
 
       <PlanGuardStatusModal

@@ -469,7 +469,26 @@ export async function settleTipPool(
       });
     }
 
-    return distribution;
+    const fullDistribution = await tx.tipPoolDistribution.findUnique({
+      where: { id: distribution.id },
+      include: {
+        shares: {
+          include: {
+            employee: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+                position: true,
+                role_title: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return fullDistribution || distribution;
   });
 
   return result;
