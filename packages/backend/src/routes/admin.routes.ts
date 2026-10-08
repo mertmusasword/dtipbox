@@ -105,8 +105,10 @@ router.get('/payments', async (req, res, next) => {
 // --- Super Admin Platform Revenue & Founder Commission Tracking ---
 router.get('/commissions', async (req, res, next) => {
   try {
-    const { page, limit } = parsePagination(req.query, 30);
-    const data = await adminService.getAdminCommissionsAndRevenue(page, limit);
+    const { page, limit } = parsePagination(req.query, 50);
+    const filter = req.query.filter as string | undefined;
+    const search = req.query.search as string | undefined;
+    const data = await adminService.getAdminCommissionsAndRevenue(page, limit, filter, search);
     res.json({ success: true, data });
   } catch (error) {
     next(error);

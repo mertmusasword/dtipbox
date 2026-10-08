@@ -185,10 +185,13 @@ export async function getAdminQrs(page: number = 1, limit: number = 30) {
   return { qrCodes, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
 
-export async function getAdminCommissionsAndRevenue(page: number = 1, limit: number = 30) {
-  const skip = (page - 1) * limit;
-
-  const [allTips, totalVenues, founderVenuesCount] = await Promise.all([
+export async function getAdminCommissionsAndRevenue(
+  page: number = 1,
+  limit: number = 50,
+  filter?: string,
+  search?: string
+) {
+  const [allTips, totalVenues, founderVenuesCount, allBusinesses, declarationLogs] = await Promise.all([
     prisma.tip.findMany({
       where: { payment_status: 'SUCCESS' },
       select: {
@@ -205,6 +208,27 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
     }),
     prisma.business.count(),
     prisma.business.count({ where: { is_founder_member: true } }),
+    prisma.business.findMany({
+      select: {
+        id: true,
+        name: true,
+        country: true,
+        currency: true,
+        is_founder_member: true,
+        membership_plan: true,
+        membership_status: true,
+        is_active: true,
+        created_at: true,
+        owner: { select: { id: true, email: true } },
+      },
+      orderBy: { created_at: 'desc' },
+    }),
+    prisma.auditLog.findMany({
+      where: {
+        entity_type: 'COMMISSION_SETTLEMENT',
+      },
+      orderBy: { created_at: 'desc' },
+    }),
   ]);
 
   let totalVolume = 0;
@@ -293,37 +317,6 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
     }
   }
 
-  const [businesses, total] = await Promise.all([
-    prisma.business.findMany({
-      skip,
-      take: limit,
-      select: {
-        id: true,
-        name: true,
-        country: true,
-        currency: true,
-        is_founder_member: true,
-        membership_plan: true,
-        membership_status: true,
-        is_active: true,
-        created_at: true,
-        owner: { select: { id: true, email: true } },
-      },
-      orderBy: { created_at: 'desc' },
-    }),
-    prisma.business.count(),
-  ]);
-
-  // Fetch active settlement declarations from audit logs
-  const businessIds = businesses.map((b) => b.id);
-  const declarationLogs = await prisma.auditLog.findMany({
-    where: {
-      business_id: { in: businessIds },
-      entity_type: 'COMMISSION_SETTLEMENT',
-    },
-    orderBy: { created_at: 'desc' },
-  });
-
   const declarationMap = new Map<string, any>();
   for (const log of declarationLogs) {
     if (!declarationMap.has(log.business_id!)) {
@@ -338,7 +331,7 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
     }
   }
 
-  const venueRows = businesses.map((b) => {
+  const allVenueRows = allBusinesses.map((b) => {
     const stats = venueStatsMap.get(b.id) || {
       totalVolume: 0,
       cardVolume: 0,
@@ -385,6 +378,68 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
     };
   });
 
+  // Calculate category counts across all venues before filtering
+  let pendingVerificationCount = 0;
+  let pendingCollectionCount = 0;
+  let settledCount = 0;
+
+  for (const v of allVenueRows) {
+    if (v.hasPendingDeclaration) {
+      pendingVerificationCount++;
+    } else if (v.settlementStatus === 'PENDING') {
+      pendingCollectionCount++;
+    } else {
+      settledCount++;
+    }
+  }
+
+  // Priority sorting:
+  // 1. Pending verification declarations at the VERY TOP (action required!)
+  // 2. Pending collections next (highest pending commission first)
+  // 3. Settled / clean accounts last (newest first)
+  allVenueRows.sort((a, b) => {
+    if (a.hasPendingDeclaration && !b.hasPendingDeclaration) return -1;
+    if (!a.hasPendingDeclaration && b.hasPendingDeclaration) return 1;
+
+    const aIsPending = a.settlementStatus === 'PENDING';
+    const bIsPending = b.settlementStatus === 'PENDING';
+    if (aIsPending && !bIsPending) return -1;
+    if (!aIsPending && bIsPending) return 1;
+
+    if (aIsPending && bIsPending) {
+      return b.bankCommissionPending - a.bankCommissionPending;
+    }
+
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  // Apply filters
+  let filteredRows = allVenueRows;
+
+  if (filter && filter !== 'ALL') {
+    const f = filter.toUpperCase();
+    if (f === 'PENDING_VERIFICATION' || f === 'DECLARED' || f === 'ONAY_BEKLEYEN') {
+      filteredRows = filteredRows.filter((v) => v.hasPendingDeclaration);
+    } else if (f === 'PENDING' || f === 'TAHSILAT_BEKLEYEN') {
+      filteredRows = filteredRows.filter((v) => v.settlementStatus === 'PENDING');
+    } else if (f === 'SETTLED' || f === 'MUTABIK') {
+      filteredRows = filteredRows.filter((v) => v.settlementStatus === 'SETTLED');
+    }
+  }
+
+  if (search && search.trim()) {
+    const term = search.trim().toLowerCase();
+    filteredRows = filteredRows.filter(
+      (v) =>
+        v.name.toLowerCase().includes(term) ||
+        (v.ownerEmail && v.ownerEmail.toLowerCase().includes(term))
+    );
+  }
+
+  const total = filteredRows.length;
+  const skip = (page - 1) * limit;
+  const pagedRows = filteredRows.slice(skip, skip + limit);
+
   return {
     summary: {
       totalVolume: Number(totalVolume.toFixed(2)),
@@ -399,13 +454,16 @@ export async function getAdminCommissionsAndRevenue(page: number = 1, limit: num
       totalVenues,
       founderVenuesCount,
       founderRatio: totalVenues > 0 ? Math.round((founderVenuesCount / totalVenues) * 100) : 0,
+      pendingVerificationCount,
+      pendingCollectionCount,
+      settledCount,
     },
-    venues: venueRows,
+    venues: pagedRows,
     pagination: {
       page,
       limit,
       total,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit) || 1,
     },
   };
 }
