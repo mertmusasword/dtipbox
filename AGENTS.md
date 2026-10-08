@@ -202,3 +202,10 @@ d-tipbox (Monorepo)
    * Always cross-reference this `AGENTS.md` file, `git log`, and backend service implementations before stating project status.
 6. **NO GENERIC CHECKLISTS:** When asked "Eksik bir şey kaldı mı?" or assessing production readiness, do not output generic textbook checklists. Base answers strictly on the verified factual state recorded in this document.
 7. **Mandatory Live Deployment Status Notification:** Her işlem ve kod değişikliği tamamlandığında kullanıcının her zaman açıkça durumdan haberdar olması için: yapılan işlemin **canlıda olup olmadığını** belirt ve yereldeyse **"Canlıya alayım mı?"** diye bilgi verip onay sor.
+8. **CODEBASE AUDIT BEFORE PROPOSING ROADMAP OR NEW FEATURES (SIFIR VARSAYIM VE KOD DENETİMİ):**
+   * Kullanıcı bir özellik, geliştirme, yol haritası (roadmap) veya eksik listesi istediğinde; afaki veya genel geçer teorik tavsiyeler üretmek KESİNLİKLE YASAKTIR.
+   * Tek bir kelime dahi önermeden önce `packages/frontend/src` ve `packages/backend/src` dizinlerinde `grep_search` ve `view_file` çalıştırılarak o özelliğin mevcut olup olmadığı kontrol edilmek ZORUNDADIR.
+   * Halihazırda kodlanmış (örneğin: Google Review yönlendirmesi, sadakat damgaları, bahşiş havuzları, yasal Tronc politikası, çoklu dil sözleşmeleri vb.) olan özellikleri sanki projede hiç yokmuş gibi "yapılacaklar listesi"ne almak kesin bir kural ihlalidir.
+9. **KOD TABANINA BAĞLILIK VE DOĞRULUK:**
+   * Yanıtlar ve planlar sadece ve sadece diskteki doğrulanmış kod gerçeklerine dayanmalıdır. Kodda olan bir şey geliştirilecekse "X dosyasında zaten mevcut, şu ekleme yapılabilir" şeklinde sunulmalıdır.
+
