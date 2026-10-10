@@ -18,7 +18,6 @@ import { PaymentMethodType, PaymentMethodStatus, QrType, TipDistributionMode, Po
 import { requireAcceptedAgreement } from '../middleware/agreement.middleware';
 import { AppError } from '../middleware/errorHandler';
 import { emailService } from '../services/email.service';
-import { lemonSqueezyService } from '../services/lemonsqueezy.service';
 import prisma from '../utils/prisma';
 
 const router = Router();
@@ -579,7 +578,6 @@ router.post('/commissions/settle', commissionActionLimiter, async (req: AuthRequ
 
 router.post('/commissions/card-checkout', commissionActionLimiter, async (req: AuthRequest, res, next) => {
   try {
-    const { periodKey } = req.body || {};
     const businessId = req.user!.businessId!;
     const business = await prisma.business.findUnique({
       where: { id: businessId },
@@ -589,46 +587,11 @@ router.post('/commissions/card-checkout', commissionActionLimiter, async (req: A
       throw new AppError('İşletme bulunamadı', 404);
     }
 
-    const report = await commissionService.getBusinessCommissionsReport(businessId);
-    let amountToPay = report.summary.bankPlatformFeePending;
-    if (periodKey && periodKey !== 'ALL_PENDING') {
-      const p = report.monthlyPeriods.find((x) => x.periodKey === periodKey);
-      if (p) {
-        amountToPay = p.bankCommissionPending;
-      }
-    }
-
-    if (amountToPay <= 0) {
-      throw new AppError('Ödenecek cari komisyon borcu bulunmuyor.', 400);
-    }
-
-    const SETTLEMENT_MIN_THRESHOLDS: Record<string, number> = {
-      TRY: 100,
-      USD: 5,
-      EUR: 5,
-      GBP: 5,
-    };
-    const bCurrency = (business.currency || 'TRY').toUpperCase();
-    const minThreshold = SETTLEMENT_MIN_THRESHOLDS[bCurrency] || 5;
-
-    if (amountToPay < minThreshold) {
-      throw new AppError(
-        `Asgari kartlı mutabakat eşiği ${minThreshold} ${bCurrency}'dir. Bakiyeniz bu eşiğe ulaştığında kartla ödenebilir.`,
-        400
-      );
-    }
-
-    const { checkoutUrl } = await lemonSqueezyService.createCommissionCheckout({
-      businessId,
-      businessName: business.name,
-      periodKey,
-      totalAmount: amountToPay,
-      currency: business.currency || 'TRY',
-      customerEmail: req.user!.email,
-      customerName: business.name,
-    });
-
-    res.json({ success: true, data: { checkoutUrl, amount: amountToPay, currency: business.currency || 'TRY' } });
+    // Online credit card checkout disabled. Direct PayTR / Sanal POS transition in progress.
+    throw new AppError(
+      'Online kredi kartı ile mutabakat altyapımız PayTR / Sanal POS geçişi kapsamında güncellenmektedir. Lütfen mutabakatınızı Havale / EFT / FAST ile tamamlayınız.',
+      400
+    );
   } catch (error) {
     next(error);
   }
@@ -883,7 +846,7 @@ router.put('/tips/:id/verify', async (req: AuthRequest, res, next) => {
     if (!isBank) {
       res.status(400).json({
         success: false,
-        error: 'Kredi kartı ve online ödemeler yalnızca ödeme sağlayıcısı (Stripe/Lemon Squeezy) tarafından otomatik onaylanabilir.',
+        error: 'Kredi kartı ve online ödemeler yalnızca lisanslı ödeme sağlayıcısı (Stripe/PayTR) tarafından otomatik onaylanabilir.',
       });
       return;
     }

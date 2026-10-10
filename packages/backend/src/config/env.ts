@@ -62,12 +62,6 @@ export const env = {
   R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || '',
   S3_ENDPOINT: process.env.S3_ENDPOINT || '',
 
-  // Lemon Squeezy (Global MoR, Apple Pay, Google Pay, Global Cards)
-  LEMONSQUEEZY_API_KEY: process.env.LEMONSQUEEZY_API_KEY || '',
-  LEMONSQUEEZY_STORE_ID: process.env.LEMONSQUEEZY_STORE_ID || '',
-  LEMONSQUEEZY_VARIANT_ID: process.env.LEMONSQUEEZY_VARIANT_ID || '',
-  LEMONSQUEEZY_WEBHOOK_SECRET: process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '',
-
   // Sentry (Backend Error Tracking)
   SENTRY_DSN:
     process.env.SENTRY_DSN ||

@@ -251,7 +251,7 @@ export const BusinessStorePage: React.FC = () => {
 
   const paymentProcessedRef = React.useRef(false);
 
-  // Handle Lemon Squeezy return redirect (?payment=success)
+  // Handle online payment return redirect (?payment=success)
   useEffect(() => {
     if (searchParams.get('payment') === 'success' && !paymentProcessedRef.current) {
       paymentProcessedRef.current = true;
@@ -2501,7 +2501,7 @@ export const BusinessStorePage: React.FC = () => {
                         </p>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem', fontSize: '0.7rem', color: '#34d399', fontWeight: 600 }}>
                           <ShieldCheck size={14} />
-                          <span>Global Stripe / Lemon Squeezy Altyapısı</span>
+                          <span>Lisanslı Güvenli Ödeme Altyapısı (PayTR / Stripe)</span>
                         </div>
                       </div>
                     </label>

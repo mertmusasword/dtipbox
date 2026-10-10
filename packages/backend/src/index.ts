@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import fs from 'fs';
 import bcrypt from 'bcrypt';
 import { env } from './config/env';
 import prisma from './utils/prisma';
@@ -220,10 +221,50 @@ app.use(
 // Serve frontend static assets in production with Cloudflare & CDN caching headers
 if (env.isProd) {
   const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+  const HTML_CACHE = 'public, max-age=3600, must-revalidate';
+
+  // SEO: Serve pre-rendered pages (dist/<route>/index.html) at their canonical URL
+  // WITHOUT a trailing slash. Previously express.static 301-redirected /blog/x -> /blog/x/
+  // while the canonical tag + sitemap pointed back to /blog/x, creating a
+  // redirect/canonical conflict that prevented Google from indexing the pages.
+  app.get('*', (req: Request, res: Response, next) => {
+    if (req.path === '/' || req.path.startsWith('/api') || path.extname(req.path)) {
+      next();
+      return;
+    }
+
+    let decodedPath: string;
+    try {
+      decodedPath = decodeURIComponent(req.path);
+    } catch {
+      next();
+      return;
+    }
+
+    const cleanPath = decodedPath.replace(/\/+$/, '');
+    const candidate = path.resolve(frontendDist, '.' + cleanPath, 'index.html');
+    if (!candidate.startsWith(frontendDist + path.sep) || !fs.existsSync(candidate)) {
+      next();
+      return;
+    }
+
+    // Trailing-slash variant -> 301 to canonical (preserve query string)
+    if (req.path.endsWith('/')) {
+      const qsIndex = req.originalUrl.indexOf('?');
+      const qs = qsIndex >= 0 ? req.originalUrl.slice(qsIndex) : '';
+      res.redirect(301, req.path.replace(/\/+$/, '') + qs);
+      return;
+    }
+
+    res.setHeader('Cache-Control', HTML_CACHE);
+    res.sendFile(candidate, { cacheControl: false });
+  });
+
   app.use(
     express.static(frontendDist, {
       maxAge: '1y',
       immutable: true,
+      redirect: false,
       setHeaders: (res, filePath) => {
         // HTML files and SEO descriptors (sitemap, robots.txt) must never be aggressively cached
         if (
@@ -232,7 +273,7 @@ if (env.isProd) {
           filePath.endsWith('sitemap.xml') ||
           filePath.endsWith('llms.txt')
         ) {
-          res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+          res.setHeader('Cache-Control', HTML_CACHE);
         }
       },
     })
@@ -244,6 +285,11 @@ if (env.isProd) {
       res.status(404).json({ success: false, error: 'API route not found' });
       return;
     }
+    // SEO: Every indexable marketing page is pre-rendered and served above.
+    // Anything reaching this fallback is an app route (login, dashboards, /tip, /menu,
+    // /loyalty), a duplicate alias (/katalog, /security) or a non-existent URL.
+    // Mark it noindex so Google doesn't index soft-404 copies of the homepage.
+    res.setHeader('X-Robots-Tag', 'noindex, follow');
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     res.sendFile(path.join(frontendDist, 'index.html'));
   });

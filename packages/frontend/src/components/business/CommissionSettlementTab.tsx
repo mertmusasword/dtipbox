@@ -239,7 +239,7 @@ export const CommissionSettlementTab: React.FC = () => {
     loadData();
   }, [loadData]);
 
-  // Handle Lemon Squeezy return redirect (?settled=success)
+  // Handle online card return redirect (?settled=success)
   useEffect(() => {
     if (searchParams.get('settled') === 'success' && !cardSettledProcessedRef.current) {
       cardSettledProcessedRef.current = true;

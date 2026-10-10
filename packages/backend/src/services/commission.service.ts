@@ -538,14 +538,14 @@ export async function rejectAdminVenueSettlement(
 }
 
 /**
- * Automatically confirms commission settlement paid via Credit Card / Apple Pay (Lemon Squeezy)
+ * Automatically confirms commission settlement paid via Credit Card / Payment Gateway (PayTR, Stripe, etc.)
  */
 export async function settleCommissionViaCard(
   businessId: string,
   input: {
     periodKey?: string;
     paymentMethod: string;
-    lemonSqueezyOrderId?: string;
+    providerOrderId?: string;
     userEmail?: string;
     amount?: number;
     currency?: string;
@@ -580,12 +580,12 @@ export async function settleCommissionViaCard(
       periodKey: input.periodKey || 'ALL_PENDING',
       settledCount: result.count,
       paymentMethod: 'CREDIT_CARD',
-      lemonSqueezyOrderId: input.lemonSqueezyOrderId,
+      providerOrderId: input.providerOrderId,
       userEmail: input.userEmail,
       amount: input.amount,
       currency: input.currency,
       confirmedAt: new Date().toISOString(),
-      note: 'Lemon Squeezy kredi kartı / Apple Pay ile anında otomatik tahsil edildi.',
+      note: 'Online kredi kartı / lisanslı ödeme kuruluşu ile anında otomatik tahsil edildi.',
     },
   });
 

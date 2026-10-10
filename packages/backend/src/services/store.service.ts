@@ -1,7 +1,6 @@
 import prisma from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { StoreOrderStatus, StorePaymentMethod } from '@prisma/client';
-import { lemonSqueezyService } from './lemonsqueezy.service';
 
 export interface CreateOrderInput {
   items: Array<{
@@ -708,20 +707,10 @@ export async function createStoreOrder(businessId: string, input: CreateOrderInp
 
   let checkoutUrl: string | null = null;
   if (paymentMethod === StorePaymentMethod.CREDIT_CARD) {
-    try {
-      const checkoutSession = await lemonSqueezyService.createStoreCheckout({
-        orderId: order.id,
-        orderNumber: order.order_number,
-        totalAmount: Number(order.total_amount),
-        currency: order.currency,
-        customerEmail: business.email || undefined,
-        customerName: order.recipient_name || business.name,
-        description: `Naponi Hardware Store Order #${order.order_number}`,
-      });
-      checkoutUrl = checkoutSession.checkoutUrl;
-    } catch (checkoutErr: any) {
-      throw checkoutErr;
-    }
+    throw new AppError(
+      'Online kredi kartı ödeme altyapımız PayTR / Sanal POS geçişi kapsamında güncellenmektedir. Lütfen siparişinizi Havale / EFT / FAST seçeneğiyle oluşturunuz.',
+      400
+    );
   }
 
   return {
@@ -778,22 +767,7 @@ export async function getOrderById(orderId: string, businessId?: string) {
   }
 
   let checkoutUrl: string | null = null;
-  if (order.payment_method === StorePaymentMethod.CREDIT_CARD && order.payment_status === 'UNPAID') {
-    try {
-      const checkoutSession = await lemonSqueezyService.createStoreCheckout({
-        orderId: order.id,
-        orderNumber: order.order_number,
-        totalAmount: Number(order.total_amount),
-        currency: order.currency,
-        customerEmail: order.business?.email || undefined,
-        customerName: order.recipient_name || order.business?.name,
-        description: `Naponi Hardware Store Order #${order.order_number}`,
-      });
-      checkoutUrl = checkoutSession.checkoutUrl;
-    } catch {
-      // Non-fatal if offline
-    }
-  }
+  // Online credit card checkout URL will be provided via PayTR when configured
 
   return {
     order,
