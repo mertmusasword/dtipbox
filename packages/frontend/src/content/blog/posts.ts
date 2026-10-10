@@ -1364,7 +1364,14 @@ export const BLOG_POSTS_TR: BlogPost[] = [
 ];
 
 import { BLOG_POSTS_EN, BLOG_CATEGORIES_EN, DEFAULT_AUTHOR_EN } from './posts-en';
-export { BLOG_POSTS_EN, BLOG_CATEGORIES_EN, DEFAULT_AUTHOR_EN };
+import { BLOG_POSTS_DE, BLOG_CATEGORIES_DE, DEFAULT_AUTHOR_DE } from './posts-de';
+import { BLOG_POSTS_ES, BLOG_CATEGORIES_ES, DEFAULT_AUTHOR_ES } from './posts-es';
+
+export {
+  BLOG_POSTS_EN, BLOG_CATEGORIES_EN, DEFAULT_AUTHOR_EN,
+  BLOG_POSTS_DE, BLOG_CATEGORIES_DE, DEFAULT_AUTHOR_DE,
+  BLOG_POSTS_ES, BLOG_CATEGORIES_ES, DEFAULT_AUTHOR_ES,
+};
 
 const TRANSLATION_MAP_TR_EN: Record<string, string> = {
   'dijital-bahsis-nedir-isletmeler-icin-rehber': 'what-is-digital-tipping-guide-for-businesses',
@@ -1385,6 +1392,22 @@ const TRANSLATION_MAP_TR_EN: Record<string, string> = {
   '2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri': '2026-founder-membership-program-zero-cost-era-in-digital-tipping',
 };
 
+const MULTI_LANG_CLUSTERS: Array<{ tr?: string; en?: string; de?: string; es?: string }> = [
+  {
+    tr: 'dijital-bahsis-nedir-isletmeler-icin-rehber',
+    en: 'what-is-digital-tipping-guide-for-businesses',
+    de: 'digitales-trinkgeld-gastronomie-leitfaden',
+    es: 'que-es-propina-digital-guia-restaurantes',
+  },
+  {
+    tr: 'calisan-bahsislerini-yonetmenin-yollari',
+    en: 'how-to-manage-staff-tips-individual-qr-vs-tip-pooling',
+    de: 'trinkgeld-pool-aufteilung-gastronomie-system',
+    es: 'como-calcular-dividir-propinas-camareros-restaurante',
+  },
+];
+
+// 1. Initial 1-to-1 TR-EN
 BLOG_POSTS_TR.forEach((p) => {
   const enSlug = TRANSLATION_MAP_TR_EN[p.slug];
   if (enSlug) {
@@ -1399,4 +1422,23 @@ BLOG_POSTS_EN.forEach((p) => {
   }
 });
 
-export const BLOG_POSTS: BlogPost[] = [...BLOG_POSTS_TR, ...BLOG_POSTS_EN];
+// 2. Multi-language clusters (TR, EN, DE, ES)
+MULTI_LANG_CLUSTERS.forEach((cluster) => {
+  const allPosts = [...BLOG_POSTS_TR, ...BLOG_POSTS_EN, ...BLOG_POSTS_DE, ...BLOG_POSTS_ES];
+  const entries = Object.entries(cluster) as [string, string][];
+  
+  entries.forEach(([lang, slug]) => {
+    const post = allPosts.find((p) => p.slug === slug);
+    if (post) {
+      post.alternateSlugs = { ...(post.alternateSlugs || {}), ...cluster };
+    }
+  });
+});
+
+export const BLOG_POSTS: BlogPost[] = [
+  ...BLOG_POSTS_TR,
+  ...BLOG_POSTS_EN,
+  ...BLOG_POSTS_DE,
+  ...BLOG_POSTS_ES,
+];
+

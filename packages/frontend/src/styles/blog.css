@@ -964,3 +964,91 @@
     align-items: flex-start;
   }
 }
+
+/* ==============================================================================
+   TOOL RICH EDITORIAL GUIDE & DATA TABLE STYLES
+   ============================================================================== */
+
+.tool-guide-wrapper {
+  max-width: 980px;
+  margin: 4.5rem auto 0;
+}
+
+.tool-guide-section {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2.25rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(12px);
+}
+
+.tool-guide-section h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.tool-guide-section h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.tool-guide-section p,
+.tool-guide-section li {
+  color: #94a3b8;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.tool-guide-section strong {
+  color: #f8fafc;
+}
+
+.tool-formula-box {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #fbbf24;
+  font-size: 1rem;
+}
+
+.tool-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.tool-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.tool-guide-table th {
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+}
+
+.tool-guide-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.tool-guide-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+

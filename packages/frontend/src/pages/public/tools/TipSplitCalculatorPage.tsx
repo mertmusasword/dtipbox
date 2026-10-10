@@ -133,29 +133,53 @@ export const TipSplitCalculatorPage: React.FC = () => {
     ? [
         {
           question: 'What is the most standard restaurant tip pooling breakdown?',
-          answer: 'The most popular hospitality formula allocates 60%–70% to front-of-house service staff who interact directly with guests, 20%–25% to back-of-house kitchen/culinary team members, and 10%–15% to bar mixologists and bussers.',
+          answer: 'The industry-standard hospitality formula allocates 60%–70% to front-of-house service staff (waiters and head servers) who directly interact with guests, 20%–25% to back-of-house culinary teams (cooks, kitchen prep, and dishwashers), and 10%–15% to bar mixologists and runners.',
         },
         {
-          question: 'Should bussers, barbacks, and runners receive a share of the tip pool?',
-          answer: 'Yes. In high-performing restaurants, support staff are typically included with partial point weighting (e.g., 0.5 points compared to 1.0 full point for lead servers) to ensure seamless floor coordination.',
+          question: 'Can restaurant owners or salaried managers participate in the tip pool?',
+          answer: 'No. Under international labor standards (including the US FLSA and UK Employment Tips Act) and common fair-employment legal precedents, restaurant owners, general managers, and supervisors who possess hiring/firing authority are strictly prohibited from keeping or participating in employee tip pools.',
         },
         {
-          question: 'Can Naponi automate tip pool distribution digitally?',
-          answer: 'Yes. Naponi allows restaurant managers to set automated pooling rules on the dashboard. Digital QR tips collected throughout the shift are automatically categorized and reported per staff member without manual spreadsheet work.',
+          question: 'How should support staff like bussers, runners, and barbacks be weighted?',
+          answer: 'In professional point-based systems, support roles receive partial point weighting. For instance, if lead servers are weighted at 1.0 point, bussers and runners commonly receive 0.5 to 0.7 points, reflecting their vital support role in table turnarounds while acknowledging direct service accountability.',
+        },
+        {
+          question: 'What is the formula for calculating tips by hours worked?',
+          answer: 'Employee Share = (Shift Hours × Role Weight) × [Total Tip Pool / Total Weighted Points of All Staff]. This mathematically guarantees that employees who work longer or more demanding shifts are rewarded proportionally and transparently.',
+        },
+        {
+          question: 'Is an equal split or a role-weighted percentage better for restaurant morale?',
+          answer: 'For small cafes or fast-casual counters with 2 to 4 staff where everyone rotates tasks, an equal split is optimal. For full-service dining venues with distinct kitchen, service, and bar teams, a role-weighted or point-based model is universally preferred to prevent resentment.',
+        },
+        {
+          question: 'Can Naponi automate tip pool distribution digitally without spreadsheets?',
+          answer: 'Yes. Naponi allows restaurant managers to configure automated pooling rules directly on the dashboard. Digital QR tips collected throughout shifts are automatically calculated, split by hours or role weights, and exported as clean CSV payroll audit sheets with one click.',
         },
       ]
     : [
         {
-          question: 'Bahşiş havuzunda yüzdeler nasıl belirlenmelidir?',
-          answer: 'Sektörde en sık uygulanan model; doğrudan müşteriyle temas kuran servis ekibine %60-%70, lezzet kalitesini sağlayan mutfak personeline %20-%30, bar ve komi ekibine %10-%15 ayrılmasıdır.',
+          question: 'Bahşiş havuzunda (tip pool) sektör standardı yüzdeler nasıldır?',
+          answer: 'Sektörde en sık uygulanan adil model; doğrudan misafirle ilgilenen salon ve servis ekibine %60-%70, lezzet ve sunum kalitesini sağlayan mutfak personeline %20-%25, bar ve komi ekibine ise %10-%15 pay ayrılmasıdır.',
         },
         {
-          question: 'Bahşiş dağıtımında komi veya stajyerlere pay verilir mi?',
-          answer: 'Evet. Birçok restoranda komiler genellikle garson puanının yarısı oranında (%50 ağırlık) değerlendirilerek havuza dahil edilir.',
+          question: 'İşletme sahibi, müdür veya salon şefleri bahşiş havuzundan pay alabilir mi?',
+          answer: 'Kesinlikle hayır. Hem Yargıtay içtihatlarına hem de uluslararası çalışma standartlarına göre bahşiş, müşterinin doğrudan hizmet veren çalışana yaptığı bir bağıştır. İşveren, restoran sahibi veya işe alma/çıkarma yetkisi olan müdürlerin havuzdan pay alması veya bahşişe el koyması hukuka aykırıdır.',
         },
         {
-          question: 'Naponi dijital bahşiş havuzunu otomatik bölebilir mi?',
-          answer: 'Evet. Naponi işletme panelinde tanımlayacağınız kurallarla gün boyu QR ile toplanan tüm bahşişler otomatik olarak personel bazında hesaplanır ve raporlanır.',
+          question: 'Komi, runner ve bulaşık personeli havuza nasıl dahil edilir?',
+          answer: 'Modern işletmelerde puan katsayısı modeli uygulanır. Örneğin garson 1.0 tam puan alırken, komi ve runner personeli 0.5 veya 0.6 puan katsayısı ile değerlendirilir. Böylece masanın hızlı toplanması ödüllendirilirken garsonun sorumluluğu korunur.',
+        },
+        {
+          question: 'Vardiya saatlerine göre bahşiş bölüştürme formülü nedir?',
+          answer: 'Personel Payı = (Çalışılan Saat × Rol Katsayısı) × [Toplam Bahşiş / Tüm Ekibin Toplam Puanı]. Bu formül sayesinde 4 saat çalışan yarı zamanlı personel ile 8 saat tam vardiya çalışan personel arasında kuruşu kuruşuna adil bölüşüm sağlanır.',
+        },
+        {
+          question: 'Eşit paylaşım mı yoksa rol ağırlıklı paylaşım mı daha adildir?',
+          answer: '3-4 kişinin çalıştığı küçük butik kafelerde ve kahvecilerde herkes her işi yaptığı için eşit bölüşüm idealdir. Ancak geniş kadrolu alakart ve lüks restoranlarda rol ağırlıklı veya puanlı sistem ekip motivasyonunu ve personel bağlılığını en üst düzeyde tutar.',
+        },
+        {
+          question: 'Naponi dijital bahşiş havuzunu Excel kullanmadan nasıl otomatikleştirir?',
+          answer: 'Naponi işletme yönetim panelinde işletmenizin rol oranlarını veya puanlarını bir kez tanımlarsınız. Gün boyu masalardaki QR kodlardan toplanan bahşişler vardiya sonunda tek tıkla personele paylaştırılır, PDF/CSV dökümü alınır ve muhasebeye hazır hale getirilir.',
         },
       ];
 
@@ -433,6 +457,113 @@ export const TipSplitCalculatorPage: React.FC = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Rich Editorial Guide Section */}
+        <div className="tool-guide-wrapper">
+          {/* Section 1: Tip Pooling Models Comparison */}
+          <article className="tool-guide-section">
+            <h2>{isEn ? 'Restaurant Tip Pooling Models: Which System is Right for Your Team?' : 'Restoran Bahşiş Havuzu (Tip Pool) Modelleri: Hangi Sistem İşletmeniz İçin Uygun?'}</h2>
+            <p>
+              {isEn
+                ? 'Tip pooling is a collaborative gratuity management practice where tips collected across a dining service are combined into a central fund and redistributed among qualifying front-of-house and back-of-house employees. Selecting the right distribution model is essential for staff retention and transparent teamwork.'
+                : 'Bahşiş havuzu (tip pool), bir restoranda veya kafede toplanan tüm bahşişlerin tek bir fonda birleştirilerek çalışanlar arasında önceden belirlenmiş şeffaf kurallara göre paylaştırılmasıdır. Doğru modeli seçmek, personel sirkülasyonunu (turnover) azaltır ve mutfak ile servis arasındaki iş birliğini güçlendirir.'}
+            </p>
+
+            <div className="tool-table-responsive">
+              <table className="tool-guide-table">
+                <thead>
+                  <tr>
+                    <th>{isEn ? 'Pooling Model' : 'Havuz Modeli'}</th>
+                    <th>{isEn ? 'Best Suited For' : 'Hangi İşletmeler İçin Uygun?'}</th>
+                    <th>{isEn ? 'Key Advantages' : 'En Büyük Avantajı'}</th>
+                    <th>{isEn ? 'Potential Drawbacks' : 'Olası Dezavantajı'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>{isEn ? '1. Equal Split (Per Capita)' : '1. Eşit Dağıtım (Kişi Başı)'}</strong></td>
+                    <td>{isEn ? 'Small cafes, coffee shops, food trucks (2–6 staff)' : 'Küçük kafeler, 3. nesil kahveciler ve büfeler (2-5 kişi)'}</td>
+                    <td>{isEn ? 'Extremely simple to calculate without software' : 'Hesaplaması çok basittir, anında paylaşılır'}</td>
+                    <td>{isEn ? 'Ignores seniority and shift hour differences' : 'Farklı saat çalışanlar arasında adaletsizlik yaratabilir'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? '2. Role-Weighted Percentage' : '2. Rol Bazlı Yüzdesel Dağıtım'}</strong></td>
+                    <td>{isEn ? 'Bistros, bars, and casual dining restaurants' : 'Alakart restoranlar, bistrolar ve kokteyl barları'}</td>
+                    <td>{isEn ? 'Rewards service staff (60%) while compensating kitchen (25%)' : 'Mutfak ve barı motive ederken garsonun payını korur'}</td>
+                    <td>{isEn ? 'Requires daily calculation when headcounts shift' : 'Vardiya kadrosu değiştikçe hesaplama gerektirir'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? '3. Point & Hours System' : '3. Puan ve Çalışılan Saat Sistemi'}</strong></td>
+                    <td>{isEn ? 'High-volume dining, hotel restaurants, and fine dining' : 'Yoğun restoranlar, otel F&B ve fine dining'}</td>
+                    <td>{isEn ? '100% mathematically fair across part-time & full-time' : 'Tam zamanlı ve yarı zamanlı için kuruşu kuruşuna adil'}</td>
+                    <td>{isEn ? 'Cumbersome with paper; best automated with Naponi' : 'Kağıt-kalemle zordur; dijital altyapı gerektirir'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          {/* Section 2: Mathematical Hours & Points Formula */}
+          <article className="tool-guide-section">
+            <h2>{isEn ? 'The Mathematical Formula for Fair Shift Tip Pool Distribution' : 'Vardiya Bahşiş Havuzunun Adil Dağıtım Formülü'}</h2>
+            <p>
+              {isEn
+                ? 'To fairly compensate staff working different shift lengths (e.g. lunch rush vs. full 8-hour dinner closing), modern hospitality managers use the Weighted Point-Hour formula:'
+                : 'Farklı saatlerde çalışan personeli (örneğin 4 saat öğle servisine gelen komi ile 8 saat akşam servisini kapatan kaptan garson) adil ödüllendirmek için sektör standardı Ağırlıklı Puan Formülü kullanılır:'}
+            </p>
+
+            <div className="tool-formula-box">
+              {isEn ? 'Staff Points = Hours Worked × Role Point Weight' : 'Personel Puanı = Çalışılan Saat × Rol Katsayısı'}<br />
+              {isEn ? 'Total Shift Points = Sum of (Hours Worked × Role Point Weight) for all staff' : 'Toplam Vardiya Puanı = Tüm Personelin Puanlarının Toplamı'}<br />
+              {isEn ? 'Point Value ($/pt) = Total Tip Pool / Total Shift Points' : '1 Puanın Parasal Değeri = Toplam Toplanan Bahşiş / Toplam Vardiya Puanı'}<br />
+              {isEn ? 'Individual Payout = Staff Points × Point Value' : 'Personele Ödenecek Bahşiş = Personel Puanı × 1 Puanın Değeri'}
+            </div>
+
+            <h3>{isEn ? 'Example Scenario: A Busy Saturday Dinner Shift' : 'Örnek Uygulama: Yoğun Bir Cumartesi Akşamı'}</h3>
+            <p>
+              {isEn
+                ? 'A restaurant collects $1,800 in digital and cash tips across 5 team members. With lead servers weighted at 1.0, kitchen at 0.6, and bussers at 0.5:'
+                : 'Bir restoranda cumartesi akşamı QR ve nakit toplam 12.000 ₺ bahşiş toplanmıştır. Ekipte 2 garson (1.0 katsayı), 1 aşçı (0.6 katsayı) ve 1 komi (0.5 katsayı) bulunmaktadır:'}
+            </p>
+            <ul>
+              <li><strong>{isEn ? 'Server 1 (8 hours @ 1.0):' : 'Garson 1 (8 saat × 1.0):'}</strong> {isEn ? '8.0 points' : '8.0 puan'}</li>
+              <li><strong>{isEn ? 'Server 2 (8 hours @ 1.0):' : 'Garson 2 (8 saat × 1.0):'}</strong> {isEn ? '8.0 points' : '8.0 puan'}</li>
+              <li><strong>{isEn ? 'Cook (8 hours @ 0.6):' : 'Aşçı (8 saat × 0.6):'}</strong> {isEn ? '4.8 points' : '4.8 puan'}</li>
+              <li><strong>{isEn ? 'Busser (6 hours @ 0.5):' : 'Komi (6 saat × 0.5):'}</strong> {isEn ? '3.0 points' : '3.0 puan'}</li>
+              <li><strong>{isEn ? 'Total Shift Points:' : 'Tüm Ekibin Toplam Puanı:'}</strong> {isEn ? '23.8 points' : '23.8 puan'}</li>
+            </ul>
+          </article>
+
+          {/* Section 3: Legal Compliance & Manager Prohibition */}
+          <article className="tool-guide-section">
+            <h2>{isEn ? 'Legal Compliance: Who May and May NOT Participate in a Tip Pool?' : 'Hukuki Mevzuat: Kimler Bahşiş Havuzundan Pay Alabilir, Kimler Alamaz?'}</h2>
+            <p>
+              {isEn
+                ? 'Labor authorities worldwide enforce strict regulations to protect hospitality workers from tip theft. Operating a compliant tip pool requires understanding these mandatory boundaries:'
+                : 'Hem Türk İş Hukuku Yargıtay kararlarında hem de küresel gastronomi standartlarında (ABD FLSA ve İngiltere Tips Act), bahşiş havuzunun çalışan haklarını koruması için kesin kırmızı çizgiler çizilmiştir:'}
+            </p>
+            <ul>
+              <li>
+                <strong>{isEn ? 'Managers and Employers are STRICTLY Excluded:' : 'İşverenler ve Şirket Müdürleri Kesinlikle Pay Alamaz:'}</strong>{' '}
+                {isEn
+                  ? 'Owners, general managers, floor directors, and supervisors with scheduling or disciplinary authority may never take a share of employee tips, even if they assisted on the floor.'
+                  : 'Restoran sahipleri, işletme ortakları, genel müdürler ve işe alma/çıkarma yetkisi olan yöneticiler bahşiş havuzundan 1 kuruş dahi alamaz. Bahşiş doğrudan hizmeti üreten işçinin anayasal ve yasal hakkıdır.'}
+              </li>
+              <li>
+                <strong>{isEn ? 'Back-of-House (Kitchen & Dishwashing) Inclusion:' : 'Mutfak ve Bulaşık Personelinin Havuza Dahil Edilmesi:'}</strong>{' '}
+                {isEn
+                  ? 'Modern regulations allow back-of-house staff to participate in valid employer-mandated tip pools as long as all staff receive at least full minimum base wages without tip credit deductions.'
+                  : 'Yargıtay ve sektör teamüllerine göre mutfak personeli, garsonların topladığı bahşiş havuzundan işletme içi mutabakatla belirlenen oranda pay alabilir. Bu durum salon ile mutfak arasındaki bağı güçlendirir.'}
+              </li>
+              <li>
+                <strong>{isEn ? 'Deductions for Breakage & Till Shortages are Prohibited:' : 'Kırılan Tabak veya Kasa Açığı Bahşişten Kesilemez:'}</strong>{' '}
+                {isEn
+                  ? 'Employers may not deduct cash register shortages, walkouts, or broken dishware from staff tips.'
+                  : 'İşletmeler kırılan bardak/tabak veya masadan ödeme yapmadan kalkan müşterilerin zararını çalışanların bahşiş havuzundan kesinlikle kesemez.'}
+              </li>
+            </ul>
+          </article>
         </div>
 
         {/* FAQs */}

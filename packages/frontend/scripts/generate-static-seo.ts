@@ -1014,6 +1014,89 @@ Object.values(SECTOR_SOLUTIONS_EN).forEach((sectorEn) => {
 // =============================================================================
 // 4. GENERATE /tools/:tool/index.html (Bilingual & Hreflang Enabled)
 // =============================================================================
+const TOOL_RICH_SECTIONS: Record<string, {
+  guideHtml: string;
+  faqs: Array<{ question: string; answer: string }>;
+}> = {
+  'tip-calculator': {
+    faqs: [
+      {
+        question: 'How much should you typically tip at a restaurant?',
+        answer: 'In the United States and Canada, standard restaurant tipping is 15% to 20% for attentive dining service, with 18% being common. In European destinations, tipping is discretionary, typically 5% to 10% for quality service.',
+      },
+      {
+        question: 'How is the per-person bill split calculated?',
+        answer: 'The total bill amount plus the calculated tip percentage is summed, then divided equally by the number of dining guests: Total Per Person = (Bill Amount + Tip Amount) / Guest Count.',
+      },
+      {
+        question: 'Should I tip if a service charge or auto-gratuity is already included?',
+        answer: 'If the check clearly lists an automatic gratuity or service charge (often 10% to 18% for parties of 6 or more), additional tipping is optional and reserved for extraordinary service.',
+      },
+      {
+        question: 'Is tipping calculated before or after sales tax?',
+        answer: 'Etiquette experts universally agree that tipping should be calculated on the pre-tax subtotal of food and beverage charges rather than the post-tax total.',
+      },
+      {
+        question: 'Why do cashless diners prefer tableside QR tipping?',
+        answer: 'Tableside QR stands allow guests to scan with Apple Pay or Google Pay, select a preset in 6 seconds, and leave a direct tip that bypasses POS delays without carrying cash.',
+      },
+    ],
+    guideHtml: `
+      <section class="tool-guide-section" style="margin-top: 3rem; background: rgba(17,24,39,0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem;">
+        <h2 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Global Restaurant Tipping Etiquette & Standards</h2>
+        <p style="color: #94a3b8; line-height: 1.6;">Tipping etiquette varies significantly across service industries. Use our reference guide below for customary tipping benchmarks:</p>
+        <ul style="color: #cbd5e1; line-height: 1.8; margin-top: 1rem;">
+          <li><strong>Casual Dining & Bistros:</strong> 10% to 15% for attentive table service.</li>
+          <li><strong>Fine Dining & Chef Venues:</strong> 15% to 20% for sommelier care, tasting menus, and multi-course dining.</li>
+          <li><strong>Cafes & Specialty Coffee:</strong> 5% to 10% or $1-$2 (20-50 ₺) per handcrafted specialty drink.</li>
+          <li><strong>Bars & Cocktail Lounges:</strong> $1-$3 per drink or 15% on open tabs.</li>
+          <li><strong>Hotel Bellboys & Valets:</strong> $2-$5 (50-100 ₺) per luggage bag or vehicle retrieval.</li>
+        </ul>
+
+        <h3 style="color: #f1f5f9; font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.75rem;">How to Calculate Tips: Mathematical Formula</h3>
+        <p style="color: #94a3b8; line-height: 1.6;">Calculating restaurant gratuity involves two simple steps:</p>
+        <div style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 1rem; color: #fbbf24; font-family: monospace; margin: 1rem 0;">
+          Tip Amount = Bill Subtotal × (Tip Percentage / 100)<br />
+          Total Bill = Bill Subtotal + Tip Amount<br />
+          Split Per Person = Total Bill / Guest Count
+        </div>
+      </section>
+    `,
+  },
+  'tip-split-calculator': {
+    faqs: [
+      {
+        question: 'What is the most standard restaurant tip pooling breakdown?',
+        answer: 'The industry-standard hospitality formula allocates 60%–70% to front-of-house service staff (waiters and head servers), 20%–25% to back-of-house culinary teams (cooks and prep), and 10%–15% to bar mixologists and runners.',
+      },
+      {
+        question: 'Can restaurant owners or salaried managers participate in the tip pool?',
+        answer: 'No. Under international labor standards (including the US FLSA and UK Employment Tips Act) and common fair-employment legal precedents, restaurant owners and managers are strictly prohibited from participating in employee tip pools.',
+      },
+      {
+        question: 'How should support staff like bussers, runners, and barbacks be weighted?',
+        answer: 'In professional point-based systems, support roles receive partial point weighting. For instance, if lead servers are weighted at 1.0 point, bussers and runners commonly receive 0.5 to 0.7 points.',
+      },
+    ],
+    guideHtml: `
+      <section class="tool-guide-section" style="margin-top: 3rem; background: rgba(17,24,39,0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem;">
+        <h2 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Restaurant Tip Pooling Models & Shift Distribution</h2>
+        <p style="color: #94a3b8; line-height: 1.6;">Tip pooling is a collaborative gratuity practice where tips are combined into a central fund and redistributed fairly across front-of-house and back-of-house teams:</p>
+        <ul style="color: #cbd5e1; line-height: 1.8; margin-top: 1rem;">
+          <li><strong>1. Equal Split:</strong> Ideal for small cafes (2-5 team members) where all staff share equal floor responsibilities.</li>
+          <li><strong>2. Role-Weighted Percentage:</strong> 60% front-of-house service, 25% kitchen chefs, 15% bar mixologists.</li>
+          <li><strong>3. Point & Hours System:</strong> Points = Shift Hours × Role Weight (e.g. Server 1.0, Busser 0.5, Chef 0.6).</li>
+        </ul>
+
+        <h3 style="color: #f1f5f9; font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.75rem;">Legal Compliance in Tip Distribution</h3>
+        <p style="color: #94a3b8; line-height: 1.6;">
+          Restaurant owners, general managers, and supervisors with administrative authority may never withhold or participate in employee tip pools. Tips belong 100% to the service and culinary employees who perform the direct shift work.
+        </p>
+      </section>
+    `,
+  },
+};
+
 Object.values(SEO_TOOLS_EN).forEach((toolEn) => {
   const alternateLanguages = [
     { lang: 'x-default', url: toolEn.canonicalUrl },
@@ -1021,6 +1104,7 @@ Object.values(SEO_TOOLS_EN).forEach((toolEn) => {
     { lang: 'tr', url: toolEn.canonicalUrl },
   ];
 
+  const toolExtra = TOOL_RICH_SECTIONS[toolEn.slug];
   const jsonLd: any[] = [
     {
       '@type': 'BreadcrumbList',
@@ -1040,6 +1124,20 @@ Object.values(SEO_TOOLS_EN).forEach((toolEn) => {
     },
   ];
 
+  if (toolExtra && toolExtra.faqs && toolExtra.faqs.length > 0) {
+    jsonLd.push({
+      '@type': 'FAQPage',
+      mainEntity: toolExtra.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.answer,
+        },
+      })),
+    });
+  }
+
   const contentHtml = `
     <main class="blog-container" style="padding-top: 5rem; padding-bottom: 5rem;">
       <nav aria-label="Breadcrumb">
@@ -1050,8 +1148,32 @@ Object.values(SEO_TOOLS_EN).forEach((toolEn) => {
         <h1 class="home-section-title">${toolEn.title}</h1>
         <p class="home-section-desc">${toolEn.description}</p>
       </header>
+
+      ${toolExtra ? toolExtra.guideHtml : ''}
+
+      ${
+        toolExtra && toolExtra.faqs
+          ? `
+        <section style="margin-top: 3rem; background: rgba(17,24,39,0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem;">
+          <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            ${toolExtra.faqs
+              .map(
+                (f) => `
+              <div>
+                <h3 style="color: #f1f5f9; font-size: 1.05rem; margin-bottom: 0.35rem;">${f.question}</h3>
+                <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin: 0;">${f.answer}</p>
+              </div>
+            `
+              )
+              .join('')}
+          </div>
+        </section>
+      `
+          : ''
+      }
+
       <div style="text-align: center; margin: 3rem 0;">
-        <p>Interactive tool loading... Please enable JavaScript in your browser for live calculations.</p>
         <a href="/register" class="home-btn-primary">Get QR Tip Box for Your Business &rarr;</a>
       </div>
     </main>

@@ -14,31 +14,36 @@ import {
   BLOG_POSTS,
   BLOG_CATEGORIES,
   BLOG_CATEGORIES_EN,
+  BLOG_CATEGORIES_DE,
+  BLOG_CATEGORIES_ES,
 } from '../../../content/blog/posts';
 import { trackBlogSearch, trackBlogCategoryClick, trackBlogCtaClick } from '../../../analytics';
 import { useLanguage } from '../../../i18n';
 import '../../../styles/home.css';
+
+type SupportedBlogLang = 'tr' | 'en' | 'de' | 'es';
 
 export const BlogIndexPage: React.FC = () => {
   const { category: paramCategory } = useParams<{ category?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const { language } = useLanguage();
 
-  // Blog active language ('tr' or 'en')
-  const [blogLang, setBlogLang] = useState<'tr' | 'en'>(language === 'tr' ? 'tr' : 'en');
+  // Blog active language ('tr', 'en', 'de', 'es')
+  const initialLang: SupportedBlogLang =
+    language === 'tr' ? 'tr' : language === 'de' ? 'de' : language === 'es' ? 'es' : 'en';
+  const [blogLang, setBlogLang] = useState<SupportedBlogLang>(initialLang);
 
   useEffect(() => {
-    if (language === 'tr') {
-      setBlogLang('tr');
-    } else {
-      setBlogLang('en');
-    }
+    if (language === 'tr') setBlogLang('tr');
+    else if (language === 'de') setBlogLang('de');
+    else if (language === 'es') setBlogLang('es');
+    else setBlogLang('en');
   }, [language]);
 
   const querySearch = searchParams.get('q') || '';
   const [searchTerm, setSearchTerm] = useState(querySearch);
   const isEn = blogLang === 'en';
-  const defaultCategory = isEn ? 'All' : 'Tümü';
+  const defaultCategory = blogLang === 'de' ? 'Alle' : blogLang === 'es' ? 'Todos' : isEn ? 'All' : 'Tümü';
   const [selectedCategory, setSelectedCategory] = useState<string>(paramCategory || defaultCategory);
 
   // Sync category param
@@ -48,7 +53,14 @@ export const BlogIndexPage: React.FC = () => {
     }
   }, [paramCategory]);
 
-  const categories = isEn ? BLOG_CATEGORIES_EN : BLOG_CATEGORIES;
+  const categories =
+    blogLang === 'de'
+      ? ['Alle', ...BLOG_CATEGORIES_DE]
+      : blogLang === 'es'
+      ? ['Todos', ...BLOG_CATEGORIES_ES]
+      : isEn
+      ? BLOG_CATEGORIES_EN
+      : BLOG_CATEGORIES;
 
   // Filtered posts
   const filteredPosts = useMemo(() => {
@@ -95,44 +107,80 @@ export const BlogIndexPage: React.FC = () => {
     trackBlogCategoryClick(cat);
   };
 
-  const handleLanguageSwitch = (lang: 'tr' | 'en') => {
+  const handleLanguageSwitch = (lang: SupportedBlogLang) => {
     setBlogLang(lang);
-    setSelectedCategory(lang === 'en' ? 'All' : 'Tümü');
+    const newDefault = lang === 'de' ? 'Alle' : lang === 'es' ? 'Todos' : lang === 'en' ? 'All' : 'Tümü';
+    setSelectedCategory(newDefault);
     setSearchTerm('');
     setSearchParams({});
   };
 
-  const isFilteredOrSearched = (selectedCategory !== 'Tümü' && selectedCategory !== 'All') || !!searchTerm;
+  const postCounts = useMemo(() => {
+    return {
+      tr: BLOG_POSTS.filter((p) => p.language === 'tr' && p.status === 'published').length,
+      en: BLOG_POSTS.filter((p) => p.language === 'en' && p.status === 'published').length,
+      de: BLOG_POSTS.filter((p) => p.language === 'de' && p.status === 'published').length,
+      es: BLOG_POSTS.filter((p) => p.language === 'es' && p.status === 'published').length,
+    };
+  }, []);
+
+  const isFilteredOrSearched =
+    (selectedCategory !== 'Tümü' &&
+      selectedCategory !== 'All' &&
+      selectedCategory !== 'Alle' &&
+      selectedCategory !== 'Todos') ||
+    !!searchTerm;
 
   return (
     <div className="home-wrapper">
       <SeoHead
         title={
-          selectedCategory !== 'Tümü' && selectedCategory !== 'All'
+          selectedCategory !== 'Tümü' &&
+          selectedCategory !== 'All' &&
+          selectedCategory !== 'Alle' &&
+          selectedCategory !== 'Todos'
             ? `${selectedCategory} ${isEn ? 'Guides & Articles — Naponi Blog' : 'Rehberleri & Makaleleri — Naponi Blog'}`
+            : blogLang === 'de'
+            ? 'Naponi Blog — Digitales Trinkgeld, Gastronomie & Knigge-Leitfäden'
+            : blogLang === 'es'
+            ? 'Naponi Blog — Propina Digital, Hostelería y Gestión de Bote Común'
             : isEn
             ? 'Naponi Blog — Digital Tipping, Restaurant & Hospitality Guides'
             : 'Naponi Blog — Dijital Bahşiş, Restoran ve Konaklama Rehberi'
         }
         description={
-          isEn
+          blogLang === 'de'
+            ? 'Praxisnahe Leitfäden für Gastronomen, Hoteliers und Servicekräfte zu steuerfreiem QR-Trinkgeld nach § 3 Nr. 51 EStG und Schichtaufteilung.'
+            : blogLang === 'es'
+            ? 'Guías para restaurantes y hostelería sobre propinas con código QR, reparto justo de botes y motivación de camareros.'
+            : isEn
             ? 'Actionable guides on QR digital tipping, cashless hospitality payments, tip pooling, and service staff retention for restaurants and hotels.'
             : 'Restoranlar, kafeler ve oteller için dijital bahşiş sistemleri, temassız ödeme teknolojileri ve personel yönetim rehberleri.'
         }
         canonicalUrl={
-          selectedCategory !== 'Tümü' && selectedCategory !== 'All'
+          selectedCategory !== 'Tümü' &&
+          selectedCategory !== 'All' &&
+          selectedCategory !== 'Alle' &&
+          selectedCategory !== 'Todos'
             ? `https://www.naponi.com/blog/category/${encodeURIComponent(selectedCategory)}`
             : 'https://www.naponi.com/blog'
         }
         keywords={
-          isEn
+          blogLang === 'de'
+            ? ['digitales trinkgeld blog', 'gastronomie leitfaden', 'trinkgeld pool restaurant', 'kellner trinkgeld']
+            : blogLang === 'es'
+            ? ['propina digital blog', 'guias hosteleria restaurantes', 'reparto propinas camareros', 'codigo qr propinas']
+            : isEn
             ? ['digital tipping blog', 'restaurant tipping guide', 'qr tipping articles', 'hotel tipping solutions']
             : ['dijital bahşiş blog', 'restoran bahşiş rehberi', 'qr bahşiş makaleleri', 'otel bahşiş çözümleri']
         }
         breadcrumbs={[
           { name: isEn ? 'Home' : 'Ana Sayfa', url: 'https://www.naponi.com/' },
           { name: 'Blog', url: 'https://www.naponi.com/blog' },
-          ...(selectedCategory !== 'Tümü' && selectedCategory !== 'All'
+          ...(selectedCategory !== 'Tümü' &&
+          selectedCategory !== 'All' &&
+          selectedCategory !== 'Alle' &&
+          selectedCategory !== 'Todos'
             ? [{ name: selectedCategory, url: `https://www.naponi.com/blog/category/${encodeURIComponent(selectedCategory)}` }]
             : []),
         ]}
@@ -148,18 +196,33 @@ export const BlogIndexPage: React.FC = () => {
           <Link to="/">{isEn ? 'Home' : 'Ana Sayfa'}</Link>
           <span>/</span>
           <span className="current">Blog</span>
-          {selectedCategory !== 'Tümü' && selectedCategory !== 'All' && (
-            <>
-              <span>/</span>
-              <span className="current">{selectedCategory}</span>
-            </>
-          )}
+          {selectedCategory !== 'Tümü' &&
+            selectedCategory !== 'All' &&
+            selectedCategory !== 'Alle' &&
+            selectedCategory !== 'Todos' && (
+              <>
+                <span>/</span>
+                <span className="current">{selectedCategory}</span>
+              </>
+            )}
         </nav>
 
         {/* Hero Header */}
         <div className="blog-hero">
           {/* Language Switch Pills */}
-          <div style={{ display: 'inline-flex', gap: '0.5rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.05)', padding: '4px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              gap: '0.4rem',
+              marginBottom: '1.5rem',
+              background: 'rgba(255,255,255,0.05)',
+              padding: '4px',
+              borderRadius: '999px',
+              border: '1px solid rgba(255,255,255,0.1)',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
             <button
               type="button"
               onClick={() => handleLanguageSwitch('tr')}
@@ -168,14 +231,14 @@ export const BlogIndexPage: React.FC = () => {
                 borderRadius: '999px',
                 border: 'none',
                 cursor: 'pointer',
-                background: !isEn ? 'var(--primary)' : 'transparent',
+                background: blogLang === 'tr' ? 'var(--primary)' : 'transparent',
                 color: '#fff',
                 fontSize: '0.84rem',
                 fontWeight: 600,
                 transition: 'all 0.2s ease',
               }}
             >
-              🇹🇷 Türkçe (15)
+              🇹🇷 Türkçe ({postCounts.tr})
             </button>
             <button
               type="button"
@@ -185,28 +248,78 @@ export const BlogIndexPage: React.FC = () => {
                 borderRadius: '999px',
                 border: 'none',
                 cursor: 'pointer',
-                background: isEn ? 'var(--primary)' : 'transparent',
+                background: blogLang === 'en' ? 'var(--primary)' : 'transparent',
                 color: '#fff',
                 fontSize: '0.84rem',
                 fontWeight: 600,
                 transition: 'all 0.2s ease',
               }}
             >
-              🇬🇧 English (15)
+              🇬🇧 English ({postCounts.en})
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLanguageSwitch('de')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '999px',
+                border: 'none',
+                cursor: 'pointer',
+                background: blogLang === 'de' ? 'var(--primary)' : 'transparent',
+                color: '#fff',
+                fontSize: '0.84rem',
+                fontWeight: 600,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              🇩🇪 Deutsch ({postCounts.de})
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLanguageSwitch('es')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '999px',
+                border: 'none',
+                cursor: 'pointer',
+                background: blogLang === 'es' ? 'var(--primary)' : 'transparent',
+                color: '#fff',
+                fontSize: '0.84rem',
+                fontWeight: 600,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              🇪🇸 Español ({postCounts.es})
             </button>
           </div>
 
           <br />
-          <span className="home-section-tag">{isEn ? 'Knowledge & Guides Hub' : 'İçerik & Rehber Merkezi'}</span>
+          <span className="home-section-tag">
+            {blogLang === 'de'
+              ? 'Wissen & Leitfäden Hub'
+              : blogLang === 'es'
+              ? 'Centro de Conocimiento y Guías'
+              : isEn
+              ? 'Knowledge & Guides Hub'
+              : 'İçerik & Rehber Merkezi'}
+          </span>
           <h1 className="home-section-title" style={{ fontSize: '2.8rem', marginBottom: '1rem' }}>
-            {isEn
+            {blogLang === 'de'
+              ? 'Gastronomie-Technologie & Digitales Trinkgeld Leitfäden'
+              : blogLang === 'es'
+              ? 'Tecnología en Hostelería y Guías de Propina Digital'
+              : isEn
               ? 'Hospitality Technology & Digital Tipping Guides'
               : 'Hizmet Sektöründe Dijitalleşme ve Bahşiş Rehberleri'}
           </h1>
           <p className="home-section-desc" style={{ maxWidth: 700, margin: '0 auto 2rem' }}>
-            {isEn
+            {blogLang === 'de'
+              ? 'Praxisnahe, datengestützte Leitfäden für Restaurants, Hotels und Cafés zu kontaktlosem Trinkgeld, Schicht-Pools und Mitarbeiterbindung.'
+              : blogLang === 'es'
+              ? 'Guías operativas y prácticas para restaurantes, hoteles y bares sobre pagos contactless, reparto de botes y fidelización del equipo.'
+              : isEn
               ? 'Practical, data-backed operational guides for restaurants, hotels, and cafes on contactless payments, tip pool distribution, and frontline staff motivation.'
-              : 'Restoranlar, kafeler ve oteller için temassız ödemeler, bahşiş havuzu modelleri ve personel verimliliğini artıran pratik stratejiler.'}
+              : 'Restoranlar, oteller ve kafeler için temassız ödemeler, bahşiş havuzu dağıtımı ve personel motivasyonu üzerine pratik rehberler.'}
           </p>
 
           {/* Search Form */}

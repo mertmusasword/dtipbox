@@ -87,29 +87,61 @@ export const TipCalculatorPage: React.FC = () => {
     ? [
         {
           question: 'How much should you typically tip at a restaurant?',
-          answer: 'In the United States and Canada, the standard gratuity ranges from 15% to 20% for good dining service, with 18% being common. In European destinations, tipping is discretionary, often 5% to 10% for attentive service, as wages are higher.',
+          answer: 'In the United States and Canada, the standard gratuity ranges from 15% to 20% for attentive dining service, with 18% being common. In European destinations (UK, Germany, France, Spain), tipping is discretionary, typically 5% to 10% for quality service, as base wages are structured differently.',
         },
         {
           question: 'How is the per-person bill split calculated?',
-          answer: 'The total bill amount plus the calculated tip percentage is summed, then divided equally by the number of dining guests. This calculator instantly displays both each guest’s individual tip portion and their total payment amount.',
+          answer: 'The total bill amount plus the calculated tip percentage is summed, then divided equally by the number of dining guests: Total Per Person = (Bill Amount + Tip Amount) / Guest Count. Our calculator displays both each guest’s tip portion and their total payment amount.',
         },
         {
           question: 'Should I tip if a service charge or auto-gratuity is already included?',
-          answer: 'If the check clearly lists an automatic gratuity or service charge (common for parties of 6 or more), additional tipping is optional and reserved for extraordinary service. To ensure gratuity reaches staff directly without corporate deductions, guests often prefer scanning tableside QR codes.',
+          answer: 'If the check clearly lists an automatic gratuity or service charge (often 10% to 18% for parties of 6 or more), additional tipping is optional and reserved for extraordinary service. Note that in many venues, corporate service charges do not go 100% directly to waitstaff. To ensure gratuity reaches staff directly without corporate deductions, guests often prefer scanning tableside QR codes.',
+        },
+        {
+          question: 'Is tipping calculated before or after sales tax?',
+          answer: 'Etiquette experts universally agree that tipping should be calculated on the pre-tax subtotal of food and beverage charges. However, most POS terminals and credit card slips calculate tip presets on the final total after tax, adding an extra 1-2% unintentionally.',
+        },
+        {
+          question: 'Why do cashless diners prefer tableside QR tipping?',
+          answer: 'With fewer guests carrying physical banknotes, asking servers to manually add tips to credit card terminals often feels awkward or delays table departure. Tableside QR stands allow guests to scan with Apple Pay or Google Pay, select a preset in 6 seconds, and leave a direct tip that bypasses POS delays.',
+        },
+        {
+          question: 'How much should you tip for coffee, bars, and hotel services?',
+          answer: 'For counter coffee and baristas, rounding up the change or leaving $1 to $2 (10-20 ₺) per handcrafted beverage is customary. At bars, $1 to $2 per drink or 15-20% on a running tab is standard. For hotel bellboys and valets, $2 to $5 (50-100 ₺) per bag or vehicle delivery is standard practice.',
+        },
+        {
+          question: 'Can restaurants set up standalone digital tipping without changing their POS?',
+          answer: 'Yes. Naponi provides zero-integration QR stands that sit directly on dining tables. Guests tip directly from their smartphones, funds are distributed transparently, and the restaurant incurs zero setup or hardware replacement fees.',
         },
       ]
     : [
         {
           question: 'Türkiye’de restoranlarda ne kadar bahşiş bırakılır?',
-          answer: 'Türkiye’de restoran ve kafelerde genel kabul gören standart bahşiş oranı hesap tutarının %10’udur. Çok memnun kalınan servislerde bu oran %15-%20 seviyelerine çıkabilir. Hızlı self-servis veya kahve siparişlerinde ise bozukluk veya 20-50 ₺ gibi sabit tutarlar yaygındır.',
+          answer: 'Türkiye’de restoran ve kafelerde genel kabul gören standart bahşiş oranı hesap tutarının %10’udur. Kusursuz ve özenli servislerde bu oran %15-%20 seviyelerine çıkabilir. Hızlı self-servis, üçüncü nesil kahveciler veya paket servislerde ise bozukluk veya 20-50 ₺ gibi sabit tutarlar yaygındır.',
         },
         {
           question: 'Kişi başı bahşiş bölüşümü nasıl hesaplanır?',
-          answer: 'Toplam hesap tutarına seçilen bahşiş yüzdesi eklenir ve elde edilen nihai tutar masadaki kişi sayısına bölünür. Aracımız sayesinde hem kişi başı düşen bahşişi hem de toplam kişi başı ödenecek tutarı anında görebilirsiniz.',
+          answer: 'Toplam hesap tutarına seçilen bahşiş yüzdesi eklenir ve elde edilen nihai tutar masadaki kişi sayısına bölünür: Kişi Başı Tutar = (Hesap Tutarı + Bahşiş) / Kişi Sayısı. Aracımız sayesinde hem kişi başı düşen bahşişi hem de toplam kişi başı ödenecek tutarı anında görebilirsiniz.',
         },
         {
           question: 'Restoran hesabında kuver veya servis ücreti varsa bahşiş verilmeli mi?',
-          answer: 'Adisyonda "%10 Servis Ücreti" yer alıyorsa bu tutar genellikle doğrudan garsona kalmayabilir veya işletme maliyetine gidebilir. Servis elemanına doğrudan jest yapmak için masadaki QR kod üzerinden doğrudan garsonun hesabına bahşiş bırakılması en şeffaf yöntemdir.',
+          answer: 'Adisyonda "%10 Servis Ücreti" veya "Kuver" yer alıyorsa bu tutar genellikle doğrudan garsona kalmaz; işletmenin ekmek, su, örtü ve operasyon maliyetlerine gider. Servis elemanına doğrudan jest yapmak için masadaki QR kod üzerinden doğrudan garsonun veya ekibin hesabına bahşiş bırakılması en şeffaf yöntemdir.',
+        },
+        {
+          question: 'Bahşiş KDV dahil tutardan mı yoksa KDV hariç tutardan mı hesaplanmalı?',
+          answer: 'Gastronomi ve görgü kurallarına göre bahşiş, yiyecek ve içeceklerin KDV hariç net bedeli üzerinden hesaplanmalıdır. Ancak pratik olması açısından tüketicilerin büyük kısmı adisyonun altındaki genel toplam üzerinden %10 hesaplar.',
+        },
+        {
+          question: 'Kredi kartı sliplerine yazılan bahşiş neden personeli mağdur edebilir?',
+          answer: 'Kredi kartı pos cihazına bahşiş eklendiğinde bu para önce işletmenin ticari banka hesabına yatar. Banka komisyonları, geciken blokaj süreleri ve işletmenin muhasebe süreçleri nedeniyle bu para garsona haftalar sonra veya kesintili ulaşabilir. Doğrudan QR bahşiş ise parayı anında personelin hesabına aktarır.',
+        },
+        {
+          question: 'Otel, vale ve taksilerde bahşiş teamülü nasıldır?',
+          answer: 'Vale hizmetlerinde araç tesliminde 50 - 100 ₺, otellerde valiz taşıyan bellboy personeline valiz başı 30 - 50 ₺, günlük oda temizliği görevlisine ise 50 - 100 ₺ bırakılması yaygın nezaket kuralıdır. Taksilerde ise genellikle taksimetre ücreti en yakın 10 veya 20 ₺ tutarına yuvarlanır.',
+        },
+        {
+          question: 'İşletmeler kendi masalarına QR bahşiş sistemini nasıl kurabilir?',
+          answer: 'Naponi üzerinden 2 dakikada ücretsiz işletme hesabı açarak masalarınıza özel yüksek çözünürlüklü QR kodları oluşturabilirsiniz. POS cihazı değiştirmeye veya pahalı donanım almaya gerek kalmadan misafirleriniz Apple Pay veya kredi kartıyla 6 saniyede bahşiş bırakabilir.',
         },
       ];
 
@@ -331,6 +363,142 @@ export const TipCalculatorPage: React.FC = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Rich Editorial Guide Section */}
+        <div className="tool-guide-wrapper">
+          {/* Section 1: Tipping Etiquette & Standards Table */}
+          <article className="tool-guide-section">
+            <h2>{isEn ? 'Global Restaurant Tipping Etiquette & Sector Guidelines' : 'Restoran Bahşiş Rehberi & Sektörel Bahşiş Oranları'}</h2>
+            <p>
+              {isEn
+                ? 'Tipping etiquette varies significantly across service industries and geographical locations. Whether dining at a casual bistro, enjoying fine dining, or ordering specialty coffee, here is a definitive reference table for standard gratuity percentages.'
+                : 'Yemek ve hizmet sektöründe ne kadar bahşiş bırakılacağı; mekanın türüne, aldığınız servisin niteliğine ve ülkeye göre değişiklik gösterir. İşte restoranlardan otellere, kafelerden valeye kadar kabul gören standart bahşiş oranları:'}
+            </p>
+
+            <div className="tool-table-responsive">
+              <table className="tool-guide-table">
+                <thead>
+                  <tr>
+                    <th>{isEn ? 'Venue / Service Type' : 'Hizmet / Mekan Türü'}</th>
+                    <th>{isEn ? 'Standard Gratuity' : 'Standart Bahşiş Oranı'}</th>
+                    <th>{isEn ? 'Typical Payment Method' : 'Yaygın Ödeme Şekli'}</th>
+                    <th>{isEn ? 'Service Etiquette' : 'Görgü Kuralı & Not'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>{isEn ? 'Casual Dining & Bistros' : 'Restoranlar & Lokantalar'}</strong></td>
+                    <td><span style={{ color: '#10b981', fontWeight: 600 }}>%10 – %15</span></td>
+                    <td>{isEn ? 'Tableside QR / Credit Card' : 'Masada QR Kod / Nakit / Kart'}</td>
+                    <td>{isEn ? 'Standard polite acknowledgment for food & table service.' : 'Kusursuz servis ve masada karşılama için standart oran.'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Fine Dining & Chef Venues' : 'Lüks Restoran & Fine Dining'}</strong></td>
+                    <td><span style={{ color: '#10b981', fontWeight: 600 }}>%15 – %20</span></td>
+                    <td>{isEn ? 'Standalone Digital Tip / Card' : 'Doğrudan QR Bahşiş / Kredi Kartı'}</td>
+                    <td>{isEn ? 'Reserved for sommelier, multi-course dining, and dedicated table care.' : 'Sommelier, tadım menüsü ve üst düzey masa ilgisi için.'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Cafes & Specialty Coffee' : 'Kafeler & Baristalar'}</strong></td>
+                    <td><span style={{ color: '#10b981', fontWeight: 600 }}>%5 – %10 / {isEn ? '$1–$2' : '20–50 ₺'}</span></td>
+                    <td>{isEn ? 'Counter QR / Tip Jar' : 'Kasa QR Kodu / Bahşiş Kutusu'}</td>
+                    <td>{isEn ? 'Optional per-handcrafted drink appreciation.' : 'Özel el yapımı kahveler ve hızlı güler yüzlü servis için.'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Bars & Nightclubs' : 'Barlar & Kokteyl Salonları'}</strong></td>
+                    <td><span style={{ color: '#10b981', fontWeight: 600 }}>%10 – %15 / {isEn ? '$1–$3 per drink' : '30–60 ₺'}</span></td>
+                    <td>{isEn ? 'Direct QR / Cash' : 'Bar QR Kodu / Nakit'}</td>
+                    <td>{isEn ? 'Given per drink round or closed tab at departure.' : 'Her içki siparişinde veya ayrılırken hesap kapatırken.'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Valet & Bellboy Service' : 'Vale & Otel Bellboy Hizmeti'}</strong></td>
+                    <td><span style={{ color: '#10b981', fontWeight: 600 }}>{isEn ? '$2–$5 per bag/car' : '50–100 ₺ / Valiz'}</span></td>
+                    <td>{isEn ? 'Cash or Staff QR Badge' : 'Nakit veya Yaka Kartı QR'}</td>
+                    <td>{isEn ? 'Direct appreciation upon vehicle delivery or luggage placement.' : 'Araç tesliminde veya valizler odaya yerleştirildiğinde.'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          {/* Section 2: Mathematical Formula & Steps */}
+          <article className="tool-guide-section">
+            <h2>{isEn ? 'How to Calculate Tips: The Exact Formula & Step-by-Step Examples' : 'Bahşiş Nasıl Hesaplanır? Matematiksel Formül ve Adım Adım Örnekler'}</h2>
+            <p>
+              {isEn
+                ? 'Calculating restaurant gratuity involves two simple mathematical steps. Below is the standard formula used by professional hospitality software and our online calculator:'
+                : 'Restoranda veya kafede bahşiş hesaplamak temel iki matematiksel işleme dayanır. Profesyonel adisyon ve finansal yazılımların kullandığı standart formül şu şekildedir:'}
+            </p>
+
+            <div className="tool-formula-box">
+              {isEn ? 'Tip Amount = Bill Subtotal × (Tip Percentage / 100)' : 'Bahşiş Tutarı = Hesap Tutarı × (Bahşiş Yüzdesi / 100)'}<br />
+              {isEn ? 'Total Payment = Bill Subtotal + Tip Amount' : 'Toplam Ödeme = Hesap Tutarı + Bahşiş Tutarı'}<br />
+              {isEn ? 'Per Person Share = Total Payment / Number of Dining Guests' : 'Kişi Başı Tutar = Toplam Ödeme / Masadaki Kişi Sayısı'}
+            </div>
+
+            <h3>{isEn ? 'Practical Calculation Example' : 'Pratik Hesaplama Örneği (Senaryo)'}</h3>
+            <p>
+              {isEn
+                ? 'Suppose four colleagues dine out, and the bill arrives at $160.00. The party agrees on an 18% tip for attentive service:'
+                : 'Dört kişilik bir arkadaş grubunun yemek yediğini ve adisyonun 1.200 ₺ geldiğini varsayalım. Ekip iyi servis için %10 bahşiş bırakmak istiyor:'}
+            </p>
+            <ul>
+              <li><strong>{isEn ? '1. Bill Amount:' : '1. Hesap Tutarı:'}</strong> {isEn ? '$160.00' : '1.200 ₺'}</li>
+              <li><strong>{isEn ? '2. Tip (18% / %10):' : '2. Bahşiş Hesabı:'}</strong> {isEn ? '$160.00 × 0.18 = $28.80' : '1.200 ₺ × 0.10 = 120 ₺'}</li>
+              <li><strong>{isEn ? '3. Total Bill:' : '3. Genel Toplam:'}</strong> {isEn ? '$160.00 + $28.80 = $188.80' : '1.200 ₺ + 120 ₺ = 1.320 ₺'}</li>
+              <li><strong>{isEn ? '4. Split Per Person (4 diners):' : '4. Kişi Başı Bölüşüm (4 Kişi):'}</strong> {isEn ? '$188.80 / 4 = $47.20 per guest' : '1.320 ₺ / 4 = 330 ₺ / kişi başı'}</li>
+            </ul>
+          </article>
+
+          {/* Section 3: Cash vs POS vs Digital QR Comparison */}
+          <article className="tool-guide-section">
+            <h2>{isEn ? 'Cash Tips vs POS Terminal Slips vs Standalone QR Codes' : 'Nakit Bahşiş vs POS Slipi vs Bağımsız Masada QR Kod Karşılaştırması'}</h2>
+            <p>
+              {isEn
+                ? 'As cashless consumer habits dominate, hospitality operators must understand how different tipping channels impact staff morale, cash flow, and guest convenience.'
+                : 'Nakit kullanımının neredeyse tamamen kalktığı günümüzde, işletmelerin bahşiş toplama yöntemleri garson motivasyonunu ve misafir sadakatini doğrudan etkiler.'}
+            </p>
+
+            <div className="tool-table-responsive">
+              <table className="tool-guide-table">
+                <thead>
+                  <tr>
+                    <th>{isEn ? 'Comparison Factor' : 'Karşılaştırma Kriteri'}</th>
+                    <th>{isEn ? 'Physical Cash Tip' : 'Fiziksel Nakit Bahşiş'}</th>
+                    <th>{isEn ? 'POS Terminal Addition' : 'Kredi Kartı / POS Slipi'}</th>
+                    <th><span style={{ color: '#fbbf24' }}>Naponi Masa QR Kodu</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>{isEn ? 'Speed & Friction' : 'Ödeme Hızı & Pratiklik'}</strong></td>
+                    <td>{isEn ? 'High friction (rarely carry cash)' : 'Düşük (Misafirlerin yanında nakit yok)'}</td>
+                    <td>{isEn ? 'Medium (awkward terminal prompts)' : 'Orta (Garsona pos cihazında tutar söyletme mahcubiyeti)'}</td>
+                    <td><strong style={{ color: '#10b981' }}>{isEn ? 'Instant (6s Apple/Google Pay)' : 'Kusursuz (6 saniyede Apple/Google Pay)'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Time to Staff Payout' : 'Personele Ulaşma Hızı'}</strong></td>
+                    <td>{isEn ? 'Same day (manual count)' : 'Aynı gün (elden)'}</td>
+                    <td>{isEn ? 'Delayed (15–30 days via payroll)' : 'Gecikmeli (Banka blokajı ve ay sonu bordro)'}</td>
+                    <td><strong style={{ color: '#10b981' }}>{isEn ? 'Real-time direct transfer' : 'Anında personelin kendi IBAN hesabına'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Deductions & Overhead' : 'Maliyet & Kesintiler'}</strong></td>
+                    <td>{isEn ? 'Theft risk & counting errors' : 'Kayıp, hırsızlık ve sayım hataları'}</td>
+                    <td>{isEn ? 'Bank POS interchange cuts (2–4%)' : 'Banka POS komisyon kesintisi (%2-%4)'}</td>
+                    <td><strong style={{ color: '#10b981' }}>{isEn ? 'Zero POS lock-in, 100% transparent' : 'POS cihazından bağımsız, şeffaf dağıtım'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td><strong>{isEn ? 'Tip Yield Increase' : 'Toplam Bahşiş Artışı'}</strong></td>
+                    <td>{isEn ? 'Declining year over year' : 'Sürekli düşüyor (nakitsizlikten)'}</td>
+                    <td>{isEn ? 'Flat (+5% to +10%)' : 'Yatay (%5 - %10)'}</td>
+                    <td><strong style={{ color: '#10b981' }}>{isEn ? '+35% to +50% Average Increase' : '+%35 ile +%50 Ortalama Artış'}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
         </div>
 
         {/* FAQ Section */}

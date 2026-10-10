@@ -75,7 +75,7 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog" />
   </url>
 
-  <!-- 3. Dynamic Blog Articles (35 posts) -->
+  <!-- 3. Dynamic Blog Articles (40 posts) -->
   <url>
     <loc>https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber</loc>
     <lastmod>2026-03-11</lastmod>
@@ -384,6 +384,49 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/2026-kurucu-uyelik-programi-dijital-bahsiste-sifir-lira-devri" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/2026-founder-membership-program-zero-cost-era-in-digital-tipping" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/digitales-trinkgeld-gastronomie-leitfaden</loc>
+    <lastmod>2026-10-10T12:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/trinkgeld-berechnen-wie-viel-deutschland-knigge</loc>
+    <lastmod>2026-10-10T12:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.naponi.com/blog/trinkgeld-berechnen-wie-viel-deutschland-knigge" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/trinkgeld-pool-aufteilung-gastronomie-system</loc>
+    <lastmod>2026-10-10T12:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/calisan-bahsislerini-yonetmenin-yollari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/que-es-propina-digital-guia-restaurantes</loc>
+    <lastmod>2026-10-10T12:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/dijital-bahsis-nedir-isletmeler-icin-rehber" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/what-is-digital-tipping-guide-for-businesses" />
+  </url>
+  <url>
+    <loc>https://www.naponi.com/blog/como-calcular-dividir-propinas-camareros-restaurante</loc>
+    <lastmod>2026-10-10T12:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.naponi.com/blog/calisan-bahsislerini-yonetmenin-yollari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.naponi.com/blog/how-to-manage-staff-tips-individual-qr-vs-tip-pooling" />
   </url>
 
   <!-- 4. Global Sector Solutions (6 sectors) -->
