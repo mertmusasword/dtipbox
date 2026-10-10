@@ -1397,6 +1397,23 @@ input, select, textarea {
   overflow-y: auto;
 }
 
+.sidebar-section-title {
+  padding: 0.85rem 0.9rem 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.sidebar-section-title:first-of-type {
+  padding-top: 0.2rem;
+}
+
 .sidebar-nav-item {
   display: flex;
   align-items: center;

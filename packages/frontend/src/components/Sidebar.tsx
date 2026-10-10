@@ -110,16 +110,27 @@ export const Sidebar: React.FC = () => {
         <nav className="sidebar-nav">
           {isBusiness && (
             <>
+              <div className="sidebar-section-title">
+                {language === 'tr' ? 'Operasyon' : 'Operations'}
+              </div>
               <NavItem to="/business/dashboard" icon={<LayoutDashboard size={18} />} label={t('nav.dashboard')} onClick={closeMobile} />
-              <NavItem to="/business/profile" icon={<UserCircle size={18} />} label={t('nav.profile')} onClick={closeMobile} dot={!!ob?.isPending('profile')} />
-              <NavItem to="/business/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} dot={!!ob?.isPending('staff')} />
               <NavItem to="/business/qr" icon={<QrCode size={18} />} label={t('nav.qrCodes')} onClick={closeMobile} dot={!!ob?.isPending('qr')} />
+              <NavItem to="/business/employees" icon={<Users size={18} />} label={t('nav.employees')} onClick={closeMobile} dot={!!ob?.isPending('staff')} />
+
+              <div className="sidebar-section-title">
+                {language === 'tr' ? 'Hizmetler & Müşteri' : 'Services & Guests'}
+              </div>
               <NavItem to="/business/menu" icon={<BookOpen size={18} />} label={t('nav.menu') || 'QR Menü'} onClick={closeMobile} />
-              <NavItem to="/business/store" icon={<ShoppingBag size={18} />} label={t('nav.store') || 'Donanım Mağazası'} onClick={closeMobile} />
-              <NavItem to="/business/payment-settings" icon={<CreditCard size={18} />} label={t('nav.paymentSettings') || 'Ödeme Ayarları'} onClick={closeMobile} dot={!!ob?.isPending('payment')} />
-              <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
-              <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
               <NavItem to="/business/loyalty" icon={<Award size={18} />} label={t('nav.loyalty')} onClick={closeMobile} />
+              <NavItem to="/business/feedbacks" icon={<MessageSquareHeart size={18} />} label={t('nav.feedbacks')} onClick={closeMobile} />
+              <NavItem to="/business/store" icon={<ShoppingBag size={18} />} label={t('nav.store') || 'Donanım Mağazası'} onClick={closeMobile} />
+
+              <div className="sidebar-section-title">
+                {language === 'tr' ? 'Yönetim & Ayarlar' : 'Management'}
+              </div>
+              <NavItem to="/business/analytics" icon={<BarChart3 size={18} />} label={t('nav.analytics')} onClick={closeMobile} />
+              <NavItem to="/business/payment-settings" icon={<CreditCard size={18} />} label={t('nav.paymentSettings') || 'Ödeme Ayarları'} onClick={closeMobile} dot={!!ob?.isPending('payment')} />
+              <NavItem to="/business/profile" icon={<UserCircle size={18} />} label={t('nav.profile')} onClick={closeMobile} dot={!!ob?.isPending('profile')} />
               <NavItem to="/business/settings" icon={<Settings size={18} />} label={t('nav.settings')} onClick={closeMobile} />
               {ob && ob.loaded && (
                 <button

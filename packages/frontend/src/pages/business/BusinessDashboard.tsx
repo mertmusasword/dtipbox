@@ -57,9 +57,9 @@ export const BusinessDashboard: React.FC = () => {
   const [showPlanGuardModal, setShowPlanGuardModal] = useState<boolean>(false);
   const [founderCardCollapsed, setFounderCardCollapsed] = useState<boolean>(() => {
     try {
-      return localStorage.getItem('naponi_founder_card_collapsed') === 'true';
+      return localStorage.getItem('naponi_founder_card_collapsed') !== 'false';
     } catch {
-      return false;
+      return true;
     }
   });
 
@@ -850,26 +850,38 @@ export const BusinessDashboard: React.FC = () => {
         <SkeletonCard count={4} />
       ) : (
         <div className="metrics-grid">
-          <MetricCard
-            label={t('business.staffCount')}
-            value={analytics?.employeeCount || 0}
-            icon={<Users size={24} />}
-          />
-          <MetricCard
-            label={t('business.tablesCount')}
-            value={analytics?.tableCount || 0}
-            icon={<UtensilsCrossed size={24} />}
-          />
-          <MetricCard
-            label={t('business.qrCodesCount')}
-            value={analytics?.qrCount || 0}
-            icon={<QrCode size={24} />}
-          />
-          <MetricCard
-            label={t('business.activeChannels')}
-            value={analytics?.activePaymentMethodsCount || 0}
-            icon={<CreditCard size={24} />}
-          />
+          <Link to="/business/employees" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <MetricCard
+              label={t('business.staffCount')}
+              value={analytics?.employeeCount || 0}
+              icon={<Users size={24} />}
+              subtitle={language === 'tr' ? 'Ekibi Yönet →' : 'Manage Team →'}
+            />
+          </Link>
+          <Link to="/business/qr?tab=tables" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <MetricCard
+              label={t('business.tablesCount')}
+              value={analytics?.tableCount || 0}
+              icon={<UtensilsCrossed size={24} />}
+              subtitle={language === 'tr' ? 'Masaları Gör →' : 'View Tables →'}
+            />
+          </Link>
+          <Link to="/business/qr" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <MetricCard
+              label={t('business.qrCodesCount')}
+              value={analytics?.qrCount || 0}
+              icon={<QrCode size={24} />}
+              subtitle={language === 'tr' ? 'QR İndir & Yazdır →' : 'Download QR →'}
+            />
+          </Link>
+          <Link to="/business/payment-settings" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <MetricCard
+              label={t('business.activeChannels')}
+              value={analytics?.activePaymentMethodsCount || 0}
+              icon={<CreditCard size={24} />}
+              subtitle={language === 'tr' ? 'Banka & Ödeme →' : 'Payment Settings →'}
+            />
+          </Link>
         </div>
       )}
 
